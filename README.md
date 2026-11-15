@@ -13,7 +13,20 @@ cd backend
 mvn spring-boot:run
 ```
 
-The API runs on http://localhost:8080 and Swagger UI is at `/swagger-ui.html`.
+The API runs on http://localhost:8080 and Swagger UI is at `/swagger-ui.html`. By default it uses an in-memory H2
+database, so it works with zero setup.
+
+### Using Neon Postgres
+
+1. Create a project at [neon.tech](https://neon.tech) and copy the connection details.
+2. `cp backend/.env.example backend/.env` and fill in `DB_URL`, `DB_USER` and `DB_PASSWORD`
+   (Neon shows `postgresql://user:pass@host/db?sslmode=require`; for JDBC use
+   `jdbc:postgresql://host/db?sslmode=require` and put the user and password in their own variables).
+3. Keep `spring.profiles.active=prod` in that file (in Docker or on a host, set the `SPRING_PROFILES_ACTIVE=prod`
+   environment variable instead), then run `mvn spring-boot:run` as usual.
+
+Tables are created on first start and the 15 seed problems are inserted. If you use Neon's pooled host (`-pooler`),
+append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 
 | Endpoint | Purpose |
 | --- | --- |
