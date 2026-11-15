@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/leetcode}
+    username: ${DB_USER:leetcode}
+    password: ${DB_PASSWORD:leetcode}
+  jpa:
+    hibernate:
+      ddl-auto: update
