@@ -1,0 +1,33 @@
+# LeetCode Practice Platform
+
+A LeetCode-style practice app.
+
+- **Backend:** Java 21, Spring Boot 3, Spring Data JPA (H2 for dev, PostgreSQL for prod)
+- **Code execution:** sandboxed through [Judge0](https://github.com/judge0/judge0) (optional, configured via `JUDGE0_URL`)
+- **Frontend:** Next.js + TypeScript (coming next)
+
+## Backend
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+The API runs on http://localhost:8080 and Swagger UI is at `/swagger-ui.html`.
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/problems` | Search and filter (`q`, `difficulty`, `tag`, `status`, `bookmarked`, `page`, `size`) |
+| `GET /api/problems/{slug}` | Problem detail, starter code and sample cases |
+| `GET /api/tags` | All topic tags |
+| `POST /api/problems/{slug}/run` | Run code against sample cases |
+| `POST /api/problems/{slug}/submit` | Judge against all cases and record the submission |
+| `GET /api/problems/{slug}/submissions` | Submission history |
+| `PUT` / `DELETE /api/problems/{slug}/bookmark` | Bookmark toggle |
+| `GET /api/progress` | Solved / attempted counts |
+
+Per-user state is keyed by an anonymous UUID sent in the `X-Client-Id` header.
+
+## Status
+
+Work in progress. Backend skeleton is in place; seed data, tests and the frontend are being added in follow-up commits.
