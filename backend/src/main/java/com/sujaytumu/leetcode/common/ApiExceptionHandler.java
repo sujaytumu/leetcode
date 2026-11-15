@@ -6,18 +6,23 @@ import com.sujaytumu.leetcode.common.ApiExceptions.TooManyRequestsException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-/** Translates exceptions into RFC 7807 problem responses. */
+/**
+ * Translates exceptions into RFC 7807 problem responses. Extends Spring's base handler so framework
+ * errors (405, 404 for unknown paths, bad headers, unreadable bodies) keep their correct status codes.
+ */
 @RestControllerAdvice
-public class ApiExceptionHandler {
+public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
@@ -37,31 +42,20 @@ public class ApiExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    ProblemDetail invalidBody(MethodArgumentNotValidException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    ProblemDetail badArgument(IllegalArgumentException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         String detail = ex.getBindingResult().getFieldErrors().stream()
-                .map(e -> e.getField() + " " + e.getDefaultMessage())
+                .map(error -> error.getField() + " " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
-        return ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, detail.isBlank() ? "Invalid request" : detail);
-    }
-
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    ProblemDetail missingHeader(MissingRequestHeaderException ex) {
-        return ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "Missing required header: " + ex.getHeaderName());
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    ProblemDetail typeMismatch(MethodArgumentTypeMismatchException ex) {
-        return ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "Invalid value for '" + ex.getName() + "'");
-    }
-
-    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
-    ProblemDetail badRequest(Exception ex) {
-        String detail = ex instanceof IllegalArgumentException ? ex.getMessage() : "Malformed request body";
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        ProblemDetail body =
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail.isBlank() ? "Invalid request" : detail);
+        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(Exception.class)
