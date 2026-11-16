@@ -602,6 +602,506 @@ PROBLEMS = [
 ]
 
 
+# ------------------------------------------------------------ batch 2 problems
+# Appended after the original 15 so their random test data is unchanged.
+import bisect
+import heapq
+import math
+
+
+def single_number(nums):
+    r = 0
+    for x in nums:
+        r ^= x
+    return r
+
+
+def majority_element(nums):
+    cand, cnt = None, 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
+
+
+def missing_number(nums):
+    n = len(nums)
+    return n * (n + 1) // 2 - sum(nums)
+
+
+def valid_anagram(a, b):
+    return sorted(a) == sorted(b)
+
+
+def search_rotated(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+
+
+def find_min_rotated(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+
+
+def container(height):
+    l, r, best = 0, len(height) - 1, 0
+    while l < r:
+        best = max(best, min(height[l], height[r]) * (r - l))
+        if height[l] < height[r]:
+            l += 1
+        else:
+            r -= 1
+    return best
+
+
+def house_robber(nums):
+    a = b = 0
+    for x in nums:
+        a, b = b, max(b, a + x)
+    return b
+
+
+def lis(nums):
+    tails = []
+    for x in nums:
+        i = bisect.bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)
+
+
+def jump_game(nums):
+    far = 0
+    for i, x in enumerate(nums):
+        if i > far:
+            return False
+        far = max(far, i + x)
+    return True
+
+
+def unique_paths(m, n):
+    return math.comb(m + n - 2, m - 1)
+
+
+def daily_temperatures(t):
+    res = [0] * len(t)
+    st = []
+    for i, x in enumerate(t):
+        while st and t[st[-1]] < x:
+            j = st.pop()
+            res[j] = i - j
+        st.append(i)
+    return res
+
+
+def subarray_sum_k(nums, k):
+    seen = {0: 1}
+    s = cnt = 0
+    for x in nums:
+        s += x
+        cnt += seen.get(s - k, 0)
+        seen[s] = seen.get(s, 0) + 1
+    return cnt
+
+
+def kth_largest(nums, k):
+    return heapq.nlargest(k, nums)[-1]
+
+
+def max_product(nums):
+    best = hi = lo = nums[0]
+    for x in nums[1:]:
+        cands = (x, hi * x, lo * x)
+        hi, lo = max(cands), min(cands)
+        best = max(best, hi)
+    return best
+
+
+def longest_pal_len(s):
+    best = 0
+    for c in range(len(s)):
+        for l, r in ((c, c), (c, c + 1)):
+            while l >= 0 and r < len(s) and s[l] == s[r]:
+                l -= 1
+                r += 1
+            best = max(best, r - l - 1)
+    return best
+
+
+def min_cost_stairs(cost):
+    a = b = 0
+    for i in range(2, len(cost) + 1):
+        a, b = b, min(b + cost[i - 1], a + cost[i - 2])
+    return b
+
+
+def count_primes(n):
+    if n < 3:
+        return 0
+    sieve = bytearray([1]) * n
+    sieve[0] = sieve[1] = 0
+    for i in range(2, int(n ** 0.5) + 1):
+        if sieve[i]:
+            sieve[i * i::i] = bytearray(len(sieve[i * i::i]))
+    return sum(sieve)
+
+
+def isqrt_floor(x):
+    return math.isqrt(x)
+
+
+def lcs(a, b):
+    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i in range(len(a) - 1, -1, -1):
+        for j in range(len(b) - 1, -1, -1):
+            dp[i][j] = dp[i + 1][j + 1] + 1 if a[i] == b[j] else max(dp[i + 1][j], dp[i][j + 1])
+    return dp[0][0]
+
+
+def partition_equal(nums):
+    total = sum(nums)
+    if total % 2:
+        return False
+    target = total // 2
+    reach = 1
+    for x in nums:
+        reach |= reach << x
+    return bool((reach >> target) & 1)
+
+
+def search_insert(nums, target):
+    return bisect.bisect_left(nums, target)
+
+
+def first_missing_positive(nums):
+    s = set(nums)
+    i = 1
+    while i in s:
+        i += 1
+    return i
+
+
+def largest_rect(h):
+    st, best = [], 0
+    for i, x in enumerate(h + [0]):
+        start = i
+        while st and st[-1][1] >= x:
+            idx, hh = st.pop()
+            best = max(best, hh * (i - idx))
+            start = idx
+        st.append((start, x))
+    return best
+
+
+def rotate_sorted(arr, k):
+    k %= len(arr)
+    return arr[k:] + arr[:k]
+
+
+def single_cases():
+    cases = [[2, 2, 1], [4, 1, 2, 1, 2], [1], [-1, -1, -2], [0, 7, 7]]
+    for n in (5, 50, 300, 999):
+        vals = rng.sample(range(-10**4, 10**4), n // 2 + 1)
+        arr = [v for v in vals[1:] for _ in (0, 1)] + [vals[0]]
+        rng.shuffle(arr)
+        cases.append(arr)
+    return cases
+
+
+def majority_cases():
+    cases = [[3, 2, 3], [2, 2, 1, 1, 1, 2, 2], [5], [1, 1], [7, 7, 7, 1, 2]]
+    for n in (11, 101, 501, 999):
+        m = rng.randint(-100, 100)
+        arr = [m] * (n // 2 + 1) + [rng.randint(-100, 100) for _ in range(n - n // 2 - 1)]
+        rng.shuffle(arr)
+        cases.append(arr)
+    return cases
+
+
+def missing_cases():
+    cases = [[3, 0, 1], [0, 1], [9, 6, 4, 2, 3, 5, 7, 0, 1], [0], [1]]
+    for n in (10, 100, 500, 1000):
+        arr = list(range(n + 1))
+        arr.pop(rng.randrange(len(arr)))
+        rng.shuffle(arr)
+        cases.append(arr)
+    return cases
+
+
+def anagram_cases():
+    cases = [("anagram", "nagaram"), ("rat", "car"), ("a", "a"), ("ab", "a"), ("listen", "silent")]
+    for n in (10, 100, 800):
+        a = [rng.choice("abcdefghij") for _ in range(n)]
+        b = a[:]
+        rng.shuffle(b)
+        cases.append(("".join(a), "".join(b)))
+        c = b[:]
+        c[0] = "z" if c[0] != "z" else "y"
+        cases.append(("".join(a), "".join(c)))
+    return cases
+
+
+def rotated_array(n, lo=-10**4, hi=10**4):
+    arr = sorted(rng.sample(range(lo, hi), n))
+    return rotate_sorted(arr, rng.randrange(n))
+
+
+def search_rot_cases():
+    cases = [([4, 5, 6, 7, 0, 1, 2], 0), ([4, 5, 6, 7, 0, 1, 2], 3), ([1], 0), ([1], 1), ([3, 1], 1)]
+    for n in (10, 100, 1000):
+        arr = rotated_array(n)
+        cases.append((arr, rng.choice(arr)))
+        cases.append((arr, 10**4 + 5))
+    return cases
+
+
+def min_rot_cases():
+    cases = [[3, 4, 5, 1, 2], [4, 5, 6, 7, 0, 1, 2], [11, 13, 15, 17], [2, 1], [5]]
+    for n in (10, 100, 1000):
+        cases.append(rotated_array(n))
+    return cases
+
+
+def temp_cases():
+    cases = [[73, 74, 75, 71, 69, 72, 76, 73], [30, 40, 50, 60], [30, 60, 90], [50], [90, 80, 70]]
+    for n in (20, 200, 1000):
+        cases.append(rand_arr(n, 30, 100))
+    return cases
+
+
+def subsum_cases():
+    cases = [([1, 1, 1], 2), ([1, 2, 3], 3), ([1], 0), ([0, 0, 0], 0), ([-1, -1, 1], 0)]
+    for n in (20, 200, 1000):
+        arr = rand_arr(n, -10, 10)
+        cases.append((arr, rng.randint(-20, 20)))
+    return cases
+
+
+def kth_cases():
+    cases = [([3, 2, 1, 5, 6, 4], 2), ([3, 2, 3, 1, 2, 4, 5, 5, 6], 4), ([1], 1), ([2, 1], 2), ([5, 5, 5], 3)]
+    for n in (20, 200, 1000):
+        arr = rand_arr(n, -10**4, 10**4)
+        cases.append((arr, rng.randint(1, n)))
+    return cases
+
+
+def maxprod_cases():
+    cases = [[2, 3, -2, 4], [-2, 0, -1], [-2], [0, 2], [-2, 3, -4], [2, -5, -2, -4, 3]]
+    for n in (8, 15, 20):
+        while True:
+            arr = rand_arr(n, -2, 3)
+            if max(abs(max_product(arr)), 0) < 2**31:
+                cases.append(arr)
+                break
+    return cases
+
+
+def pal_cases():
+    cases = ["babad", "cbbd", "a", "ac", "racecar", "abacdfgdcaba"]
+    for n in (30, 200, 600):
+        cases.append("".join(rng.choice("ab") for _ in range(n)))
+    return cases
+
+
+def cost_cases():
+    cases = [[10, 15, 20], [1, 100, 1, 1, 1, 100, 1, 1, 100, 1], [0, 0], [5, 5], [1, 2, 3]]
+    for n in (10, 100, 1000):
+        cases.append(rand_arr(n, 0, 999))
+    return cases
+
+
+def lcs_cases():
+    cases = [("abcde", "ace"), ("abc", "abc"), ("abc", "def"), ("a", "a"), ("bl", "yby")]
+    for n, m in ((20, 25), (100, 80), (300, 300)):
+        cases.append(("".join(rng.choice("abcd") for _ in range(n)), "".join(rng.choice("abcd") for _ in range(m))))
+    return cases
+
+
+def partition_cases():
+    cases = [[1, 5, 11, 5], [1, 2, 3, 5], [1, 1], [2], [3, 3, 3, 4, 5]]
+    for n in (10, 40, 100):
+        cases.append(rand_arr(n, 1, 100))
+    cases.append([rng.randint(1, 50) * 2 for _ in range(60)])
+    return cases
+
+
+def insert_cases():
+    cases = [([1, 3, 5, 6], 5), ([1, 3, 5, 6], 2), ([1, 3, 5, 6], 7), ([1, 3, 5, 6], 0), ([1], 1)]
+    for n in (10, 200, 1000):
+        arr = sorted_unique(n, -10**4, 10**4)
+        cases.append((arr, rng.randint(-10**4 - 5, 10**4 + 5)))
+    return cases
+
+
+def firstmiss_cases():
+    cases = [[1, 2, 0], [3, 4, -1, 1], [7, 8, 9, 11, 12], [1], [2], [1, 2, 3, 4, 5]]
+    for n in (20, 200, 1000):
+        arr = list(range(1, n + 1))
+        arr.pop(rng.randrange(n))
+        arr += rand_arr(10, -50, 0)
+        rng.shuffle(arr)
+        cases.append(arr)
+    return cases
+
+
+def rect_cases():
+    cases = [[2, 1, 5, 6, 2, 3], [2, 4], [1], [6, 5, 4, 3], [0, 0, 0], [2, 1, 2]]
+    for n in (20, 200, 1000):
+        cases.append(rand_arr(n, 0, 10000))
+    return cases
+
+
+def mk(slug, title, difficulty, tags, params, ret, ref, cases, summary, inp, outp, cons):
+    return dict(slug=slug, title=title, difficulty=difficulty, tags=tags, params=params, ret=ret, ref=ref, cases=cases,
+                description=desc(summary, inp, outp, cons))
+
+
+ARR_IN = "Line 1: `n`.\nLine 2: `n` space-separated integers."
+
+PROBLEMS += [
+    mk("single-number", "Single Number", "EASY", ["array", "bit-manipulation"], [("nums", "int[]")], "int",
+       single_number, single_cases(),
+       "Every element appears exactly twice except one, which appears once. Return that single element. Aim for "
+       "linear time and constant extra space.", ARR_IN, "The element that appears once.",
+       ["`1 <= n <= 999`, `n` is odd", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("majority-element", "Majority Element", "EASY", ["array", "hash-table", "sorting"], [("nums", "int[]")], "int",
+       majority_element, majority_cases(),
+       "Return the element that appears more than `n / 2` times. It is guaranteed to exist.", ARR_IN,
+       "The majority element.", ["`1 <= n <= 999`", "A majority element always exists"]),
+    mk("missing-number", "Missing Number", "EASY", ["array", "math", "bit-manipulation"], [("nums", "int[]")], "int",
+       missing_number, missing_cases(),
+       "`nums` holds `n` distinct numbers from the range `[0, n]`. Return the one number in that range that is "
+       "missing.", ARR_IN, "The missing number.", ["`1 <= n <= 1000`", "All values are distinct"]),
+    mk("valid-anagram", "Valid Anagram", "EASY", ["string", "hash-table", "sorting"],
+       [("s", "str"), ("t", "str")], "bool", valid_anagram, anagram_cases(),
+       "Return `true` if `t` is an anagram of `s`, meaning it uses exactly the same letters with the same counts.",
+       "Line 1: `s`.\nLine 2: `t`.", "`true` or `false`.",
+       ["`1 <= s.length, t.length <= 1000`", "Lowercase English letters"]),
+    mk("search-insert-position", "Search Insert Position", "EASY", ["array", "binary-search"],
+       [("nums", "int[]"), ("target", "int")], "int", search_insert, insert_cases(),
+       "Given a sorted array of distinct integers and a `target`, return the index of the target if present, "
+       "otherwise the index where it would be inserted to keep the array sorted. Use `O(log n)` time.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `target`.", "The index.",
+       ["`1 <= n <= 1000`", "`nums` is sorted ascending with distinct values"]),
+    mk("sqrt-x", "Sqrt(x)", "EASY", ["math", "binary-search"], [("x", "int")], "int", isqrt_floor,
+       [4, 8, 0, 1, 2, 15, 16, 99, 2147395599, 2147483647, 1000000, 46340 * 46340],
+       "Return the square root of `x` rounded down to the nearest integer, without using a built-in power or root "
+       "function.", "A single integer `x`.", "`floor(sqrt(x))`.", ["`0 <= x <= 2^31 - 1`"]),
+    mk("count-primes", "Count Primes", "MEDIUM", ["math", "sieve"], [("n", "int")], "int", count_primes,
+       [10, 0, 1, 2, 3, 20, 100, 1000, 4999, 5000, 97, 98],
+       "Return the number of prime numbers that are strictly less than `n`.", "A single integer `n`.",
+       "The count of primes below `n`.", ["`0 <= n <= 5000`"]),
+    mk("find-minimum-in-rotated-sorted-array", "Find Minimum in Rotated Sorted Array", "MEDIUM",
+       ["array", "binary-search"], [("nums", "int[]")], "int", find_min_rotated, min_rot_cases(),
+       "A sorted array of distinct integers was rotated at an unknown pivot. Return its minimum element in "
+       "`O(log n)` time.", ARR_IN, "The minimum element.", ["`1 <= n <= 1000`", "All values are distinct"]),
+    mk("search-in-rotated-sorted-array", "Search in Rotated Sorted Array", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]"), ("target", "int")], "int", search_rotated, search_rot_cases(),
+       "A sorted array of distinct integers was rotated at an unknown pivot. Return the index of `target`, or `-1` "
+       "if it is absent. Use `O(log n)` time.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.",
+       "The index of `target`, or `-1`.", ["`1 <= n <= 1000`", "All values are distinct"]),
+    mk("container-with-most-water", "Container With Most Water", "MEDIUM", ["array", "two-pointers", "greedy"],
+       [("height", "int[]")], "int", container,
+       [[1, 8, 6, 2, 5, 4, 8, 3, 7], [1, 1], [4, 3, 2, 1, 4], [1, 2, 1], rand_arr(30, 0, 100), rand_arr(500, 0, 5000),
+        rand_arr(1000, 0, 10000), [0, 0, 5, 0]],
+       "Vertical lines stand at positions `0..n-1` with the given heights. Pick two lines that, together with the "
+       "x-axis, hold the most water, and return that amount.", ARR_IN, "The maximum area.",
+       ["`2 <= n <= 1000`", "`0 <= height[i] <= 10^4`"]),
+    mk("house-robber", "House Robber", "MEDIUM", ["array", "dynamic-programming"], [("nums", "int[]")], "int",
+       house_robber,
+       [[1, 2, 3, 1], [2, 7, 9, 3, 1], [5], [2, 1], [0, 0, 0], rand_arr(20, 0, 400), rand_arr(200, 0, 400),
+        rand_arr(1000, 0, 400)],
+       "Houses are in a row and each holds some money. Robbing two adjacent houses triggers an alarm. Return the "
+       "maximum you can rob in one night.", ARR_IN, "The maximum amount.",
+       ["`1 <= n <= 1000`", "`0 <= nums[i] <= 400`"]),
+    mk("longest-increasing-subsequence", "Longest Increasing Subsequence", "MEDIUM",
+       ["array", "binary-search", "dynamic-programming"], [("nums", "int[]")], "int", lis,
+       [[10, 9, 2, 5, 3, 7, 101, 18], [0, 1, 0, 3, 2, 3], [7, 7, 7, 7], [1], sorted(rand_arr(30, -100, 100)),
+        rand_arr(50, -100, 100), rand_arr(500, -10**4, 10**4), rand_arr(1000, -10**4, 10**4)],
+       "Return the length of the longest strictly increasing subsequence of `nums`.", ARR_IN, "The length.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("jump-game", "Jump Game", "MEDIUM", ["array", "greedy", "dynamic-programming"], [("nums", "int[]")], "bool",
+       jump_game,
+       [[2, 3, 1, 1, 4], [3, 2, 1, 0, 4], [0], [1, 0], [2, 0, 0], rand_arr(30, 0, 3), rand_arr(500, 0, 2),
+        rand_arr(1000, 0, 5), [0, 1]],
+       "You start at index `0`; `nums[i]` is the maximum jump length from index `i`. Return whether you can reach "
+       "the last index.", ARR_IN, "`true` or `false`.", ["`1 <= n <= 1000`", "`0 <= nums[i] <= 1000`"]),
+    mk("unique-paths", "Unique Paths", "MEDIUM", ["math", "dynamic-programming"], [("m", "int"), ("n", "int")], "int",
+       unique_paths, [(3, 7), (3, 2), (1, 1), (1, 10), (10, 1), (7, 3), (10, 10), (15, 15), (16, 16), (2, 2)],
+       "A robot starts at the top-left of an `m x n` grid and can only move right or down. Return the number of "
+       "distinct paths to the bottom-right corner.", "Line 1: `m`.\nLine 2: `n`.", "The number of paths.",
+       ["`1 <= m, n <= 16`"]),
+    mk("daily-temperatures", "Daily Temperatures", "MEDIUM", ["array", "stack", "monotonic-stack"],
+       [("temperatures", "int[]")], "int[]", daily_temperatures, temp_cases(),
+       "For each day, return how many days you must wait for a warmer temperature, or `0` if none is coming.",
+       ARR_IN, "`n` space-separated integers, one per day.", ["`1 <= n <= 1000`", "`30 <= temperatures[i] <= 100`"]),
+    mk("subarray-sum-equals-k", "Subarray Sum Equals K", "MEDIUM", ["array", "hash-table", "prefix-sum"],
+       [("nums", "int[]"), ("k", "int")], "int", subarray_sum_k, subsum_cases(),
+       "Return the number of contiguous, non-empty subarrays whose sum equals `k`.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The number of subarrays.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`", "`-10^7 <= k <= 10^7`"]),
+    mk("kth-largest-element-in-an-array", "Kth Largest Element in an Array", "MEDIUM",
+       ["array", "heap", "sorting", "quickselect"], [("nums", "int[]"), ("k", "int")], "int", kth_largest, kth_cases(),
+       "Return the `k`-th largest element in sorted order (duplicates count separately), not the `k`-th distinct "
+       "element.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The `k`-th largest element.",
+       ["`1 <= k <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("maximum-product-subarray", "Maximum Product Subarray", "MEDIUM", ["array", "dynamic-programming"],
+       [("nums", "int[]")], "int", max_product, maxprod_cases(),
+       "Return the largest product of any contiguous, non-empty subarray. The answer fits in a 32-bit signed "
+       "integer.", ARR_IN, "The maximum product.", ["`1 <= n <= 20`", "`-2 <= nums[i] <= 3`"]),
+    mk("longest-palindromic-substring-length", "Longest Palindromic Substring (Length)", "MEDIUM",
+       ["string", "dynamic-programming"], [("s", "str")], "int", longest_pal_len, pal_cases(),
+       "Return the length of the longest palindromic substring of `s`.", "A single line containing `s`.",
+       "The length.", ["`1 <= s.length <= 1000`", "Lowercase English letters"]),
+    mk("min-cost-climbing-stairs", "Min Cost Climbing Stairs", "EASY", ["array", "dynamic-programming"],
+       [("cost", "int[]")], "int", min_cost_stairs, cost_cases(),
+       "`cost[i]` is the price of stepping on stair `i`, after which you may climb one or two stairs. You may start "
+       "at stair `0` or `1`. Return the minimum cost to reach the top, one step beyond the last stair.", ARR_IN,
+       "The minimum cost.", ["`2 <= n <= 1000`", "`0 <= cost[i] <= 999`"]),
+    mk("longest-common-subsequence", "Longest Common Subsequence", "MEDIUM", ["string", "dynamic-programming"],
+       [("text1", "str"), ("text2", "str")], "int", lcs, lcs_cases(),
+       "Return the length of the longest common subsequence of two strings. A subsequence keeps relative order but "
+       "may skip characters.", "Line 1: `text1`.\nLine 2: `text2`.", "The length.",
+       ["`1 <= length <= 300`", "Lowercase English letters"]),
+    mk("partition-equal-subset-sum", "Partition Equal Subset Sum", "MEDIUM", ["array", "dynamic-programming"],
+       [("nums", "int[]")], "bool", partition_equal, partition_cases(),
+       "Return whether `nums` can be split into two subsets with equal sums.", ARR_IN, "`true` or `false`.",
+       ["`1 <= n <= 100`", "`1 <= nums[i] <= 100`"]),
+    mk("first-missing-positive", "First Missing Positive", "HARD", ["array", "hash-table"], [("nums", "int[]")],
+       "int", first_missing_positive, firstmiss_cases(),
+       "Return the smallest positive integer that does not appear in `nums`. Try to do it in `O(n)` time with "
+       "`O(1)` extra space.", ARR_IN, "The smallest missing positive integer.",
+       ["`1 <= n <= 1100`", "`-2^31 <= nums[i] <= 2^31 - 1`"]),
+    mk("largest-rectangle-in-histogram", "Largest Rectangle in Histogram", "HARD", ["array", "stack", "monotonic-stack"],
+       [("heights", "int[]")], "int", largest_rect, rect_cases(),
+       "Bars of width 1 and the given heights form a histogram. Return the area of the largest rectangle that fits "
+       "inside it.", ARR_IN, "The largest area.", ["`1 <= n <= 1000`", "`0 <= heights[i] <= 10^4`"]),
+]
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
