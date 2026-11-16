@@ -27,6 +27,19 @@ npm run dev
 
 CI (`.github/workflows/ci.yml`) runs `mvn verify` for the backend and `npm run build` (which type-checks) for the frontend.
 
+## Deploying (Render + Vercel + Neon)
+
+1. **Neon:** create a project and note the JDBC URL, user and password (see "Using Neon Postgres" below).
+2. **Render (backend):** Dashboard -> New -> Blueprint -> select this repo. `render.yaml` defines the service. Enter
+   `DB_URL`, `DB_USER`, `DB_PASSWORD`, and leave `CORS_ALLOWED_ORIGINS` blank for now. Wait for the deploy and copy the
+   URL, e.g. `https://leetcode-backend-xxxx.onrender.com`. Check `<url>/actuator/health` returns `UP`.
+3. **Vercel (frontend):** Add New -> Project -> import this repo, set **Root Directory** to `frontend`, and add the
+   environment variable `NEXT_PUBLIC_API_URL` = your Render URL. Deploy and copy the Vercel URL.
+4. Back in Render, set `CORS_ALLOWED_ORIGINS` to the Vercel URL (no trailing slash) and redeploy.
+
+Notes: Render's free plan sleeps after inactivity, so the first request can take about a minute. Run and Submit
+need a Judge0 instance (`JUDGE0_URL`); without one the app browses problems and tracks bookmarks but cannot execute code.
+
 ## Backend
 
 ```bash
