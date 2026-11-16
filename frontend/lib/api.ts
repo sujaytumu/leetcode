@@ -9,6 +9,8 @@ export interface ProblemSummary {
   tags: string[]; status: Status; bookmarked: boolean;
   /** Percent of all submissions that were accepted; null/absent until someone submits. */
   acceptance?: number | null;
+  /** Position in the study path; shown as the problem's number. Falls back to id for older servers. */
+  number?: number | null;
 }
 export interface ProblemDetail extends ProblemSummary {
   description: string; starterCode: Record<string, string>;

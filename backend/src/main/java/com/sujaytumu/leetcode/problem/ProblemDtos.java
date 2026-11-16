@@ -10,6 +10,7 @@ public final class ProblemDtos {
     /**
      * Status values: TODO, ATTEMPTED, SOLVED (always TODO for anonymous requests). {@code acceptance} is the
      * percentage of all submissions on this server that were accepted, or null when nobody has submitted yet.
+     * {@code number} is the problem's position in the study path (what the UI shows as its number).
      */
     public record ProblemSummary(
             Long id,
@@ -19,7 +20,8 @@ public final class ProblemDtos {
             List<String> tags,
             StatusFilter status,
             boolean bookmarked,
-            Double acceptance) {}
+            Double acceptance,
+            Integer number) {}
 
     public record SampleCase(String input, String expectedOutput) {}
 
@@ -34,7 +36,8 @@ public final class ProblemDtos {
             List<SampleCase> samples,
             StatusFilter status,
             boolean bookmarked,
-            Double acceptance) {}
+            Double acceptance,
+            Integer number) {}
 
     public record ProblemQuery(
             String text,

@@ -8,6 +8,8 @@ export const PLANS: Plan[] = [
   { id: "arrays", title: "Arrays & hashing", blurb: "Hash maps, prefix sums and sorting tricks.", match: has("array", "hash-table", "prefix-sum", "sorting") },
   { id: "pointers", title: "Two pointers, windows & binary search", blurb: "Linear-time scans and halving the search space.", match: has("two-pointers", "sliding-window", "binary-search") },
   { id: "stacks", title: "Stacks & heaps", blurb: "Monotonic stacks, priority queues and selection.", match: has("stack", "monotonic-stack", "heap", "quickselect") },
+  { id: "lists", title: "Linked lists", blurb: "Pointer rewiring: reversing, merging and fast/slow pointers.", match: has("linked-list") },
+  { id: "trees", title: "Binary trees", blurb: "DFS, BFS and binary-search-tree properties.", match: has("tree", "bst") },
   { id: "dp", title: "Dynamic programming", blurb: "From climbing stairs to harder state machines.", match: has("dynamic-programming") },
   { id: "graphs", title: "Graphs & grids", blurb: "BFS, DFS, union-find and topological order.", match: has("graph", "bfs", "dfs", "union-find", "topological-sort", "matrix") },
   { id: "search", title: "Backtracking, greedy & intervals", blurb: "Explore, prune and choose locally-best moves.", match: has("backtracking", "greedy", "divide-and-conquer", "intervals") },
@@ -18,4 +20,4 @@ export const PLANS: Plan[] = [
 
 const RANK = { EASY: 0, MEDIUM: 1, HARD: 2 } as const;
 export const inPlan = (plan: Plan, all: ProblemSummary[]) =>
-  all.filter(plan.match).sort((a, b) => RANK[a.difficulty] - RANK[b.difficulty] || a.id - b.id);
+  all.filter(plan.match).sort((a, b) => RANK[a.difficulty] - RANK[b.difficulty] || (a.number ?? a.id) - (b.number ?? b.id));

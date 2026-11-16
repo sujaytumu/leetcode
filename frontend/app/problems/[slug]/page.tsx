@@ -242,7 +242,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <div className="left-body">
             {tab === "desc" ? (
               <>
-                <h2 className="ptitle">{problem.id}. {problem.title}</h2>
+                <h2 className="ptitle">{problem.number ?? problem.id}. {problem.title}</h2>
                 <div className="pmeta">
                   <span className={`pill ${problem.difficulty}`}>{title(problem.difficulty)}</span>
                   {problem.status === "SOLVED" && <span className="pill EASY">✔ Solved</span>}
