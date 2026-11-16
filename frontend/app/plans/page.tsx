@@ -1,30 +1,19 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ProblemSummary } from "@/lib/api";
-import { loadAll } from "@/lib/local";
+import { useCatalog } from "@/lib/catalog";
 import { inPlan, PLANS } from "@/lib/plans";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "○" } as const;
 
 export default function PlansPage() {
-  const [all, setAll] = useState<ProblemSummary[]>([]);
-  const [saved, setSaved] = useState(false);
-  const [waking, setWaking] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    loadAll((items, fromCache) => { setAll(items); setSaved(fromCache); }, () => setWaking(true))
-      .then(() => setWaking(false))
-      .catch((e) => { setError(e.message); setWaking(false); });
-  }, []);
+  const { items: all, ready, server, retry, loadError: error } = useCatalog();
 
   return (
-    <>
+    <main className="page">
       <h2 style={{ marginTop: 0 }}>Study plans</h2>
-      {saved && !error && <div className="banner warn">Showing a saved copy{waking ? " while the server wakes up (1–3 min) — refreshing automatically…" : "."}</div>}
+      {server === "offline" && <div className="banner warn">The server is not responding, so solved status may be out of date. <button onClick={retry}>Retry</button></div>}
       {error && <div className="banner err">{error}</div>}
-      {!all.length && !error && <p className="mute">Loading…</p>}
+      {!ready && !error && <p className="mute">Loading…</p>}
       <div className="plans">
         {all.length > 0 && PLANS.map((plan) => {
           const items = inPlan(plan, all);
@@ -51,6 +40,6 @@ export default function PlansPage() {
           );
         })}
       </div>
-    </>
+    </main>
   );
 }

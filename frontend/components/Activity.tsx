@@ -19,7 +19,7 @@ export default function Activity() {
     cells.push(<div key={i} className={`cell l${lvl}`} title={`${dayKey(d)}: ${n} accepted`} />);
   }
   return (
-    <div className="card activity">
+    <div className="activity">
       <div className="bar" style={{ flexWrap: "wrap", gap: 16 }}>
         <span><b>🔥 {s.current}</b> <span className="mute">day streak</span></span>
         <span><b>{s.longest}</b> <span className="mute">longest</span></span>

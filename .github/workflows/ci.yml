@@ -57,5 +57,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      # The bundled problem data must match the seed file.
+      - run: node ../scripts/build-frontend-data.js --check
       # `next build` also type-checks the project.
       - run: npm run build
