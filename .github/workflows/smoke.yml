@@ -1,0 +1,40 @@
+# Manual end-to-end check of the live deployment (timing, CORS, execution status, Run, Submit).
+name: smoke-test
+on:
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke test live API
+        run: |
+          API="https://leetcode-api-i731.onrender.com"
+          ORIGINS="https://leetcode-frontend.vercel.app https://leetcode-frontend-sujays-projects-c5bb1f58.vercel.app https://leetcode-frontend-git-main-sujays-projects-c5bb1f58.vercel.app"
+          t() { curl -sS -o /tmp/out -w "%{http_code} in %{time_total}s" --max-time 180 "$@"; echo; head -c 400 /tmp/out; echo; echo ---; }
+          echo "== health (cold start shows here)"; t "$API/actuator/health"
+          echo "== health again (warm)"; t "$API/actuator/health"
+          echo "== problems page"; t "$API/api/problems?page=0&size=2"
+          echo "== execution status"; t "$API/api/execution/status"
+          for o in $ORIGINS; do
+            echo "== CORS preflight from $o"
+            curl -sS -i -X OPTIONS "$API/api/problems/two-sum/run" -H "Origin: $o" \
+              -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type,x-client-id" | grep -iE "^HTTP|access-control-allow-origin" 
+            echo ---
+          done
+          cat > /tmp/sol.py <<'PY'
+          import sys
+          lines = sys.stdin.read().splitlines()
+          n = int(lines[0]); nums = list(map(int, lines[1].split())); target = int(lines[2])
+          seen = {}
+          for i, v in enumerate(nums):
+              if target - v in seen:
+                  print(seen[target - v], i); break
+              seen[v] = i
+          PY
+          python3 - <<'PY' > /tmp/body.json
+          import json, textwrap
+          code = open('/tmp/sol.py').read()
+          print(json.dumps({"language": "python", "code": textwrap.dedent(code)}))
+          PY
+          echo "== RUN two-sum (python)"; t -X POST "$API/api/problems/two-sum/run" -H "Content-Type: application/json" -H "X-Client-Id: 11111111-1111-1111-1111-111111111111" -d @/tmp/body.json
+          echo "== SUBMIT two-sum (python)"; t -X POST "$API/api/problems/two-sum/submit" -H "Content-Type: application/json" -H "X-Client-Id: 11111111-1111-1111-1111-111111111111" -d @/tmp/body.json
