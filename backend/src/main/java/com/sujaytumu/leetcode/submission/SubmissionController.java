@@ -30,7 +30,7 @@ public class SubmissionController {
             @PathVariable String slug,
             @RequestHeader(Headers.CLIENT_ID) UUID clientId,
             @Valid @RequestBody RunRequest request) {
-        return service.run(slug, clientId, request.language(), request.code());
+        return service.run(slug, clientId, request.language(), request.code(), request.customInput());
     }
 
     @PostMapping("/submit")

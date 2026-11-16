@@ -42,10 +42,16 @@ public class SubmissionService {
         this.rateLimiter = rateLimiter;
     }
 
-    /** Runs against sample cases only; nothing is persisted. */
-    public RunResponse run(String slug, UUID clientId, Language language, String code) {
+    /**
+     * Runs against sample cases only, or once against {@code customInput} when it is non-blank.
+     * Nothing is persisted either way.
+     */
+    public RunResponse run(String slug, UUID clientId, Language language, String code, String customInput) {
         Problem problem = requireProblem(slug);
         rateLimiter.check(clientId);
+        if (customInput != null && !customInput.isBlank()) {
+            return runCustom(language, code, customInput);
+        }
         List<TestCase> cases = problem.getTestCases().stream().filter(TestCase::isSample).toList();
         return judge(problem, clientId, language, code, cases, false);
     }
@@ -113,6 +119,44 @@ public class SubmissionService {
             submissionId = saved.getId();
         }
         return new RunResponse(verdict, passed, cases.size(), runtimeMs, message, results, submissionId);
+    }
+
+    /** Single execution with user-supplied stdin. There is no expected output, so "passed" means it ran cleanly. */
+    private RunResponse runCustom(Language language, String code, String customInput) {
+        String stdin = customInput.endsWith("\n") ? customInput : customInput + "\n";
+        ExecutionResult execution = executor.execute(language, code, stdin);
+        Integer timeMs = execution.timeSeconds() == null ? null : (int) Math.round(execution.timeSeconds() * 1000);
+
+        Verdict verdict;
+        String error = null;
+        switch (execution.status()) {
+            case OK -> verdict = Verdict.ACCEPTED;
+            case COMPILE_ERROR -> {
+                verdict = Verdict.COMPILE_ERROR;
+                error = truncate(execution.compileOutput(), MAX_ERROR_CHARS);
+            }
+            case RUNTIME_ERROR -> {
+                verdict = Verdict.RUNTIME_ERROR;
+                error = truncate(execution.stderr(), MAX_ERROR_CHARS);
+            }
+            case TIME_LIMIT_EXCEEDED -> verdict = Verdict.TIME_LIMIT_EXCEEDED;
+            default -> {
+                verdict = Verdict.INTERNAL_ERROR;
+                error = truncate(execution.stderr(), MAX_ERROR_CHARS);
+            }
+        }
+        boolean ok = verdict == Verdict.ACCEPTED;
+        String message = ok
+                ? null
+                : switch (verdict) {
+                    case COMPILE_ERROR -> "Compilation failed.";
+                    case RUNTIME_ERROR -> "Runtime error on your custom input.";
+                    case TIME_LIMIT_EXCEEDED -> "Time limit exceeded on your custom input.";
+                    default -> "The judge hit an internal error.";
+                };
+        CaseResult result = new CaseResult(
+                1, true, ok, verdict, stdin, null, truncate(execution.stdout(), MAX_OUTPUT_CHARS), error, timeMs);
+        return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, message, List.of(result), null);
     }
 
     private CaseVerdict evaluate(ExecutionResult execution, TestCase testCase) {

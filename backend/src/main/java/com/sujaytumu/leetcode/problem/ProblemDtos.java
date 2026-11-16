@@ -7,7 +7,10 @@ public final class ProblemDtos {
 
     private ProblemDtos() {}
 
-    /** Status values: TODO, ATTEMPTED, SOLVED. Always TODO for anonymous (no client id) requests. */
+    /**
+     * Status values: TODO, ATTEMPTED, SOLVED (always TODO for anonymous requests). {@code acceptance} is the
+     * percentage of all submissions on this server that were accepted, or null when nobody has submitted yet.
+     */
     public record ProblemSummary(
             Long id,
             String slug,
@@ -15,7 +18,8 @@ public final class ProblemDtos {
             Difficulty difficulty,
             List<String> tags,
             StatusFilter status,
-            boolean bookmarked) {}
+            boolean bookmarked,
+            Double acceptance) {}
 
     public record SampleCase(String input, String expectedOutput) {}
 
@@ -29,7 +33,8 @@ public final class ProblemDtos {
             Map<String, String> starterCode,
             List<SampleCase> samples,
             StatusFilter status,
-            boolean bookmarked) {}
+            boolean bookmarked,
+            Double acceptance) {}
 
     public record ProblemQuery(
             String text,

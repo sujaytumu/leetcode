@@ -11,9 +11,14 @@ public final class SubmissionDtos {
 
     private SubmissionDtos() {}
 
+    /**
+     * {@code customInput}, when present on a run, executes the code once against that stdin instead of the
+     * sample cases (the console's "custom testcase"). It is ignored by submit.
+     */
     public record RunRequest(
             @NotNull Language language,
-            @NotBlank @Size(max = 65536) String code) {}
+            @NotBlank @Size(max = 65536) String code,
+            @Size(max = 20000) String customInput) {}
 
     /**
      * Result of a single test. For hidden cases input/expected/actual are always null so
