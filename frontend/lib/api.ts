@@ -7,6 +7,8 @@ export type Lang = "java" | "python" | "javascript" | "cpp";
 export interface ProblemSummary {
   id: number; slug: string; title: string; difficulty: Difficulty;
   tags: string[]; status: Status; bookmarked: boolean;
+  /** Percent of all submissions that were accepted; null/absent until someone submits. */
+  acceptance?: number | null;
 }
 export interface ProblemDetail extends ProblemSummary {
   description: string; starterCode: Record<string, string>;

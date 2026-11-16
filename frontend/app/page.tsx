@@ -123,19 +123,20 @@ export default function Home() {
           onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
       </div>
       <table>
-        <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th>Difficulty</th></tr></thead>
+        <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th className="th-num">Acceptance</th><th>Difficulty</th></tr></thead>
         <tbody>
           {data?.items.map((p) => (
             <tr key={p.id}>
-              <td className="EASY">{ICON[p.status]}</td>
+              <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
               <td><Link href={`/problems/${p.slug}`}>{p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                 <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
               <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
+              <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
               <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
             </tr>
           ))}
-          {!loading && !error && data?.items.length === 0 && <tr><td colSpan={4} className="mute">No problems match.</td></tr>}
-          {loading && !data && <tr><td colSpan={4} className="mute">Loading…</td></tr>}
+          {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
+          {loading && !data && <tr><td colSpan={5} className="mute">Loading…</td></tr>}
         </tbody>
       </table>
       {data && data.totalPages > 1 && (
