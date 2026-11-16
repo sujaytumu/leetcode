@@ -12,8 +12,10 @@ OUT = Path(__file__).resolve().parent.parent / "src/main/resources/seed/problems
 rng = random.Random(20261115)
 
 # ---------------------------------------------------------------- I/O helpers
-# Param types: int, str, int[], int[][], grid (list of strings).
-# Return types: int, bool, int[], int[][].
+# Param types: int, str, int[], int[][], grid (list of strings), list (singly linked list), tree (binary tree).
+# Return types: int, bool, int[], int[][], list, tree.
+# Wire format: `list` is `n` then `n` ints; `tree` is `n` then `n` level-order tokens where `null` is a missing child.
+# In the reference solutions a list is a Python list of ints and a tree is a level-order Python list with None gaps.
 
 
 def fmt_input(params, args):
@@ -32,6 +34,12 @@ def fmt_input(params, args):
         elif typ == "grid":
             lines.append(f"{len(val)} {len(val[0])}")
             lines.extend(val)
+        elif typ == "list":
+            lines.append(str(len(val)))
+            lines.append(" ".join(map(str, val)))
+        elif typ == "tree":
+            lines.append(str(len(val)))
+            lines.append(" ".join("null" if v is None else str(v) for v in val))
         else:
             raise ValueError(typ)
     return "\n".join(lines) + "\n"
@@ -46,18 +54,108 @@ def fmt_output(ret, val):
         return " ".join(map(str, val)) + "\n"
     if ret == "int[][]":
         return "\n".join(" ".join(map(str, r)) for r in val) + "\n"
+    if ret == "list":
+        return " ".join(map(str, val)) + "\n"
+    if ret == "tree":
+        toks = list(val)
+        while toks and toks[-1] is None:
+            toks.pop()
+        return " ".join("null" if v is None else str(v) for v in toks) + "\n"
     raise ValueError(ret)
 
 
 # ------------------------------------------------------------ starter code
+def uses(params, ret, kind):
+    return ret == kind or any(t == kind for _, t in params)
+
+
+PY_LIST = ["class ListNode:", "    def __init__(self, val=0, next=None):", "        self.val = val", "        self.next = next", "",
+           "", "def build_list(vals):", "    head = None", "    for v in reversed(vals):", "        head = ListNode(v, head)",
+           "    return head", "", "", "def list_values(node):", "    out = []", "    while node:", "        out.append(node.val)",
+           "        node = node.next", "    return out", "", ""]
+PY_TREE = ["from collections import deque", "", "", "class TreeNode:", "    def __init__(self, val=0, left=None, right=None):",
+           "        self.val = val", "        self.left = left", "        self.right = right", "", "",
+           "def build_tree(tokens):", '    if not tokens or tokens[0] == "null":', "        return None",
+           "    root = TreeNode(int(tokens[0]))", "    queue = deque([root])", "    i = 1",
+           "    while queue and i < len(tokens):", "        node = queue.popleft()",
+           '        if i < len(tokens) and tokens[i] != "null":', "            node.left = TreeNode(int(tokens[i]))",
+           "            queue.append(node.left)", "        i += 1",
+           '        if i < len(tokens) and tokens[i] != "null":', "            node.right = TreeNode(int(tokens[i]))",
+           "            queue.append(node.right)", "        i += 1", "    return root", "", "",
+           "def tree_tokens(root):", "    out = []", "    queue = deque([root])", "    while queue:",
+           "        node = queue.popleft()", "        if node is None:", '            out.append("null")', "        else:",
+           "            out.append(str(node.val))", "            queue.append(node.left)", "            queue.append(node.right)",
+           '    while out and out[-1] == "null":', "        out.pop()", "    return out", "", ""]
+
+JAVA_LIST = ["    static class ListNode {", "        int val;", "        ListNode next;", "        ListNode(int val) { this.val = val; }",
+             "    }", "",
+             "    static ListNode buildList(int[] vals) {", "        ListNode dummy = new ListNode(0), tail = dummy;",
+             "        for (int v : vals) { tail.next = new ListNode(v); tail = tail.next; }", "        return dummy.next;", "    }", "",
+             "    static String listString(ListNode node) {", "        StringBuilder sb = new StringBuilder();",
+             "        for (; node != null; node = node.next) { if (sb.length() > 0) sb.append(' '); sb.append(node.val); }",
+             "        return sb.toString();", "    }", ""]
+JAVA_TREE = ["    static class TreeNode {", "        int val;", "        TreeNode left, right;", "        TreeNode(int val) { this.val = val; }",
+             "    }", "",
+             "    static TreeNode buildTree(String[] t) {", '        if (t.length == 0 || t[0].equals("null")) return null;',
+             "        TreeNode root = new TreeNode(Integer.parseInt(t[0]));", "        Deque<TreeNode> queue = new ArrayDeque<>();",
+             "        queue.add(root);", "        int i = 1;", "        while (!queue.isEmpty() && i < t.length) {",
+             "            TreeNode node = queue.poll();", '            if (i < t.length && !t[i].equals("null")) {',
+             "                node.left = new TreeNode(Integer.parseInt(t[i]));", "                queue.add(node.left);", "            }",
+             "            i++;", '            if (i < t.length && !t[i].equals("null")) {',
+             "                node.right = new TreeNode(Integer.parseInt(t[i]));", "                queue.add(node.right);", "            }",
+             "            i++;", "        }", "        return root;", "    }", "",
+             "    static String treeString(TreeNode root) {", "        List<String> out = new ArrayList<>();",
+             "        Deque<TreeNode> queue = new LinkedList<>(); // allows null entries", "        queue.add(root);", "        while (!queue.isEmpty()) {",
+             "            TreeNode node = queue.poll();", '            if (node == null) { out.add("null"); continue; }',
+             "            out.add(String.valueOf(node.val));", "            queue.add(node.left);", "            queue.add(node.right);",
+             "        }", '        while (!out.isEmpty() && out.get(out.size() - 1).equals("null")) out.remove(out.size() - 1);',
+             '        return String.join(" ", out);', "    }", ""]
+
+JS_LIST = ["class ListNode {", "  constructor(val = 0, next = null) {", "    this.val = val;", "    this.next = next;", "  }", "}", "",
+           "function buildList(vals) {", "  let head = null;",
+           "  for (let i = vals.length - 1; i >= 0; i--) head = new ListNode(vals[i], head);", "  return head;", "}", "",
+           "function listString(node) {", "  const out = [];", "  for (; node; node = node.next) out.push(node.val);",
+           '  return out.join(" ");', "}", ""]
+JS_TREE = ["class TreeNode {", "  constructor(val = 0, left = null, right = null) {", "    this.val = val;", "    this.left = left;",
+           "    this.right = right;", "  }", "}", "", "function buildTree(t) {",
+           '  if (t.length === 0 || t[0] === "null") return null;', "  const root = new TreeNode(Number(t[0]));",
+           "  const queue = [root];", "  let head = 0;", "  let i = 1;", "  while (head < queue.length && i < t.length) {",
+           "    const node = queue[head++];", '    if (i < t.length && t[i] !== "null") { node.left = new TreeNode(Number(t[i])); queue.push(node.left); }',
+           "    i++;", '    if (i < t.length && t[i] !== "null") { node.right = new TreeNode(Number(t[i])); queue.push(node.right); }',
+           "    i++;", "  }", "  return root;", "}", "", "function treeString(root) {", "  const out = [];",
+           "  const queue = [root];", "  let head = 0;", "  while (head < queue.length) {", "    const node = queue[head++];",
+           '    if (!node) { out.push("null"); continue; }', "    out.push(String(node.val));", "    queue.push(node.left, node.right);",
+           "  }", '  while (out.length && out[out.length - 1] === "null") out.pop();', '  return out.join(" ");', "}", ""]
+
+CPP_LIST = ["struct ListNode {", "    int val;", "    ListNode *next;", "    ListNode(int v) : val(v), next(nullptr) {}", "};", "",
+            "ListNode *buildList(const vector<int> &vals) {", "    ListNode dummy(0);", "    ListNode *tail = &dummy;",
+            "    for (int v : vals) { tail->next = new ListNode(v); tail = tail->next; }", "    return dummy.next;", "}", "",
+            "string listString(ListNode *node) {", "    string out;", "    for (; node; node = node->next) {",
+            '        if (!out.empty()) out += " ";', "        out += to_string(node->val);", "    }", "    return out;", "}", ""]
+CPP_TREE = ["struct TreeNode {", "    int val;", "    TreeNode *left, *right;", "    TreeNode(int v) : val(v), left(nullptr), right(nullptr) {}",
+            "};", "", "TreeNode *buildTree(const vector<string> &t) {", '    if (t.empty() || t[0] == "null") return nullptr;',
+            "    TreeNode *root = new TreeNode(stoi(t[0]));", "    queue<TreeNode *> q;", "    q.push(root);", "    size_t i = 1;",
+            "    while (!q.empty() && i < t.size()) {", "        TreeNode *node = q.front();", "        q.pop();",
+            '        if (i < t.size() && t[i] != "null") { node->left = new TreeNode(stoi(t[i])); q.push(node->left); }',
+            "        i++;", '        if (i < t.size() && t[i] != "null") { node->right = new TreeNode(stoi(t[i])); q.push(node->right); }',
+            "        i++;", "    }", "    return root;", "}", "", "string treeString(TreeNode *root) {", "    vector<string> out;",
+            "    queue<TreeNode *> q;", "    q.push(root);", "    while (!q.empty()) {", "        TreeNode *node = q.front();",
+            "        q.pop();", '        if (!node) { out.push_back("null"); continue; }', "        out.push_back(to_string(node->val));",
+            "        q.push(node->left);", "        q.push(node->right);", "    }",
+            '    while (!out.empty() && out.back() == "null") out.pop_back();', '    string s;', "    for (size_t i = 0; i < out.size(); i++) {",
+            '        if (i) s += " ";', "        s += out[i];", "    }", "    return s;", "}", ""]
+
 def cap(name):
     return name[0].upper() + name[1:]
 
 
 def starter_python(params, ret):
     names = ", ".join(n for n, _ in params)
-    body = ["import sys", "", "", f"def solve({names}):", "    # Write your solution here", "    pass", "", "", "def main():",
-            "    lines = sys.stdin.read().splitlines()", "    pos = 0"]
+    prelude = (PY_LIST if uses(params, ret, "list") else []) + (PY_TREE if uses(params, ret, "tree") else [])
+    body = ["import sys"] + ([""] if not prelude or prelude[0].startswith("from") else []) + [""]
+    body += prelude
+    body += [f"def solve({names}):", "    # Write your solution here", "    pass", "", "", "def main():",
+             "    lines = sys.stdin.read().splitlines()", "    pos = 0"]
     for n, t in params:
         if t == "int":
             body += [f"    {n} = int(lines[pos]); pos += 1"]
@@ -72,27 +170,36 @@ def starter_python(params, ret):
         elif t == "grid":
             body += [f"    {n}_rows = int(lines[pos].split()[0]); pos += 1",
                      f"    {n} = lines[pos:pos + {n}_rows]; pos += {n}_rows"]
+        elif t == "list":
+            body += [f"    {n}_len = int(lines[pos]); pos += 1",
+                     f"    {n} = build_list(list(map(int, lines[pos].split())) if {n}_len > 0 else []); pos += 1"]
+        elif t == "tree":
+            body += [f"    {n}_len = int(lines[pos]); pos += 1",
+                     f"    {n} = build_tree(lines[pos].split() if {n}_len > 0 else []); pos += 1"]
     body += [f"    result = solve({names})"]
     body += {
         "int": ["    print(result)"],
         "bool": ['    print("true" if result else "false")'],
         "int[]": ['    print(" ".join(map(str, result)))'],
         "int[][]": ["    for row in result:", '        print(" ".join(map(str, row)))'],
+        "list": ['    print(" ".join(map(str, list_values(result))))'],
+        "tree": ['    print(" ".join(tree_tokens(result)))'],
     }[ret]
     body += ["", "", 'if __name__ == "__main__":', "    main()", ""]
     return "\n".join(body)
 
 
-JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]"}
-JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]"}
-JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]"}
+JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "list": "ListNode", "tree": "TreeNode"}
+JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]", "list": "ListNode", "tree": "TreeNode"}
+JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]", "list": "null", "tree": "null"}
 
 
 def starter_java(params, ret):
     sig = ", ".join(f"{JAVA_T[t]} {n}" for n, t in params)
     names = ", ".join(n for n, _ in params)
-    out = ["import java.io.*;", "import java.util.*;", "import java.util.stream.*;", "", "public class Main {",
-           f"    static {JAVA_RET[ret]} solve({sig}) {{", "        // Write your solution here",
+    prelude = (JAVA_LIST if uses(params, ret, "list") else []) + (JAVA_TREE if uses(params, ret, "tree") else [])
+    out = ["import java.io.*;", "import java.util.*;", "import java.util.stream.*;", "", "public class Main {"] + prelude
+    out += [f"    static {JAVA_RET[ret]} solve({sig}) {{", "        // Write your solution here",
            f"        return {JAVA_DEFAULT[ret]};", "    }", "",
            "    public static void main(String[] args) throws IOException {",
            "        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));",
@@ -121,6 +228,17 @@ def starter_java(params, ret):
             out += [f"        int {n}Rows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());",
                     f"        String[] {n} = new String[{n}Rows];",
                     f"        for (int i = 0; i < {n}Rows; i++) {n}[i] = lines.get(pos++);"]
+        elif t == "list":
+            out += [f"        int {n}Len = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        int[] {n}Vals = new int[{n}Len];",
+                    f"        if ({n}Len > 0) {{",
+                    f"            StringTokenizer st = new StringTokenizer(lines.get(pos));",
+                    f"            for (int i = 0; i < {n}Len; i++) {n}Vals[i] = Integer.parseInt(st.nextToken());",
+                    "        }", "        pos++;", f"        ListNode {n} = buildList({n}Vals);"]
+        elif t == "tree":
+            out += [f"        int {n}Len = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        String[] {n}Tok = {n}Len > 0 ? lines.get(pos).trim().split(\"\\\\s+\") : new String[0];",
+                    "        pos++;", f"        TreeNode {n} = buildTree({n}Tok);"]
     out += [f"        {JAVA_RET[ret]} result = solve({names});"]
     out += {
         "int": ["        System.out.println(result);"],
@@ -128,6 +246,8 @@ def starter_java(params, ret):
         "int[]": ['        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(" ")));'],
         "int[][]": ["        for (int[] row : result) {",
                     '            System.out.println(row[0] + " " + row[1]);', "        }"],
+        "list": ["        System.out.println(listString(result));"],
+        "tree": ["        System.out.println(treeString(result));"],
     }[ret]
     out += ["    }", "}", ""]
     return "\n".join(out)
@@ -135,8 +255,10 @@ def starter_java(params, ret):
 
 def starter_js(params, ret):
     names = ", ".join(n for n, _ in params)
+    prelude = (JS_LIST if uses(params, ret, "list") else []) + (JS_TREE if uses(params, ret, "tree") else [])
     out = ['const lines = require("fs").readFileSync(0, "utf8").split("\\n").map((l) => l.replace(/\\r$/, ""));',
-           "let pos = 0;", "", f"function solve({names}) {{", "  // Write your solution here", "}", ""]
+           "let pos = 0;", ""] + prelude
+    out += [f"function solve({names}) {{", "  // Write your solution here", "}", ""]
     for n, t in params:
         if t == "int":
             out += [f"const {n} = parseInt(lines[pos++], 10);"]
@@ -151,27 +273,37 @@ def starter_js(params, ret):
         elif t == "grid":
             out += [f"const {n}Rows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);",
                     f"const {n} = lines.slice(pos, pos + {n}Rows);", f"pos += {n}Rows;"]
+        elif t == "list":
+            out += [f"const {n}Len = parseInt(lines[pos++], 10);",
+                    f"const {n} = buildList({n}Len > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : []);", "pos++;"]
+        elif t == "tree":
+            out += [f"const {n}Len = parseInt(lines[pos++], 10);",
+                    f"const {n} = buildTree({n}Len > 0 ? lines[pos].trim().split(/\\s+/) : []);", "pos++;"]
     out += [f"const result = solve({names});"]
     out += {
         "int": ["console.log(String(result));"],
         "bool": ['console.log(result ? "true" : "false");'],
         "int[]": ['console.log(result.join(" "));'],
         "int[][]": ['console.log(result.map((r) => r.join(" ")).join("\\n"));'],
+        "list": ["console.log(listString(result));"],
+        "tree": ["console.log(treeString(result));"],
     }[ret]
     out += [""]
     return "\n".join(out)
 
 
-CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>"}
-CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>"}
-CPP_DEFAULT = {"int": "0", "bool": "false", "int[]": "{}", "int[][]": "{}"}
+CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>",
+         "list": "ListNode *", "tree": "TreeNode *"}
+CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "list": "ListNode *", "tree": "TreeNode *"}
+CPP_DEFAULT = {"int": "0", "bool": "false", "int[]": "{}", "int[][]": "{}", "list": "nullptr", "tree": "nullptr"}
 
 
 def starter_cpp(params, ret):
     sig = ", ".join(f"{CPP_T[t]} {n}" for n, t in params)
     names = ", ".join(n for n, _ in params)
-    out = ["#include <bits/stdc++.h>", "using namespace std;", "",
-           f"{CPP_RET[ret]} solve({sig}) {{", "    // Write your solution here", f"    return {CPP_DEFAULT[ret]};", "}", "",
+    prelude = (CPP_LIST if uses(params, ret, "list") else []) + (CPP_TREE if uses(params, ret, "tree") else [])
+    out = ["#include <bits/stdc++.h>", "using namespace std;", ""] + prelude
+    out += [f"{CPP_RET[ret]} solve({sig}) {{", "    // Write your solution here", f"    return {CPP_DEFAULT[ret]};", "}", "",
            "int main() {", "    ios::sync_with_stdio(false);", "    cin.tie(nullptr);",
            "    vector<string> lines;", "    string line;",
            "    while (getline(cin, line)) {",
@@ -195,6 +327,16 @@ def starter_cpp(params, ret):
             out += [f"    int {n}Rows = stoi(lines[pos++]);",
                     f"    vector<string> {n}(lines.begin() + pos, lines.begin() + pos + {n}Rows);",
                     f"    pos += {n}Rows;"]
+        elif t == "list":
+            out += [f"    int {n}Len = stoi(lines[pos++]);", f"    vector<int> {n}Vals({n}Len);",
+                    f"    if ({n}Len > 0) {{", "        istringstream iss(lines[pos]);",
+                    f"        for (auto &v : {n}Vals) iss >> v;", "    }", "    pos++;",
+                    f"    ListNode *{n} = buildList({n}Vals);"]
+        elif t == "tree":
+            out += [f"    int {n}Len = stoi(lines[pos++]);", f"    vector<string> {n}Tok;",
+                    f"    if ({n}Len > 0) {{", "        istringstream iss(lines[pos]);", "        string tok;",
+                    f"        while (iss >> tok) {n}Tok.push_back(tok);", "    }", "    pos++;",
+                    f"    TreeNode *{n} = buildTree({n}Tok);"]
     out += [f"    {CPP_RET[ret]} result = solve({names});"]
     out += {
         "int": ['    cout << result << "\\n";'],
@@ -202,6 +344,8 @@ def starter_cpp(params, ret):
         "int[]": ["    for (size_t i = 0; i < result.size(); i++) {",
                   '        if (i) cout << " ";', "        cout << result[i];", "    }", '    cout << "\\n";'],
         "int[][]": ["    for (auto &row : result) {", '        cout << row[0] << " " << row[1] << "\\n";', "    }"],
+        "list": ['    cout << listString(result) << "\\n";'],
+        "tree": ['    cout << treeString(result) << "\\n";'],
     }[ret]
     out += ["    return 0;", "}", ""]
     return "\n".join(out)
@@ -2831,6 +2975,497 @@ _B3_ALL = [
 
 _B3_KEEP = ["length-of-last-word", "best-time-to-buy-and-sell-stock-ii", "intersection-of-two-arrays-ii", "reverse-integer", "jump-game-ii", "h-index", "candy", "longest-consecutive-sequence", "longest-valid-parentheses", "minimum-path-sum", "max-area-of-island", "insert-interval", "koko-eating-bananas", "capacity-to-ship-packages", "split-array-largest-sum", "partition-labels"]
 PROBLEMS += [p for p in _B3_ALL if p["slug"] in _B3_KEEP]
+
+
+# ================================================================ batch 4: linked lists and binary trees
+# Lists are plain Python lists; trees are level-order token lists with None gaps (see the wire format above).
+class TN:
+    def __init__(self, val, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+
+def tok2tree(tokens):
+    if not tokens or tokens[0] is None:
+        return None
+    root = TN(tokens[0])
+    queue, i = [root], 1
+    qi = 0
+    while qi < len(queue) and i < len(tokens):
+        node = queue[qi]
+        qi += 1
+        if i < len(tokens) and tokens[i] is not None:
+            node.left = TN(tokens[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(tokens) and tokens[i] is not None:
+            node.right = TN(tokens[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
+def tree2tok(root):
+    out, queue, qi = [], [root], 0
+    while qi < len(queue):
+        node = queue[qi]
+        qi += 1
+        if node is None:
+            out.append(None)
+        else:
+            out.append(node.val)
+            queue.append(node.left)
+            queue.append(node.right)
+    while out and out[-1] is None:
+        out.pop()
+    return out
+
+
+def rand_tree(m, lo=-20, hi=50):
+    """Random binary tree with m nodes (random shape), as level-order tokens."""
+    if m == 0:
+        return []
+    root = TN(rng.randint(lo, hi))
+    slots = [(root, "left"), (root, "right")]
+    for _ in range(m - 1):
+        node, side = slots.pop(rng.randrange(len(slots)))
+        child = TN(rng.randint(lo, hi))
+        setattr(node, side, child)
+        slots += [(child, "left"), (child, "right")]
+    return tree2tok(root)
+
+
+def rand_bst(m, lo=1, hi=99):
+    """Random BST with m distinct values, as level-order tokens."""
+    if m == 0:
+        return []
+    vals = rng.sample(range(lo, hi + 1), m)
+    root = TN(vals[0])
+    for v in vals[1:]:
+        cur = root
+        while True:
+            side = "left" if v < cur.val else "right"
+            nxt = getattr(cur, side)
+            if nxt is None:
+                setattr(cur, side, TN(v))
+                break
+            cur = nxt
+    return tree2tok(root)
+
+
+def rand_sorted_list(n, lo=-30, hi=60):
+    return sorted(rng.randint(lo, hi) for _ in range(n))
+
+
+def rand_list(n, lo=-30, hi=60):
+    return [rng.randint(lo, hi) for _ in range(n)]
+
+
+# ---- list references
+def b4_reverse(a): return a[::-1]
+def b4_merge(a, b): return sorted(a + b)
+def b4_middle(a): return a[len(a) // 2:]
+def b4_remove_nth(a, n): return a[:len(a) - n] + a[len(a) - n + 1:]
+def b4_palin_list(a): return a == a[::-1]
+
+
+def b4_dedup_sorted(a):
+    out = []
+    for v in a:
+        if not out or out[-1] != v:
+            out.append(v)
+    return out
+
+
+def b4_add_numbers(a, b):
+    x = int("".join(map(str, a[::-1])))
+    y = int("".join(map(str, b[::-1])))
+    return [int(c) for c in str(x + y)[::-1]]
+
+
+def b4_swap_pairs(a):
+    out = list(a)
+    for i in range(0, len(out) - 1, 2):
+        out[i], out[i + 1] = out[i + 1], out[i]
+    return out
+
+
+def b4_odd_even(a): return a[0::2] + a[1::2]
+def b4_sort_list(a): return sorted(a)
+
+
+def b4_reorder(a):
+    out, i, j = [], 0, len(a) - 1
+    while i <= j:
+        out.append(a[i])
+        if i != j:
+            out.append(a[j])
+        i += 1
+        j -= 1
+    return out
+
+
+def b4_reverse_k(a, k):
+    out = []
+    for i in range(0, len(a), k):
+        chunk = a[i:i + k]
+        out += chunk[::-1] if len(chunk) == k else chunk
+    return out
+
+
+# ---- tree references
+def b4_depth(t):
+    def d(n): return 0 if n is None else 1 + max(d(n.left), d(n.right))
+    return d(tok2tree(t))
+
+
+def b4_invert(t):
+    def inv(n):
+        if n is None:
+            return None
+        return TN(n.val, inv(n.right), inv(n.left))
+    return tree2tok(inv(tok2tree(t)))
+
+
+def b4_symmetric(t):
+    def mirror(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.val == b.val and mirror(a.left, b.right) and mirror(a.right, b.left)
+    root = tok2tree(t)
+    return root is None or mirror(root.left, root.right)
+
+
+def b4_same(p, q):
+    def same(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)
+    return same(tok2tree(p), tok2tree(q))
+
+
+def b4_diameter(t):
+    best = 0
+
+    def h(n):
+        nonlocal best
+        if n is None:
+            return 0
+        l, r = h(n.left), h(n.right)
+        best = max(best, l + r)
+        return 1 + max(l, r)
+    h(tok2tree(t))
+    return best
+
+
+def b4_inorder(t):
+    out = []
+
+    def go(n):
+        if n:
+            go(n.left)
+            out.append(n.val)
+            go(n.right)
+    go(tok2tree(t))
+    return out
+
+
+def b4_right_view(t):
+    root = tok2tree(t)
+    out, level = [], [root] if root else []
+    while level:
+        out.append(level[-1].val)
+        level = [c for n in level for c in (n.left, n.right) if c]
+    return out
+
+
+def b4_valid_bst(t):
+    def ok(n, lo, hi):
+        if n is None:
+            return True
+        return lo < n.val < hi and ok(n.left, lo, n.val) and ok(n.right, n.val, hi)
+    return ok(tok2tree(t), float("-inf"), float("inf"))
+
+
+def b4_path_sum(t, target):
+    def go(n, rem):
+        if n is None:
+            return False
+        if n.left is None and n.right is None:
+            return n.val == rem
+        return go(n.left, rem - n.val) or go(n.right, rem - n.val)
+    return go(tok2tree(t), target)
+
+
+def b4_balanced(t):
+    def h(n):
+        if n is None:
+            return 0
+        l, r = h(n.left), h(n.right)
+        if l < 0 or r < 0 or abs(l - r) > 1:
+            return -1
+        return 1 + max(l, r)
+    return h(tok2tree(t)) >= 0
+
+
+def b4_kth_bst(t, k): return b4_inorder(t)[k - 1]
+
+
+def b4_good_nodes(t):
+    def go(n, mx):
+        if n is None:
+            return 0
+        return (1 if n.val >= mx else 0) + go(n.left, max(mx, n.val)) + go(n.right, max(mx, n.val))
+    root = tok2tree(t)
+    return go(root, root.val) if root else 0
+
+
+def b4_max_path(t):
+    best = float("-inf")
+
+    def h(n):
+        nonlocal best
+        if n is None:
+            return 0
+        l, r = max(0, h(n.left)), max(0, h(n.right))
+        best = max(best, n.val + l + r)
+        return n.val + max(l, r)
+    h(tok2tree(t))
+    return best
+
+
+def b4_lca_bst(t, p, q):
+    n = tok2tree(t)
+    while n:
+        if p < n.val and q < n.val:
+            n = n.left
+        elif p > n.val and q > n.val:
+            n = n.right
+        else:
+            return n.val
+
+
+def b4_lca(t, p, q):
+    def go(n):
+        if n is None or n.val in (p, q):
+            return n
+        l, r = go(n.left), go(n.right)
+        return n if l and r else (l or r)
+    return go(tok2tree(t)).val
+
+
+# ---- case generators (the first two are shown as the problem's examples)
+def b4_lists(sizes, **kw): return [rand_list(n, **kw) for n in sizes]
+
+
+def b4_c_reverse(): return [[1, 2, 3, 4, 5], [1, 2], [], [7]] + b4_lists([2, 3, 10, 30, 60, 100])
+def b4_c_merge(): return [([1, 2, 4], [1, 3, 4]), ([], [])] + [([], [5]), ([0], [])] + [(rand_sorted_list(rng.randint(0, 40)), rand_sorted_list(rng.randint(0, 40))) for _ in range(6)]
+def b4_c_middle(): return [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6], [9]] + b4_lists([2, 3, 10, 11, 50, 99], lo=-50, hi=50)
+def b4_c_remove_nth():
+    cases = [([1, 2, 3, 4, 5], 2), ([1], 1), ([1, 2], 1), ([1, 2], 2)]
+    for n in [3, 10, 30, 60, 100]:
+        cases.append((rand_list(n), rng.randint(1, n)))
+    return cases
+def b4_c_palin_list():
+    return [[1, 2, 2, 1], [1, 2], [1], [1, 2, 1], [1, 2, 3, 2, 1], [1, 2, 3, 4], [5, 5, 5, 5], [1, 2, 3, 3, 1]] + [x + x[::-1][len(x) % 2:] for x in (rand_list(20, 0, 9), rand_list(41, 0, 9))] + [rand_list(30, 0, 9)]
+def b4_c_dedup(): return [[1, 1, 2], [1, 1, 2, 3, 3], [], [4], [7, 7, 7, 7]] + [rand_sorted_list(n, 0, 15) for n in (5, 20, 60, 100)]
+def b4_c_add():
+    def digits(n): return [rng.randint(0, 9) for _ in range(n - 1)] + [rng.randint(1, 9)]
+    return [([2, 4, 3], [5, 6, 4]), ([0], [0]), ([9, 9, 9, 9, 9, 9, 9], [9, 9, 9, 9]), ([1], [9, 9, 9]), ([5], [5])] + [(digits(rng.randint(1, 30)), digits(rng.randint(1, 30))) for _ in range(5)]
+def b4_c_swap(): return [[1, 2, 3, 4], [1], [], [1, 2, 3]] + b4_lists([2, 4, 9, 40, 99])
+def b4_c_odd_even(): return [[1, 2, 3, 4, 5], [2, 1, 3, 5, 6, 4, 7], [1], [1, 2]] + b4_lists([3, 8, 15, 50, 100])
+def b4_c_sort(): return [[4, 2, 1, 3], [-1, 5, 3, 4, 0], [], [3]] + b4_lists([2, 10, 40, 100, 100], lo=-100, hi=100)
+def b4_c_reorder(): return [[1, 2, 3, 4], [1, 2, 3, 4, 5], [1], [1, 2]] + b4_lists([3, 6, 21, 60, 100], lo=1, hi=500)
+def b4_c_reverse_k():
+    return [([1, 2, 3, 4, 5], 2), ([1, 2, 3, 4, 5], 3), ([1], 1), ([1, 2, 3, 4], 4), ([1, 2, 3], 5)] + [(rand_list(n), k) for n, k in [(10, 3), (30, 4), (50, 7), (100, 1), (100, 10)]]
+
+
+def b4_trees(sizes, **kw): return [rand_tree(m, **kw) for m in sizes]
+
+
+def b4_c_depth(): return [[3, 9, 20, None, None, 15, 7], [1, None, 2], [], [5]] + b4_trees([2, 6, 15, 40, 100])
+def b4_c_invert(): return [[4, 2, 7, 1, 3, 6, 9], [2, 1, 3], [], [1]] + b4_trees([4, 9, 20, 60])
+def b4_c_symmetric():
+    def mirror_tree(m):
+        t = tok2tree(rand_tree(m))
+        def mir(n): return None if n is None else TN(n.val, mir(n.right), mir(n.left))
+        root = TN(t.val, t, mir(t)) if t else None
+        return tree2tok(root)
+    return [[1, 2, 2, 3, 4, 4, 3], [1, 2, 2, None, 3, None, 3], [1], [], [1, 2, 3], mirror_tree(5), mirror_tree(12)] + b4_trees([7, 20], lo=1, hi=3)
+def b4_c_same():
+    pairs = [([1, 2, 3], [1, 2, 3]), ([1, 2], [1, None, 2]), ([1, 2, 1], [1, 1, 2]), ([], []), ([], [1])]
+    for m in [3, 10, 25]:
+        t = rand_tree(m, 1, 4)
+        pairs.append((t, list(t)))
+        pairs.append((t, rand_tree(m, 1, 4)))
+    return pairs
+def b4_c_diameter(): return [[1, 2, 3, 4, 5], [1, 2], [1], [1, None, 2, None, 3, None, 4]] + b4_trees([5, 12, 30, 70, 100])
+def b4_c_inorder(): return [[1, None, 2, 3], [], [1], [3, 1, 2]] + b4_trees([4, 9, 25, 60])
+def b4_c_right_view(): return [[1, 2, 3, None, 5, None, 4], [1, None, 3], [], [1, 2]] + b4_trees([5, 10, 25, 60, 100])
+def b4_c_valid_bst():
+    def tamper(t):
+        t = list(t)
+        i = rng.choice([j for j, v in enumerate(t) if v is not None])
+        t[i] = rng.randint(1, 99)
+        return t
+    cases = [[2, 1, 3], [5, 1, 4, None, None, 3, 6], [1, 1], [], [5], [5, 4, 6, None, None, 3, 7], [2, 2, 2]]
+    for m in [8, 20, 50]:
+        t = rand_bst(m)
+        cases += [t, tamper(t)]
+    return cases
+def b4_c_path_sum():
+    cases = [([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, None, 1], 22), ([1, 2, 3], 5), ([1, 2], 0), ([], 0), ([1], 1), ([1, 2], 1)]
+    for m in [6, 15, 30, 60]:
+        t = rand_tree(m, -5, 15)
+        root, target = tok2tree(t), 0
+        n = root
+        while n.left or n.right:
+            target += n.val
+            n = rng.choice([c for c in (n.left, n.right) if c])
+        target += n.val
+        cases += [(t, target), (t, target + 1)]
+    return cases
+def b4_c_balanced(): return [[3, 9, 20, None, None, 15, 7], [1, 2, 2, 3, 3, None, None, 4, 4], [], [1], [1, 2, None, 3]] + b4_trees([6, 14, 30, 60]) + [tree2tok(TN(1, TN(2, TN(3)), TN(4)))]
+def b4_c_kth():
+    cases = [([3, 1, 4, None, 2], 1), ([5, 3, 6, 2, 4, None, None, 1], 3), ([1], 1)]
+    for m, k in [(7, 7), (15, 1), (30, 12), (60, 31), (99, 99)]:
+        cases.append((rand_bst(m), k))
+    return cases
+def b4_c_good(): return [[3, 1, 4, 3, None, 1, 5], [3, 3, None, 4, 2], [1], [], ] + b4_trees([5, 12, 30, 80], lo=-10, hi=10)
+def b4_c_maxpath():
+    return [[1, 2, 3], [-10, 9, 20, None, None, 15, 7], [-3], [2, -1], [-2, -3]] + b4_trees([6, 15, 40, 90], lo=-30, hi=30)
+def b4_c_lca_bst():
+    cases = [([6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], 2, 8), ([6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], 2, 4), ([2, 1], 2, 1)]
+    for m in [5, 12, 30, 60, 99]:
+        t = rand_bst(m)
+        vals = [v for v in t if v is not None]
+        cases.append((t, *rng.sample(vals, 2)))
+    return cases
+def b4_c_lca():
+    cases = [([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4], 5, 1), ([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4], 5, 4), ([1, 2], 1, 2)]
+    for m in [5, 12, 30, 60, 99]:
+        vals = rng.sample(range(1, 200), m)
+        it = iter(vals)
+        root = TN(next(it))
+        slots = [(root, "left"), (root, "right")]
+        for _ in range(m - 1):
+            node, side = slots.pop(rng.randrange(len(slots)))
+            child = TN(next(it))
+            setattr(node, side, child)
+            slots += [(child, "left"), (child, "right")]
+        cases.append((tree2tok(root), *rng.sample(vals, 2)))
+    return cases
+
+
+LIST_IN = "Line 1: `n`, the number of nodes.\nLine 2: the `n` node values, space separated (blank when `n = 0`)."
+TREE_IN = ("Line 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written "
+           "`null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).")
+LIST_OUT = "The resulting list's values, space separated (a blank line for an empty list)."
+TREE_OUT = "The resulting tree in the same level-order format."
+LC = "`0 <= n <= 100` nodes"
+VAL = "`-100 <= val <= 100`"
+
+PROBLEMS += [
+    mk("reverse-linked-list", "Reverse Linked List", "EASY", ["linked-list"], [("head", "list")], "list", b4_reverse,
+       b4_c_reverse(), "Given the `head` of a singly linked list, reverse the list and return the new head. Try both an "
+       "iterative and a recursive solution.", LIST_IN, LIST_OUT, [LC, VAL]),
+    mk("merge-two-sorted-lists", "Merge Two Sorted Lists", "EASY", ["linked-list", "two-pointers"],
+       [("list1", "list"), ("list2", "list")], "list", b4_merge, b4_c_merge(),
+       "Merge two sorted linked lists into one sorted list by splicing together the nodes of the two lists, and return its head.",
+       "The first list in the format below, then the second list in the same format.\n\n" + LIST_IN, LIST_OUT,
+       ["Each list has `0 <= n <= 50` nodes", "Both lists are sorted in non-decreasing order"]),
+    mk("middle-of-the-linked-list", "Middle of the Linked List", "EASY", ["linked-list", "two-pointers"],
+       [("head", "list")], "list", b4_middle, b4_c_middle(),
+       "Return the middle node of the list (as the list starting from that node). If there are two middle nodes, return the second one.",
+       LIST_IN, "The values from the middle node to the end.", ["`1 <= n <= 100` nodes", VAL]),
+    mk("remove-nth-node-from-end-of-list", "Remove Nth Node From End of List", "MEDIUM", ["linked-list", "two-pointers"],
+       [("head", "list"), ("n", "int")], "list", b4_remove_nth, b4_c_remove_nth(),
+       "Remove the `n`-th node from the end of the list and return its head. Can you do it in one pass?",
+       LIST_IN + "\nLine 3: `n`.", LIST_OUT, ["`1 <= size <= 100`", "`1 <= n <= size`"]),
+    mk("palindrome-linked-list", "Palindrome Linked List", "EASY", ["linked-list", "two-pointers", "stack"],
+       [("head", "list")], "bool", b4_palin_list, b4_c_palin_list(),
+       "Return `true` if the values of the list read the same forwards and backwards. Aim for `O(n)` time and `O(1)` extra space.",
+       LIST_IN, "`true` or `false`.", ["`1 <= n <= 100` nodes", "`0 <= val <= 9`"]),
+    mk("remove-duplicates-from-sorted-list", "Remove Duplicates from Sorted List", "EASY", ["linked-list"],
+       [("head", "list")], "list", b4_dedup_sorted, b4_c_dedup(),
+       "Given a sorted linked list, delete all duplicates so each value appears only once, and return the list.",
+       LIST_IN, LIST_OUT, [LC, "The list is sorted in non-decreasing order"]),
+    mk("add-two-numbers", "Add Two Numbers", "MEDIUM", ["linked-list", "math"], [("l1", "list"), ("l2", "list")], "list",
+       b4_add_numbers, b4_c_add(),
+       "Two non-empty lists represent non-negative integers with the digits stored in **reverse order** (the head is the "
+       "ones digit). Add the numbers and return the sum as a list in the same form.",
+       "The first list in the format below, then the second list in the same format.\n\n" + LIST_IN, LIST_OUT,
+       ["`1 <= n <= 30` nodes per list", "`0 <= digit <= 9`", "No leading zeros except the number 0 itself"]),
+    mk("swap-nodes-in-pairs", "Swap Nodes in Pairs", "MEDIUM", ["linked-list"], [("head", "list")], "list", b4_swap_pairs,
+       b4_c_swap(), "Swap every two adjacent nodes and return the head. Change the links between nodes; do not just swap the values.",
+       LIST_IN, LIST_OUT, [LC, "`0 <= val <= 100`"]),
+    mk("odd-even-linked-list", "Odd Even Linked List", "MEDIUM", ["linked-list"], [("head", "list")], "list", b4_odd_even,
+       b4_c_odd_even(), "Group all nodes at odd positions first, followed by the nodes at even positions, keeping the "
+       "relative order inside each group. Positions start at 1. Use `O(1)` extra space and `O(n)` time.",
+       LIST_IN, LIST_OUT, ["`0 <= n <= 100` nodes", VAL]),
+    mk("sort-list", "Sort List", "MEDIUM", ["linked-list", "sorting", "divide-and-conquer"], [("head", "list")], "list",
+       b4_sort_list, b4_c_sort(), "Sort the linked list in ascending order. For a challenge, do it in `O(n log n)` time and `O(1)` extra space.",
+       LIST_IN, LIST_OUT, [LC, VAL]),
+    mk("reorder-list", "Reorder List", "MEDIUM", ["linked-list", "two-pointers"], [("head", "list")], "list", b4_reorder,
+       b4_c_reorder(), "Reorder `L0 → L1 → … → Ln-1 → Ln` into `L0 → Ln → L1 → Ln-1 → L2 → Ln-2 → …` in place, "
+       "without changing node values. Return the reordered list.", LIST_IN, LIST_OUT, ["`1 <= n <= 100` nodes", "`1 <= val <= 500`"]),
+    mk("reverse-nodes-in-k-group", "Reverse Nodes in k-Group", "HARD", ["linked-list", "recursion"],
+       [("head", "list"), ("k", "int")], "list", b4_reverse_k, b4_c_reverse_k(),
+       "Reverse the nodes of the list `k` at a time and return the head. If the number of remaining nodes is less than `k`, "
+       "leave them as they are. Only the links may change, not the values.", LIST_IN + "\nLine 3: `k`.", LIST_OUT,
+       ["`1 <= k <= n <= 100`", VAL]),
+
+    mk("maximum-depth-of-binary-tree", "Maximum Depth of Binary Tree", "EASY", ["tree", "dfs", "bfs"], [("root", "tree")], "int",
+       b4_depth, b4_c_depth(), "Return the maximum depth of a binary tree: the number of nodes on the longest path from the root down to a leaf.",
+       TREE_IN, "The maximum depth (`0` for the empty tree).", [LC, VAL]),
+    mk("invert-binary-tree", "Invert Binary Tree", "EASY", ["tree", "dfs", "bfs"], [("root", "tree")], "tree", b4_invert,
+       b4_c_invert(), "Invert the binary tree (swap every node's left and right child) and return its root.", TREE_IN, TREE_OUT, [LC, VAL]),
+    mk("symmetric-tree", "Symmetric Tree", "EASY", ["tree", "dfs", "bfs"], [("root", "tree")], "bool", b4_symmetric,
+       b4_c_symmetric(), "Return `true` if the tree is a mirror image of itself around its center.", TREE_IN, "`true` or `false`.",
+       ["`0 <= n <= 100` nodes", "`-100 <= val <= 100`"]),
+    mk("same-tree", "Same Tree", "EASY", ["tree", "dfs"], [("p", "tree"), ("q", "tree")], "bool", b4_same, b4_c_same(),
+       "Return `true` if the two binary trees are structurally identical and their nodes hold the same values.",
+       "Tree `p` in the format below, then tree `q` in the same format.\n\n" + TREE_IN, "`true` or `false`.", ["Each tree has `0 <= n <= 100` nodes", VAL]),
+    mk("diameter-of-binary-tree", "Diameter of Binary Tree", "EASY", ["tree", "dfs"], [("root", "tree")], "int",
+       b4_diameter, b4_c_diameter(), "Return the diameter of the tree: the number of **edges** on the longest path between any "
+       "two nodes. The path may or may not pass through the root.", TREE_IN, "The diameter.", ["`1 <= n <= 100` nodes", VAL]),
+    mk("binary-tree-inorder-traversal", "Binary Tree Inorder Traversal", "EASY", ["tree", "dfs", "stack"], [("root", "tree")],
+       "int[]", b4_inorder, b4_c_inorder(), "Return the inorder traversal (left, node, right) of the tree. Try an iterative solution.",
+       TREE_IN, "The node values in inorder, space separated (a blank line for the empty tree).", [LC, VAL]),
+    mk("binary-tree-right-side-view", "Binary Tree Right Side View", "MEDIUM", ["tree", "bfs", "dfs"], [("root", "tree")],
+       "int[]", b4_right_view, b4_c_right_view(), "Imagine standing on the right side of the tree. Return the values of the nodes "
+       "you can see, ordered from top to bottom.", TREE_IN, "The visible values, space separated (blank for the empty tree).", [LC, VAL]),
+    mk("validate-binary-search-tree", "Validate Binary Search Tree", "MEDIUM", ["tree", "bst", "dfs"], [("root", "tree")], "bool",
+       b4_valid_bst, b4_c_valid_bst(), "Return `true` if the tree is a valid binary search tree: for every node, all values in "
+       "its left subtree are **strictly less** and all in its right subtree are **strictly greater**.", TREE_IN, "`true` or `false`.",
+       ["`0 <= n <= 100` nodes", "`-2^31 <= val <= 2^31 - 1`"]),
+    mk("path-sum", "Path Sum", "EASY", ["tree", "dfs"], [("root", "tree"), ("targetSum", "int")], "bool", b4_path_sum,
+       b4_c_path_sum(), "Return `true` if the tree has a **root-to-leaf** path whose node values add up to `targetSum`.",
+       TREE_IN + "\nLine 3: `targetSum`.", "`true` or `false`.", ["`0 <= n <= 100` nodes", "`-1000 <= val, targetSum <= 1000`"]),
+    mk("balanced-binary-tree", "Balanced Binary Tree", "EASY", ["tree", "dfs"], [("root", "tree")], "bool", b4_balanced,
+       b4_c_balanced(), "Return `true` if the tree is height-balanced: for every node, the heights of its two subtrees differ by at most one.",
+       TREE_IN, "`true` or `false`.", [LC, VAL]),
+    mk("kth-smallest-element-in-a-bst", "Kth Smallest Element in a BST", "MEDIUM", ["tree", "bst", "dfs"],
+       [("root", "tree"), ("k", "int")], "int", b4_kth_bst, b4_c_kth(), "Given a binary search tree, return the `k`-th smallest value (1-indexed).",
+       TREE_IN + "\nLine 3: `k`.", "The `k`-th smallest value.", ["`1 <= k <= n <= 100`", "All values are distinct"]),
+    mk("count-good-nodes-in-binary-tree", "Count Good Nodes in Binary Tree", "MEDIUM", ["tree", "dfs"], [("root", "tree")], "int",
+       b4_good_nodes, b4_c_good(), "A node `X` is **good** if no node on the path from the root to `X` has a larger value than `X`. "
+       "Return the number of good nodes.", TREE_IN, "The number of good nodes.", [LC, "`-10^4 <= val <= 10^4`"]),
+    mk("binary-tree-maximum-path-sum", "Binary Tree Maximum Path Sum", "HARD", ["tree", "dfs", "dp"], [("root", "tree")], "int",
+       b4_max_path, b4_c_maxpath(), "A path is any sequence of nodes in which consecutive nodes are connected by an edge, visiting "
+       "each node at most once; it need not pass through the root. Return the maximum sum of node values over all non-empty paths.",
+       TREE_IN, "The maximum path sum.", ["`1 <= n <= 100` nodes", "`-1000 <= val <= 1000`"]),
+    mk("lowest-common-ancestor-of-a-binary-search-tree", "Lowest Common Ancestor of a BST", "MEDIUM", ["tree", "bst"],
+       [("root", "tree"), ("p", "int"), ("q", "int")], "int", b4_lca_bst, b4_c_lca_bst(),
+       "Given a BST and the values of two nodes `p` and `q` that are in it, return the value of their lowest common ancestor "
+       "(a node may be its own descendant).", TREE_IN + "\nLine 3: `p`.\nLine 4: `q`.", "The value of the LCA.",
+       ["`2 <= n <= 100` nodes", "All values are unique", "`p != q` and both exist in the tree"]),
+    mk("lowest-common-ancestor-of-a-binary-tree", "Lowest Common Ancestor of a Binary Tree", "MEDIUM", ["tree", "dfs"],
+       [("root", "tree"), ("p", "int"), ("q", "int")], "int", b4_lca, b4_c_lca(),
+       "Given a binary tree and the values of two nodes `p` and `q` that are in it, return the value of their lowest common "
+       "ancestor (a node may be its own descendant).", TREE_IN + "\nLine 3: `p`.\nLine 4: `q`.", "The value of the LCA.",
+       ["`2 <= n <= 100` nodes", "All values are unique", "`p != q` and both exist in the tree"]),
+]
+
 
 
 def to_seed(problem):
