@@ -48,6 +48,10 @@ public class Problem {
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, String> starterCode = new HashMap<>();
 
+    /** Position in the curated study path (topic, then difficulty). Null until the seeder assigns it. */
+    @Column(name = "sort_order")
+    private Integer sortOrder;
+
     @ElementCollection
     @CollectionTable(name = "problem_tags", joinColumns = @JoinColumn(name = "problem_id"))
     @Column(name = "tag", nullable = false, length = 50)
@@ -98,6 +102,14 @@ public class Problem {
 
     public void setStarterCode(Map<String, String> starterCode) {
         this.starterCode = starterCode;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     public Set<String> getTags() {

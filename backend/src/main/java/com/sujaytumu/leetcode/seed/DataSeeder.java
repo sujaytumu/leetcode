@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Loads classpath:seed/problems.json on startup. Only inserts problems whose slug does not exist yet,
- * so it is safe to run against a populated database and never overwrites edited content.
+ * so it is safe to run against a populated database and never overwrites edited content (only the study-path
+ * position, {@code order}, is refreshed on existing rows).
  * The file is produced by backend/tools/generate_seed.py.
  */
 @Component
@@ -39,7 +40,8 @@ public class DataSeeder implements ApplicationRunner {
             List<String> tags,
             String description,
             Map<String, String> starterCode,
-            List<SeedTestCase> testCases) {}
+            List<SeedTestCase> testCases,
+            Integer order) {}
 
     private final ProblemRepository problems;
     private final ObjectMapper objectMapper;
@@ -66,12 +68,18 @@ public class DataSeeder implements ApplicationRunner {
 
         int inserted = 0;
         for (SeedProblem item : seed) {
-            if (problems.findBySlug(item.slug()).isPresent()) {
+            Problem existing = problems.findBySlug(item.slug()).orElse(null);
+            if (existing != null) {
+                // Content is never overwritten, but the study-path position is kept in step with the seed file.
+                if (item.order() != null && !item.order().equals(existing.getSortOrder())) {
+                    existing.setSortOrder(item.order());
+                }
                 continue;
             }
             Problem problem = new Problem(item.slug(), item.title(), item.difficulty(), item.description());
             problem.setTags(new LinkedHashSet<>(item.tags()));
             problem.setStarterCode(item.starterCode());
+            problem.setSortOrder(item.order());
             for (int i = 0; i < item.testCases().size(); i++) {
                 SeedTestCase tc = item.testCases().get(i);
                 problem.addTestCase(new TestCase(i, tc.input(), tc.expectedOutput(), tc.sample()));

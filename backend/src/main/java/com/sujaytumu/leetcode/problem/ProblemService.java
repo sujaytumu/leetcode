@@ -57,7 +57,7 @@ public class ProblemService {
             spec = spec.and(statusSpec(query.status(), state));
         }
 
-        Page<Problem> result = problems.findAll(spec, PageRequest.of(page, size, Sort.by("id")));
+        Page<Problem> result = problems.findAll(spec, PageRequest.of(page, size, Sort.by("sortOrder").and(Sort.by("id"))));
         Map<Long, Double> acceptance = acceptanceByProblem(result.getContent().stream().map(Problem::getId).toList());
         return PageResponse.of(result.map(problem -> toSummary(problem, state, acceptance.get(problem.getId()))));
     }
@@ -84,7 +84,8 @@ public class ProblemService {
                 samples,
                 state.statusOf(problem.getId()),
                 state.bookmarked.contains(problem.getId()),
-                acceptanceByProblem(List.of(problem.getId())).get(problem.getId()));
+                acceptanceByProblem(List.of(problem.getId())).get(problem.getId()),
+                numberOf(problem));
     }
 
     @Transactional(readOnly = true)
@@ -120,6 +121,10 @@ public class ProblemService {
         return result;
     }
 
+    private static Integer numberOf(Problem problem) {
+        return problem.getSortOrder() != null ? problem.getSortOrder() : Math.toIntExact(problem.getId());
+    }
+
     private ProblemSummary toSummary(Problem problem, ClientState state, Double acceptance) {
         return new ProblemSummary(
                 problem.getId(),
@@ -129,7 +134,8 @@ public class ProblemService {
                 List.copyOf(problem.getTags()),
                 state.statusOf(problem.getId()),
                 state.bookmarked.contains(problem.getId()),
-                acceptance);
+                acceptance,
+                numberOf(problem));
     }
 
     /** Snapshot of one client's progress; empty for anonymous requests. */

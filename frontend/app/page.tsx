@@ -91,7 +91,7 @@ export default function Home() {
         <div className="daily">
           <div>
             <span className="mute">Daily challenge · {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
-            <div><Link href={`/problems/${daily.slug}`}><b>{daily.id}. {daily.title}</b></Link>{" "}
+            <div><Link href={`/problems/${daily.slug}`}><b>{daily.number ?? daily.id}. {daily.title}</b></Link>{" "}
               <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
               {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
             </div>
@@ -128,7 +128,7 @@ export default function Home() {
           {data?.items.map((p) => (
             <tr key={p.id}>
               <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
-              <td><Link href={`/problems/${p.slug}`}>{p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+              <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                 <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
               <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
               <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>

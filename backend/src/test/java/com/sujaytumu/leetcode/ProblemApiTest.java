@@ -31,6 +31,8 @@ class ProblemApiTest {
                 .andExpect(jsonPath("$.totalPages").value(25))
                 .andExpect(jsonPath("$.items.length()").value(5))
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"))
+                .andExpect(jsonPath("$.items[0].number").value(1))
+                .andExpect(jsonPath("$.items[1].number").value(2))
                 .andExpect(jsonPath("$.items[0].status").value("TODO"));
     }
 

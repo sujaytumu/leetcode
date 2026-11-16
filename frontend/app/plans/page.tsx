@@ -42,7 +42,7 @@ export default function PlansPage() {
                 {items.map((p) => (
                   <li key={p.id}>
                     <span className={p.status === "SOLVED" ? "EASY" : "mute"}>{ICON[p.status]}</span>{" "}
-                    <Link href={`/problems/${p.slug}`}>{p.id}. {p.title}</Link>{" "}
+                    <Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}</Link>{" "}
                     <span className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>
                   </li>
                 ))}

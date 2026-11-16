@@ -3496,8 +3496,36 @@ def to_seed(problem):
     }
 
 
+# Study-path ordering: topics in the order a learner should meet them, then Easy -> Medium -> Hard inside each topic.
+TOPIC_ORDER = ["Arrays & Hashing", "Two Pointers", "Sliding Window", "Stack", "Binary Search", "Linked List", "Trees",
+               "Heap", "Backtracking", "Graphs", "Dynamic Programming", "Greedy", "Intervals", "Math & Bits", "Matrix"]
+# A problem goes to the first topic here that one of its tags matches (more specific topics come first).
+TOPIC_TAGS = [
+    ("Linked List", {"linked-list"}), ("Trees", {"tree", "bst"}), ("Graphs", {"graph", "union-find", "topological-sort", "bfs", "dfs"}),
+    ("Backtracking", {"backtracking"}), ("Heap", {"heap", "quickselect"}), ("Dynamic Programming", {"dynamic-programming", "dp"}),
+    ("Sliding Window", {"sliding-window"}), ("Stack", {"stack", "monotonic-stack"}), ("Binary Search", {"binary-search"}),
+    ("Intervals", {"intervals"}), ("Greedy", {"greedy"}), ("Two Pointers", {"two-pointers"}),
+    ("Math & Bits", {"math", "bit-manipulation", "sieve"}), ("Matrix", {"matrix"}),
+]
+DIFF_RANK = {"EASY": 0, "MEDIUM": 1, "HARD": 2}
+
+
+def topic_of(problem):
+    tags = set(problem["tags"])
+    return next((name for name, group in TOPIC_TAGS if tags & group), "Arrays & Hashing")
+
+
+def study_order(problems):
+    """Returns the problems sorted into study-path order (the position in this list is the problem's number)."""
+    indexed = list(enumerate(problems))
+    indexed.sort(key=lambda ip: (TOPIC_ORDER.index(topic_of(ip[1])), DIFF_RANK[ip[1]["difficulty"]], ip[0]))
+    return [p for _, p in indexed]
+
+
 def main():
-    seed = [to_seed(p) for p in PROBLEMS]
+    seed = [to_seed(p) for p in study_order(PROBLEMS)]
+    for number, item in enumerate(seed, 1):
+        item["order"] = number
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(seed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     total = sum(len(p["testCases"]) for p in seed)
