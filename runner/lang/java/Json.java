@@ -150,6 +150,10 @@ public class Json {
 
     private static String join(List<String> parts) { return "[" + String.join(",", parts) + "]"; }
 
+    // Typed entry points: a null ListNode/TreeNode means an empty list/tree, not JSON null.
+    public static String serLn(ListNode h) { return h == null ? "[]" : ser(h); }
+    public static String serTn(TreeNode t) { return t == null ? "[]" : ser(t); }
+
     public static String ser(Object o) {
         if (o == null) return "null";
         if (o instanceof String) return esc((String) o);
