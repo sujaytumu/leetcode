@@ -224,6 +224,8 @@ const java = {
       .join("\n");
     const args = sig.params.map((p) => p.name).join(", ");
     const call = mut ? `__sol.${sig.name}(${args}); Object __r = ${mut.name};` : `Object __r = __sol.${sig.name}(${args});`;
+    const outType = mut ? mut.type : sig.returns;
+    const serFn = outType === "ListNode" ? "Json.serLn((ListNode) __r)" : outType === "TreeNode" ? "Json.serTn((TreeNode) __r)" : "Json.ser(__r)";
     const main = String.raw`import java.util.*;
 import java.io.*;
 import java.nio.file.*;
@@ -249,7 +251,7 @@ ${decls}
                 long __t0 = System.nanoTime();
                 ${call}
                 double __ms = (System.nanoTime() - __t0) / 1e6;
-                String __res = Json.ser(__r);
+                String __res = ${serFn};
                 out.println("{\"ok\":true,\"out\":" + __res + ",\"ms\":" + __ms + "}");
                 out.flush();
             } catch (Throwable __e) {
