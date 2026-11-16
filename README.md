@@ -4,7 +4,28 @@ A LeetCode-style practice app.
 
 - **Backend:** Java 21, Spring Boot 3, Spring Data JPA (H2 for dev, PostgreSQL for prod)
 - **Code execution:** sandboxed through [Judge0](https://github.com/judge0/judge0) (optional, configured via `JUDGE0_URL`)
-- **Frontend:** Next.js + TypeScript (coming next)
+- **Frontend:** Next.js + TypeScript with the Monaco editor
+
+## Quick start with Docker
+
+```bash
+docker compose up --build
+```
+
+Frontend: http://localhost:3000, backend: http://localhost:8080. The backend uses in-memory H2 unless you set the
+Neon variables (see below) in a root-level `.env`. The frontend calls the backend from the browser, so
+`NEXT_PUBLIC_API_URL` must be a URL your browser can reach; it is baked in at build time.
+
+## Frontend
+
+```bash
+cd frontend
+cp .env.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8080
+npm ci
+npm run dev
+```
+
+CI (`.github/workflows/ci.yml`) runs `mvn verify` for the backend and `npm run build` (which type-checks) for the frontend.
 
 ## Backend
 
@@ -46,7 +67,7 @@ Per-user state is keyed by an anonymous UUID sent in the `X-Client-Id` header.
 Work in progress.
 
 - Backend API, 39 seeded problems (365 test cases) and backend tests are in place.
-- Frontend, Docker setup and CI are being added in follow-up commits.
+- Frontend, Docker setup and CI are in place.
 
 ### Seed data
 
