@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { api, Page, Progress, ProblemSummary } from "@/lib/api";
+import { useCallback, useEffect, useState } from "react";
+import { api, apiWithWake, Page, Progress, ProblemSummary } from "@/lib/api";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
 
@@ -16,32 +16,42 @@ export default function Home() {
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState("");
+  const [waking, setWaking] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     api<string[]>("/api/tags").then(setTags).catch(() => {});
     api<Progress>("/api/progress").then(setProgress).catch(() => {});
-  }, []);
+  }, [reload]);
+
+  const fetchList = useCallback(() => {
+    const p = new URLSearchParams({ page: String(page), size: "20" });
+    if (q) p.set("q", q); if (difficulty) p.set("difficulty", difficulty);
+    if (tag) p.set("tag", tag); if (status) p.set("status", status);
+    if (bookmarked) p.set("bookmarked", "true");
+    setLoading(true); setError("");
+    apiWithWake<Page<ProblemSummary>>(`/api/problems?${p}`, () => setWaking(true))
+      .then((d) => { setData(d); setWaking(false); })
+      .catch((e) => { setError(e.message); setWaking(false); })
+      .finally(() => setLoading(false));
+  }, [q, difficulty, tag, status, bookmarked, page]);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      const p = new URLSearchParams({ page: String(page), size: "20" });
-      if (q) p.set("q", q); if (difficulty) p.set("difficulty", difficulty);
-      if (tag) p.set("tag", tag); if (status) p.set("status", status);
-      if (bookmarked) p.set("bookmarked", "true");
-      setLoading(true);
-      api<Page<ProblemSummary>>(`/api/problems?${p}`)
-        .then((d) => { setData(d); setError(""); })
-        .catch((e) => setError(e.message))
-        .finally(() => setLoading(false));
-    }, 250);
+    const t = setTimeout(fetchList, 250);
     return () => clearTimeout(t);
-  }, [q, difficulty, tag, status, bookmarked, page]);
+  }, [fetchList, reload]);
 
   const reset = <T,>(set: (v: T) => void) => (v: T) => { setPage(0); set(v); };
 
   return (
     <>
+      {waking && <div className="banner warn">Waking up the server (free hosting sleeps when idle). This can take 1–3 minutes — retrying automatically…</div>}
+      {error && (
+        <div className="banner err">
+          {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
+        </div>
+      )}
       {progress && (
         <div className="cards">
           <div className="card"><span className="mute">Solved</span><b>{progress.solved}/{progress.total}</b></div>
@@ -69,7 +79,6 @@ export default function Home() {
         <label className="bar"><input type="checkbox" checked={bookmarked}
           onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
       </div>
-      {error && <p className="err">{error} — the API may be waking up (free tier), retry in ~50s.</p>}
       <table>
         <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th>Topics</th><th>Difficulty</th></tr></thead>
         <tbody>
@@ -81,7 +90,7 @@ export default function Home() {
               <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
             </tr>
           ))}
-          {!loading && data?.items.length === 0 && <tr><td colSpan={4} className="mute">No problems match.</td></tr>}
+          {!loading && !error && data?.items.length === 0 && <tr><td colSpan={4} className="mute">No problems match.</td></tr>}
           {loading && !data && <tr><td colSpan={4} className="mute">Loading…</td></tr>}
         </tbody>
       </table>

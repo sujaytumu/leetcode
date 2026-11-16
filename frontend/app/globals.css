@@ -33,3 +33,12 @@ pre { background:#0c0e12; border:1px solid var(--line); border-radius:8px; paddi
 .err { color:var(--hard); }
 .mute { color:var(--mute); }
 .pager { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:14px; }
+.banner { border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.banner.warn { border-color:var(--med); color:var(--med); background:#2a2412; }
+.banner.err { border-color:var(--hard); color:var(--hard); background:#2a1414; }
+.banner button { margin-left:auto; }
+.md h1,.md h2,.md h3 { margin:16px 0 6px; } .md h3 { font-size:15px; }
+.md p { margin:6px 0; } .md ul { padding-left:22px; margin:6px 0; }
+.md code { background:#0c0e12; border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:13px; }
+.md pre code { border:0; padding:0; background:none; }
+.split { height:calc(100vh - 150px); }

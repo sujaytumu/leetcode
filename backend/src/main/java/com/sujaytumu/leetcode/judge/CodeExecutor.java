@@ -5,6 +5,13 @@ public interface CodeExecutor {
 
     ExecutionResult execute(Language language, String sourceCode, String stdin);
 
+    /** Reports whether code execution is configured and reachable, so the UI can say so up front. */
+    default Health health() {
+        return new Health(true, true, "custom", "Code execution is available.");
+    }
+
+    record Health(boolean enabled, boolean reachable, String provider, String message) {}
+
     enum Status {
         OK,
         COMPILE_ERROR,

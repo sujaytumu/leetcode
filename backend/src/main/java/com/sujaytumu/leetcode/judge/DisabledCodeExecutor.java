@@ -10,4 +10,9 @@ public class DisabledCodeExecutor implements CodeExecutor {
         throw new ExecutionUnavailableException(
                 "Code execution is not configured on this server. Set JUDGE0_URL to a Judge0 instance.");
     }
+
+    @Override
+    public Health health() {
+        return new Health(false, false, "none", "Code execution is not configured on this server.");
+    }
 }
