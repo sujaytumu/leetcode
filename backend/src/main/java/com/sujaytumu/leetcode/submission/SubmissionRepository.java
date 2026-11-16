@@ -1,5 +1,6 @@
 package com.sujaytumu.leetcode.submission;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,4 +25,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             group by p.difficulty
             """)
     List<Object[]> countSolvedByDifficulty(@Param("clientId") UUID clientId, @Param("verdict") Verdict verdict);
+
+    /** Rows of [problemId, total submissions, accepted submissions] across all clients. */
+    @Query("""
+            select s.problemId, count(s), sum(case when s.verdict = :accepted then 1 else 0 end)
+            from Submission s
+            where s.problemId in :ids
+            group by s.problemId
+            """)
+    List<Object[]> acceptanceStats(@Param("ids") Collection<Long> ids, @Param("accepted") Verdict accepted);
 }
