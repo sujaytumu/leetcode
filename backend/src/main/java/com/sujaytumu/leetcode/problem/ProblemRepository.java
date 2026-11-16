@@ -9,7 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProblemRepository extends JpaRepository<Problem, Long>, JpaSpecificationExecutor<Problem> {
 
-    @EntityGraph(attributePaths = {"tags", "testCases"})
+    // Fetch ONLY testCases. Also fetch-joining the tags collection makes a cartesian product, and because
+    // testCases is a List (a Hibernate "bag") every test case would be duplicated once per tag. Tags are
+    // loaded lazily (batched) by callers that run inside a transaction.
+    @EntityGraph(attributePaths = {"testCases"})
     Optional<Problem> findBySlug(String slug);
 
     @Query("select distinct t from Problem p join p.tags t order by t")
