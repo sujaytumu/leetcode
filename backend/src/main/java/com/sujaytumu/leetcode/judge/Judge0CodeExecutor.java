@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 /** Executes code on a Judge0 CE instance (https://github.com/judge0/judge0) using synchronous submissions. */
 public class Judge0CodeExecutor implements CodeExecutor {
@@ -35,17 +36,7 @@ public class Judge0CodeExecutor implements CodeExecutor {
         body.put("cpu_time_limit", cpuTimeLimitSeconds);
         body.put("wall_time_limit", cpuTimeLimitSeconds * 5);
 
-        Judge0Response response;
-        try {
-            response = client.post()
-                    .uri("/submissions?base64_encoded=false&wait=true")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(body)
-                    .retrieve()
-                    .body(Judge0Response.class);
-        } catch (RestClientException ex) {
-            throw new ExecutionUnavailableException("Code execution service is unreachable or returned an error.", ex);
-        }
+        Judge0Response response = submit(body);
         if (response == null || response.status() == null) {
             throw new ExecutionUnavailableException("Code execution service returned an empty response.");
         }
@@ -71,6 +62,60 @@ public class Judge0CodeExecutor implements CodeExecutor {
         }
         return new ExecutionResult(
                 Status.INTERNAL_ERROR, stdout, nullToEmpty(response.message()), compile, time);
+    }
+
+    private static final int MAX_ATTEMPTS = 3;
+
+    /** Posts a synchronous submission, retrying briefly when the free public instance is rate limited or busy. */
+    private Judge0Response submit(Map<String, Object> body) {
+        ExecutionUnavailableException last = null;
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            try {
+                return client.post()
+                        .uri("/submissions?base64_encoded=false&wait=true")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(body)
+                        .retrieve()
+                        .body(Judge0Response.class);
+            } catch (RestClientResponseException ex) {
+                int status = ex.getStatusCode().value();
+                if (status == 429) {
+                    last = new ExecutionUnavailableException(
+                            "The free code-execution service is rate limited right now. Wait a few seconds and try again.", ex);
+                } else if (status == 502 || status == 503 || status == 504) {
+                    last = new ExecutionUnavailableException(
+                            "The code-execution service is busy or restarting (HTTP " + status + "). Try again shortly.", ex);
+                } else {
+                    throw new ExecutionUnavailableException(
+                            "The code-execution service rejected the request (HTTP " + status + ").", ex);
+                }
+                if (attempt < MAX_ATTEMPTS) {
+                    pause(1500L * attempt);
+                }
+            } catch (RestClientException ex) {
+                throw new ExecutionUnavailableException(
+                        "The code-execution service is unreachable or timed out. Try again shortly.", ex);
+            }
+        }
+        throw last;
+    }
+
+    private static void pause(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Override
+    public Health health() {
+        try {
+            client.get().uri("/about").retrieve().toBodilessEntity();
+            return new Health(true, true, "judge0", "Code execution is available.");
+        } catch (RestClientException ex) {
+            return new Health(true, false, "judge0", "The code-execution service is not responding right now.");
+        }
     }
 
     private static Double parseTime(String value) {
