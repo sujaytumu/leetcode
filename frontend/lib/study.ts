@@ -1,0 +1,332 @@
+// Study material shown on the problem page: progressive hints plus a short approach write-up.
+// Keyed by problem slug. Kept in the frontend so it also reaches problems that are already stored
+// in a database (the backend seeder never overwrites existing rows).
+export interface Study {
+  hints: string[];
+  approach: string;
+  time: string;
+  space: string;
+}
+
+export const STUDY: Record<string, Study> = {
+  "two-sum": {
+    hints: [
+      "Checking every pair works but takes O(n²). Can you avoid looking at pairs?",
+      "For each number x, the partner you need is target − x.",
+      "A hash map from value to index lets you ask “have I seen the partner?” in O(1).",
+    ],
+    approach: "Scan once, keeping a map of value → index. For each element look up target − x; if present you are done, otherwise store x. Store after the lookup so an element never pairs with itself.",
+    time: "O(n)", space: "O(n)",
+  },
+  "valid-parentheses": {
+    hints: [
+      "The most recently opened bracket must be the first one closed.",
+      "Which data structure gives you last-in, first-out access?",
+    ],
+    approach: "Push every opening bracket on a stack. For a closing bracket the stack must be non-empty and its top must be the matching opener; pop it. The string is valid only if the stack is empty at the end.",
+    time: "O(n)", space: "O(n)",
+  },
+  "palindrome-number": {
+    hints: [
+      "Negative numbers and numbers ending in 0 (except 0) can never be palindromes.",
+      "You do not need the whole reverse. Reversing half the digits is enough and avoids overflow.",
+    ],
+    approach: "Peel digits off the end into a reversed number until it is at least as large as what remains. Then the two halves match if they are equal, or equal after dropping the middle digit for odd lengths.",
+    time: "O(log n)", space: "O(1)",
+  },
+  "maximum-subarray": {
+    hints: [
+      "Let best[i] be the largest sum of a subarray that ends exactly at index i.",
+      "best[i] is either nums[i] alone, or nums[i] added to best[i−1]. Which is larger?",
+    ],
+    approach: "Kadane's algorithm: keep the best sum ending at the current element, cur = max(x, cur + x), and track the maximum cur seen. Restarting is better exactly when the running sum has gone negative.",
+    time: "O(n)", space: "O(1)",
+  },
+  "best-time-to-buy-and-sell-stock": {
+    hints: [
+      "For a fixed selling day, which buying day is best?",
+      "It is the cheapest price seen before that day, and you can maintain it while scanning.",
+    ],
+    approach: "Scan once, tracking the minimum price so far. The best profit for selling today is price − minSoFar; keep the maximum over all days.",
+    time: "O(n)", space: "O(1)",
+  },
+  "climbing-stairs": {
+    hints: [
+      "To stand on step n you came from step n−1 or step n−2.",
+      "That is the Fibonacci recurrence. You only need the previous two values.",
+    ],
+    approach: "ways(n) = ways(n−1) + ways(n−2) with ways(1) = 1 and ways(2) = 2. Roll two variables forward instead of storing a table.",
+    time: "O(n)", space: "O(1)",
+  },
+  "contains-duplicate": {
+    hints: [
+      "Sorting puts equal values next to each other.",
+      "A hash set can detect a repeat the moment it appears, without sorting.",
+    ],
+    approach: "Insert each element into a set; if it is already present, return true. If the loop finishes, all values are distinct.",
+    time: "O(n)", space: "O(n)",
+  },
+  "binary-search": {
+    hints: [
+      "The array is sorted, so one comparison can discard half of the remaining range.",
+      "Keep lo and hi as inclusive bounds and loop while lo <= hi. Compute mid as lo + (hi − lo) / 2.",
+    ],
+    approach: "Compare the middle element with the target. If equal, return it; if the middle is smaller, search the right half, otherwise the left half. Stop when the range is empty and return −1.",
+    time: "O(log n)", space: "O(1)",
+  },
+  "longest-substring-without-repeating-characters": {
+    hints: [
+      "Think of a window [left, right] that never contains a repeated character.",
+      "When the new character is already inside the window, how far must left move?",
+      "Store the last index of each character so left can jump straight past the old occurrence.",
+    ],
+    approach: "Sliding window with a map of last-seen indices. For each right, if its character was seen at or after left, set left to that index + 1. The answer is the largest right − left + 1.",
+    time: "O(n)", space: "O(k) for k distinct characters",
+  },
+  "product-of-array-except-self": {
+    hints: [
+      "The product except self is (product of everything to the left) × (product of everything to the right).",
+      "Build the left products in one pass, then multiply in the right products in a second pass from the end.",
+    ],
+    approach: "Fill the output with prefix products (product of elements before i). Then sweep from the right keeping a running suffix product and multiply it into each position. No division is needed and zeros are handled naturally.",
+    time: "O(n)", space: "O(1) extra beyond the output",
+  },
+  "coin-change": {
+    hints: [
+      "Let dp[a] be the fewest coins needed to make amount a.",
+      "dp[a] = 1 + min(dp[a − coin]) over every coin that fits. dp[0] = 0.",
+      "Use a value larger than any real answer to mean “impossible”.",
+    ],
+    approach: "Bottom-up dynamic programming over amounts 0..amount. For each amount try every coin and take the best of dp[a − coin] + 1. If dp[amount] is still the sentinel, the answer is −1.",
+    time: "O(amount × coins)", space: "O(amount)",
+  },
+  "merge-intervals": {
+    hints: [
+      "Overlaps are hard to spot in random order. What if the intervals were sorted?",
+      "After sorting by start, an interval either overlaps the last merged one or starts a new group.",
+    ],
+    approach: "Sort by start. Walk the intervals: if the current start is at most the last merged end, extend that end to the maximum of the two ends; otherwise append a new interval.",
+    time: "O(n log n)", space: "O(n)",
+  },
+  "number-of-islands": {
+    hints: [
+      "Each connected group of land cells counts once, however large it is.",
+      "When you find unvisited land, flood the whole island so you never count it again.",
+      "Use an explicit stack or queue if a large all-land grid could overflow recursion.",
+    ],
+    approach: "Scan every cell. On unvisited land, increment the count and run a DFS/BFS that marks every connected land cell visited.",
+    time: "O(rows × cols)", space: "O(rows × cols)",
+  },
+  "trapping-rain-water": {
+    hints: [
+      "Water above a bar is limited by the tallest bar on its left and the tallest on its right.",
+      "At each index the water is min(maxLeft, maxRight) − height.",
+      "Two pointers moving inward can track both maxima without extra arrays.",
+    ],
+    approach: "Keep left and right pointers with their running maxima. Always advance the side whose maximum is smaller, since that side's water level is already determined; add max − height at that pointer.",
+    time: "O(n)", space: "O(1)",
+  },
+  "edit-distance": {
+    hints: [
+      "Let dp[i][j] be the edit distance between the first i letters of word1 and the first j of word2.",
+      "If the letters match, dp[i][j] = dp[i−1][j−1]. Otherwise 1 + the best of insert, delete or replace.",
+      "The base cases are converting to or from the empty string.",
+    ],
+    approach: "Fill a (m+1) × (n+1) table. dp[i][0] = i and dp[0][j] = j. For each cell take dp[i−1][j−1] on a match, or 1 + min(dp[i−1][j], dp[i][j−1], dp[i−1][j−1]) on a mismatch.",
+    time: "O(m × n)", space: "O(m × n), reducible to O(n)",
+  },
+  "single-number": {
+    hints: [
+      "A hash map of counts works, but there is a constant-space trick.",
+      "What is x XOR x? What is x XOR 0? Does the order matter?",
+    ],
+    approach: "XOR all elements together. Pairs cancel to 0 and XOR is commutative, so only the unpaired element remains.",
+    time: "O(n)", space: "O(1)",
+  },
+  "majority-element": {
+    hints: [
+      "Counting occurrences with a map works. Can you do it with O(1) space?",
+      "If you cancel each occurrence of the candidate with a different value, the majority still survives.",
+    ],
+    approach: "Boyer–Moore voting: keep a candidate and a count. A matching element increments the count, a different one decrements it, and at zero the next element becomes the candidate. The guaranteed majority is what remains.",
+    time: "O(n)", space: "O(1)",
+  },
+  "missing-number": {
+    hints: [
+      "You know exactly which numbers should be present: 0 through n.",
+      "What does the sum of 0..n equal, and how does the actual sum differ?",
+    ],
+    approach: "The expected sum is n(n+1)/2. Subtracting the actual sum leaves the missing number. XOR-ing all indices and values also works.",
+    time: "O(n)", space: "O(1)",
+  },
+  "valid-anagram": {
+    hints: [
+      "Two strings are anagrams if every letter appears the same number of times in both.",
+      "Sorting both strings, or counting letters, makes that easy to compare.",
+    ],
+    approach: "Compare letter counts: count up for one string, count down for the other, and check that every count returns to zero (or simply compare the sorted strings).",
+    time: "O(n)", space: "O(1) for a fixed alphabet",
+  },
+  "search-insert-position": {
+    hints: [
+      "This is a binary search, but the answer is a position even when the target is absent.",
+      "When the loop ends, lo is the first index whose value is not smaller than the target.",
+    ],
+    approach: "Binary search for the first index where nums[i] >= target (a lower bound). That index is both the match position and the insertion point.",
+    time: "O(log n)", space: "O(1)",
+  },
+  "sqrt-x": {
+    hints: [
+      "The answer lies between 0 and x. The function y × y is monotonic.",
+      "Binary search for the largest y with y × y <= x, and use 64-bit arithmetic to avoid overflow.",
+    ],
+    approach: "Binary search on y in [0, x]. If y × y <= x remember y and go right, otherwise go left. Compare using y <= x / y or a 64-bit product to prevent overflow.",
+    time: "O(log x)", space: "O(1)",
+  },
+  "count-primes": {
+    hints: [
+      "Testing every number for divisibility is too slow for large n.",
+      "Instead of testing, cross out the multiples of each prime you find.",
+      "Crossing out can start at p × p because smaller multiples were removed by smaller primes.",
+    ],
+    approach: "Sieve of Eratosthenes: mark 0 and 1 as non-prime, and for each prime p up to √n mark p², p²+p, … as composite. The unmarked numbers below n are the primes.",
+    time: "O(n log log n)", space: "O(n)",
+  },
+  "find-minimum-in-rotated-sorted-array": {
+    hints: [
+      "Compare the middle element with the rightmost element.",
+      "If mid is greater than the right end, the minimum must be strictly to the right of mid.",
+    ],
+    approach: "Binary search: if nums[mid] > nums[hi] the rotation point is right of mid so set lo = mid + 1, otherwise the minimum is at mid or left of it so set hi = mid. When lo == hi it is the minimum.",
+    time: "O(log n)", space: "O(1)",
+  },
+  "search-in-rotated-sorted-array": {
+    hints: [
+      "After splitting at mid, at least one half is always properly sorted.",
+      "Decide which half is sorted, then check whether the target lies inside that sorted range.",
+    ],
+    approach: "Binary search. If nums[lo] <= nums[mid] the left half is sorted: go left when the target is in [nums[lo], nums[mid]), else right. Otherwise the right half is sorted and the symmetric test applies.",
+    time: "O(log n)", space: "O(1)",
+  },
+  "container-with-most-water": {
+    hints: [
+      "Start with the widest container. Which line should you move to have any chance of a larger area?",
+      "Moving the taller line can only reduce the height limit while shrinking the width, so move the shorter one.",
+    ],
+    approach: "Two pointers at both ends. Record min(h[l], h[r]) × (r − l), then move the pointer at the shorter line inward. Every discarded pair is provably no better than one already considered.",
+    time: "O(n)", space: "O(1)",
+  },
+  "house-robber": {
+    hints: [
+      "For each house you either rob it or skip it.",
+      "If you rob house i you add its value to the best total up to house i−2. If you skip it, you keep the best total up to i−1.",
+    ],
+    approach: "dp[i] = max(dp[i−1], dp[i−2] + nums[i]). Only the previous two values are needed, so use two variables.",
+    time: "O(n)", space: "O(1)",
+  },
+  "longest-increasing-subsequence": {
+    hints: [
+      "A simple DP: dp[i] is the longest increasing subsequence ending at i, found by looking at all earlier smaller values. That is O(n²).",
+      "To reach O(n log n), keep for each length the smallest possible tail value. This list stays sorted.",
+    ],
+    approach: "Maintain a sorted array tails where tails[k] is the smallest tail of any increasing subsequence of length k+1. For each x, binary-search the first tail >= x and replace it (or append if none). The final length of tails is the answer.",
+    time: "O(n log n)", space: "O(n)",
+  },
+  "jump-game": {
+    hints: [
+      "You do not need to track every path, only how far you can possibly get.",
+      "If you reach an index beyond your current furthest reach, you are stuck.",
+    ],
+    approach: "Greedy: keep far, the furthest index reachable so far. Walk the array; if i > far the end is unreachable, otherwise update far = max(far, i + nums[i]).",
+    time: "O(n)", space: "O(1)",
+  },
+  "unique-paths": {
+    hints: [
+      "The number of ways to reach a cell is the ways to reach the cell above plus the ways to reach the cell to its left.",
+      "Every path is a sequence of (m−1) downs and (n−1) rights in some order. How many orderings exist?",
+    ],
+    approach: "Either fill a DP grid with paths[i][j] = paths[i−1][j] + paths[i][j−1], or count orderings directly with the binomial coefficient C(m+n−2, m−1).",
+    time: "O(m × n) for DP, O(min(m, n)) with the formula", space: "O(n) or O(1)",
+  },
+  "daily-temperatures": {
+    hints: [
+      "For each day you want the nearest later day that is warmer.",
+      "Keep a stack of days still waiting for a warmer day. What order are their temperatures in?",
+    ],
+    approach: "Monotonic stack of indices with decreasing temperatures. When today is warmer than the day on top, pop it and set its answer to the index difference. Push today afterwards.",
+    time: "O(n)", space: "O(n)",
+  },
+  "subarray-sum-equals-k": {
+    hints: [
+      "A subarray sum is the difference of two prefix sums.",
+      "At each position you want to know how many earlier prefix sums equal currentPrefix − k.",
+      "A hash map from prefix sum to its count answers that in O(1). Seed it with 0 → 1.",
+    ],
+    approach: "Walk the array maintaining the running prefix sum. Add the number of earlier prefixes equal to prefix − k to the answer, then record the current prefix in the map.",
+    time: "O(n)", space: "O(n)",
+  },
+  "kth-largest-element-in-an-array": {
+    hints: [
+      "Sorting and indexing works in O(n log n). Can you avoid sorting everything?",
+      "A min-heap of size k always holds the k largest values seen so far. Its top is the answer.",
+    ],
+    approach: "Push elements into a min-heap, popping whenever the size exceeds k. After processing all elements the heap root is the k-th largest. Quickselect achieves O(n) average time.",
+    time: "O(n log k)", space: "O(k)",
+  },
+  "maximum-product-subarray": {
+    hints: [
+      "Unlike sums, a very negative product can become the largest after multiplying by another negative.",
+      "Track both the maximum and the minimum product of a subarray ending at the current index.",
+    ],
+    approach: "Maintain hi and lo, the largest and smallest products ending at the current element. For each x take the max and min of (x, hi × x, lo × x), and update the global best with hi.",
+    time: "O(n)", space: "O(1)",
+  },
+  "longest-palindromic-substring-length": {
+    hints: [
+      "Every palindrome mirrors around a centre.",
+      "There are 2n − 1 centres: n single characters (odd length) and n − 1 gaps (even length).",
+    ],
+    approach: "For every centre expand outward while the characters match, recording the longest span. A DP over substrings or Manacher's algorithm are alternatives.",
+    time: "O(n²)", space: "O(1)",
+  },
+  "min-cost-climbing-stairs": {
+    hints: [
+      "Let best[i] be the minimum cost to stand on step i, where you may begin on step 0 or 1 for free.",
+      "You reached step i from i−1 or i−2, paying the cost of the step you left.",
+    ],
+    approach: "best[i] = min(best[i−1] + cost[i−1], best[i−2] + cost[i−2]) with best[0] = best[1] = 0. The answer is best[n], the position just beyond the last step. Two rolling variables suffice.",
+    time: "O(n)", space: "O(1)",
+  },
+  "longest-common-subsequence": {
+    hints: [
+      "Let dp[i][j] be the LCS length of the suffixes starting at i in text1 and j in text2.",
+      "If the characters match, extend the diagonal. If not, take the better of skipping one character from either string.",
+    ],
+    approach: "dp[i][j] = dp[i+1][j+1] + 1 when text1[i] == text2[j], else max(dp[i+1][j], dp[i][j+1]). The answer is dp[0][0].",
+    time: "O(m × n)", space: "O(m × n), reducible to O(min(m, n))",
+  },
+  "partition-equal-subset-sum": {
+    hints: [
+      "If the total is odd the answer is immediately false.",
+      "Otherwise this becomes: can some subset sum to total / 2? That is a 0/1 knapsack.",
+    ],
+    approach: "Let target = total / 2 and track which sums are reachable. For each number update reachable sums from high to low (or use a bitset shift) so each element is used at most once. Answer true if target is reachable.",
+    time: "O(n × sum)", space: "O(sum)",
+  },
+  "first-missing-positive": {
+    hints: [
+      "The answer is always between 1 and n + 1, so values outside 1..n do not matter.",
+      "Use the array itself as a hash table: try to place value v at index v − 1.",
+    ],
+    approach: "Cyclic placement: for each index swap nums[i] into its home slot nums[v−1] while 1 <= v <= n and the target slot differs. Then the first index i with nums[i] != i + 1 gives answer i + 1, or n + 1 if all match. A hash set is a simpler O(n)-space version.",
+    time: "O(n)", space: "O(1) with in-place placement",
+  },
+  "largest-rectangle-in-histogram": {
+    hints: [
+      "For each bar, find how far left and right it can extend while staying the shortest bar.",
+      "A stack of increasing heights finds those boundaries in a single pass.",
+    ],
+    approach: "Monotonic stack of (start index, height). When a shorter bar arrives, pop taller bars and compute their area as height × (i − start); the popped bar's start carries over to the new bar. A final sentinel height of 0 flushes the stack.",
+    time: "O(n)", space: "O(n)",
+  },
+};

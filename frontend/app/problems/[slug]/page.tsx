@@ -1,12 +1,18 @@
 "use client";
 import dynamic from "next/dynamic";
 import Markdown from "react-markdown";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { type ComponentType, use, useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
-  api, apiWithWake, ApiError, ExecutionStatus, Lang, ProblemDetail, RunResponse, Submission,
+  api, apiWithWake, ApiError, ExecutionStatus, fetchAllProblems, Lang, ProblemDetail, ProblemSummary, RunResponse,
+  Submission,
 } from "@/lib/api";
+import { STUDY } from "@/lib/study";
 
-const Editor = dynamic(() => import("@monaco-editor/react"), {
+import type { EditorProps } from "@monaco-editor/react";
+// Without this, next/dynamic infers ComponentType<never> for Monaco's Editor and the production build fails type-checking.
+const Editor = dynamic<EditorProps>(
+  () => import("@monaco-editor/react").then((m) => m.default as unknown as ComponentType<EditorProps>), {
   ssr: false, loading: () => <p className="mute" style={{ padding: 16 }}>Loading editor…</p>,
 });
 const LANGS: { key: Lang; label: string; monaco: string }[] = [
@@ -31,6 +37,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [tab, setTab] = useState<"desc" | "history">("desc");
   const [history, setHistory] = useState<Submission[]>([]);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
+  const [all, setAll] = useState<ProblemSummary[]>([]);
+  const [hintsShown, setHintsShown] = useState(0);
+  const [showApproach, setShowApproach] = useState(false);
+  const [timer, setTimer] = useState({ on: false, secs: 0 });
 
   const draftKey = (l: Lang) => `lc-draft:${slug}:${l}`;
   const loadHistory = useCallback(
@@ -47,6 +57,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [slug]);
 
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
+  useEffect(() => { fetchAllProblems().then(setAll).catch(() => {}); }, []);
+  useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
+  useEffect(() => {
+    if (!timer.on) return;
+    const t = setInterval(() => setTimer((x) => ({ ...x, secs: x.secs + 1 })), 1000);
+    return () => clearInterval(t);
+  }, [timer.on]);
 
   useEffect(() => {
     if (problem) setCode(localStorage.getItem(draftKey(lang)) ?? problem.starterCode[lang] ?? "");
@@ -114,6 +131,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }
 
   const execDown = exec && (!exec.enabled || !exec.reachable);
+  const study = STUDY[slug];
+  const idx = all.findIndex((p) => p.slug === slug);
+  const prev = idx > 0 ? all[idx - 1] : null;
+  const next = idx >= 0 && idx + 1 < all.length ? all[idx + 1] : null;
+  const clock = `${String(Math.floor(timer.secs / 60)).padStart(2, "0")}:${String(timer.secs % 60).padStart(2, "0")}`;
   const cur = result?.cases[caseTab];
 
   return (
@@ -130,6 +152,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <span className="grow" />
+            {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title}>← Prev</Link> : <span className="navbtn off">← Prev</span>}
+            {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title}>Next →</Link> : <span className="navbtn off">Next →</span>}
+            <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
+              ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
+            </button>
             <button onClick={toggleBookmark}>{problem.bookmarked ? "★ Bookmarked" : "☆ Bookmark"}</button>
           </div>
           {tab === "desc" ? (
@@ -138,6 +165,28 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <p><span className={problem.difficulty}>{title(problem.difficulty)}</span>{" "}
                 {problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</p>
               <div className="md"><Markdown>{problem.description}</Markdown></div>
+              {study && (
+                <div className="study">
+                  <h3>Hints</h3>
+                  {study.hints.slice(0, hintsShown).map((h, i) => (
+                    <div className="hint" key={i}><b>Hint {i + 1}.</b> {h}</div>
+                  ))}
+                  {hintsShown < study.hints.length ? (
+                    <button onClick={() => setHintsShown(hintsShown + 1)}>
+                      {hintsShown === 0 ? "Show a hint" : `Show hint ${hintsShown + 1} of ${study.hints.length}`}
+                    </button>
+                  ) : <span className="mute">No more hints.</span>}
+                  <h3>Approach</h3>
+                  {showApproach ? (
+                    <>
+                      <p>{study.approach}</p>
+                      <p className="mute">Time: <b>{study.time}</b> · Space: <b>{study.space}</b></p>
+                    </>
+                  ) : (
+                    <button onClick={() => setShowApproach(true)}>Reveal approach (spoiler)</button>
+                  )}
+                </div>
+              )}
             </>
           ) : (
             <table style={{ marginTop: 12 }}>

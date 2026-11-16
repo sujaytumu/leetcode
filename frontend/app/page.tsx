@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { api, apiWithWake, Page, Progress, ProblemSummary } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { api, apiWithWake, dailyIndex, fetchAllProblems, Page, Progress, ProblemSummary } from "@/lib/api";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
 
@@ -19,11 +20,21 @@ export default function Home() {
   const [waking, setWaking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
+  const [all, setAll] = useState<ProblemSummary[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     api<string[]>("/api/tags").then(setTags).catch(() => {});
     api<Progress>("/api/progress").then(setProgress).catch(() => {});
+    fetchAllProblems().then(setAll).catch(() => {});
   }, [reload]);
+
+  const daily = all.length ? all[dailyIndex(all.length)] : null;
+  const pickRandom = () => {
+    const unsolved = all.filter((p) => p.status !== "SOLVED");
+    const pool = unsolved.length ? unsolved : all;
+    if (pool.length) router.push(`/problems/${pool[Math.floor(Math.random() * pool.length)].slug}`);
+  };
 
   const fetchList = useCallback(() => {
     const p = new URLSearchParams({ page: String(page), size: "20" });
@@ -63,6 +74,25 @@ export default function Home() {
           <div className="card"><span className="mute">Bookmarked</span><b>{progress.bookmarked}</b></div>
         </div>
       )}
+      {daily && (
+        <div className="daily">
+          <div>
+            <span className="mute">Daily challenge · {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+            <div><Link href={`/problems/${daily.slug}`}><b>{daily.id}. {daily.title}</b></Link>{" "}
+              <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
+              {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
+            </div>
+          </div>
+          <span className="grow" />
+          <button onClick={pickRandom} disabled={!all.length} title="Open a random problem you have not solved yet">🎲 Pick one</button>
+        </div>
+      )}
+      <div className="chips">
+        <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
+        {tags.map((t) => (
+          <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{t}</button>
+        ))}
+      </div>
       <div className="filters">
         <input placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
         <select value={difficulty} onChange={(e) => reset(setDifficulty)(e.target.value)}>
