@@ -1,0 +1,1012 @@
+[
+  {
+    "slug": "two-sum",
+    "title": "Two Sum",
+    "difficulty": "EASY",
+    "tags": [
+      "array",
+      "hash-table"
+    ],
+    "description": "Given an array of integers `nums` and an integer `target`, find the two numbers that add up to `target`. Each input has **exactly one** solution and you may not use the same element twice.\n\n### Input\nLine 1: `n`, the length of `nums`.\nLine 2: `n` space-separated integers.\nLine 3: `target`.\n\n### Output\nThe two indices, smaller first, separated by a space.\n\n### Constraints\n- `2 <= n <= 200`\n- `-10^4 <= nums[i], target <= 10^4`\n- Exactly one valid pair exists\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n2 7 11 15\n9\n\nOutput:\n0 1\n```\n\n**Example 2**\n```text\nInput:\n3\n3 2 4\n6\n\nOutput:\n1 2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] nums, int target) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int target = Integer.parseInt(lines.get(pos++).trim());\n        int[] result = solve(nums, target);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, target):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    target = int(lines[pos]); pos += 1\n    result = solve(nums, target)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, target) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst target = parseInt(lines[pos++], 10);\nconst result = solve(nums, target);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> nums, int target) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int target = stoi(lines[pos++]);\n    vector<int> result = solve(nums, target);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n2 7 11 15\n9\n",
+        "expectedOutput": "0 1\n",
+        "sample": true
+      },
+      {
+        "input": "3\n3 2 4\n6\n",
+        "expectedOutput": "1 2\n",
+        "sample": true
+      },
+      {
+        "input": "2\n3 3\n6\n",
+        "expectedOutput": "0 1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n-1 -2 -3 -4 -5\n-8\n",
+        "expectedOutput": "2 4\n",
+        "sample": false
+      },
+      {
+        "input": "4\n0 4 3 0\n0\n",
+        "expectedOutput": "0 3\n",
+        "sample": false
+      },
+      {
+        "input": "50\n-4585 2793 4912 -2355 760 -2094 2410 -1849 -3445 -4242 -1071 3458 -1941 -2542 -3709 3909 3108 -2396 3414 513 574 -2730 978 2554 1005 -2121 3925 -4285 1948 -4866 898 4094 -96 325 4743 791 1210 331 -3574 -1561 -3428 -4437 1672 -3450 2288 2355 690 3810 -2972 -1144\n-1336\n",
+        "expectedOutput": "7 19\n",
+        "sample": false
+      },
+      {
+        "input": "50\n-932 -1627 646 -4645 -1990 -4842 -3325 1931 2664 -4148 4829 693 3484 -2324 1105 3552 721 -2541 -2593 823 3779 -4322 2805 -876 -3788 -4474 3463 -2947 -3533 3027 3673 -4183 -925 -2397 1858 -2385 -3181 1708 -2719 -63 -2333 2185 -3145 -4566 15 -1956 3188 -3527 -1962 -493\n-1675\n",
+        "expectedOutput": "28 34\n",
+        "sample": false
+      },
+      {
+        "input": "50\n129 -1948 -4115 58 -78 1708 3089 2344 982 -4837 -4870 -436 -1602 3640 -939 2576 381 -4663 2910 655 3775 -3264 2317 -1745 3618 2480 4597 -2218 -4113 -2488 -4001 24 265 3080 617 -2875 -2994 -1796 3998 1311 2513 -3208 -3873 -2350 3281 1449 1450 -155 4953 -1779\n2077\n",
+        "expectedOutput": "11 40\n",
+        "sample": false
+      },
+      {
+        "input": "50\n4450 995 4241 1606 -33 4272 4601 4476 -4120 -3802 -3054 3394 3519 -3963 -4380 -465 576 4434 -3652 4722 2763 -1875 -3101 1745 4946 306 852 -1566 4541 217 -3648 -3117 -1245 3698 2764 -3851 4548 4467 -3388 3619 2898 -993 -1835 -3198 494 4283 -4497 3975 63 -4138\n-3502\n",
+        "expectedOutput": "1 46\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "valid-parentheses",
+    "title": "Valid Parentheses",
+    "difficulty": "EASY",
+    "tags": [
+      "string",
+      "stack"
+    ],
+    "description": "Given a string `s` containing only `()[]{}`, determine whether it is valid. Brackets must close in the correct order and every close bracket needs a matching open bracket of the same type.\n\n### Input\nA single line containing the string `s`.\n\n### Output\n`true` if `s` is valid, otherwise `false`.\n\n### Constraints\n- `1 <= s.length <= 1000`\n- `s` consists only of `()[]{}`\n\n### Examples\n**Example 1**\n```text\nInput:\n()\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n()[]{}\n\nOutput:\ntrue\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static boolean solve(String s) {\n        // Write your solution here\n        return false;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String s = lines.get(pos++);\n        boolean result = solve(s);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(s):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    s = lines[pos]; pos += 1\n    result = solve(s)\n    print(\"true\" if result else \"false\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(s) {\n  // Write your solution here\n}\n\nconst s = lines[pos++];\nconst result = solve(s);\nconsole.log(result ? \"true\" : \"false\");\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool solve(string s) {\n    // Write your solution here\n    return false;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string s = lines[pos++];\n    bool result = solve(s);\n    cout << (result ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "()\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "()[]{}\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "(]\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "([)]\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "{[]}\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "(\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "]\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "((((((((((()))))))))))\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "[[[)}]{}}}[}}}()}[[}}{}[[)}(((}}[)](}[}[)]}[})}[]][](}[{}((][))()()({])[((}]){{}(}({()[])[}{[(}]]]{}\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "({)}[)((]}(}((}})]}[)}}[)}))}{})](]}([(]][{]]){{[)()({{[}]{]][[]{]]})}[]){)[))])[[])([]()}{]}(}[)][)(){{](({)([}({](()}}})]}}{)}{}]()(({](([]}})}}[}({][[))(]]])[{}{[][})[{)((({])}}(})){}[)({){))]{})[[){)]}}{{][[[{)]{(]{]{{}})({)){{[)[[])[]{{)]){(((({{})}){})[}}{(){}{((]]](}](]](}[[}){]{(][[[])}([][)([))(}]{[{]({))[(){]))[}])]{[})]}{](}){{)[(]{(}))(}[(}[[[{[(])}}{}}]]([}{[[}}){[{)}{{[]{[]}))}({][}}{{)){[{})]{])[(}{)(([}}{](})}](}{({)})}[}(][]}[]]){}]}[}{](](]])[{{[}()]][[))}]}}}}(]))(){(})}(([)[[\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "(]]}[([[][{[{((){[]]({[)[]]]}[[]()]}}}[])[[)()[]()[{}))]{{)[{]}[(}}{{[[)}(]{}}(){(()(]]]]{]})[{{}]({\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "]{){)[)[}([)(](((]}[}}}]]])]}{{([){[]{]])}){([}]}]{{]}{}][()[{[}]()({])](()[}(}{{)})({(]){({}][[[[)[[)([)[{}[(][(}]}[)([})}}()]){]]){([())[[}(([))[])()[{))(({})}]{{})[()}[(){))}}](}[[(]}]](]}(]][})}(){([]][{[[[])(){}()[)}][[{}{[}][}{}](([([(](}}]]))[{{{{})[{][{]))}})][{((}}}))])])]))[(}}}{}(}][)]({(}[})(){})[})({](]{)(](]}(()]{){}{]}{(()}}([[([)(]}[)((}](}][)}())[}]))}{}}()[[}[{()[})([{][{]{){[{[){{(}()[]){[)[}{)[[}]]{[{)}]{(][{}()]})[{}(})}{))]){][]]{[]()([])}]]}[[)]{]}}}{}{[([{)](]]}[())){}{((\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "(){[[]]}{()}(()){{}}[]{[{}{{{[]}[]}}]}{}[]([]([]()))[]()[(){}(){}()()[]]({[]}){[][]({({}[{}(())[{}]()])[[]]})[[{()}]]{}}{(([]))[]}()()[](){}[][][{}{{}}]({}{}){({[]()})}[([][]({{{[]{{[(())([])[]](([])[(){}]{{{(((()([]))))}}()(())()([(){[]}{{[]}([[]{{{{}}{({{{([]{{}}{{{}}}{}{})}}{}()})}}}([])[{{((()))}}]])}])})}}}}}))]\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "palindrome-number",
+    "title": "Palindrome Number",
+    "difficulty": "EASY",
+    "tags": [
+      "math"
+    ],
+    "description": "Given an integer `x`, return whether it reads the same backward as forward. Negative numbers are never palindromes.\n\n### Input\nA single integer `x`.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `-2^31 <= x <= 2^31 - 1`\n\n### Examples\n**Example 1**\n```text\nInput:\n121\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n-121\n\nOutput:\nfalse\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static boolean solve(int x) {\n        // Write your solution here\n        return false;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int x = Integer.parseInt(lines.get(pos++).trim());\n        boolean result = solve(x);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(x):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    x = int(lines[pos]); pos += 1\n    result = solve(x)\n    print(\"true\" if result else \"false\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(x) {\n  // Write your solution here\n}\n\nconst x = parseInt(lines[pos++], 10);\nconst result = solve(x);\nconsole.log(result ? \"true\" : \"false\");\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool solve(int x) {\n    // Write your solution here\n    return false;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int x = stoi(lines[pos++]);\n    bool result = solve(x);\n    cout << (result ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "121\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "-121\n",
+        "expectedOutput": "false\n",
+        "sample": true
+      },
+      {
+        "input": "10\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "7\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "1221\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "12321\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "123456789\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "1000000001\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "2147447412\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "100\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "maximum-subarray",
+    "title": "Maximum Subarray",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "dynamic-programming"
+    ],
+    "description": "Find the contiguous, non-empty subarray with the largest sum and return that sum.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum subarray sum.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n9\n-2 1 -3 4 -1 2 1 -5 4\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n\nOutput:\n1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(nums);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int result = solve(nums);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "9\n-2 1 -3 4 -1 2 1 -5 4\n",
+        "expectedOutput": "6\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "5\n5 4 -1 7 8\n",
+        "expectedOutput": "23\n",
+        "sample": false
+      },
+      {
+        "input": "3\n-3 -2 -1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n0 0 0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "20\n2 -37 15 -44 -18 25 -46 17 -44 22 -1 -13 46 -49 7 39 5 -15 4 31\n",
+        "expectedOutput": "76\n",
+        "sample": false
+      },
+      {
+        "input": "500\n87 -36 7 58 56 -67 -69 75 -50 9 63 16 88 19 96 -31 -32 -23 19 -87 -65 52 72 -19 -58 3 -14 -88 -79 69 80 -73 -21 -87 54 -66 -27 -91 -70 12 -95 -79 71 -80 75 36 -57 51 -70 65 74 53 -39 -64 43 -99 -15 15 -1 -60 23 94 48 -100 -7 -85 31 92 52 82 -58 18 62 34 52 -74 -77 80 -15 -99 39 -6 74 66 37 38 1 14 -43 52 57 5 31 -1 -16 66 63 11 27 -88 -50 -35 65 4 38 -6 63 6 -97 -24 -87 -80 -36 -85 -38 -32 49 59 -3 79 -67 11 39 -87 77 -48 44 54 67 -43 37 -17 -23 -65 80 92 -28 -89 -31 -3 40 -60 77 74 85 -8 -81 71 -57 3 -41 -26 -86 2 97 -72 86 -86 80 30 90 -24 81 14 -72 -21 78 93 -71 -75 -94 -2 46 42 -58 11 -5 33 -66 -32 88 12 -9 -57 52 -96 -49 73 20 43 -8 23 35 66 62 3 40 -90 85 -100 39 -78 98 41 -18 96 15 -58 -33 6 65 -2 87 21 -73 -96 -40 53 34 13 -70 -60 -24 -22 65 -14 -97 10 7 33 13 77 -65 0 -5 -66 45 23 2 93 42 20 53 78 8 63 -81 -20 6 6 -80 -51 -57 -66 85 -42 99 25 9 -59 39 44 82 -31 -9 -70 37 -78 1 -86 69 -28 -9 -23 71 60 80 65 -60 59 39 77 -83 -98 14 -50 77 -76 -16 20 20 89 -70 46 98 -90 -75 89 -9 40 67 -70 66 -90 10 -28 -76 25 33 92 -2 41 42 -35 -98 58 50 -89 64 38 12 72 -30 11 -83 64 58 -24 80 92 40 -53 -93 -78 32 59 -53 -40 -97 35 13 -34 76 -93 -35 -54 -77 -22 -29 98 -44 -47 52 52 -85 61 50 -62 24 16 59 95 -24 22 -96 42 58 -66 4 -18 -33 30 -85 -2 75 -11 -89 88 96 -51 -78 -72 -91 48 8 -95 87 -47 -82 -47 -54 20 50 -24 -19 43 80 4 13 -88 22 97 4 40 37 77 -6 18 -84 61 16 -57 -39 -65 -88 -57 -52 98 90 -36 -48 46 -19 9 -44 69 -3 16 89 -85 77 91 76 43 52 -58 7 -54 -28 39 -70 41 -16 37 83 -46 -92 43 -23 88 -49 96 36 -44 -79 96 -17 -96 42 28 78 -78 -100 -43 98 -61 75 45 -49 -68 -59 67 -24 45 -42 -11 -43 95 8 -44 -20 -69 0 -5 -80 -19 -80 -63 34 -19 -99 5 64 91 -35 25 55 12 -67 3\n",
+        "expectedOutput": "1484\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n-783 -571 657 -456 858 -85 -101 -291 -368 156 -23 -584 -433 75 787 -276 827 -382 -566 -891 -949 619 -65 -294 -9 138 -596 -384 -512 -385 -473 -980 -339 -543 94 636 -637 -629 398 853 186 -830 -68 -791 -699 -576 -464 280 -443 -769 835 751 490 521 -59 237 -985 215 138 491 -617 722 -381 -174 -707 -24 -33 -106 413 -285 -919 798 880 513 -193 -690 659 524 -674 -221 373 -404 -316 224 796 -172 -589 -950 901 530 -74 -858 151 327 439 278 987 203 -821 -442 240 -355 -543 676 131 337 528 52 -605 477 181 -29 209 -634 294 883 152 -746 637 129 -497 -405 -826 869 966 651 -497 -558 587 179 509 -71 397 318 -67 28 -467 484 399 608 -987 264 745 -347 -15 362 -258 -903 193 505 -446 644 -785 -30 957 323 522 -281 939 -208 25 509 -549 825 346 -789 -929 -191 -397 -146 -562 771 693 -104 -542 -758 194 -21 -781 967 -988 -517 -59 -221 67 -373 -777 -865 649 160 428 -453 -768 -886 628 -299 -195 -323 -28 -2 -857 -851 -521 168 -845 132 320 -484 190 990 -935 954 -148 503 -589 63 880 -88 -355 -382 -484 661 285 111 128 324 -21 613 692 -848 847 -68 757 646 772 -787 -317 -941 296 -90 885 616 254 643 822 -366 915 -286 634 752 539 -431 508 -25 -92 421 -303 804 -457 -445 -805 -247 759 -680 936 -139 -955 -464 671 349 404 456 -388 70 204 610 885 -955 -712 -115 947 27 556 -114 -582 -266 47 -396 224 -162 -748 819 -140 -921 892 -354 -42 665 449 -725 -447 -212 -624 888 568 -410 853 -935 859 300 285 47 -854 -635 -937 -873 -632 -631 70 -59 -466 437 638 -167 -40 -851 -369 586 387 -271 -197 671 -715 -186 534 -663 -58 -524 185 -452 -931 886 -444 -945 255 547 392 -336 -88 567 78 -217 -673 -562 552 -62 -877 677 216 -276 800 146 399 -250 -482 420 145 489 -719 -350 -476 -817 740 354 16 396 94 105 -525 -724 -696 681 391 874 535 125 -664 162 997 -256 -503 -125 -169 -205 -942 -998 -521 -626 -116 -525 615 849 -77 -734 -980 -521 644 520 -754 -928 825 -193 -320 303 -574 842 -42 -838 351 603 -550 -269 137 -580 -274 102 120 724 515 -812 923 -22 -63 -911 -200 -315 251 -198 980 -261 760 71 -641 -964 825 624 -854 883 -25 74 606 673 -945 -483 -402 471 560 -65 -939 -295 303 298 497 -895 32 -849 -423 -546 -613 -501 -376 -157 223 -963 -178 105 540 -121 -726 511 -550 813 -617 -723 51 930 303 -277 383 -903 62 195 -146 291 -858 977 -588 -737 9 92 -356 899 854 866 -438 -865 503 271 -895 -775 906 105 783 620 770 -719 -961 921 -506 -624 -517 -770 766 -912 198 -806 991 372 313 -865 -162 -753 18 -15 -536 -672 -874 -567 -882 -976 -770 660 -611 -292 601 -948 -171 -410 99 424 34 -454 724 -469 522 908 145 -25 752 -370 558 176 -261 -814 388 -228 974 -965 723 -670 933 -260 373 110 -548 -452 429 -404 303 -857 -22 966 789 609 659 -493 -156 -419 365 -500 -981 -677 171 259 591 -118 -898 -853 518 88 -287 111 -910 -674 656 205 113 -711 -86 659 -161 -74 -309 226 115 601 -549 771 430 720 204 -709 -288 -919 -912 673 32 -444 479 331 -61 5 -45 956 277 533 37 445 28 213 -213 747 931 81 -224 -39 -237 -138 -280 452 67 -883 -78 704 -444 -860 995 -339 269 -793 -491 -936 -894 -180 -379 827 -294 500 151 -125 -877 -972 -954 -829 -574 -201 463 855 -107 -450 170 -521 -915 -237 -651 -634 918 -250 -718 -861 392 -874 73 -264 255 -501 705 552 -981 -98 323 -19 648 343 -637 684 637 737 287 226 770 398 -141 239 405 -474 -173 -65 718 695 849 -496 -529 -874 627 397 -453 -712 262 492 51 -590 -309 91 -137 839 -780 -2 -146 -287 -539 841 -232 877 -487 -519 -890 536 664 -920 821 910 827 -952 -292 190 210 912 139 -305 833 438 -989 -999 -617 -779 -83 905 932 489 -926 633 498 -652 -743 454 -138 398 -700 828 988 -988 848 876 -882 -89 -808 -838 -568 -254 670 934 -561 6 -537 654 706 203 -530 -178 -807 989 -341 -947 -726 37 -763 857 -617 -158 -159 689 190 296 -378 42 -57 -293 -162 837 78 873 937 10 78 -367 -896 -573 -770 -959 -348 928 611 41 285 985 381 -328 461 -142 954 -516 -33 417 -1000 -337 -227 210 490 230 -857 -566 -815 562 -789 -944 641 485 709 106 369 581 -107 284 606 -422 610 354 -508 582 -903 37 -233 551 577 -93 574 -277 -564 810 -48 659 -791 789 500 -783 572 -433 -681 347 527 -640 -588 445 769 -590 -41 500 70 -744 218 364 193 125 697 -566 -17 32 691 824 -332 501 -88 784 -511 158 -927 -866 -127 -771 328 -799 243 -969 -201 -992 -90 301 -756 681 -835 -449 -545 -620 -23 -563 -189 621 -383 5 -559 -929 -851 468 4 -220 631 -203 -235 861 784 481 -760 413 600 58 -512 -962 -326 357 -591 968 -909 -989 -949 446 859 166 -522 454 180 -640 -196 -140 -429 -566 -46 365 -748 789 534 -973 360 -336 -443 -250 717 369 -517 -604 -371 -645 -569 351 -8 -336 775 -725 92 -219\n",
+        "expectedOutput": "10713\n",
+        "sample": false
+      },
+      {
+        "input": "2\n-1 2\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 -1 2\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "best-time-to-buy-and-sell-stock",
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "EASY",
+    "tags": [
+      "array",
+      "dynamic-programming"
+    ],
+    "description": "`prices[i]` is the price of a stock on day `i`. Buy on one day and sell on a later day to maximise profit. Return the maximum profit, or `0` if no profit is possible.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated prices.\n\n### Output\nThe maximum profit.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= prices[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n7 1 5 3 6 4\n\nOutput:\n5\n```\n\n**Example 2**\n```text\nInput:\n5\n7 6 4 3 1\n\nOutput:\n0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] prices) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int pricesLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] prices = new int[pricesLen];\n        if (pricesLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < pricesLen; i++) prices[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(prices);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(prices):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    prices_len = int(lines[pos]); pos += 1\n    prices = list(map(int, lines[pos].split())) if prices_len > 0 else []; pos += 1\n    result = solve(prices)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(prices) {\n  // Write your solution here\n}\n\nconst pricesLen = parseInt(lines[pos++], 10);\nconst prices = pricesLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(prices);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> prices) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int pricesLen = stoi(lines[pos++]);\n    vector<int> prices(pricesLen);\n    if (pricesLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : prices) iss >> v;\n    }\n    pos++;\n    int result = solve(prices);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "6\n7 1 5 3 6 4\n",
+        "expectedOutput": "5\n",
+        "sample": true
+      },
+      {
+        "input": "5\n7 6 4 3 1\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 4 1\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "6\n3 2 6 5 0 3\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "100\n360 707 810 856 480 79 527 355 885 436 668 524 513 540 790 935 818 845 565 903 290 143 565 272 148 26 586 601 397 589 752 407 934 904 76 446 20 216 723 258 259 233 269 675 398 702 940 848 869 714 272 718 694 700 270 516 399 442 478 493 14 395 458 514 414 346 243 318 366 749 434 760 67 324 915 624 661 32 137 558 136 638 561 570 490 932 712 982 403 203 918 770 237 708 260 376 897 336 811 228\n",
+        "expectedOutput": "968\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n5473 5193 2780 707 6775 8840 1187 6015 4920 5455 9614 6612 7256 5048 769 4417 3380 6613 6259 6617 4753 9147 6527 7879 6851 5335 8675 5501 6476 9207 2109 9645 3129 2081 387 4788 1455 2627 2398 1568 8664 1868 4479 2377 8699 8831 8046 1653 1385 4540 6594 2782 2441 1799 9270 7720 2085 7385 9003 6073 1592 2008 7000 7307 936 8843 8513 316 2918 2659 3244 5985 8719 6113 9739 7974 5288 3175 227 9786 559 4128 595 695 9050 3632 3868 2990 6288 6867 6213 3541 3294 991 9112 9004 6709 2819 5384 9792 5041 8931 1162 7318 4014 664 5959 4975 216 3093 5006 7457 8921 2017 9466 9220 6645 7574 1662 6470 3771 9 2193 2986 7773 4598 2488 677 6779 9807 458 3550 4604 3596 81 8962 9384 3049 6724 6591 8282 9034 9201 1470 1258 439 6657 7249 9823 9936 2950 680 2422 4809 6087 6028 7948 4846 867 3679 1279 4269 4045 3677 5150 3584 1765 8896 9707 5244 3432 9105 9302 8784 9070 6471 1591 8514 1087 9616 5353 4556 6883 5118 9353 7333 2865 1881 9737 227 7926 7990 6108 7232 5905 6613 9461 1236 554 7244 5307 3877 2333 2655 2080 655 9990 7503 1474 7195 1457 473 3058 7547 8525 4519 9109 4908 353 996 2553 8761 458 8590 8054 9174 3093 4264 7928 8433 2905 1383 9793 7930 5083 6337 9431 8856 5342 2240 1205 6647 1753 841 5796 5006 8851 1947 3076 5679 5031 9174 4512 3733 2835 8279 1749 8421 9005 3194 217 2260 9295 5123 3017 9870 1156 1751 886 1083 7321 9450 4477 2797 5769 4836 4160 5002 7939 3143 9933 4659 629 2196 5112 3712 6410 1139 4349 6217 8960 1804 9688 1612 9385 8340 495 5103 9861 2933 9189 1799 2049 7192 9857 5606 9770 508 5728 7350 5100 8573 9990 2864 5035 6407 2912 8015 5391 6414 1370 65 8534 1131 9506 406 4746 1130 3530 8350 1665 5005 7887 4851 6385 5164 8460 2522 9123 3272 395 8512 9233 2901 8622 1992 6541 4991 1515 9890 7172 1569 1730 6976 3848 2706 8591 5185 7987 1962 9249 8377 3579 9739 301 4003 8566 2761 4140 7956 5283 7853 4443 8082 4387 3981 7795 1825 5327 903 2187 9531 7141 7959 1792 4869 4766 1507 8220 3628 1210 4428 8547 8962 7029 8671 8754 1852 7011 2198 1688 7377 2054 9449 7198 6835 5361 4814 1722 3483 6583 5965 6797 7732 5966 1316 2813 7440 8620 9128 6099 5857 2774 888 1898 5471 1016 731 9521 2384 6036 930 9545 3116 5011 8527 7852 6801 8432 418 1377 7055 4685 6633 1772 2593 8330 2597 5099 4270 9695 2619 6799 752 1967 8024 1261 7256 5273 7980 1763 8036 2077 9141 3524 5836 1812 5332 2340 9219 4086 5460 9213 4706 3081 4489 3695 4630 6754 9298 9113 191 2336 1586 8854 5130 2897 3406 470 681 4818 3399 9437 844 5113 6529 2914 1137 4326 794 4558 939 5796 3628 8566 5546 1877 3374 6793 4732 5805 3653 4874 4332 3431 6822 5766 5884 8603 4442 5854 5720 3568 9603 4895 2503 6589 7069 6260 6852 3505 9125 2986 8008 5094 613 2536 7234 8795 8597 2242 3330 6085 9362 7472 5827 6257 6937 9705 6423 8115 4413 2897 6846 1717 9589 4816 5198 5935 9455 5451 689 8170 6969 3068 5882 6047 8156 2936 2235 5207 565 525 3233 7699 733 992 9594 832 684 45 7288 5772 6687 1892 6435 5357 6870 8537 7143 7788 1347 9388 1153 4551 8646 8184 1677 8520 1383 9938 4534 3990 7390 9570 3806 968 9765 5144 7700 4746 1713 7554 254 3593 2645 2879 7622 814 3889 6140 9433 3849 7144 1994 8117 8436 652 7544 892 191 504 4765 8182 7833 8676 3046 5437 1670 452 2790 9826 4261 2543 3152 9801 3848 9279 6590 5538 486 2390 4761 5288 3276 1033 4416 1511 2670 1232 4202 2002 2334 9744 5400 372 6035 7889 5892 1549 1900 9316 8753 8432 2638 5907 6802 6565 8793 4836 3412 1243 3843 7200 826 7130 8017 3387 5231 5249 3986 8771 7024 6734 9160 5215 3534 3813 4626 3888 683 6013 2877 8590 8700 4538 9587 9420 9217 7885 5986 4855 2773 4876 4138 8376 5532 7976 9886 9356 770 9819 4228 8072 1774 5512 527 5294 364 6795 1941 8968 3681 49 4199 7082 3337 1932 5839 7244 1875 3745 1094 1911 5330 5142 435 3419 3737 6827 9912 9532 8577 8430 4246 4404 8961 4083 8902 932 9975 8256 8324 6989 6033 3945 6692 1318 3265 9480 6481 8611 7295 9879 944 3815 1481 7947 3118 6248 3816 2278 3526 8149 6421 2596 9709 3995 739 7493 6335 4007 7962 5665 8596 463 1513 5452 7030 3873 3897 5086 4712 3577 8743 6505 2413 10 2673 9898 6082 6778 8136 8798 3553 1575 3303 2183 1366 6748 9904 5464 4352 7757 2335 6798 7082 2071 9402 327 6046 9328 1299 2430 916 690 6956 1391 3732 693 8115 808 5510 2292 1342 3683 3502 2774 9034 4086 7055 2415 8563 7916 5243 8665 5483 3131 4170 6262 6879 9822 7684 127 8444 501 3978 1376 6915 4213 1537 660 688 1641 7633 7615 1808 8481 1069 1889 8032 6514 9019 4448 9456 6400 3545 8094 4858 9313 1133 6615 1175 9565 6262 4913 5777 6894 5955 7112 4142 280 4739 9527 8828 1969 8020 1737 5176 4268 5378 3290 7202 5152 1039 700 699 9563 7286 7100 4455 860 4023 4071 7805 4786 9728 1353 8461 6442 5317 8290 8172 327 9815 1821 4035 4202 1665 7459 5268 5875 2728 8190 3989 5618 3927 6901 4985 9813 2085 8036 6210 4095 5940 4398 7082 2062 1253 9380 351 5094 7357 2636 1046 9043 1668 4974 4204 7953 1526 353 9341 9356 2340 8069 8453 1787 186 5350 6505 1278 2603 6585 8083 5642 7581 8325 5516 3159 2792 6471 5398 6917 5561 6336 4851 9898 694 9252\n",
+        "expectedOutput": "9981\n",
+        "sample": false
+      },
+      {
+        "input": "50\n3 7 14 18 25 47 54 63 69 85 90 91 92 131 132 139 144 151 174 175 195 202 207 213 213 214 232 239 240 281 291 295 299 368 375 379 400 404 411 425 439 439 441 449 464 464 473 473 481 495\n",
+        "expectedOutput": "492\n",
+        "sample": false
+      },
+      {
+        "input": "50\n480 478 475 472 464 461 443 434 431 430 395 389 359 357 352 345 344 334 334 327 308 307 297 294 293 287 266 243 229 218 207 196 150 133 118 106 105 101 98 83 65 64 60 52 27 23 14 13 13 6\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "climbing-stairs",
+    "title": "Climbing Stairs",
+    "difficulty": "EASY",
+    "tags": [
+      "math",
+      "dynamic-programming"
+    ],
+    "description": "You are climbing a staircase with `n` steps. Each move climbs 1 or 2 steps. How many distinct ways can you reach the top?\n\n### Input\nA single integer `n`.\n\n### Output\nThe number of distinct ways.\n\n### Constraints\n- `1 <= n <= 45`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n3\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int n) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int n = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(n);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(n):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    n = int(lines[pos]); pos += 1\n    result = solve(n)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(n) {\n  // Write your solution here\n}\n\nconst n = parseInt(lines[pos++], 10);\nconst result = solve(n);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(int n) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int n = stoi(lines[pos++]);\n    int result = solve(n);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "3\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "4\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "5\n",
+        "expectedOutput": "8\n",
+        "sample": false
+      },
+      {
+        "input": "10\n",
+        "expectedOutput": "89\n",
+        "sample": false
+      },
+      {
+        "input": "20\n",
+        "expectedOutput": "10946\n",
+        "sample": false
+      },
+      {
+        "input": "30\n",
+        "expectedOutput": "1346269\n",
+        "sample": false
+      },
+      {
+        "input": "44\n",
+        "expectedOutput": "1134903170\n",
+        "sample": false
+      },
+      {
+        "input": "45\n",
+        "expectedOutput": "1836311903\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "contains-duplicate",
+    "title": "Contains Duplicate",
+    "difficulty": "EASY",
+    "tags": [
+      "array",
+      "hash-table"
+    ],
+    "description": "Return `true` if any value appears at least twice in the array, otherwise `false`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^9 <= nums[i] <= 10^9`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 2 3 1\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n4\n1 2 3 4\n\nOutput:\nfalse\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static boolean solve(int[] nums) {\n        // Write your solution here\n        return false;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        boolean result = solve(nums);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(\"true\" if result else \"false\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(result ? \"true\" : \"false\");\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool solve(vector<int> nums) {\n    // Write your solution here\n    return false;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    bool result = solve(nums);\n    cout << (result ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n1 2 3 1\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "4\n1 2 3 4\n",
+        "expectedOutput": "false\n",
+        "sample": true
+      },
+      {
+        "input": "10\n1 1 1 3 3 4 3 2 4 2\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "1\n7\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "2\n0 0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "500\n-44638 -53778 -11232 81282 19452 -61636 -88857 2099 -27593 41429 -29319 14460 73383 10329 -89646 38754 -65004 58371 -87738 79439 96618 -14918 -68496 12767 -80733 -4814 40616 33232 9210 46120 -17709 46545 -86979 24515 -66249 75872 -30968 37883 -73454 -76385 69152 -63093 25810 37701 71961 -43868 -51503 37155 -40608 49698 -29605 78329 -48752 -91353 -14899 50880 -31114 -88383 51115 -77955 33066 65797 26710 -62754 4614 31492 27312 75975 -30053 26124 -45382 -91380 39798 37420 -89693 36555 30454 25765 -26866 80476 39089 -20135 4329 -56280 -75726 -43735 -36505 -44844 -18094 92338 8473 14869 95170 -42604 -97399 89226 47208 -68567 9584 -64105 22962 -96955 -3129 -77868 55623 -66942 -89384 22107 51891 21417 -59262 -86366 -60614 -31493 -54181 53832 -25009 -38115 -7338 1897 -82215 42049 91890 340 89923 -85044 77199 3778 32907 -30756 46340 97639 16703 42554 87712 -75816 90856 36752 55876 88303 -20053 -2594 91222 -89424 -55506 92144 -86799 -89711 -68141 40036 51732 -77492 -33936 -67322 -39816 31471 -68782 27048 -79386 -98635 13611 -2005 60971 -36256 75365 -44062 -68329 96395 -94796 97528 -2603 95475 -92444 -71916 -58374 91777 2068 -8995 18097 1069 60979 98745 -75944 -650 -18705 56621 19290 92080 -82463 63691 -83419 89215 36679 -3390 -79247 -10142 -54724 -45235 1477 52491 3847 -47769 -48088 17508 86123 -96072 -65249 96698 64332 12792 -74053 -79587 54922 -69134 -41097 81412 13452 88962 -99219 43453 21658 -99277 3207 693 13967 -1815 67926 -47920 45912 31954 62273 -50523 73749 63013 48406 81342 14861 -17470 60859 -87653 -40962 -63602 -29424 1675 -50290 -8171 -40499 77996 -7495 37989 -5280 -24925 29766 -9194 73860 11950 -70481 -25124 -75635 -81342 -32291 -65095 33804 -43997 -53878 14886 -63325 -58475 -34934 19678 69087 31780 -39939 -48118 84561 -30389 82245 11111 -38827 7951 -35382 -55166 -43234 72035 -27527 21880 41664 -97297 -74362 47025 -19137 1058 -64115 -73708 25684 48419 -16418 43849 89198 -11335 40751 1210 16002 94950 12240 37583 -74191 95802 24162 -42877 -94924 47423 -42276 87059 25401 -68338 36534 63551 -74158 -27013 -51085 -39370 89601 -86777 -26620 -32451 -85342 -14140 -51485 65511 -96606 -95855 59360 94356 38381 -45441 -6704 -85996 84545 50148 -56574 54869 -48128 40617 -17964 17276 48983 -18080 -84816 -94531 80728 -48975 14645 19847 54796 79559 -91927 -26180 59754 87280 67158 65252 39402 17870 13289 -61213 -91255 84073 -35288 -65724 76646 8388 73668 -63678 49267 -55229 -27711 -82300 76803 45849 90692 14824 -62272 -59251 7891 16193 -38825 -28833 46859 85412 -42768 -42530 55840 34277 -7358 84552 57699 81898 -54078 90173 -92301 58595 -33265 -26617 -98385 -69798 -1824 41489 53854 6115 11439 84969 -34886 -62356 -21868 -24243 -30267 -49973 43269 40911 -25673 -10058 41542 55853 -43917 4428 -36264 -38679 58736 -25359 -44835 58607 16972 85993 49915 92393 81173 -78958 -2569 45880 32606 54046 -73455 10351 -52824 -52481 90779 15238 -48628 1673 42937 64186 37859 -3960 -52491 33884 89103 -41472 -20905 27619 57939 -50083 18324 37964 -7214 -58668 84041 -90199 46181 10591 74795 -17486 47784 -43808 95117 49331 -93132 17104 -96691 -64728 15862 -67303 15889 45119 -34253 41609 -42164 -70206 -10000 92708 -50715 -51345 16225 7389 70898 -45598 -9675 45668 -8963 14467\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "500\n31983 -99196 -18712 -64969 -82709 -48025 43402 -59544 -18632 -34886 -34508 57421 12274 38356 8101 7784 -12115 -548 -25397 89302 -36376 91801 56721 35355 -3429 44663 83681 -50880 1771 58697 -55556 93665 -25017 -22864 74640 -86198 37561 -56789 -76415 -22033 90492 34606 20814 25542 79146 21501 5086 13795 -23423 38378 71721 -4216 -43960 -88783 -32015 -74454 23398 -24247 -63516 -89560 94616 85013 97414 15686 -48839 17543 71868 66701 82534 -69003 69996 -18973 -64588 28448 97295 99704 89291 -4374 -52634 65673 30068 90055 -36497 80192 90067 -25624 -16093 5295 -61589 89672 60099 -47227 12233 72174 -69010 77817 -36751 69073 54806 -92656 80302 47126 73339 1582 24882 -84006 -29757 -19255 -26058 -12095 -24072 91009 -24500 -77493 59812 92630 -21420 19624 -72221 28647 21711 73488 72417 26162 -65135 92475 -63779 -7709 4182 -19904 -17586 15512 -90051 -63482 -78203 -61966 34826 66385 -2828 37105 -54259 26161 93252 63874 -70542 -80088 46511 -84737 79679 -67350 87661 -21784 4887 67798 -41864 -94991 18294 -10820 27222 -52138 -6971 62491 -93451 80665 -21954 33177 -46803 -42810 -93151 32468 -82026 36281 -17881 82223 -13014 -3980 -47483 -91360 -35084 -73492 62402 -13328 -29351 -94582 -43954 -68585 -74726 -13699 -58694 -99097 31396 -11199 -11432 15232 51374 86059 18219 67498 -85458 -26601 37353 39450 -95314 -45252 -85668 32113 -76223 -78101 -53400 -4489 86546 73526 94277 97185 -75571 41488 -96 -12860 93956 57586 -14236 -5293 -75396 -9125 -82506 -76990 20041 27920 56956 -98441 -68878 15620 -70031 -72388 85118 21800 -92851 -78709 20866 -50936 -32889 -6080 70395 -86043 -79941 31887 84352 -48195 -47011 98529 29073 -68712 -63179 -77646 -91168 -18062 -66812 65415 -88748 87409 26607 -59454 -40802 30982 13716 6744 67746 97983 -71094 -89276 -49641 -17131 79173 42031 -55246 -95733 -87307 84015 77110 7669 -95354 -14808 74352 -4013 -66799 -28958 15140 -96552 54287 43859 92305 -62693 -19225 -39877 -29093 -44576 -90948 -81992 -73061 -85105 75790 92368 82348 25944 12954 -85170 -4289 33249 38069 45060 -76587 -6051 26772 -71866 -7118 38152 -49944 -66944 65961 41733 -96562 -7154 59791 44074 -24112 30527 29655 89256 99208 776 54451 96784 -24576 -92208 -11595 -44059 32982 53683 -12695 43477 -72460 -29800 1102 3792 -60171 70402 76549 -34155 73335 36351 -19526 60816 82614 -51116 41814 -31229 -60724 -84094 69271 38651 39202 15322 -62891 64976 70696 93452 -56205 16239 -63523 -55538 37771 -68794 -62109 59212 45345 -47102 40116 -10142 -58558 -84788 24141 -93138 -8428 -49006 4637 28450 -94007 -85742 82785 -61428 -77924 -63784 -10949 82714 10275 41820 60328 -66472 90504 85054 76992 33691 10547 -82798 80525 -26405 47582 -64574 23384 -40913 23779 89761 88021 35291 -76542 -6316 46502 -12199 91002 -92187 11232 -35094 -3947 -25579 9097 -33265 -75145 -25451 65047 -5149 45092 -2830 -68353 -19150 86462 -79139 -74867 78970 64270 -8418 -24569 -46180 8377 40762 -99479 -2545 60386 26926 -90164 -38293 76558 -59102 -3330 89485 -70016 -74223 -24527 -72287 28952 5211 -35442 -68543 -6921 -39232 -2588 38769 62528 -30245 68033 -44854 91655 -91733 -40950 21008 3957 73473 -49576 -49547 57026 25167 89361 -19223 -666 49913 14446 -12943 39300 -75472 41248 59694 14035 -53889 -27457 31517 -12378 -82732 -21341 -66116 88150 -90539\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "2\n-1 -1\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "binary-search",
+    "title": "Binary Search",
+    "difficulty": "EASY",
+    "tags": [
+      "array",
+      "binary-search"
+    ],
+    "description": "Given a sorted array of distinct integers and a `target`, return the index of `target` or `-1` if it is not present. Your algorithm should run in `O(log n)`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` ascending space-separated integers.\nLine 3: `target`.\n\n### Output\nThe index of `target`, or `-1`.\n\n### Constraints\n- `1 <= n <= 1000`\n- All values are distinct and sorted ascending\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n-1 0 3 5 9 12\n9\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n6\n-1 0 3 5 9 12\n2\n\nOutput:\n-1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums, int target) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int target = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(nums, target);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, target):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    target = int(lines[pos]); pos += 1\n    result = solve(nums, target)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, target) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst target = parseInt(lines[pos++], 10);\nconst result = solve(nums, target);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums, int target) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int target = stoi(lines[pos++]);\n    int result = solve(nums, target);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "6\n-1 0 3 5 9 12\n9\n",
+        "expectedOutput": "4\n",
+        "sample": true
+      },
+      {
+        "input": "6\n-1 0 3 5 9 12\n2\n",
+        "expectedOutput": "-1\n",
+        "sample": true
+      },
+      {
+        "input": "1\n5\n5\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n-5\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "2\n1 3\n3\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n-99961 -99923 -99869 -99705 -99653 -99491 -99304 -99289 -99115 -98954 -98875 -98762 -98715 -98676 -98286 -98194 -97852 -97619 -97549 -97337 -97312 -97168 -97064 -97036 -96028 -95874 -95631 -95605 -95508 -95246 -94691 -94539 -94226 -94079 -93990 -93830 -93282 -92990 -92980 -92767 -92410 -92351 -92257 -91961 -91835 -91765 -91746 -91534 -91386 -91246 -91183 -91179 -90915 -90780 -90697 -90311 -89927 -89897 -89636 -89561 -89360 -89306 -89289 -89183 -88946 -88699 -88537 -88419 -87574 -87456 -87446 -87445 -87386 -86946 -86350 -86159 -85875 -85789 -85495 -85447 -85344 -85010 -84843 -84374 -83966 -83728 -83567 -83518 -83507 -83352 -83263 -83170 -82681 -82665 -82353 -82129 -82101 -82070 -81830 -81648 -81311 -81212 -81189 -80856 -80691 -80606 -80307 -80191 -79531 -79472 -79009 -78837 -78012 -77719 -77697 -77378 -77216 -77138 -76951 -76861 -76414 -76358 -75907 -75673 -75438 -75428 -75037 -74691 -74669 -74668 -74628 -74167 -73990 -73887 -73880 -73868 -73167 -72933 -72763 -72575 -72545 -72067 -71571 -71516 -71506 -71476 -70593 -70585 -70096 -69909 -69873 -69855 -69791 -69080 -68976 -68930 -68502 -68299 -68245 -68124 -67848 -67749 -67693 -67690 -67438 -67276 -67253 -67119 -66903 -66690 -66317 -66308 -66153 -65636 -65620 -65498 -65416 -65381 -65000 -64910 -64650 -64302 -64163 -64157 -63959 -63834 -63824 -63820 -63653 -63435 -63408 -63257 -62649 -62564 -62492 -62182 -61865 -61251 -61244 -61132 -60842 -60172 -59770 -59670 -59601 -59380 -59304 -59105 -59033 -58824 -58814 -58755 -58595 -58375 -57888 -57795 -57317 -56757 -56632 -56538 -55631 -55432 -55378 -55316 -55151 -54724 -54666 -54514 -54088 -54085 -54011 -53926 -53831 -53771 -53751 -53630 -53619 -53586 -53529 -53415 -53323 -53196 -53032 -52959 -52883 -52843 -52821 -52633 -52283 -52192 -51574 -51247 -51105 -50821 -50713 -50461 -50357 -50345 -50088 -50072 -50033 -49894 -49878 -49760 -49511 -49478 -49265 -48623 -48540 -48518 -48296 -47913 -47563 -47000 -46997 -46844 -46598 -45285 -45055 -45023 -44743 -44454 -44356 -44324 -44111 -43769 -43240 -43160 -42687 -42616 -42168 -41602 -41497 -41491 -41306 -41004 -40985 -40883 -40866 -40760 -40686 -40652 -40611 -40585 -40152 -39976 -39918 -39726 -39501 -39378 -39375 -38967 -38953 -37937 -37855 -37618 -37231 -37219 -36828 -36040 -35645 -35065 -34881 -34383 -34045 -33785 -33702 -33478 -33105 -32889 -32674 -32350 -32048 -31785 -30770 -30696 -30098 -29890 -29867 -29458 -29450 -29433 -29215 -29182 -28981 -28947 -28694 -28464 -28441 -28316 -28007 -27998 -27356 -27248 -27019 -26565 -26493 -26392 -25839 -25764 -25702 -25642 -25489 -25481 -25124 -25111 -25013 -24947 -24845 -24820 -24786 -24551 -24497 -24471 -24388 -24360 -24263 -23590 -23530 -23456 -22794 -22622 -22448 -22212 -21962 -21758 -21680 -20879 -20852 -20677 -20339 -20185 -19870 -19667 -19355 -19306 -19005 -18606 -18340 -18180 -18126 -17953 -17802 -17710 -17331 -17300 -17200 -17017 -16782 -16562 -16388 -15826 -15754 -15192 -15081 -14619 -14503 -14220 -14009 -13981 -13951 -13946 -13807 -13485 -13051 -12719 -12684 -12661 -12464 -11910 -11898 -11664 -11538 -11524 -11498 -11449 -10702 -10584 -10527 -10481 -10448 -10405 -9970 -9437 -9094 -8849 -8749 -8245 -7983 -7922 -7799 -7601 -7536 -7450 -7117 -6622 -6583 -6215 -6214 -5972 -5772 -5715 -5602 -5496 -5490 -5090 -4868 -4783 -4734 -4701 -4466 -4393 -4328 -4288 -4182 -3589 -3413 -3255 -3204 -3069 -2866 -2743 -2649 -2045 -1882 -1652 -1632 -1581 -1537 -1531 -1395 -1345 -856 -604 -523 -437 -118 411 592 665 1001 1116 1151 1197 1401 1785 1818 1930 2003 3021 3136 3636 3802 3893 3899 3907 4423 4483 4586 4616 4637 4693 4708 5670 5789 6619 6671 6943 6968 7076 7282 7289 7391 7474 7515 7545 7573 8172 8430 8602 8826 8958 9371 9438 9557 9563 9707 10405 10707 10762 11214 11329 11460 11510 11612 11676 12096 12343 12449 12466 12488 12495 12619 12672 13160 13412 13656 13731 13852 14239 14525 15074 15242 15348 15601 15679 15751 16196 16596 16745 16825 17447 17475 17656 17928 18046 18291 18381 18497 18631 18646 18847 18919 19725 19806 19827 20029 20521 21025 21047 21072 21073 21144 21267 21377 21618 21783 22011 22297 22502 22742 22816 22847 23358 23513 23544 23555 23904 24026 24112 24195 24324 24425 25117 25129 25174 25396 25707 25775 26060 26438 26843 27486 27702 27822 28057 28190 28448 29406 29505 29613 30061 30071 30077 30157 30205 30397 30739 30991 31253 31828 32202 32315 32396 32667 32724 33258 33329 33347 33949 34053 34240 34261 34294 34971 35456 35498 35657 35771 36358 36369 36723 36729 36752 36920 36938 37220 37329 37742 37768 37804 37956 38157 38647 38893 39105 39159 39580 39946 40108 40117 40135 40190 40458 40511 40747 40923 41063 41126 41130 41256 41388 41432 41532 41803 41893 41954 41982 42063 42101 42175 42225 42231 42416 42505 42548 42564 42657 42700 42720 42948 42973 43108 43339 43430 43448 43498 43535 43571 43644 44072 44187 44274 45289 45474 45898 45955 46193 46203 46302 46332 46508 46791 47092 47133 47209 48461 48711 48718 48851 48921 49141 49161 49569 50097 50157 50160 50377 50411 50498 50572 50604 51319 51522 51747 51753 52179 52397 52482 52769 52823 52962 53218 53329 53374 53684 54039 54081 54583 54706 54737 55063 55321 55599 55638 55650 55857 56122 56458 56690 56743 56893 56979 57153 57796 58166 58321 58370 58519 58535 58824 58832 59098 59609 59720 59797 59803 60039 60058 60195 61112 61166 61324 61640 61795 61861 62331 62398 62444 62517 62935 63164 63489 63565 64011 64174 64367 64877 65054 65249 65886 66364 66523 66582 66585 66707 67085 67364 67441 67635 67646 67687 67820 67969 68206 68332 68433 68837 68997 69243 69525 69659 70435 70441 70983 71138 71220 71541 71546 71601 71641 71763 71917 72068 72182 72806 72925 73477 73572 73769 73894 73901 74195 74251 74363 74833 75118 75140 75194 75217 75316 75421 75769 75965 76096 76285 76419 77461 77572 77575 77615 77777 77792 77818 77836 77908 78072 78389 78451 78670 78876 79125 79160 79611 80408 80439 80548 80551 80997 81071 81421 81554 81875 81937 82111 82627 82705 83252 83466 83769 83824 83967 84036 84101 84674 84839 84927 84977 85408 85466 85554 85763 85949 86092 86608 86705 86766 86850 86938 86961 87092 87155 87561 88166 88242 88519 88733 88849 89109 89172 89572 89679 89956 90024 90653 90982 91319 91515 91780 91862 91898 91949 92002 92056 92636 92785 92863 93045 93091 93115 93140 93716 93960 94564 94586 94916 95020 95200 95273 95669 95844 95918 96169 96221 96253 96369 96534 96621 96739 96750 96822 96872 98249 98268 98326 98779 99065 99463 99608 99902\n-8749\n",
+        "expectedOutput": "446\n",
+        "sample": false
+      },
+      {
+        "input": "50\n-99789 -89374 -83576 -83410 -82401 -69648 -60658 -54496 -51732 -50880 -48578 -44140 -39408 -38517 -36059 -35880 -35341 -21766 -21522 -20131 -19141 -16986 -11404 -8719 -8175 -6343 -3886 6191 12946 16970 19849 20011 27381 30700 32139 33137 41853 48222 54805 58600 62419 63224 63764 68538 74082 76814 81505 86088 87334 99668\n-21766\n",
+        "expectedOutput": "17\n",
+        "sample": false
+      },
+      {
+        "input": "50\n-99487 -95362 -95066 -90336 -83415 -82691 -78738 -76017 -75683 -72252 -53706 -48760 -43874 -36644 -35531 -10052 -5249 -1108 -899 -726 5056 7447 10561 15915 20194 23325 26215 33405 36724 40029 40523 43930 45007 55534 58847 59643 61393 62282 63079 79109 79912 83012 86608 87036 87535 87810 92758 94038 95663 97373\n40029\n",
+        "expectedOutput": "29\n",
+        "sample": false
+      },
+      {
+        "input": "500\n-99858 -99625 -99607 -99592 -99200 -99144 -98882 -98482 -98288 -98223 -96710 -96679 -95862 -95780 -95029 -94977 -94550 -94403 -94253 -94100 -93899 -93601 -93386 -93180 -92467 -92169 -92153 -91734 -90608 -90477 -89734 -89413 -88000 -87932 -87887 -87761 -87741 -87722 -87120 -87046 -86786 -86576 -85952 -84777 -84664 -84281 -84232 -84211 -83988 -83598 -83547 -83486 -82703 -82495 -82410 -81989 -80471 -79949 -79667 -79088 -78854 -78612 -77916 -77543 -76628 -76420 -76337 -75743 -75227 -75090 -74758 -74673 -73830 -71075 -70418 -69651 -68855 -68291 -68110 -67644 -65219 -64754 -64707 -64654 -64607 -64399 -63824 -62498 -62458 -62376 -60582 -60370 -60345 -60057 -59568 -59283 -59033 -58841 -58776 -58318 -58073 -58062 -57742 -57152 -56811 -56353 -54912 -54501 -53476 -53167 -52945 -52818 -52605 -52434 -52266 -51994 -51819 -51801 -50671 -50275 -49738 -49002 -48804 -48326 -47962 -47199 -46633 -46230 -45794 -45771 -45508 -44883 -44870 -43114 -42692 -42638 -42168 -41934 -41762 -41128 -40356 -40191 -40190 -39731 -39602 -39211 -39121 -38503 -38498 -37345 -37322 -35970 -35889 -34273 -33224 -33100 -32723 -31787 -31610 -31223 -30993 -30127 -29839 -29562 -29547 -29302 -28953 -28941 -28634 -28448 -28263 -27769 -27591 -27522 -26915 -26886 -25513 -25436 -25368 -25341 -24336 -23692 -22654 -22238 -21912 -21749 -21708 -21488 -21205 -20255 -20083 -19929 -19134 -19020 -18782 -18581 -18168 -18152 -17418 -17410 -17209 -17119 -17045 -16849 -16427 -13797 -13475 -13196 -13178 -13075 -12703 -12154 -12049 -11985 -11344 -11119 -10750 -10572 -10359 -9733 -9692 -9083 -9025 -8821 -8676 -8430 -8287 -8098 -7814 -6894 -6867 -6816 -6208 -5760 -5239 -4749 -4146 -3791 -3470 -2889 -1702 -1653 -1282 263 840 1259 1373 1381 2644 2694 2775 2824 2917 2992 3340 3961 4046 4565 5505 5953 6153 6790 6831 7297 7352 7626 7677 7896 10046 10224 10368 11432 13439 13867 13946 14092 15470 15973 16105 16749 17163 17204 17233 17312 18070 18181 18265 18580 18750 19235 20153 20857 20878 21125 23168 23275 23354 23725 24499 24855 25587 25962 26103 26362 27314 27814 28510 29023 29761 30348 30428 30584 30854 31109 31680 31785 31959 31985 32146 32366 32535 32696 33085 33172 33207 33467 33629 33649 33748 34142 34182 34273 34602 35198 35796 36412 36984 37233 37893 38410 38710 38814 39816 40493 40851 41199 41224 41266 42056 42498 42899 43899 44079 44264 44297 44786 45042 45416 46310 46855 47875 48152 48524 48538 48621 49961 50097 50496 50704 50837 51206 51947 52270 52751 53134 53303 53377 53558 53636 53702 54097 55810 56058 56440 56531 57044 57214 57281 57467 58349 59341 60043 60242 60781 61993 62099 62611 62676 63276 63291 64108 64920 65814 65966 66651 66735 67273 67766 68061 68712 68915 69185 69618 69979 70127 70336 70590 70786 71326 71471 72609 72948 73010 73355 73448 74028 74260 74763 75009 75376 75982 77242 77294 77325 77988 78373 79515 79567 79584 79893 80298 80350 81598 81773 82467 82888 82893 82921 83257 83382 84539 84730 85219 85335 85593 85875 85904 86835 86921 87134 87716 88108 89028 89100 89237 89269 89303 89308 89686 89969 90437 90626 92066 92327 92596 92866 93271 93532 93772 94281 94297 94739 94770 94772 95605 95751 95960 95999 96369 96395 97638 97856 98047 98482 98694 98792 99135 99410 99679 99780\n95960\n",
+        "expectedOutput": "486\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n-99746 -99618 -99598 -99502 -99387 -99320 -98931 -98882 -98736 -98235 -98153 -97652 -97547 -97458 -97285 -96796 -96746 -96509 -96423 -96420 -96160 -95698 -95632 -95200 -94895 -94768 -94362 -94343 -94317 -94038 -93894 -93619 -93363 -93209 -93046 -93020 -92968 -92933 -91863 -91776 -91630 -91529 -91500 -90482 -90180 -90048 -89898 -89857 -89645 -89515 -89093 -89062 -88953 -88946 -88777 -88621 -88452 -88451 -88151 -87541 -87294 -87283 -87261 -87178 -87055 -86477 -86420 -85706 -85649 -85488 -85476 -84742 -84700 -84600 -84383 -84107 -84077 -83868 -83704 -83503 -83443 -83427 -83276 -83143 -83112 -83099 -83061 -82559 -82429 -82093 -82068 -81915 -81711 -81493 -81211 -81206 -81157 -80942 -80159 -80129 -79668 -79491 -79443 -79366 -79189 -78931 -78809 -78709 -78606 -78085 -77853 -77809 -77679 -77530 -77400 -77361 -77147 -77115 -77027 -76986 -76638 -76548 -76444 -76442 -76212 -76067 -75948 -74795 -74701 -74395 -74290 -73723 -73115 -72973 -72893 -72871 -72869 -72528 -72448 -72312 -72304 -72291 -71223 -71180 -71133 -70181 -70074 -69448 -69058 -69039 -68947 -68946 -68529 -68481 -68412 -68342 -67761 -67396 -66890 -66569 -66522 -66354 -66286 -65954 -65933 -65577 -65457 -65328 -65322 -64958 -64949 -64776 -64572 -64077 -63183 -63071 -62968 -62765 -62654 -62432 -61916 -61624 -61577 -61410 -61039 -61014 -60907 -60717 -60414 -59645 -59556 -59301 -58985 -58940 -58517 -58024 -57558 -57456 -57363 -56863 -56561 -56411 -55190 -55165 -55113 -55111 -54950 -54754 -54120 -53996 -53780 -53477 -53162 -52799 -52785 -52453 -51995 -51386 -51086 -51025 -50798 -50573 -50449 -50444 -50249 -49813 -49463 -48845 -48520 -48477 -48466 -48302 -48296 -48293 -48247 -48093 -47972 -47731 -47680 -47574 -47311 -47160 -47127 -47076 -47044 -47024 -46982 -46958 -46901 -46559 -46286 -46178 -46101 -46093 -46081 -46075 -45695 -45458 -45439 -45258 -44914 -44905 -44797 -44321 -44272 -44040 -43193 -43155 -43042 -42988 -42839 -42838 -42501 -42344 -41172 -41138 -40826 -40736 -40732 -40319 -40292 -39969 -38907 -38825 -38676 -38655 -38568 -38545 -38040 -37400 -37212 -37186 -37084 -36958 -36942 -36213 -36048 -35885 -35842 -35378 -35318 -35175 -34735 -34635 -34055 -33836 -33794 -33478 -33396 -33339 -33338 -33274 -33097 -33030 -32592 -32446 -32426 -32413 -32225 -32207 -31864 -31821 -31805 -31512 -30733 -30367 -30290 -29980 -29744 -29719 -29704 -29512 -29321 -29221 -29059 -29001 -28538 -27819 -27395 -27347 -27309 -27053 -26867 -26355 -26349 -26075 -25728 -25723 -25671 -25403 -25360 -25317 -25225 -25213 -24749 -24680 -24450 -24419 -24377 -24356 -24100 -23873 -23754 -22494 -22465 -21537 -21530 -21391 -21321 -21027 -21008 -20977 -20901 -20456 -20282 -20263 -20180 -20164 -20150 -20057 -19949 -19918 -19773 -19690 -19604 -19448 -19250 -19108 -18940 -18573 -18453 -18349 -17687 -17238 -17181 -17153 -16889 -16859 -16823 -16822 -16741 -16157 -16005 -15962 -15943 -15898 -15740 -15269 -15068 -14884 -14366 -14082 -13715 -13694 -13584 -13510 -13265 -13190 -13019 -12969 -12775 -12635 -12332 -12133 -11615 -11525 -11311 -10990 -10794 -10565 -10184 -10160 -10135 -10074 -9990 -9789 -9664 -9301 -9227 -8997 -8986 -8980 -8933 -8784 -8597 -8442 -8375 -7933 -7905 -7899 -7748 -7719 -7630 -7278 -7265 -7263 -7178 -7142 -7063 -6773 -6410 -6106 -5995 -5809 -5469 -5161 -5106 -5014 -4834 -4531 -4384 -4109 -3970 -3905 -3892 -3721 -3632 -3196 -2943 -2731 -2600 -2585 -2563 -2487 -2141 -2012 -1656 -190 -56 89 185 203 297 487 795 964 1312 1354 1480 1662 1874 1933 2068 2089 2249 2583 2639 2673 2716 3277 3584 3665 3715 3875 4021 4496 4685 4841 4986 5086 5121 5250 6126 6130 6149 6317 6786 6837 6869 6966 7048 7221 7345 7582 7674 7725 7729 7733 7839 7893 8045 8452 8704 8775 9023 9090 9138 9167 9447 9918 10276 10433 10513 10526 11168 11404 11465 11489 11559 11710 11911 11982 12067 12233 12413 12923 13122 13401 13728 13836 13847 14006 14219 14994 15003 15109 15767 16054 16246 16270 16324 16560 16686 16865 16923 16944 17026 17297 17465 17739 17893 17903 17947 18119 18498 18627 19026 19038 19527 19569 19647 19897 20650 20654 20879 21023 21064 22069 22128 22746 22926 22995 23078 23341 23544 23916 24523 24683 24764 24947 24979 25124 25316 25558 25596 25602 26115 26161 26295 26952 26965 27315 27356 27523 27528 27559 27575 27749 28139 28207 28296 28341 28493 28601 28699 28705 28791 28854 29211 29256 29533 29789 29867 29879 29904 30426 30524 30544 30885 31362 31569 31649 31742 31831 31859 31939 32364 32416 32612 32664 32935 32972 33237 33573 33915 33986 33993 34111 34234 34259 34369 34371 34514 34560 35029 35799 35915 36197 36316 36334 36345 36420 36427 36482 36541 36678 36838 36860 36986 37229 37498 37666 37685 37891 37992 38094 38102 38325 39164 39228 39239 39373 39510 39574 39699 39900 40001 40149 40385 40817 41410 41424 41528 41855 41927 41989 42039 42168 42231 42380 42607 42988 43153 43662 43819 44692 45197 45265 45285 46275 46630 46809 46950 47061 47250 47447 48238 48397 48545 49243 49799 49815 50400 50951 51145 51164 52071 52309 52448 52540 52777 52861 52870 53289 53346 53363 53495 53507 53533 53578 54467 54472 54586 55103 55184 55268 55522 55566 55594 56058 56329 57065 57221 57697 58002 58070 58436 58462 58721 58780 58828 59099 59117 59145 59919 60157 60215 60291 60352 60454 60456 60501 60559 60856 60859 60889 61030 61094 61128 61155 61331 61528 61631 61707 61841 62321 62680 62755 62862 63126 63231 63339 63512 63608 64107 64593 64603 64839 64929 65406 65573 65580 65852 66019 66119 66659 66997 67185 67304 67497 67781 68252 68620 68728 69034 69100 69608 69739 69882 70068 70097 70446 70525 70690 70926 71013 71158 71230 71520 71744 71950 72125 72147 72348 72730 73180 73654 74415 74516 74623 74634 74643 75092 75303 75504 75676 76309 76332 76567 76615 76775 76883 77273 77328 77338 77377 77467 78518 78524 78587 78907 78992 79119 79414 79827 80205 80853 81681 81896 82079 82391 82460 82542 82565 82650 82951 83152 83242 83554 83564 83594 83832 84245 84420 84467 84893 84932 85634 85949 86103 86351 86801 86991 87018 87384 87557 87613 87739 88075 88353 88438 88632 88808 88854 88899 89004 89025 89343 89344 89479 89695 90028 90342 90756 90761 90767 90811 90871 91043 91194 91533 91619 91822 91854 91921 92000 92185 92217 92420 93176 93317 93382 93561 93600 93662 93781 93791 94050 94159 94489 94845 95382 95611 95781 95842 95892 95938 95952 96173 96348 96814 96849 97137 97339 97608 97898 98022 98275 98280 98286 98517 98725 98790 98978 99061 99182 99388 99455 99515 99969\n-78809\n",
+        "expectedOutput": "106\n",
+        "sample": false
+      },
+      {
+        "input": "500\n-99785 -99182 -98190 -98117 -97977 -97872 -97860 -97707 -96166 -96039 -95918 -95791 -94497 -93718 -93696 -93602 -93466 -92607 -92243 -91483 -90987 -90206 -88938 -88669 -87966 -87190 -86137 -85825 -85793 -85772 -85521 -85134 -83786 -83679 -82579 -82118 -81168 -81049 -80277 -80209 -80118 -79828 -79577 -79461 -77682 -77534 -77517 -77370 -77341 -76336 -76007 -75925 -75731 -75589 -75328 -75065 -74718 -74602 -74554 -73742 -72995 -72610 -70864 -70788 -70290 -69870 -69569 -69001 -68335 -67789 -66919 -66328 -66094 -65993 -65495 -65206 -65076 -65008 -64908 -64884 -64609 -64448 -63839 -63708 -63621 -62594 -61753 -61230 -60575 -60294 -56238 -55780 -55588 -55554 -55487 -55059 -54939 -54235 -54078 -53280 -53188 -52838 -52512 -51820 -51332 -50570 -50118 -49760 -49573 -49411 -49328 -49071 -48688 -48345 -48148 -47803 -47702 -47322 -46692 -46594 -45229 -44816 -44543 -43823 -43405 -43081 -42511 -42467 -41087 -40929 -40798 -40550 -40459 -40068 -39439 -39032 -39006 -38835 -38689 -37290 -37275 -36494 -36026 -35859 -35566 -35327 -34768 -33749 -33459 -32927 -32533 -32496 -32207 -31896 -31726 -31578 -31444 -31162 -31103 -30526 -30395 -30209 -29562 -28823 -28414 -28369 -28248 -27918 -27881 -27795 -27694 -26541 -26361 -25532 -25006 -24805 -24750 -24286 -24071 -23946 -23380 -22666 -22655 -22445 -22239 -22219 -22198 -22073 -22031 -21644 -20979 -20627 -20522 -20331 -19972 -19168 -17997 -17955 -17632 -17020 -16045 -15915 -15435 -15312 -14834 -14201 -13999 -13928 -13305 -13131 -13033 -12992 -12965 -12729 -10550 -10247 -9889 -9797 -9682 -8923 -8750 -8503 -8369 -7648 -6389 -6375 -5790 -5133 -4968 -2399 -1771 -797 -781 -673 -665 15 28 40 235 494 571 792 2258 2778 3069 3579 3938 3991 5033 5516 5833 6128 6253 6522 7211 8658 9027 9048 9086 9175 9258 10365 10960 11074 11466 12748 12855 13122 13147 13690 13935 14112 14224 14384 14425 14498 14724 15347 15441 15540 16115 16732 17587 18040 18073 18421 18480 19620 20095 21490 21674 21785 23465 23932 24496 24522 24534 24685 24963 25064 25121 25888 25993 26110 26238 26334 26771 28112 28982 29194 29593 29624 29711 30148 30189 30428 30646 31162 31634 31768 31775 31824 32801 34009 34804 35122 35150 35212 35527 35820 35929 36212 36587 37333 37419 37951 37958 38200 38552 38885 39544 39727 39901 40173 40680 41121 41178 41272 41942 42216 42408 42634 43461 44105 44204 44253 44373 45030 45698 46374 47204 47386 47390 47792 48937 49326 49547 50008 50513 50708 50769 51535 51953 52119 52197 52765 52906 53030 53295 53884 54288 54312 54399 54417 54466 54874 54928 55387 55506 56919 58453 58653 58779 59236 59746 60342 60511 61008 61149 63181 64496 64743 65984 66226 66794 66907 67010 67050 67669 67738 68088 68266 68327 68546 68745 68843 70055 70104 70136 70311 70806 71349 71379 71488 71842 72452 74403 74903 75613 75669 75808 75908 76140 76324 76511 76721 76884 77083 78178 78473 78661 78802 78853 78977 79386 79421 79811 80088 80528 80867 81665 81881 81902 82006 82157 82638 83457 84753 85121 85342 85536 85673 86084 86237 86563 86660 86705 86840 86927 87663 87764 87839 87842 88081 88551 89141 90150 90211 91019 92022 92024 92152 92558 92981 94615 94657 95150 95412 96043 96306 96611 96866 96895 98230 98401 98513 98720 99096 99159 99988\n100007\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "longest-substring-without-repeating-characters",
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "sliding-window",
+      "hash-table"
+    ],
+    "description": "Return the length of the longest substring of `s` that contains no repeated characters.\n\n### Input\nA single line containing `s` (it may contain spaces).\n\n### Output\nThe length of the longest such substring.\n\n### Constraints\n- `1 <= s.length <= 1000`\n- `s` contains letters and spaces\n\n### Examples\n**Example 1**\n```text\nInput:\nabcabcbb\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\nbbbbb\n\nOutput:\n1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String s) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String s = lines.get(pos++);\n        int result = solve(s);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(s):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    s = lines[pos]; pos += 1\n    result = solve(s)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(s) {\n  // Write your solution here\n}\n\nconst s = lines[pos++];\nconst result = solve(s);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(string s) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string s = lines[pos++];\n    int result = solve(s);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "abcabcbb\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "bbbbb\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "pwwkew\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "a\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "au\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "dvdf\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "abba\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "tmmzuxt\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "deahg af degffbhb fcdghaea  gghafacfe db gdhhbbgech hbgdcfhabc bdbbhfhcaabfg  h  d fhaff fbbabbch cfha gcff haehf efcdfaef bbehgc ahc dfbd hdehbfbga gdfcd hc  fhebh e hedafghh fgehacfbffcadbbdhdghebf bgeh cddeheh fcgegccecdccgchegbfa  gagfca fdfcfafhc adhgbdaahcbccgbh dcfgfdhhe d ehfedchhfeheee ccebaahcfaff fhcdg fgghdbf  hebgfecfhdecef edafe fbhaedbhahfbfbgdefcf  dbhdgfaea f  cce cbhdfeccd dggbabeehdhgededdhcafbhdecedgcbeefedg cc heaaaaddacdbggebd fb  ghhdcbdeacfdadbdfe hghfcchgd eaa dcafdcgbda addgehc ch hdefgdedehfegd fh  d cehbcabd  dffhff fdf hh cbagdcafhgb ecgf ehheeh gacghbbggdabgddddge efbg gfcegffgaceh bghebcffhhh ca dcdhdcghebcgca eecaegabdcffdhchbgbfdfadc hhadhgcgcbbfhghebhbgeabc acecfdhh  ce ch fbcbagfhg  c efbdggaagdhc  baefdhdh hbfecgcdgbbeccchaeef bcfffcdhf fc dffegceaa  hfhbgg agabgcgah bac b bcffbabedaeehgfcggghbhchdfgdahe f dcecgha ah bhde bhbbbehchffhcgbaaaaahbbedafddfh  cf bbee af aefdeecheeehed hc gb bfhhdfaffgfe aa gdbba bgacgfhda ggecaace  hg afhcd  cggcgaggd c e\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": " adafdbbfbbhh baacbddhcgff gedcc c hbab d dfaebhec eabefdb dbghe h d gfaggc fae dc ehhabab ebggaaaefhfhch gcfhdgf eahdabcbagbeahdebdc fda ec hd hdbh ge c gfbgbfedfe ga   fghfa ahcgcg hgcgebdfdegggg e c egaggdbcfaaeddhcbefbdfgh ccgch hcbbdaefafe efhgh c hdgh dcddfd  b ebadgfdh chabehgeabcc ccgdcdeddc\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "cebaebccdcc abgac hhfddbcfdcd hbebg hcd dhfccee f  cebdhffedceabgffefeabcddcahdahgdeahdahc eddfdfdddafhbbcdfdc faeaebbcacfacgch ggbfghghf hhffhbafb ebe decfchdf haahhcdd cfcbgaffd ab c fa gfdfdcgbhg hc ahaah haf egabfhagh dccfgbbdebgfef fadbgga bcgbhege hf cgcacfffaeefbaaeeadg hgfebfcf adadf ccahahb\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "gdehfcabfggfhgaeaffhaahabf eed\n",
+        "expectedOutput": "8\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "product-of-array-except-self",
+    "title": "Product of Array Except Self",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "prefix-sum"
+    ],
+    "description": "Return an array `answer` where `answer[i]` is the product of every element of `nums` except `nums[i]`. Do it without using division, in `O(n)` time. The product always fits in a 32-bit signed integer.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`n` space-separated integers.\n\n### Constraints\n- `2 <= n <= 20`\n- `-30 <= nums[i] <= 30`\n- Every prefix/suffix product fits in a 32-bit integer\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 2 3 4\n\nOutput:\n24 12 8 6\n```\n\n**Example 2**\n```text\nInput:\n5\n-1 1 0 -3 3\n\nOutput:\n0 0 9 0 0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] nums) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(nums);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> nums) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(nums);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n1 2 3 4\n",
+        "expectedOutput": "24 12 8 6\n",
+        "sample": true
+      },
+      {
+        "input": "5\n-1 1 0 -3 3\n",
+        "expectedOutput": "0 0 9 0 0\n",
+        "sample": true
+      },
+      {
+        "input": "2\n2 3\n",
+        "expectedOutput": "3 2\n",
+        "sample": false
+      },
+      {
+        "input": "2\n0 0\n",
+        "expectedOutput": "0 0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n5 0 2\n",
+        "expectedOutput": "0 10 0\n",
+        "sample": false
+      },
+      {
+        "input": "8\n-3 2 2 -2 -4 0 5 -5\n",
+        "expectedOutput": "0 0 0 0 0 2400 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "10\n-3 3 -2 1 -2 0 3 -2 -2 -3\n",
+        "expectedOutput": "0 0 0 0 0 1296 0 0 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "20\n1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n",
+        "expectedOutput": "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "9\n1 8 3 3 3 1 1 6 3\n",
+        "expectedOutput": "3888 486 1296 1296 1296 3888 3888 648 1296\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "coin-change",
+    "title": "Coin Change",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "dynamic-programming"
+    ],
+    "description": "Given coin denominations and a target `amount`, return the fewest coins needed to make that amount, or `-1` if it is impossible. You have an unlimited supply of each coin.\n\n### Input\nLine 1: number of coin types.\nLine 2: the coin values.\nLine 3: `amount`.\n\n### Output\nThe minimum number of coins, or `-1`.\n\n### Constraints\n- `1 <= coins.length <= 12`\n- `1 <= coins[i] <= 10^4`\n- `0 <= amount <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n1 2 5\n11\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n1\n2\n3\n\nOutput:\n-1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] coins, int amount) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int coinsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] coins = new int[coinsLen];\n        if (coinsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < coinsLen; i++) coins[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int amount = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(coins, amount);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(coins, amount):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    coins_len = int(lines[pos]); pos += 1\n    coins = list(map(int, lines[pos].split())) if coins_len > 0 else []; pos += 1\n    amount = int(lines[pos]); pos += 1\n    result = solve(coins, amount)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(coins, amount) {\n  // Write your solution here\n}\n\nconst coinsLen = parseInt(lines[pos++], 10);\nconst coins = coinsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst amount = parseInt(lines[pos++], 10);\nconst result = solve(coins, amount);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> coins, int amount) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int coinsLen = stoi(lines[pos++]);\n    vector<int> coins(coinsLen);\n    if (coinsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : coins) iss >> v;\n    }\n    pos++;\n    int amount = stoi(lines[pos++]);\n    int result = solve(coins, amount);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "3\n1 2 5\n11\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "1\n2\n3\n",
+        "expectedOutput": "-1\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "4\n186 419 83 408\n6249\n",
+        "expectedOutput": "20\n",
+        "sample": false
+      },
+      {
+        "input": "4\n2 5 10 1\n27\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "1\n14\n1044\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "2\n45 19\n1206\n",
+        "expectedOutput": "32\n",
+        "sample": false
+      },
+      {
+        "input": "4\n48 43 27 44\n1346\n",
+        "expectedOutput": "29\n",
+        "sample": false
+      },
+      {
+        "input": "4\n36 8 45 40\n827\n",
+        "expectedOutput": "19\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "merge-intervals",
+    "title": "Merge Intervals",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "sorting"
+    ],
+    "description": "Merge all overlapping intervals (touching intervals such as `[1,4]` and `[4,5]` overlap) and return the non-overlapping intervals that cover the input, sorted by start.\n\n### Input\nLine 1: `n`, the number of intervals.\nNext `n` lines: `start end`.\n\n### Output\nThe merged intervals, one `start end` pair per line, sorted by start.\n\n### Constraints\n- `1 <= n <= 200`\n- `0 <= start <= end <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 3\n2 6\n8 10\n15 18\n\nOutput:\n1 6\n8 10\n15 18\n```\n\n**Example 2**\n```text\nInput:\n2\n1 4\n4 5\n\nOutput:\n1 5\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[][] solve(int[][] intervals) {\n        // Write your solution here\n        return new int[0][];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int intervalsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[][] intervals = new int[intervalsLen][2];\n        for (int i = 0; i < intervalsLen; i++) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos++));\n            intervals[i][0] = Integer.parseInt(st.nextToken());\n            intervals[i][1] = Integer.parseInt(st.nextToken());\n        }\n        int[][] result = solve(intervals);\n        for (int[] row : result) {\n            System.out.println(row[0] + \" \" + row[1]);\n        }\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(intervals):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    intervals_len = int(lines[pos]); pos += 1\n    intervals = [list(map(int, lines[pos + i].split())) for i in range(intervals_len)]; pos += intervals_len\n    result = solve(intervals)\n    for row in result:\n        print(\" \".join(map(str, row)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(intervals) {\n  // Write your solution here\n}\n\nconst intervalsLen = parseInt(lines[pos++], 10);\nconst intervals = [];\nfor (let i = 0; i < intervalsLen; i++) intervals.push(lines[pos++].trim().split(/\\s+/).map(Number));\nconst result = solve(intervals);\nconsole.log(result.map((r) => r.join(\" \")).join(\"\\n\"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<vector<int>> solve(vector<vector<int>> intervals) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int intervalsLen = stoi(lines[pos++]);\n    vector<vector<int>> intervals(intervalsLen, vector<int>(2));\n    for (int i = 0; i < intervalsLen; i++) {\n        istringstream iss(lines[pos++]);\n        iss >> intervals[i][0] >> intervals[i][1];\n    }\n    vector<vector<int>> result = solve(intervals);\n    for (auto &row : result) {\n        cout << row[0] << \" \" << row[1] << \"\\n\";\n    }\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n1 3\n2 6\n8 10\n15 18\n",
+        "expectedOutput": "1 6\n8 10\n15 18\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 4\n4 5\n",
+        "expectedOutput": "1 5\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 4\n0 4\n",
+        "expectedOutput": "0 4\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5 6\n",
+        "expectedOutput": "5 6\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 10\n2 3\n4 5\n",
+        "expectedOutput": "1 10\n",
+        "sample": false
+      },
+      {
+        "input": "200\n158 168\n457 464\n638 663\n554 575\n736 752\n90 109\n398 411\n853 860\n539 547\n948 966\n10 22\n984 1000\n390 392\n2 21\n715 720\n419 427\n384 390\n839 839\n382 382\n910 927\n769 775\n922 942\n41 54\n704 712\n417 423\n992 998\n214 225\n355 359\n704 724\n860 880\n576 578\n718 743\n807 812\n669 671\n291 291\n113 133\n93 98\n117 119\n194 208\n547 556\n920 929\n148 152\n575 587\n119 128\n478 479\n343 364\n999 1015\n987 997\n394 399\n102 121\n877 883\n73 83\n616 624\n914 934\n793 798\n877 886\n411 418\n87 104\n283 289\n879 899\n734 734\n71 77\n226 244\n193 197\n508 514\n811 817\n148 163\n36 49\n511 532\n421 424\n162 175\n678 693\n722 747\n762 779\n341 346\n791 793\n131 132\n290 307\n686 692\n663 681\n955 973\n403 410\n222 240\n353 366\n983 1000\n273 291\n996 1006\n835 848\n931 954\n313 322\n253 272\n243 247\n423 442\n651 662\n480 480\n752 770\n397 409\n134 143\n4 21\n122 131\n995 1009\n789 805\n873 883\n982 982\n145 150\n365 381\n751 773\n593 617\n488 504\n944 959\n978 988\n956 958\n273 284\n569 584\n350 374\n987 997\n318 335\n690 709\n501 516\n638 647\n135 160\n595 596\n481 500\n91 113\n23 34\n581 597\n35 46\n979 999\n935 957\n928 950\n115 116\n368 377\n331 332\n430 434\n249 258\n297 320\n511 530\n411 428\n471 484\n567 575\n302 308\n895 902\n547 556\n361 368\n533 550\n863 877\n874 899\n142 142\n706 731\n292 314\n394 396\n553 578\n206 218\n221 244\n871 875\n553 565\n192 202\n172 191\n750 770\n903 924\n113 116\n885 892\n276 292\n55 63\n123 128\n304 312\n347 360\n518 542\n970 987\n180 199\n559 567\n997 1008\n260 262\n956 966\n809 816\n489 502\n275 276\n602 605\n204 218\n733 740\n240 261\n463 470\n261 272\n689 694\n626 642\n328 342\n825 837\n850 863\n915 935\n602 605\n76 99\n940 955\n497 509\n333 356\n224 231\n129 139\n498 515\n205 224\n2 12\n162 180\n",
+        "expectedOutput": "2 22\n23 34\n35 54\n55 63\n71 272\n273 381\n382 382\n384 392\n394 442\n457 470\n471 624\n626 779\n789 805\n807 817\n825 848\n850 902\n903 1015\n",
+        "sample": false
+      },
+      {
+        "input": "60\n975 989\n185 197\n376 397\n123 146\n105 106\n341 351\n921 930\n803 828\n736 753\n254 264\n230 245\n15 33\n781 796\n850 873\n872 896\n25 46\n722 727\n855 878\n115 129\n981 981\n842 845\n836 859\n307 329\n48 50\n153 176\n210 230\n54 56\n331 353\n528 545\n70 90\n686 696\n81 84\n296 298\n328 343\n734 736\n370 394\n867 888\n171 182\n393 414\n745 751\n367 386\n729 748\n446 470\n322 342\n261 279\n751 756\n441 456\n545 567\n198 207\n329 352\n682 702\n31 36\n917 932\n607 628\n366 391\n338 349\n327 336\n972 994\n668 685\n310 330\n",
+        "expectedOutput": "15 46\n48 50\n54 56\n70 90\n105 106\n115 146\n153 182\n185 197\n198 207\n210 245\n254 279\n296 298\n307 353\n366 414\n441 470\n528 567\n607 628\n668 702\n722 727\n729 756\n781 796\n803 828\n836 896\n917 932\n972 994\n",
+        "sample": false
+      },
+      {
+        "input": "10\n34 54\n272 273\n149 157\n804 823\n21 42\n999 1015\n892 903\n990 997\n139 144\n524 537\n",
+        "expectedOutput": "21 54\n139 144\n149 157\n272 273\n524 537\n804 823\n892 903\n990 997\n999 1015\n",
+        "sample": false
+      },
+      {
+        "input": "200\n806 806\n220 234\n360 362\n379 389\n272 285\n371 383\n847 859\n511 524\n589 614\n344 363\n169 175\n296 321\n511 526\n566 578\n186 194\n574 592\n845 862\n715 730\n94 107\n176 193\n8 16\n934 939\n905 918\n897 919\n739 742\n727 745\n999 1014\n602 624\n619 625\n755 776\n749 766\n55 59\n608 630\n397 415\n8 27\n489 498\n856 879\n915 929\n165 184\n380 388\n376 400\n830 837\n322 337\n875 896\n145 170\n808 826\n519 528\n182 200\n746 756\n820 826\n708 722\n295 306\n392 408\n214 218\n659 673\n902 912\n931 943\n853 875\n339 358\n741 745\n427 432\n733 733\n859 864\n875 899\n26 32\n312 318\n900 917\n957 975\n106 112\n939 963\n5 30\n959 962\n872 884\n897 907\n751 756\n359 378\n906 914\n379 387\n850 872\n929 951\n819 841\n41 49\n305 317\n698 721\n616 622\n49 71\n299 302\n758 769\n836 843\n711 726\n774 780\n865 865\n212 222\n636 647\n457 460\n398 415\n571 584\n889 904\n913 920\n600 612\n352 373\n34 45\n505 512\n665 680\n779 781\n663 664\n588 610\n966 978\n518 528\n76 94\n117 128\n193 213\n297 304\n391 392\n517 531\n130 137\n894 908\n448 461\n495 518\n736 743\n282 300\n734 755\n13 18\n922 929\n118 128\n477 498\n124 148\n955 956\n605 607\n136 154\n661 666\n80 89\n230 246\n151 168\n339 358\n747 758\n391 393\n629 629\n337 348\n898 918\n211 235\n205 205\n828 834\n761 777\n854 868\n370 381\n438 439\n820 834\n891 916\n551 557\n533 549\n356 374\n695 699\n856 874\n373 386\n459 483\n788 800\n400 409\n363 387\n332 357\n470 479\n355 367\n684 695\n684 696\n407 431\n585 603\n303 316\n122 130\n5 21\n499 501\n482 487\n907 911\n931 952\n433 456\n607 625\n667 692\n634 659\n593 606\n469 483\n589 601\n427 438\n408 420\n823 830\n789 804\n944 958\n634 640\n722 731\n539 551\n150 155\n794 795\n997 1001\n679 683\n492 498\n962 978\n475 483\n466 470\n646 647\n113 137\n390 395\n199 223\n",
+        "expectedOutput": "5 32\n34 71\n76 112\n113 246\n272 321\n322 531\n533 557\n566 630\n634 781\n788 804\n806 806\n808 843\n845 978\n997 1014\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "number-of-islands",
+    "title": "Number of Islands",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "matrix",
+      "graph"
+    ],
+    "description": "Given a grid of `1` (land) and `0` (water), count the islands. An island is a group of land cells connected horizontally or vertically.\n\n### Input\nLine 1: `rows cols`.\nNext `rows` lines: a string of `cols` characters, each `0` or `1`.\n\n### Output\nThe number of islands.\n\n### Constraints\n- `1 <= rows, cols <= 50`\n\n### Examples\n**Example 1**\n```text\nInput:\n4 5\n11110\n11010\n11000\n00000\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n4 5\n11000\n11000\n00100\n00011\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String[] grid) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int gridRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] grid = new String[gridRows];\n        for (int i = 0; i < gridRows; i++) grid[i] = lines.get(pos++);\n        int result = solve(grid);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(grid):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    grid_rows = int(lines[pos].split()[0]); pos += 1\n    grid = lines[pos:pos + grid_rows]; pos += grid_rows\n    result = solve(grid)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(grid) {\n  // Write your solution here\n}\n\nconst gridRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst grid = lines.slice(pos, pos + gridRows);\npos += gridRows;\nconst result = solve(grid);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<string> grid) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int gridRows = stoi(lines[pos++]);\n    vector<string> grid(lines.begin() + pos, lines.begin() + pos + gridRows);\n    pos += gridRows;\n    int result = solve(grid);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4 5\n11110\n11010\n11000\n00000\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "4 5\n11000\n11000\n00100\n00011\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "1 1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "1 1\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3 3\n101\n010\n101\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "30 25\n0101001000101001011010110\n0000001010010010001111001\n1100110011010000101100011\n1001101000000101110001101\n0110010100001101110101000\n0000100110010001100011010\n0001011111011100100010111\n0000100000010010010101111\n1100011010010010010010111\n1010010100000111101100011\n1001000001101111101011001\n0010101000000110111101011\n0100110111010101010010011\n1000100110011111010000010\n1001101101000000001010100\n0010010100010101001010101\n0101111010010000110111011\n1010101100101000101001100\n0000010111111100111001001\n1000001000110110110011011\n0001100000101100001000110\n0001001111101100000000010\n0100001000111100010011111\n1010010101000001101100111\n0000100000101101111111010\n1101000011000110010101001\n1011100101001010111000100\n1100000010000000001011100\n0010100000110011110010001\n0100001110011010110000101\n",
+        "expectedOutput": "94\n",
+        "sample": false
+      },
+      {
+        "input": "30 25\n0100111101111010100101000\n1001111100000010110010000\n0011101001010000100010111\n0010000010101101011010000\n0111011110000100010010001\n0100000000100110000000101\n0111010001011001111010110\n0111001001001010111000001\n1100001111000010101100001\n0000011110110010000010110\n0010000000111100001111111\n0100010001010100110001010\n0001101001010011001100011\n1100000100011010111110001\n0100000000101110100111010\n0010100000010100010011100\n0101100011011110011000000\n1101011010000010001000110\n1001100101000101000111000\n1011000011001000110110001\n1111101101010110111000010\n1001110111110101010101001\n1011001011111000010101011\n1001010101010101100101101\n1100010000000001011100111\n0000000111010101010011000\n0010100000011010011000011\n0100011011010010001010000\n1010100110100010000100110\n1000101000101101100101110\n",
+        "expectedOutput": "86\n",
+        "sample": false
+      },
+      {
+        "input": "50 50\n01011110100101000011001011101000010000110100011011\n01010100110100010101000100000010001000000011010100\n01010001110001000111101010110111001111111011001001\n11010111001000100011001101101001000000001001011001\n01101110011101000000100100100100110011001110001101\n11100010011111111010001101100000010001100110000110\n00011110101001010100110011111011000001111000101110\n10100100111110101100001100111010100110110110110000\n11001100011011110110100010100100000100001000011000\n01011011111010101010111001101001001111110011100111\n00101011110101010011110001100111000010111010100010\n11011111000010010100010001111011011000110011100110\n11000011010110000010010010110101001100011010100110\n10000110001001010110001000000001011001000100100000\n01100000101100000001111000100100000011001011110001\n01101101110011000010100000101000111000100000010010\n10111010010001000011100010111100100001000100010100\n00110010010011011011110101001000001100001101101010\n00110111010100000001101011010100110100000000001010\n10011011001000010011011010110010011011010100001001\n10001100000011000000111001010100110010001111010110\n10011001000111011000111000000000100000000000110000\n00000010001001100101101000110010101011001001101011\n01100100010111010100010001010100010100011100011001\n01111001101111001111001000000010111001010001011100\n11000000000111101001010100110011100110100111001011\n00011100000100110101011000010100110101001100111100\n10011101110100011010101011010000111100010100000101\n01111010110011111111100001010001000111000000101010\n00001110000011111100010000100101101101000110000001\n00100000001010110110000000011100010110000111100100\n10000101011011001101111111010000000100111010001010\n10011001100001011001000111000111011100010001001010\n01101001110001001100111101100011101010000111001010\n11100101110000111100001101011011001111110001101100\n00010110000111001000001110100010000000100000001001\n11010110010000111100100011001110010000000111000101\n11111110011100000000000001100100101000101011011001\n10100101011110011100000000001010001010110010100110\n10001100011000001111100110111110100100010001001100\n00011010111111111010010110000110101110100000101011\n00100110110001100110000011101100000010001101010101\n10001011001101000000001010001001101110110000101000\n01100011101100010101111101000010111000100000101000\n01101011100000000100000110001001001010111001100111\n10110000111011001011010110110111100001101101110110\n11011100100000101001111000001111100001001100000110\n01100110000111000010110110100100000111100101010011\n00001110000001000101100010101001001100111010000011\n00000011001100001111001011011000001100111000001101\n",
+        "expectedOutput": "242\n",
+        "sample": false
+      },
+      {
+        "input": "50 50\n00011001100100010011010101100111101111001100101100\n01010110110000100110100100010000011010100011010000\n00100110000111110101100111010011011001111100010001\n00101101000110111101000010101100111011111101101001\n11100111001111010011000011011010111100100100110010\n10100010011011111010101000000110001001100000011001\n01110011100001000110001001111101111101000101101011\n10001011111100100011011000001100010110100001110010\n11010000001111101010011101100101100101110101011110\n00010100001100111000010110110011010100010001101000\n01000000111110001011000001110111000111000100011100\n00011001100011101110000110110000110110100110001000\n00101011000001100001001001010110101000110000111011\n00011000010011000000000011100001110110010011110001\n11010001100000101001110010101010010101101100000011\n10110110100000000111011100100111010100000111001001\n01010010111110000011110100010111101010010100100001\n01001111001110111100101000110111000101011011010100\n11100111101110000100011000110010101000001010000100\n10110011011001010011101010001111001011000101010011\n10101000001100001111011010011100100011010100000011\n00011001011110110100111101010000111100000111001101\n01100000011100111110001000011011100110011000000000\n01001100101111001100100000011011110100000100100001\n01001010110110100001011000100010001010011001010010\n00010110000110101100011001110001000011001001100001\n01011001110101000010101100010100001110001001001110\n11011011000000101110010000010011011110011100110011\n01110000110001010111100100001000010111101100011100\n10100000110100111101111101001010100001011011010001\n10100101100110101011010111000000010101000001000011\n00101011001100001100100010101100010100110010000001\n00011011110000001000111011100111011110011100111011\n10011000110100010001111000101100010101101101100010\n00001010000001011010000100010001111001100110011100\n10100100010110011100001010000110010000101100010000\n00101000100100101101010111000101000100010011111010\n00110111011101011010110100111000000000000010111001\n00110111000011110000010001100100011110011000111000\n10101000100010110000111000000010000011111111000110\n10110101011001010011111100100000010011110111000100\n01011100000110110100010010011010000001110110100010\n01000010011011100101111010010000111000000011110101\n01010011001101000100001011100010011010110111001101\n10011101000111100100011011001000110111110100000001\n00000100111010010111010001110000001001010011000111\n01001111000110000010100000000110100000100111110011\n01001011100100011000011001100100011110000111000000\n10011100100111101100011001110110000110110000100001\n10111011011100011010000100111100011010010101000001\n",
+        "expectedOutput": "228\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "trapping-rain-water",
+    "title": "Trapping Rain Water",
+    "difficulty": "HARD",
+    "tags": [
+      "array",
+      "two-pointers",
+      "stack"
+    ],
+    "description": "Given `n` non-negative integers representing an elevation map where each bar has width 1, compute how much water it can trap after raining.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated heights.\n\n### Output\nThe total units of trapped water.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= height[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n12\n0 1 0 2 1 0 1 3 2 1 2 1\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\n6\n4 2 0 3 2 5\n\nOutput:\n9\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] height) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int heightLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] height = new int[heightLen];\n        if (heightLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < heightLen; i++) height[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(height);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(height):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    height_len = int(lines[pos]); pos += 1\n    height = list(map(int, lines[pos].split())) if height_len > 0 else []; pos += 1\n    result = solve(height)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(height) {\n  // Write your solution here\n}\n\nconst heightLen = parseInt(lines[pos++], 10);\nconst height = heightLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(height);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> height) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int heightLen = stoi(lines[pos++]);\n    vector<int> height(heightLen);\n    if (heightLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : height) iss >> v;\n    }\n    pos++;\n    int result = solve(height);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1\n",
+        "expectedOutput": "6\n",
+        "sample": true
+      },
+      {
+        "input": "6\n4 2 0 3 2 5\n",
+        "expectedOutput": "9\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n3 3 3\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "5\n5 4 3 2 1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "30\n1 16 20 11 16 20 8 6 18 1 15 3 5 13 11 12 3 13 12 7 4 20 14 6 8 15 17 10 15 0\n",
+        "expectedOutput": "212\n",
+        "sample": false
+      },
+      {
+        "input": "500\n27 179 182 74 280 45 171 26 79 105 64 251 121 105 131 277 198 130 213 240 62 217 277 19 166 89 199 164 254 120 18 242 165 226 90 40 278 260 225 200 206 279 38 92 42 210 267 37 262 191 276 122 116 208 259 282 26 129 238 171 249 155 161 195 211 184 8 134 136 100 96 8 8 76 81 87 258 150 233 105 217 0 154 121 11 21 51 247 215 25 94 29 47 121 93 263 167 248 17 153 6 139 82 206 74 30 91 75 24 297 290 66 199 145 92 262 172 157 234 266 62 214 222 245 128 13 132 227 279 282 89 146 46 154 210 282 196 33 62 45 178 19 98 168 180 204 201 73 202 292 227 154 170 92 223 43 38 163 8 121 5 23 245 68 73 5 217 53 134 37 3 246 195 109 8 269 125 104 243 27 249 96 199 194 48 142 119 97 288 73 164 87 145 148 28 277 3 109 283 17 69 36 224 50 69 116 90 265 245 148 18 122 270 161 217 57 265 273 176 111 15 261 78 110 80 116 111 28 21 195 116 250 275 13 56 213 254 65 106 222 211 152 37 193 189 268 238 41 269 289 151 24 166 48 149 131 250 79 176 62 70 44 205 116 175 32 48 194 226 48 256 28 241 245 175 150 123 225 178 236 112 272 28 97 214 162 158 19 74 48 93 292 280 292 53 267 136 295 166 287 112 40 297 41 10 116 59 77 16 183 188 14 144 265 283 48 168 109 185 150 185 94 74 81 240 145 36 240 62 203 153 196 245 57 234 55 206 121 162 54 259 106 10 88 95 174 175 276 115 145 70 159 149 79 256 81 250 177 95 147 20 34 228 51 188 23 243 62 266 72 198 52 47 50 158 39 23 204 153 13 246 106 254 163 62 82 245 232 115 298 92 119 182 73 221 272 149 10 113 135 165 203 235 57 199 22 135 29 231 77 143 295 96 105 196 299 76 34 272 177 75 188 137 138 23 88 177 40 104 141 277 43 109 178 7 72 187 37 75 148 167 230 86 133 266 97 78 258 250 28 147 91 242 181 138 265 21 45 99 10 68 142 188 291 235 270 122 50 264 7 45 8 30 208 28 289 252 176 86 184 157 134 61 36 299 201 189 135 153 274 181 155 45 172 96 93 260 126 136 14\n",
+        "expectedOutput": "74441\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n7204 7502 8253 5812 7245 8549 2148 9961 8564 7540 3514 6984 2783 9587 6027 2206 8943 7962 2843 7359 5633 6877 201 1597 2300 7144 2820 6840 9374 9841 9196 2703 9913 493 6502 121 2052 6883 9356 1518 3962 2214 7307 3042 5482 1031 1890 7170 1998 1971 9971 689 3450 2424 5022 822 8491 6382 5024 2917 6198 5332 1098 7850 8502 5157 4212 8738 9921 3167 1247 7546 8346 7331 1013 5448 8713 2365 1446 5741 6785 7636 9483 4045 1795 808 3075 7490 4419 9530 3831 2408 1782 8149 8562 9089 3835 5054 2835 7567 6080 9781 5030 4484 2288 2192 4060 7695 1546 6041 7275 4536 8194 5906 6807 7440 9371 1712 3565 7375 6764 9649 5006 7887 235 942 5493 2757 3492 7441 8952 8611 3083 4974 1735 6944 9794 457 1763 2280 7542 9450 9930 5182 355 9155 996 2274 4789 6987 9972 1631 3651 3482 1374 4622 8741 9729 4121 6927 6792 1284 1584 6336 9808 1534 2006 998 2593 9300 7524 4522 8995 1292 4212 4672 3038 1998 1286 6569 4141 3286 28 8953 8502 9280 1899 7079 7250 3396 9600 8408 3943 8445 6239 7412 814 1819 7039 8690 6227 3634 5201 1867 1487 1002 4807 6994 5875 1066 622 7570 8715 4500 2125 2021 5974 5624 3003 1105 490 5496 1588 2081 8247 7105 937 3800 5594 2509 3200 9742 7454 3076 6074 100 8040 563 6769 7131 5742 4865 4933 4131 9235 11 2690 1927 3941 4446 9142 5788 1435 2227 5324 4096 4558 9868 4160 2281 8975 9594 5355 9674 6688 3503 370 6120 8444 4213 185 9837 4187 9414 8247 1015 2282 8237 6902 7639 4718 7550 9897 8110 7054 9749 3999 2151 8938 83 1208 5089 653 9386 1657 8842 4199 7455 4349 1600 5603 8389 4342 4569 847 4510 5388 6567 1194 2532 8663 1915 7026 7086 9885 7528 8122 5481 4965 5981 2133 7295 7841 4552 5911 3020 5622 2422 2232 3643 2994 6501 1681 6179 544 6086 209 7461 6220 4987 2601 899 8479 3674 9865 2248 3600 4676 3943 5297 9943 639 4635 3527 4627 5068 4200 3964 2310 4947 6915 4745 9741 2248 7536 5962 997 1672 9880 4206 2651 8401 3407 5707 760 8221 8696 8286 9625 6828 713 8233 9515 3965 8640 7908 4577 4976 8217 9717 7075 3450 4498 3451 1219 4046 4180 3635 6483 7213 9178 38 3574 5522 9201 7920 8556 8485 7733 6263 9277 9101 4060 9610 6690 3146 7224 7957 1458 2712 9507 5812 1540 3226 2858 7890 5629 3182 2548 5297 7158 8937 8872 2501 7487 3323 7074 5081 1137 3541 498 4413 5674 6620 8745 907 2173 639 858 5976 7891 5004 3677 7139 1020 7542 8582 8567 5929 9873 5002 5706 1445 5090 7507 8568 9856 7204 7066 9962 2469 556 1749 9806 2310 5136 4754 3504 1989 2986 9041 2003 4870 5521 1569 1384 6988 232 947 9782 8047 7274 2712 2296 3438 6614 1321 5411 3877 7518 8553 7209 5160 3226 9477 1926 9586 7603 225 743 3054 517 6527 8393 9936 1386 7808 2032 7818 7968 4311 334 7518 9956 6618 9932 276 4473 1839 4188 40 9130 326 5734 5433 4804 3353 6991 2115 5491 1951 3832 5235 5875 2269 2367 9903 1464 5995 9807 2955 264 8942 6980 5966 4928 7728 9382 8741 2325 8773 3615 8832 541 7858 8006 3872 6233 1100 6334 6665 8716 3513 10000 4436 2287 8351 6193 7283 4188 6692 7620 8618 354 7609 905 4170 7053 3206 2302 4533 3557 9184 3943 5369 9076 4205 427 3343 3014 4472 4197 1379 9783 8682 4699 4250 315 996 760 1168 8913 2748 5341 941 973 7768 8649 7635 1005 4324 5079 833 598 4752 9963 2717 1308 2196 8136 911 1373 8458 1706 4998 6021 2705 1512 7539 5018 9293 6600 5163 8363 7445 5257 9305 3977 3988 1522 1800 9464 5169 6310 8679 4641 7630 3876 3410 2377 6281 4443 3104 8485 1435 7436 3721 8921 5825 6360 5412 3035 4567 2926 1248 4641 973 3153 8298 7710 3447 6414 9818 9004 7306 9611 5028 9550 9943 2445 6996 2173 2044 1379 9531 5455 7137 266 1377 3195 3064 3547 4486 4788 6922 9830 2037 2727 3037 2493 2501 7012 2463 9135 5580 2515 3137 5306 1615 5348 1582 9072 5170 7814 9418 8681 1805 7449 8461 5891 4172 4598 3425 6284 3046 138 6663 3934 598 6125 750 1370 4667 7525 5862 7003 2220 4943 9660 6427 8391 7559 3583 3064 7708 4628 4562 8883 4636 215 2007 1001 5599 3662 9586 2716 7239 214 700 5315 2319 6200 8713 2812 984 7628 7808 5759 5198 7583 2800 5948 7847 1621 3924 999 6683 6215 2901 6023 3701 3659 2774 7248 5399 8374 2329 5618 5218 3557 5232 1733 4074 4803 7147 6184 9655 2085 1746 1011 498 5439 4486 777 5091 1457 709 3772 1097 7146 2970 1560 6684 7598 7449 5993 1714 9723 6755 7725 6113 8509 3598 7245 8507 2999 4383 7564 2570 4915 6860 8033 9761 6297 6966 6918 5307 2539 7700 5102 5773 7525 9811 1352 5690 3446 8492 2497 9476 4932 7004 6887 4590 843 3437 1718 2084 8131 2633 9976 9860 5305 7145 7007 2379 9077 358 1819 1602 984 8006 5611 4141 1283 6720 8599 8251 8317 9288 6858 192 896 3552 6917 4573 5921 8344 3392 7022 9245 8323 1829 2749 6259 4325 5010 5932 5106 4053 9146 8950 7655 4878 3885 3738 5969 2146 1148 2625 7555 9630 3181 454 2871 8244 9514 3973 4342 9673 9477 551 7951 474 5378 1977 5045 8693 226 6254 5094 9641 3882 5696 2385 2454 6258 8902 855 693 5640 820 1391 5556 7071 8781 4846 2867 6470 5001 4584 7994 2672 2299 1490 6606 2321 5133 3138 6623 2404 9522 4720 2262 1059 4879 3221 5 6634 801 9064 6301 2992 411 6116 6446 4385 8379 8033 6238 3407 4314 9970 5443 5750 1807 4869 7656 5590 8419 3463\n",
+        "expectedOutput": "4853160\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 0 2\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      }
+    ]
+  },
+  {
+    "slug": "edit-distance",
+    "title": "Edit Distance",
+    "difficulty": "HARD",
+    "tags": [
+      "string",
+      "dynamic-programming"
+    ],
+    "description": "Return the minimum number of operations to convert `word1` into `word2`. Allowed operations are insert a character, delete a character, or replace a character.\n\n### Input\nLine 1: `word1`.\nLine 2: `word2`.\n\n### Output\nThe minimum number of operations.\n\n### Constraints\n- `1 <= word1.length, word2.length <= 120`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nhorse\nros\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\nintention\nexecution\n\nOutput:\n5\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String word1, String word2) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String word1 = lines.get(pos++);\n        String word2 = lines.get(pos++);\n        int result = solve(word1, word2);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(word1, word2):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    word1 = lines[pos]; pos += 1\n    word2 = lines[pos]; pos += 1\n    result = solve(word1, word2)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(word1, word2) {\n  // Write your solution here\n}\n\nconst word1 = lines[pos++];\nconst word2 = lines[pos++];\nconst result = solve(word1, word2);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(string word1, string word2) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string word1 = lines[pos++];\n    string word2 = lines[pos++];\n    int result = solve(word1, word2);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "horse\nros\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "intention\nexecution\n",
+        "expectedOutput": "5\n",
+        "sample": true
+      },
+      {
+        "input": "a\nb\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "abc\nabc\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "kitten\nsitting\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "ddcadbacadaddaddbacbcdccdccccacadadabaadcdcaddababbdbddbbcddccaccaaddcdcaabacaaabbacddcdabcdadcdccc\nbddbbbcdbabccbbbcbacdcccbacdbcaaccdcbcdaddddcadcbcbacddbdabdaddcdbcbaadabbbaaad\n",
+        "expectedOutput": "57\n",
+        "sample": false
+      },
+      {
+        "input": "accbacbcbaddbadabdbaacbbdaccbdbababacacaddadbddacadaacbbc\naddacababdcdcbbdbabcdccdaaacacdbadabdbbdcabcdbacbacbbdbbbbcccdbdcaabdcbdaadacdbddbcdadbbd\n",
+        "expectedOutput": "48\n",
+        "sample": false
+      },
+      {
+        "input": "bbdacacaccadabdaaabdba\nbddccbbaccaaaddbdbaccccabb\n",
+        "expectedOutput": "14\n",
+        "sample": false
+      },
+      {
+        "input": "aaccaaddccdcbcaddcdacddadbddbadaabbaababbabaabccdbba\nabbddccdadabdabaddbddccddcbabbcdcc\n",
+        "expectedOutput": "30\n",
+        "sample": false
+      }
+    ]
+  }
+]
