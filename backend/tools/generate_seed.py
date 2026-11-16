@@ -1102,6 +1102,882 @@ PROBLEMS += [
 ]
 
 
+# ------------------------------------------------------------ batch 3 problems
+# Appended after batch 2 so the random data of every earlier problem is unchanged.
+from collections import Counter, deque
+
+
+def rand_str(n, alphabet):
+    return "".join(rng.choice(alphabet) for _ in range(n))
+
+
+# ---- two pointers -----------------------------------------------------------
+def valid_palindrome(s):
+    t = [c.lower() for c in s if c.isalnum()]
+    return t == t[::-1]
+
+
+def valid_palindrome_cases():
+    cases = ["A man, a plan, a canal: Panama", "race a car", ".,", "0P", "ab_a", "No lemon, no melon",
+             "Was it a car or a cat I saw?", "abc"]
+    for _ in range(3):
+        cases.append(rand_str(rng.randint(5, 60), "abcXYZ019 ,.!"))
+    for _ in range(2):
+        base = rand_str(rng.randint(3, 30), "abcdeABCDE0123")
+        mid = rng.choice(["", "x", " "])
+        cases.append((base + mid + base[::-1]).replace("a", "A, ", 1))
+    return cases
+
+
+def two_sum_ii(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        s = nums[lo] + nums[hi]
+        if s == target:
+            return [lo + 1, hi + 1]
+        if s < target:
+            lo += 1
+        else:
+            hi -= 1
+    raise AssertionError("no pair")
+
+
+def pair_count(nums, target):
+    return sum(1 for i in range(len(nums)) for j in range(i + 1, len(nums)) if nums[i] + nums[j] == target)
+
+
+def two_sum_ii_cases():
+    cases = [([2, 7, 11, 15], 9), ([2, 3, 4], 6), ([-1, 0], -1)]
+    while len(cases) < 9:
+        n = rng.choice([10, 50, 300])
+        nums = sorted(rng.sample(range(-1000, 1000), n))
+        i, j = sorted(rng.sample(range(n), 2))
+        if pair_count(nums, nums[i] + nums[j]) == 1:
+            cases.append((nums, nums[i] + nums[j]))
+    return cases
+
+
+def three_sum_count(nums):
+    nums = sorted(nums)
+    seen = set()
+    for i in range(len(nums) - 2):
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            s = nums[i] + nums[lo] + nums[hi]
+            if s == 0:
+                seen.add((nums[i], nums[lo], nums[hi]))
+                lo += 1
+                hi -= 1
+            elif s < 0:
+                lo += 1
+            else:
+                hi -= 1
+    return len(seen)
+
+
+def remove_duplicates(nums):
+    return list(dict.fromkeys(nums))
+
+
+def move_zeroes(nums):
+    nz = [x for x in nums if x != 0]
+    return nz + [0] * (len(nums) - len(nz))
+
+
+# ---- sliding window ---------------------------------------------------------
+def min_size_subarray(target, nums):
+    best, left, total = 0, 0, 0
+    for right, v in enumerate(nums):
+        total += v
+        while total >= target:
+            span = right - left + 1
+            best = span if best == 0 else min(best, span)
+            total -= nums[left]
+            left += 1
+    return best
+
+
+def longest_repeating(s, k):
+    counts, left, best, top = Counter(), 0, 0, 0
+    for right, ch in enumerate(s):
+        counts[ch] += 1
+        top = max(top, counts[ch])
+        while right - left + 1 - top > k:
+            counts[s[left]] -= 1
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+
+def sliding_window_max(nums, k):
+    dq, out = deque(), []
+    for i, v in enumerate(nums):
+        while dq and nums[dq[-1]] <= v:
+            dq.pop()
+        dq.append(i)
+        if dq[0] <= i - k:
+            dq.popleft()
+        if i >= k - 1:
+            out.append(nums[dq[0]])
+    return out
+
+
+def permutation_in_string(s1, s2):
+    n = len(s1)
+    need = Counter(s1)
+    for i in range(len(s2) - n + 1):
+        if Counter(s2[i:i + n]) == need:
+            return True
+    return False
+
+
+# ---- bit manipulation -------------------------------------------------------
+def number_of_1_bits(n):
+    return bin(n).count("1")
+
+
+def counting_bits(n):
+    return [bin(i).count("1") for i in range(n + 1)]
+
+
+def power_of_two(n):
+    return n > 0 and n & (n - 1) == 0
+
+
+# ---- backtracking -----------------------------------------------------------
+def n_queens(n):
+    cols, d1, d2 = set(), set(), set()
+
+    def go(r):
+        if r == n:
+            return 1
+        total = 0
+        for c in range(n):
+            if c in cols or r - c in d1 or r + c in d2:
+                continue
+            cols.add(c); d1.add(r - c); d2.add(r + c)
+            total += go(r + 1)
+            cols.remove(c); d1.remove(r - c); d2.remove(r + c)
+        return total
+
+    return go(0)
+
+
+def word_search(grid, word):
+    rows, cols = len(grid), len(grid[0])
+    seen = set()
+
+    def dfs(r, c, i):
+        if i == len(word):
+            return True
+        if not (0 <= r < rows and 0 <= c < cols) or (r, c) in seen or grid[r][c] != word[i]:
+            return False
+        seen.add((r, c))
+        ok = any(dfs(r + dr, c + dc, i + 1) for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+        seen.remove((r, c))
+        return ok
+
+    return any(dfs(r, c, 0) for r in range(rows) for c in range(cols))
+
+
+def word_search_cases():
+    base = ["ABCE", "SFCS", "ADEE"]
+    cases = [(base, "ABCCED"), (base, "SEE"), (base, "ABCB")]
+    for _ in range(5):
+        r, c = rng.choice([(3, 4), (4, 4), (5, 5), (6, 6)])
+        grid = ["".join(rng.choice("ABC") for _ in range(c)) for _ in range(r)]
+        if rng.random() < 0.6:
+            y, x = rng.randrange(r), rng.randrange(c)
+            path, used = [grid[y][x]], {(y, x)}
+            for _ in range(rng.randint(3, 8)):
+                options = [(y + dy, x + dx) for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                           if 0 <= y + dy < r and 0 <= x + dx < c and (y + dy, x + dx) not in used]
+                if not options:
+                    break
+                y, x = rng.choice(options)
+                used.add((y, x))
+                path.append(grid[y][x])
+            cases.append((grid, "".join(path)))
+        else:
+            cases.append((grid, rand_str(rng.randint(5, 9), "ABCD")))
+    return cases
+
+
+def count_subsets(nums, target):
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for v in nums:
+        for s in range(target, v - 1, -1):
+            dp[s] += dp[s - v]
+    return dp[target]
+
+
+def distinct_perms_count(nums):
+    total = math.factorial(len(nums))
+    for c in Counter(nums).values():
+        total //= math.factorial(c)
+    return total
+
+
+def catalan(n):
+    return math.comb(2 * n, n) // (n + 1)
+
+
+def palindrome_partitions(s):
+    n = len(s)
+    ways = [1] + [0] * n
+    for i in range(1, n + 1):
+        for j in range(i):
+            piece = s[j:i]
+            if piece == piece[::-1]:
+                ways[i] += ways[j]
+    return ways[n]
+
+
+# ---- graphs -----------------------------------------------------------------
+def course_schedule(n, prereqs):
+    indeg = [0] * n
+    adj = [[] for _ in range(n)]
+    for a, b in prereqs:
+        adj[b].append(a)
+        indeg[a] += 1
+    queue = deque(i for i in range(n) if indeg[i] == 0)
+    done = 0
+    while queue:
+        u = queue.popleft()
+        done += 1
+        for v in adj[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                queue.append(v)
+    return done == n
+
+
+def course_cases():
+    cases = [(2, [[1, 0]]), (2, [[1, 0], [0, 1]])]
+    for n in (5, 20, 60, 100, 100, 150):
+        order = list(range(n))
+        rng.shuffle(order)
+        pos = {v: i for i, v in enumerate(order)}
+        edges = set()
+        for _ in range(rng.randint(n, 2 * n)):
+            a, b = rng.sample(range(n), 2)
+            if pos[a] < pos[b]:
+                a, b = b, a
+            edges.add((a, b))  # a comes after b: always acyclic
+        edges = [list(e) for e in sorted(edges)]
+        if len(cases) % 2 == 1:
+            a, b = edges[rng.randrange(len(edges))]
+            edges.append([b, a])  # closes a cycle
+        cases.append((n, edges))
+    return cases
+
+
+def connected_components(n, edges):
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    comps = n
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+            comps -= 1
+    return comps
+
+
+def random_edges(n, m):
+    return [rng.sample(range(n), 2) for _ in range(m)]
+
+
+def components_cases():
+    cases = [(5, [[0, 1], [1, 2], [3, 4]]), (5, [[0, 1], [1, 2], [2, 3], [3, 4]])]
+    for n, m in ((10, 4), (30, 20), (100, 60), (200, 150), (200, 90), (50, 10), (1000, 800)):
+        cases.append((n, random_edges(n, m)))
+    return cases
+
+
+def valid_path(n, edges, source, destination):
+    adj = [[] for _ in range(n)]
+    for a, b in edges:
+        adj[a].append(b)
+        adj[b].append(a)
+    seen, queue = {source}, deque([source])
+    while queue:
+        u = queue.popleft()
+        if u == destination:
+            return True
+        for v in adj[u]:
+            if v not in seen:
+                seen.add(v)
+                queue.append(v)
+    return False
+
+
+def valid_path_cases():
+    cases = [(3, [[0, 1], [1, 2], [2, 0]], 0, 2), (6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5)]
+    for n, m in ((10, 8), (30, 25), (100, 80), (100, 150), (200, 160), (60, 30)):
+        s, d = rng.sample(range(n), 2)
+        cases.append((n, random_edges(n, m), s, d))
+    return cases
+
+
+def rotting_oranges(grid):
+    rows, cols = len(grid), len(grid[0])
+    cells = [list(r) for r in grid]
+    queue = deque((r, c) for r in range(rows) for c in range(cols) if cells[r][c] == "2")
+    fresh = sum(row.count("1") for row in cells)
+    minutes = 0
+    while queue and fresh:
+        for _ in range(len(queue)):
+            r, c = queue.popleft()
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                y, x = r + dr, c + dc
+                if 0 <= y < rows and 0 <= x < cols and cells[y][x] == "1":
+                    cells[y][x] = "2"
+                    fresh -= 1
+                    queue.append((y, x))
+        minutes += 1
+    return minutes if fresh == 0 else -1
+
+
+def rand_grid(rows, cols, weights):
+    chars, probs = zip(*weights)
+    return ["".join(rng.choices(chars, probs, k=cols)) for _ in range(rows)]
+
+
+def rotting_cases():
+    cases = [["211", "110", "011"], ["211", "011", "101"], ["02"], ["0"], ["1"]]
+    for r, c in ((5, 5), (8, 8), (12, 10), (20, 20)):
+        cases.append(rand_grid(r, c, (("0", 0.2), ("1", 0.7), ("2", 0.1))))
+    return cases
+
+
+def shortest_path_binary(grid):
+    n = len(grid)
+    if grid[0][0] == "1" or grid[n - 1][n - 1] == "1":
+        return -1
+    queue, seen = deque([(0, 0, 1)]), {(0, 0)}
+    while queue:
+        r, c, d = queue.popleft()
+        if (r, c) == (n - 1, n - 1):
+            return d
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                y, x = r + dr, c + dc
+                if 0 <= y < n and 0 <= x < n and grid[y][x] == "0" and (y, x) not in seen:
+                    seen.add((y, x))
+                    queue.append((y, x, d + 1))
+    return -1
+
+
+def shortest_cases():
+    cases = [["01", "10"], ["000", "110", "110"]]
+    for n, p in ((5, 0.3), (8, 0.25), (12, 0.35), (20, 0.3), (30, 0.3), (30, 0.45), (3, 0.5)):
+        g = [list(r) for r in rand_grid(n, n, (("0", 1 - p), ("1", p)))]
+        g[0][0] = g[n - 1][n - 1] = "0" if rng.random() < 0.85 else "1"
+        cases.append(["".join(r) for r in g])
+    return cases
+
+
+# ---- greedy -----------------------------------------------------------------
+def assign_cookies(g, s):
+    g, s = sorted(g), sorted(s)
+    i = 0
+    for size in s:
+        if i < len(g) and g[i] <= size:
+            i += 1
+    return i
+
+
+def valid_starts(gas, cost):
+    n = len(gas)
+    ok = []
+    for start in range(n):
+        tank = 0
+        for k in range(n):
+            j = (start + k) % n
+            tank += gas[j] - cost[j]
+            if tank < 0:
+                break
+        else:
+            ok.append(start)
+    return ok
+
+
+def gas_station(gas, cost):
+    if sum(gas) < sum(cost):
+        return -1
+    tank = start = 0
+    for i in range(len(gas)):
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            start, tank = i + 1, 0
+    return start
+
+
+def gas_cases():
+    cases = [([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]), ([2, 3, 4], [3, 4, 3])]
+    while len(cases) < 9:
+        n = rng.choice([5, 20, 100])
+        gas = rand_arr(n, 0, 10)
+        cost = rand_arr(n, 0, 10)
+        starts = valid_starts(gas, cost)
+        if len(starts) <= 1:
+            assert gas_station(gas, cost) == (starts[0] if starts else -1)
+            cases.append((gas, cost))
+    return cases
+
+
+def non_overlapping(intervals):
+    intervals = sorted(intervals, key=lambda p: p[1])
+    end, removed = -10**9, 0
+    for s, e in intervals:
+        if s >= end:
+            end = e
+        else:
+            removed += 1
+    return removed
+
+
+def rand_intervals(n, span, width):
+    out = []
+    for _ in range(n):
+        s = rng.randint(0, span)
+        out.append([s, s + rng.randint(1, width)])
+    return out
+
+
+# ---- heap / intervals -------------------------------------------------------
+def last_stone_weight(stones):
+    heap = [-s for s in stones]
+    heapq.heapify(heap)
+    while len(heap) > 1:
+        a, b = -heapq.heappop(heap), -heapq.heappop(heap)
+        if a != b:
+            heapq.heappush(heap, -(a - b))
+    return -heap[0] if heap else 0
+
+
+def top_k_frequent(nums, k):
+    ranked = sorted(Counter(nums).items(), key=lambda kv: (-kv[1], kv[0]))
+    return [v for v, _ in ranked[:k]]
+
+
+def top_k_cases():
+    cases = [([1, 1, 1, 2, 2, 3], 2), ([1], 1)]
+    for n, hi in ((10, 4), (30, 8), (100, 15), (300, 40), (500, 100), (200, 5), (50, 50)):
+        nums = rand_arr(n, -hi, hi)
+        cases.append((nums, rng.randint(1, min(5, len(set(nums))))))
+    return cases
+
+
+def meeting_rooms(intervals):
+    starts = sorted(s for s, _ in intervals)
+    ends = sorted(e for _, e in intervals)
+    rooms = best = j = 0
+    for s in starts:
+        while ends[j] <= s:
+            j += 1
+            rooms -= 1
+        rooms += 1
+        best = max(best, rooms)
+    return best
+
+
+# ---- grids ------------------------------------------------------------------
+def island_perimeter(grid):
+    rows, cols = len(grid), len(grid[0])
+    total = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                total += 4
+                if r > 0 and grid[r - 1][c] == "1":
+                    total -= 2
+                if c > 0 and grid[r][c - 1] == "1":
+                    total -= 2
+    return total
+
+
+def maximal_square(grid):
+    rows, cols = len(grid), len(grid[0])
+    dp = [[0] * (cols + 1) for _ in range(rows + 1)]
+    best = 0
+    for r in range(1, rows + 1):
+        for c in range(1, cols + 1):
+            if grid[r - 1][c - 1] == "1":
+                dp[r][c] = 1 + min(dp[r - 1][c], dp[r][c - 1], dp[r - 1][c - 1])
+                best = max(best, dp[r][c])
+    return best * best
+
+
+def binary_grid_cases(first):
+    cases = list(first)
+    for r, c, p in ((4, 4, 0.5), (6, 8, 0.6), (10, 10, 0.7), (15, 12, 0.8), (20, 20, 0.85), (30, 30, 0.9)):
+        cases.append(rand_grid(r, c, (("1", p), ("0", 1 - p))))
+    return cases
+
+
+# ---- math -------------------------------------------------------------------
+def happy_number(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(d) ** 2 for d in str(n))
+    return n == 1
+
+
+def fast_power_mod(base, exp, mod):
+    return pow(base, exp, mod)
+
+
+ROMAN = [(1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+         (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
+
+
+def to_roman(n):
+    out = []
+    for value, sym in ROMAN:
+        while n >= value:
+            out.append(sym)
+            n -= value
+    return "".join(out)
+
+
+def roman_to_integer(s):
+    vals = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for i, ch in enumerate(s):
+        if i + 1 < len(s) and vals[ch] < vals[s[i + 1]]:
+            total -= vals[ch]
+        else:
+            total += vals[ch]
+    return total
+
+
+def perfect_squares(n):
+    dp = [0] + [n] * n
+    for i in range(1, n + 1):
+        j = 1
+        while j * j <= i:
+            dp[i] = min(dp[i], dp[i - j * j] + 1)
+            j += 1
+    return dp[n]
+
+
+def excel_column(s):
+    total = 0
+    for ch in s:
+        total = total * 26 + ord(ch) - 64
+    return total
+
+
+def to_excel(n):
+    out = []
+    while n:
+        n, r = divmod(n - 1, 26)
+        out.append(chr(65 + r))
+    return "".join(reversed(out))
+
+
+# ---- dynamic programming ----------------------------------------------------
+def decode_ways(s):
+    prev2, prev1 = 1, 1 if s[0] != "0" else 0
+    for i in range(1, len(s)):
+        cur = 0
+        if s[i] != "0":
+            cur += prev1
+        if 10 <= int(s[i - 1:i + 1]) <= 26:
+            cur += prev2
+        prev2, prev1 = prev1, cur
+    return prev1
+
+
+def unique_paths_obstacles(grid):
+    rows, cols = len(grid), len(grid[0])
+    dp = [[0] * cols for _ in range(rows)]
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                continue
+            if r == 0 and c == 0:
+                dp[r][c] = 1
+            else:
+                dp[r][c] = (dp[r - 1][c] if r else 0) + (dp[r][c - 1] if c else 0)
+    return dp[rows - 1][cols - 1]
+
+
+def is_subsequence(s, t):
+    it = iter(t)
+    return all(ch in it for ch in s)
+
+
+def house_robber_ii(nums):
+    def line(a):
+        prev = cur = 0
+        for v in a:
+            prev, cur = cur, max(cur, prev + v)
+        return cur
+
+    return nums[0] if len(nums) == 1 else max(line(nums[1:]), line(nums[:-1]))
+
+
+# ------------------------------------------------------------------ catalogue
+N_IN = "A single integer `n`."
+STR_IN = "A single line containing the string `s`."
+INTERVALS_IN = "Line 1: `n`, the number of intervals.\nNext `n` lines: `start end`."
+GRID_IN = "Line 1: `rows cols`.\nNext `rows` lines: a string of `cols` characters."
+EDGES_IN = ("Line 1: `n`.\nLine 2: `m`, the number of edges.\nNext `m` lines: two integers `a b` describing one edge")
+
+PROBLEMS += [
+    # --- two pointers
+    mk("valid-palindrome", "Valid Palindrome", "EASY", ["string", "two-pointers"], [("s", "str")], "bool",
+       valid_palindrome, valid_palindrome_cases(),
+       "After lowercasing and removing every character that is not a letter or digit, does the string read the same "
+       "forwards and backwards?", STR_IN, "`true` or `false`.",
+       ["`1 <= s.length <= 200`", "`s` contains printable ASCII characters"]),
+    mk("two-sum-ii-input-array-is-sorted", "Two Sum II - Sorted Input", "MEDIUM", ["array", "two-pointers", "binary-search"],
+       [("numbers", "int[]"), ("target", "int")], "int[]", two_sum_ii, two_sum_ii_cases(),
+       "`numbers` is sorted in non-decreasing order. Find the one pair that sums to `target` and return their "
+       "**1-based** indices, smaller first. Use only constant extra space.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `target`.", "The two 1-based indices, separated by a space.",
+       ["`2 <= n <= 300`", "`-1000 <= numbers[i] <= 1000`", "Exactly one valid pair exists"]),
+    mk("3sum-count", "3Sum (Count Triplets)", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "int",
+       three_sum_count, [[-1, 0, 1, 2, -1, -4], [0, 1, 1], [0, 0, 0], [0, 0, 0, 0], rand_arr(12, -10, 10),
+                         rand_arr(60, -30, 30), rand_arr(200, -50, 50), rand_arr(500, -100, 100), rand_arr(3, -5, 5)],
+       "Count the **distinct** value triplets `[a, b, c]` taken from different indices of `nums` whose sum is `0`. "
+       "Two triplets are the same if they hold the same values, regardless of order.", ARR_IN,
+       "The number of distinct triplets.", ["`3 <= n <= 500`", "`-10^5 <= nums[i] <= 10^5`"]),
+    mk("remove-duplicates-from-sorted-array", "Remove Duplicates from Sorted Array", "EASY", ["array", "two-pointers"],
+       [("nums", "int[]")], "int[]", remove_duplicates,
+       [[1, 1, 2], [0, 0, 1, 1, 1, 2, 2, 3, 3, 4], [5], [1, 2, 3], sorted(rand_arr(50, 0, 20)),
+        sorted(rand_arr(300, -30, 30)), sorted(rand_arr(1000, 0, 100)), [7, 7, 7, 7]],
+       "`nums` is sorted. Print the distinct values in their original (sorted) order.", ARR_IN,
+       "The distinct values separated by spaces.", ["`1 <= n <= 1000`", "`nums` is sorted in non-decreasing order"]),
+    mk("move-zeroes", "Move Zeroes", "EASY", ["array", "two-pointers"], [("nums", "int[]")], "int[]", move_zeroes,
+       [[0, 1, 0, 3, 12], [0], [1, 0, 0, 2], rand_arr(20, 0, 3), rand_arr(200, -2, 2), rand_arr(1000, 0, 1), [4, 5, 6],
+        [0, 0, 7]],
+       "Move every `0` to the end while keeping the relative order of the non-zero elements. Print the resulting "
+       "array.", ARR_IN, "The rearranged array separated by spaces.", ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    # --- sliding window
+    mk("minimum-size-subarray-sum", "Minimum Size Subarray Sum", "MEDIUM", ["array", "sliding-window", "prefix-sum"],
+       [("target", "int"), ("nums", "int[]")], "int", min_size_subarray,
+       [(7, [2, 3, 1, 2, 4, 3]), (4, [1, 4, 4]), (11, [1] * 8), (15, [1, 2, 3, 4, 5]), (100, rand_arr(30, 1, 10)),
+        (50, rand_arr(200, 1, 20)), (1000, rand_arr(500, 1, 30)), (5, [5]), (3, [1, 1])],
+       "Return the length of the shortest contiguous subarray whose sum is at least `target`, or `0` if none exists.",
+       "Line 1: `target`.\nLine 2: `n`.\nLine 3: `n` positive integers.", "The minimum length, or `0`.",
+       ["`1 <= target <= 10^9`", "`1 <= n <= 1000`", "`1 <= nums[i] <= 10^4`"]),
+    mk("longest-repeating-character-replacement", "Longest Repeating Character Replacement", "MEDIUM",
+       ["string", "sliding-window", "hash-table"], [("s", "str"), ("k", "int")], "int", longest_repeating,
+       [("ABAB", 2), ("AABABBA", 1), ("A", 0), ("ABCDE", 1), (rand_str(40, "AB"), 3), (rand_str(100, "ABC"), 4),
+        (rand_str(300, "ABC"), 10), (rand_str(500, "ABCD"), 0), ("AAAA", 2)],
+       "You may change at most `k` characters of `s` to any uppercase letter. Return the length of the longest "
+       "substring of identical letters you can obtain.", "Line 1: the string `s`.\nLine 2: `k`.", "The maximum length.",
+       ["`1 <= s.length <= 500`", "`s` is uppercase English letters", "`0 <= k <= s.length`"]),
+    mk("sliding-window-maximum", "Sliding Window Maximum", "HARD", ["array", "sliding-window", "heap", "monotonic-stack"],
+       [("nums", "int[]"), ("k", "int")], "int[]", sliding_window_max,
+       [([1, 3, -1, -3, 5, 3, 6, 7], 3), ([1], 1), ([9, 11], 2), ([4, 3, 2, 1], 2), (rand_arr(30, -20, 20), 4),
+        (rand_arr(200, -1000, 1000), 10), (rand_arr(1000, -10000, 10000), 50), (list(range(100)), 7),
+        (list(range(100, 0, -1)), 7)],
+       "A window of size `k` slides from the left of `nums` to the right, one position at a time. Print the maximum "
+       "of every window.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.",
+       "`n - k + 1` window maximums separated by spaces.", ["`1 <= k <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("permutation-in-string", "Permutation in String", "MEDIUM", ["string", "sliding-window", "hash-table"],
+       [("s1", "str"), ("s2", "str")], "bool", permutation_in_string,
+       [("ab", "eidbaooo"), ("ab", "eidboaoo"), ("a", "a"), ("abc", "ab"), (rand_str(4, "abc"), rand_str(30, "abc")),
+        (rand_str(6, "abcd"), rand_str(100, "abcd")), (rand_str(8, "ab"), rand_str(200, "abc")),
+        (rand_str(10, "abcde"), rand_str(400, "abcde")), ("adc", "dcda")],
+       "Return `true` if some permutation of `s1` appears as a contiguous substring of `s2`.",
+       "Line 1: `s1`.\nLine 2: `s2`.", "`true` or `false`.", ["`1 <= s1.length, s2.length <= 400`", "Lowercase letters"]),
+    # --- bit manipulation
+    mk("number-of-1-bits", "Number of 1 Bits", "EASY", ["bit-manipulation"], [("n", "int")], "int", number_of_1_bits,
+       [11, 128, 2147483645, 1, 255, 1023, 2147483647, rng.randint(1, 2**31 - 1), rng.randint(1, 2**31 - 1)],
+       "Return the number of `1` bits in the binary representation of the positive integer `n`.", N_IN,
+       "The count of set bits.", ["`1 <= n <= 2^31 - 1`"]),
+    mk("counting-bits", "Counting Bits", "EASY", ["bit-manipulation", "dynamic-programming"], [("n", "int")], "int[]",
+       counting_bits, [2, 5, 1, 10, 16, 33, 100, 500, 1000],
+       "For every `i` from `0` to `n` inclusive, count the `1` bits in `i`. Print all `n + 1` counts.", N_IN,
+       "`n + 1` integers separated by spaces.", ["`1 <= n <= 1000`"]),
+    mk("power-of-two", "Power of Two", "EASY", ["math", "bit-manipulation"], [("n", "int")], "bool", power_of_two,
+       [1, 16, 3, 0, -16, 2**30, 2**30 + 1, 218, -2147483648, 1024, 6],
+       "Return `true` if `n` is a power of two (`1, 2, 4, 8, ...`).", N_IN, "`true` or `false`.",
+       ["`-2^31 <= n <= 2^31 - 1`"]),
+    # --- backtracking
+    mk("n-queens-count", "N-Queens (Count Solutions)", "HARD", ["backtracking"], [("n", "int")], "int", n_queens,
+       [4, 1, 2, 3, 5, 6, 7, 8, 9],
+       "Place `n` queens on an `n x n` board so that no two attack each other (same row, column or diagonal). "
+       "Return how many distinct placements exist.", N_IN, "The number of solutions.", ["`1 <= n <= 9`"]),
+    mk("word-search", "Word Search", "MEDIUM", ["backtracking", "matrix"], [("board", "grid"), ("word", "str")], "bool",
+       word_search, word_search_cases(),
+       "Return `true` if `word` can be traced through the grid by moving up, down, left or right between adjacent "
+       "cells without using any cell twice.", GRID_IN + "\nLast line: the `word`.", "`true` or `false`.",
+       ["`1 <= rows, cols <= 6`", "`1 <= word.length <= 9`", "Uppercase letters"]),
+    mk("count-subsets-with-sum", "Count Subsets With Target Sum", "MEDIUM", ["backtracking", "dynamic-programming"],
+       [("nums", "int[]"), ("target", "int")], "int", count_subsets,
+       [([1, 1, 1, 1, 1], 3), ([2, 3, 5, 6, 8, 10], 10), ([1, 2, 3], 7), (rand_arr(10, 1, 9), 15),
+        (rand_arr(15, 1, 20), 40), (rand_arr(20, 1, 30), 100), (rand_arr(20, 1, 10), 60), ([5], 5), ([4, 4], 4)],
+       "Count the subsets (chosen by index, so equal values count separately) of `nums` whose elements add up to "
+       "exactly `target`.", "Line 1: `n`.\nLine 2: `n` positive integers.\nLine 3: `target`.",
+       "The number of subsets.", ["`1 <= n <= 20`", "`1 <= nums[i] <= 50`", "`1 <= target <= 500`"]),
+    mk("distinct-permutations-count", "Distinct Permutations Count", "MEDIUM", ["backtracking", "math"],
+       [("nums", "int[]")], "int", distinct_perms_count,
+       [[1, 1, 2], [1, 2, 3], [1, 1, 1], [1, 2], rand_arr(6, 1, 3), rand_arr(7, 1, 4), rand_arr(8, 1, 3),
+        rand_arr(8, 1, 8), [5]],
+       "`nums` may contain duplicates. Return how many different arrangements (as value sequences) it has.", ARR_IN,
+       "The number of distinct permutations.", ["`1 <= n <= 8`", "`1 <= nums[i] <= 10`"]),
+    mk("generate-parentheses-count", "Generate Parentheses (Count)", "MEDIUM", ["backtracking", "dynamic-programming", "math"],
+       [("n", "int")], "int", catalan, [3, 1, 2, 4, 5, 8, 10, 12, 15],
+       "Return how many well-formed strings of `n` pairs of parentheses exist.", N_IN, "The count.", ["`1 <= n <= 15`"]),
+    mk("palindrome-partitioning-count", "Palindrome Partitioning (Count)", "MEDIUM",
+       ["backtracking", "dynamic-programming", "string"], [("s", "str")], "int", palindrome_partitions,
+       ["aab", "a", "aaa", "abc", "abba", rand_str(10, "ab"), rand_str(14, "ab"), "a" * 16, rand_str(16, "abc")],
+       "Count the ways to cut `s` into pieces so that every piece is a palindrome.", STR_IN, "The number of ways.",
+       ["`1 <= s.length <= 16`", "Lowercase letters"]),
+    # --- graphs
+    mk("course-schedule", "Course Schedule", "MEDIUM", ["graph", "topological-sort", "bfs"],
+       [("numCourses", "int"), ("prerequisites", "int[][]")], "bool", course_schedule, course_cases(),
+       "There are `numCourses` courses labelled `0..numCourses-1`. Each pair `[a, b]` means you must take course `b` "
+       "before `a`. Return whether all courses can be finished.",
+       "Line 1: `numCourses`.\nLine 2: `m`, the number of prerequisites.\nNext `m` lines: `a b`.", "`true` or `false`.",
+       ["`1 <= numCourses <= 150`", "`1 <= m <= 400`"]),
+    mk("number-of-connected-components", "Number of Connected Components", "MEDIUM", ["graph", "union-find", "dfs"],
+       [("n", "int"), ("edges", "int[][]")], "int", connected_components, components_cases(),
+       "An undirected graph has `n` nodes labelled `0..n-1`. Return the number of connected components.", EDGES_IN + ".",
+       "The number of components.", ["`1 <= n <= 1000`", "`1 <= m <= 1000`"]),
+    mk("find-if-path-exists-in-graph", "Find if Path Exists in Graph", "EASY", ["graph", "bfs", "union-find"],
+       [("n", "int"), ("edges", "int[][]"), ("source", "int"), ("destination", "int")], "bool", valid_path,
+       valid_path_cases(),
+       "Return whether a path exists between `source` and `destination` in an undirected graph.",
+       EDGES_IN + ".\nThen `source` on its own line, then `destination` on its own line.", "`true` or `false`.",
+       ["`2 <= n <= 200`", "`1 <= m <= 300`"]),
+    mk("rotting-oranges", "Rotting Oranges", "MEDIUM", ["graph", "bfs", "matrix"], [("grid", "grid")], "int",
+       rotting_oranges, rotting_cases(),
+       "Each cell is `0` (empty), `1` (fresh orange) or `2` (rotten orange). Every minute, fresh oranges next to a "
+       "rotten one (up, down, left, right) rot. Return the minutes until none are fresh, or `-1` if that is impossible.",
+       GRID_IN, "The minutes, or `-1`.", ["`1 <= rows, cols <= 20`"]),
+    mk("shortest-path-in-binary-matrix", "Shortest Path in Binary Matrix", "MEDIUM", ["graph", "bfs", "matrix"],
+       [("grid", "grid")], "int", shortest_path_binary, shortest_cases(),
+       "In an `n x n` grid of `0` (open) and `1` (blocked), find the shortest path from the top-left to the bottom-right "
+       "moving in any of the 8 directions through open cells. Return the number of cells on that path, or `-1`.",
+       GRID_IN + "\n(The grid is square.)", "The path length, or `-1`.", ["`1 <= n <= 30`"]),
+    # --- greedy
+    mk("assign-cookies", "Assign Cookies", "EASY", ["greedy", "sorting", "two-pointers"],
+       [("g", "int[]"), ("s", "int[]")], "int", assign_cookies,
+       [([1, 2, 3], [1, 1]), ([1, 2], [1, 2, 3]), ([10, 9, 8], [1, 2]), (rand_arr(10, 1, 10), rand_arr(8, 1, 10)),
+        (rand_arr(100, 1, 50), rand_arr(100, 1, 50)), (rand_arr(300, 1, 100), rand_arr(200, 1, 100)), ([5], [5]),
+        ([1, 1, 1], [9]), (rand_arr(500, 1, 1000), rand_arr(500, 1, 1000))],
+       "Child `i` is content with a cookie of size at least `g[i]`. Each cookie `s[j]` can go to one child. Return the "
+       "maximum number of content children.",
+       "Line 1: `n`.\nLine 2: the greed factors `g`.\nLine 3: `m`.\nLine 4: the cookie sizes `s`.",
+       "The maximum number of content children.", ["`1 <= n, m <= 500`", "`1 <= g[i], s[j] <= 1000`"]),
+    mk("gas-station", "Gas Station", "MEDIUM", ["greedy", "array"], [("gas", "int[]"), ("cost", "int[]")], "int",
+       gas_station, gas_cases(),
+       "Stations are arranged in a circle. `gas[i]` is the fuel you gain at station `i` and `cost[i]` the fuel to drive "
+       "to the next one. Starting with an empty tank, return the index of the station from which you can complete the "
+       "circuit, or `-1`. The answer is unique when it exists.",
+       "Line 1: `n`.\nLine 2: `gas`.\nLine 3: `n`.\nLine 4: `cost`.", "The starting index, or `-1`.",
+       ["`1 <= n <= 100`", "`0 <= gas[i], cost[i] <= 10`"]),
+    mk("non-overlapping-intervals", "Non-overlapping Intervals", "MEDIUM", ["greedy", "intervals", "sorting"],
+       [("intervals", "int[][]")], "int", non_overlapping,
+       [[[1, 2], [2, 3], [3, 4], [1, 3]], [[1, 2], [1, 2], [1, 2]], [[1, 2], [2, 3]], rand_intervals(10, 20, 6),
+        rand_intervals(50, 100, 15), rand_intervals(200, 300, 30), rand_intervals(300, 100, 40), [[0, 5]],
+        rand_intervals(100, 50, 10)],
+       "Return the minimum number of intervals to remove so the rest do not overlap. Intervals that only touch at an "
+       "endpoint (such as `[1,2]` and `[2,3]`) do not overlap.", INTERVALS_IN, "The minimum removals.",
+       ["`1 <= n <= 300`", "`0 <= start < end <= 10^4`"]),
+    # --- heap
+    mk("last-stone-weight", "Last Stone Weight", "EASY", ["heap", "array"], [("stones", "int[]")], "int",
+       last_stone_weight,
+       [[2, 7, 4, 1, 8, 1], [1], [3, 3], rand_arr(10, 1, 20), rand_arr(30, 1, 100), rand_arr(100, 1, 1000),
+        rand_arr(5, 1, 5), [9, 3, 2, 10], rand_arr(60, 1, 50)],
+       "Repeatedly smash the two heaviest stones. If they are equal both vanish; otherwise the heavier one keeps the "
+       "difference. Return the weight of the last remaining stone, or `0`.", "Line 1: `n`.\nLine 2: the stone weights.",
+       "The final weight.", ["`1 <= n <= 100`", "`1 <= stones[i] <= 1000`"]),
+    mk("top-k-frequent-elements", "Top K Frequent Elements", "MEDIUM", ["heap", "hash-table", "sorting"],
+       [("nums", "int[]"), ("k", "int")], "int[]", top_k_frequent, top_k_cases(),
+       "Return the `k` most frequent values. Order them by frequency (highest first); break ties by the smaller value "
+       "first.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "`k` integers separated by spaces.",
+       ["`1 <= n <= 500`", "`1 <= k <=` the number of distinct values"]),
+    mk("meeting-rooms-ii", "Meeting Rooms II", "MEDIUM", ["heap", "intervals", "sorting"], [("intervals", "int[][]")],
+       "int", meeting_rooms,
+       [[[0, 30], [5, 10], [15, 20]], [[7, 10], [2, 4]], [[1, 5], [5, 9]], rand_intervals(10, 30, 10),
+        rand_intervals(50, 100, 30), rand_intervals(200, 300, 60), rand_intervals(300, 80, 50), [[1, 2]],
+        rand_intervals(100, 40, 20)],
+       "Each interval is a meeting `[start, end)`. Return the minimum number of rooms needed. A meeting that starts "
+       "exactly when another ends can reuse its room.", INTERVALS_IN, "The minimum number of rooms.",
+       ["`1 <= n <= 300`", "`0 <= start < end <= 10^4`"]),
+    # --- grids
+    mk("island-perimeter", "Island Perimeter", "EASY", ["matrix", "array"], [("grid", "grid")], "int",
+       island_perimeter, binary_grid_cases([["0100", "1110", "0100", "1100"], ["1"], ["10", "01"]]),
+       "Cells are `1` (land) or `0` (water). Return the total length of the edges between land cells and water or the "
+       "grid boundary.", GRID_IN, "The perimeter.", ["`1 <= rows, cols <= 30`"]),
+    mk("maximal-square", "Maximal Square", "MEDIUM", ["matrix", "dynamic-programming"], [("matrix", "grid")], "int",
+       maximal_square, binary_grid_cases([["10100", "10111", "11111", "10010"], ["01", "10"], ["0"]]),
+       "Find the largest square made only of `1`s and return its **area**.", GRID_IN, "The area.",
+       ["`1 <= rows, cols <= 30`"]),
+    # --- math
+    mk("happy-number", "Happy Number", "EASY", ["math", "hash-table"], [("n", "int")], "bool", happy_number,
+       [19, 2, 1, 7, 4, 100, 116, 2147483647, rng.randint(1, 10**9), 1111111],
+       "Repeatedly replace `n` with the sum of the squares of its digits. `n` is happy if this reaches `1`, and unhappy "
+       "if it loops forever.", N_IN, "`true` or `false`.", ["`1 <= n <= 2^31 - 1`"]),
+    mk("fast-power-mod", "Fast Modular Exponentiation", "MEDIUM", ["math", "divide-and-conquer"],
+       [("base", "int"), ("exp", "int"), ("mod", "int")], "int", fast_power_mod,
+       [(2, 10, 1000), (3, 200, 13), (0, 0, 7), (5, 3, 1), (2, 1000000000, 1000000007),
+        (123456789, 987654321, 999999937), (10, 0, 5), (999999999, 999999999, 1000000000), (7, 1, 2)],
+       "Compute `base^exp mod mod`. `exp` can be as large as `10^9`, so use fast exponentiation and take care that "
+       "intermediate products can overflow 32 bits. `0^0` is `1`.", "Three lines: `base`, `exp`, `mod`.",
+       "The result.", ["`0 <= base, exp <= 10^9`", "`1 <= mod <= 10^9`"]),
+    mk("roman-to-integer", "Roman to Integer", "EASY", ["math", "string"], [("s", "str")], "int", roman_to_integer,
+       [to_roman(n) for n in (3, 58, 1994, 4, 9, 3999, 1, 444, 2024, rng.randint(1, 3999), rng.randint(1, 3999))],
+       "Convert a valid Roman numeral to an integer. Subtractive forms such as `IV` and `CM` apply.", STR_IN,
+       "The integer value.", ["`1 <= value <= 3999`"]),
+    mk("perfect-squares", "Perfect Squares", "MEDIUM", ["math", "dynamic-programming", "bfs"], [("n", "int")], "int",
+       perfect_squares, [12, 13, 1, 2, 7, 43, 100, 6175, 9999, 10000],
+       "Return the least number of perfect squares (`1, 4, 9, 16, ...`) that sum to `n`.", N_IN,
+       "The minimum count.", ["`1 <= n <= 10^4`"]),
+    mk("excel-sheet-column-number", "Excel Sheet Column Number", "EASY", ["math", "string"], [("columnTitle", "str")],
+       "int", excel_column,
+       ["A", "AB", "ZY", "Z", "AA", "FXSHRXW", "XFD", to_excel(rng.randint(1, 10**6)), to_excel(rng.randint(10**6, 2 * 10**9))],
+       "Return the column number for an Excel column title (`A -> 1`, `Z -> 26`, `AA -> 27`, ...).",
+       "A single line containing the column title.", "The column number.",
+       ["`1 <= title.length <= 7`", "Uppercase letters, value fits in 32 bits"]),
+    # --- dynamic programming
+    mk("decode-ways", "Decode Ways", "MEDIUM", ["dynamic-programming", "string"], [("s", "str")], "int", decode_ways,
+       ["12", "226", "06", "0", "10", "27", "11106", rand_str(20, "12"), rand_str(30, "0123456789").lstrip("0") or "1",
+        "1" * 35],
+       "Letters map to numbers (`A -> 1`, ..., `Z -> 26`). Return how many ways a digit string can be decoded back into "
+       "letters. Leading zeros make a piece invalid.", STR_IN, "The number of decodings.",
+       ["`1 <= s.length <= 35`", "Digits only"]),
+    mk("unique-paths-ii", "Unique Paths II", "MEDIUM", ["dynamic-programming", "matrix"], [("grid", "grid")], "int",
+       unique_paths_obstacles,
+       [["000", "010", "000"], ["01", "00"], ["1"]]
+       + [rand_grid(r, c, (("0", 0.85), ("1", 0.15))) for r, c in ((5, 5), (8, 6), (10, 10), (12, 12), (15, 15), (9, 14))],
+       "A robot moves only right or down from the top-left to the bottom-right of a grid. Cells marked `1` are "
+       "obstacles. Return the number of distinct paths.", GRID_IN, "The number of paths.",
+       ["`1 <= rows, cols <= 15`", "The answer fits in 32 bits"]),
+    mk("is-subsequence", "Is Subsequence", "EASY", ["string", "two-pointers", "dynamic-programming"],
+       [("s", "str"), ("t", "str")], "bool", is_subsequence,
+       [("abc", "ahbgdc"), ("axc", "ahbgdc"), ("a", "a"), ("b", "abc"), (rand_str(5, "abc"), rand_str(40, "abc")),
+        (rand_str(8, "abcd"), rand_str(100, "abcd")), (rand_str(20, "ab"), rand_str(300, "ab")),
+        (rand_str(3, "xyz"), rand_str(50, "abc")), ("abc", "cba")],
+       "Return `true` if `s` can be obtained from `t` by deleting some characters without reordering the rest.",
+       "Line 1: `s`.\nLine 2: `t`.", "`true` or `false`.", ["`1 <= s.length <= 100`", "`1 <= t.length <= 300`"]),
+    mk("house-robber-ii", "House Robber II", "MEDIUM", ["dynamic-programming", "array"], [("nums", "int[]")], "int",
+       house_robber_ii,
+       [[2, 3, 2], [1, 2, 3, 1], [1, 2, 3], [5], [1, 2], rand_arr(10, 0, 50), rand_arr(50, 0, 100),
+        rand_arr(200, 0, 400), rand_arr(500, 0, 1000)],
+       "Houses are arranged in a circle, so the first and last are neighbours. You cannot rob two adjacent houses. "
+       "Return the maximum amount you can rob.", ARR_IN, "The maximum amount.",
+       ["`1 <= n <= 500`", "`0 <= nums[i] <= 1000`"]),
+]
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
