@@ -13,6 +13,10 @@ import com.sujaytumu.leetcode.submission.SubmissionDtos.RunResponse;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.SubmissionView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,13 @@ public class SubmissionService {
 
     private static final int MAX_OUTPUT_CHARS = 1_000;
     private static final int MAX_ERROR_CHARS = 2_000;
+
+    /** Test cases are independent, so they run concurrently; a small pool keeps load on the free sandbox modest. */
+    private static final ExecutorService JUDGE_POOL = Executors.newFixedThreadPool(4, runnable -> {
+        Thread thread = new Thread(runnable, "judge-worker");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private final ProblemRepository problems;
     private final SubmissionRepository submissions;
@@ -79,9 +90,10 @@ public class SubmissionService {
         double maxSeconds = 0;
         boolean sawTime = false;
 
+        List<ExecutionResult> executions = executeAll(language, code, cases);
         for (int i = 0; i < cases.size(); i++) {
             TestCase testCase = cases.get(i);
-            ExecutionResult execution = executor.execute(language, code, testCase.getInput());
+            ExecutionResult execution = executions.get(i);
             if (execution.timeSeconds() != null) {
                 maxSeconds = Math.max(maxSeconds, execution.timeSeconds());
                 sawTime = true;
@@ -157,6 +169,36 @@ public class SubmissionService {
         CaseResult result = new CaseResult(
                 1, true, ok, verdict, stdin, null, truncate(execution.stdout(), MAX_OUTPUT_CHARS), error, timeMs);
         return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, message, List.of(result), null);
+    }
+
+    private List<ExecutionResult> executeAll(Language language, String code, List<TestCase> cases) {
+        if (cases.isEmpty()) {
+            return List.of();
+        }
+        // Judge the first case alone: a compile error or wrong answer there ends the run without fanning out.
+        ExecutionResult first = executor.execute(language, code, cases.get(0).getInput());
+        if (cases.size() == 1 || evaluate(first, cases.get(0)).verdict != Verdict.ACCEPTED) {
+            return List.of(first);
+        }
+        List<CompletableFuture<ExecutionResult>> futures = new ArrayList<>();
+        for (TestCase testCase : cases.subList(1, cases.size())) {
+            String input = testCase.getInput(); // read on the request thread, before handing off
+            futures.add(CompletableFuture.supplyAsync(() -> executor.execute(language, code, input), JUDGE_POOL));
+        }
+        List<ExecutionResult> results = new ArrayList<>();
+        results.add(first);
+        for (CompletableFuture<ExecutionResult> future : futures) {
+            try {
+                results.add(future.join());
+            } catch (CompletionException ex) {
+                futures.forEach(f -> f.cancel(false));
+                if (ex.getCause() instanceof RuntimeException runtime) {
+                    throw runtime;
+                }
+                throw ex;
+            }
+        }
+        return results;
     }
 
     private CaseVerdict evaluate(ExecutionResult execution, TestCase testCase) {
