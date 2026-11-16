@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, apiWithWake, dailyIndex, fetchAllProblems, Page, Progress, ProblemSummary } from "@/lib/api";
+import { api, dailyIndex, Page, Progress, ProblemSummary } from "@/lib/api";
+import { loadAll, swr } from "@/lib/local";
+import Activity from "@/components/Activity";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
 
@@ -20,13 +22,15 @@ export default function Home() {
   const [waking, setWaking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
+  const [saved, setSaved] = useState(false);
+  const reqId = useRef(0);
   const [all, setAll] = useState<ProblemSummary[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    api<string[]>("/api/tags").then(setTags).catch(() => {});
-    api<Progress>("/api/progress").then(setProgress).catch(() => {});
-    fetchAllProblems().then(setAll).catch(() => {});
+    swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
+    swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
+    loadAll((items) => setAll(items), () => {}).catch(() => {});
   }, [reload]);
 
   const daily = all.length ? all[dailyIndex(all.length)] : null;
@@ -42,10 +46,13 @@ export default function Home() {
     if (tag) p.set("tag", tag); if (status) p.set("status", status);
     if (bookmarked) p.set("bookmarked", "true");
     setLoading(true); setError("");
-    apiWithWake<Page<ProblemSummary>>(`/api/problems?${p}`, () => setWaking(true))
-      .then((d) => { setData(d); setWaking(false); })
-      .catch((e) => { setError(e.message); setWaking(false); })
-      .finally(() => setLoading(false));
+    const my = ++reqId.current;
+    swr<Page<ProblemSummary>>(`/api/problems?${p}`, (d, fromCache) => {
+      if (my !== reqId.current) return;
+      setData(d); setSaved(fromCache); if (!fromCache) setWaking(false);
+    }, () => { if (my === reqId.current) setWaking(true); })
+      .catch((e) => { if (my === reqId.current) { setError(e.message); setWaking(false); } })
+      .finally(() => { if (my === reqId.current) setLoading(false); });
   }, [q, difficulty, tag, status, bookmarked, page]);
 
   useEffect(() => {
@@ -57,7 +64,12 @@ export default function Home() {
 
   return (
     <>
-      {waking && <div className="banner warn">Waking up the server (free hosting sleeps when idle). This can take 1–3 minutes — retrying automatically…</div>}
+      {waking && (
+        <div className="banner warn">
+          {saved ? "Showing a saved copy — the server is waking up (free hosting sleeps when idle, 1–3 min). Refreshing automatically…"
+            : "Waking up the server (free hosting sleeps when idle). This can take 1–3 minutes — retrying automatically…"}
+        </div>
+      )}
       {error && (
         <div className="banner err">
           {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
@@ -74,6 +86,7 @@ export default function Home() {
           <div className="card"><span className="mute">Bookmarked</span><b>{progress.bookmarked}</b></div>
         </div>
       )}
+      <Activity />
       {daily && (
         <div className="daily">
           <div>
@@ -110,13 +123,14 @@ export default function Home() {
           onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
       </div>
       <table>
-        <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th>Topics</th><th>Difficulty</th></tr></thead>
+        <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th>Difficulty</th></tr></thead>
         <tbody>
           {data?.items.map((p) => (
             <tr key={p.id}>
               <td className="EASY">{ICON[p.status]}</td>
-              <td><Link href={`/problems/${p.slug}`}>{p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link></td>
-              <td>{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
+              <td><Link href={`/problems/${p.slug}`}>{p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+                <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
+              <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
               <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
             </tr>
           ))}

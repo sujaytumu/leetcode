@@ -4,10 +4,11 @@ import Markdown from "react-markdown";
 import { type ComponentType, use, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  api, apiWithWake, ApiError, ExecutionStatus, fetchAllProblems, Lang, ProblemDetail, ProblemSummary, RunResponse,
+  api, apiWithWake, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Submission,
 } from "@/lib/api";
 import { STUDY } from "@/lib/study";
+import { loadAll, recordAccepted, swr } from "@/lib/local";
 
 import type { EditorProps } from "@monaco-editor/react";
 // Without this, next/dynamic infers ComponentType<never> for Monaco's Editor and the production build fails type-checking.
@@ -34,7 +35,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
-  const [tab, setTab] = useState<"desc" | "history">("desc");
+  const [tab, setTab] = useState<"desc" | "history" | "notes">("desc");
+  const [notes, setNotes] = useState("");
+  const [stale, setStale] = useState(false);
+  const [fontSize, setFontSize] = useState(14);
   const [history, setHistory] = useState<Submission[]>([]);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
@@ -51,13 +55,21 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   const loadProblem = useCallback(() => {
     setLoadError("");
-    apiWithWake<ProblemDetail>(`/api/problems/${slug}`, () => setWaking(true))
-      .then((p) => { setProblem(p); setWaking(false); })
+    swr<ProblemDetail>(`/api/problems/${slug}`, (p, fromCache) => {
+      setProblem(p); setStale(fromCache); if (!fromCache) setWaking(false);
+    }, () => setWaking(true))
       .catch((e) => { setLoadError(e.message); setWaking(false); });
   }, [slug]);
 
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
-  useEffect(() => { fetchAllProblems().then(setAll).catch(() => {}); }, []);
+  useEffect(() => { loadAll((items) => setAll(items), () => {}).catch(() => {}); }, []);
+  useEffect(() => {
+    const l = localStorage.getItem("lc-lang") as Lang | null;
+    if (l && LANGS.some((x) => x.key === l)) setLang(l);
+    const f = Number(localStorage.getItem("lc-font"));
+    if (f >= 11 && f <= 24) setFontSize(f);
+  }, []);
+  useEffect(() => { setNotes(localStorage.getItem(`lc-notes:${slug}`) ?? ""); }, [slug]);
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
   useEffect(() => {
     if (!timer.on) return;
@@ -86,6 +98,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       const r = await api<RunResponse>(`/api/problems/${slug}/${kind}`,
         { method: "POST", body: JSON.stringify({ language: lang, code }) }, 120000);
       setResult(r);
+      if (kind === "submit" && r.verdict === "ACCEPTED") recordAccepted();
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
       if (kind === "submit") loadHistory();
@@ -140,6 +153,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   return (
     <>
+      {stale && <div className="banner warn">Showing a saved copy while the server wakes up (1–3 min). Run and Submit work once it is back.</div>}
       {execDown && (
         <div className="banner warn">
           Code execution is unavailable: {exec.message} Run and Submit will show an error until it is back.
@@ -151,6 +165,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <div className="tabs">
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
+            <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
             {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title}>← Prev</Link> : <span className="navbtn off">← Prev</span>}
             {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title}>Next →</Link> : <span className="navbtn off">Next →</span>}
@@ -188,6 +203,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 </div>
               )}
             </>
+          ) : tab === "notes" ? (
+            <>
+              <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
+              <textarea className="notes" placeholder="Your approach, mistakes, edge cases to remember…" value={notes}
+                onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); }} />
+            </>
           ) : (
             <table style={{ marginTop: 12 }}>
               <thead><tr><th>Result</th><th>Lang</th><th>Tests</th><th>Time</th><th>When</th><th></th></tr></thead>
@@ -206,9 +227,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           )}
         </section>
         <section className="col">
-          <div className="bar">
-            <select value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
+          <div className="bar actionbar">
+            <select value={lang} onChange={(e) => { setLang(e.target.value as Lang); localStorage.setItem("lc-lang", e.target.value); }}>
               {LANGS.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
+            </select>
+            <select value={fontSize} title="Editor font size" onChange={(e) => { setFontSize(Number(e.target.value)); localStorage.setItem("lc-font", e.target.value); }}>
+              {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
             </select>
             <button onClick={reset} title="Reset to starter code">Reset</button><span className="grow" />
             <button disabled={!!busy} onClick={() => run("run")} title="Ctrl/⌘ + '">
@@ -218,12 +242,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               {busy === "submit" ? `Judging… ${elapsed}s` : "Submit"}
             </button>
           </div>
-          <div className="pane" style={{ padding: 0, flex: 3 }}>
+          <div className="pane editor-pane" style={{ padding: 0, flex: 3 }}>
             <Editor height="100%" theme="vs-dark" language={LANGS.find((l) => l.key === lang)!.monaco}
               value={code} onChange={onChange}
-              options={{ minimap: { enabled: false }, fontSize: 14, automaticLayout: true, scrollBeyondLastLine: false }} />
+              options={{ minimap: { enabled: false }, fontSize, automaticLayout: true, scrollBeyondLastLine: false }} />
           </div>
-          <div className="pane" style={{ flex: 2 }}>
+          <div className="pane result-pane" style={{ flex: 2 }}>
             {busy && (
               <span className="mute">
                 {busy === "run" ? "Running your code on the sample cases" : "Judging against all test cases"}… {elapsed}s
