@@ -1978,6 +1978,861 @@ PROBLEMS += [
 ]
 
 
+# ------------------------------------------------------------ batch 3 problems
+# Helpers carry a b3_ prefix so they cannot shadow anything defined earlier; only slugs not already present are kept.
+import collections
+
+
+def b3_to_roman(n):
+    vals = [(1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+            (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
+    out = []
+    for v, s in vals:
+        while n >= v:
+            out.append(s)
+            n -= v
+    return "".join(out)
+
+
+def b3_roman_to_int(s):
+    m = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for i, c in enumerate(s):
+        if i + 1 < len(s) and m[c] < m[s[i + 1]]:
+            total -= m[c]
+        else:
+            total += m[c]
+    return total
+
+
+def b3_last_word(s):
+    return len(s.split()[-1])
+
+
+def b3_happy_number(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(d) ** 2 for d in str(n))
+    return n == 1
+
+
+def b3_power_of_two(n):
+    return n > 0 and n & (n - 1) == 0
+
+
+def b3_counting_bits(n):
+    return [bin(i).count("1") for i in range(n + 1)]
+
+
+def b3_stock_two(prices):
+    return sum(max(0, prices[i] - prices[i - 1]) for i in range(1, len(prices)))
+
+
+def b3_two_sum_sorted(nums, target):
+    i, j = 0, len(nums) - 1
+    while i < j:
+        s = nums[i] + nums[j]
+        if s == target:
+            return [i + 1, j + 1]
+        if s < target:
+            i += 1
+        else:
+            j -= 1
+    raise AssertionError("no solution")
+
+
+def b3_intersect_two(a, b):
+    c = collections.Counter(a) & collections.Counter(b)
+    return sorted(c.elements())
+
+
+def b3_reverse_integer(x):
+    sign = -1 if x < 0 else 1
+    r = sign * int(str(abs(x))[::-1])
+    return r if -2**31 <= r <= 2**31 - 1 else 0
+
+
+def b3_jump_game_two(nums):
+    jumps = cur_end = far = 0
+    for i in range(len(nums) - 1):
+        far = max(far, i + nums[i])
+        if i == cur_end:
+            jumps += 1
+            cur_end = far
+    return jumps
+
+
+def b3_h_index(c):
+    c = sorted(c, reverse=True)
+    h = 0
+    while h < len(c) and c[h] >= h + 1:
+        h += 1
+    return h
+
+
+def b3_gas_station(gas, cost):
+    if sum(gas) < sum(cost):
+        return -1
+    start = tank = 0
+    for i in range(len(gas)):
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            start, tank = i + 1, 0
+    return start
+
+
+def b3_candy(r):
+    n = len(r)
+    c = [1] * n
+    for i in range(1, n):
+        if r[i] > r[i - 1]:
+            c[i] = c[i - 1] + 1
+    for i in range(n - 2, -1, -1):
+        if r[i] > r[i + 1]:
+            c[i] = max(c[i], c[i + 1] + 1)
+    return sum(c)
+
+
+def b3_longest_consecutive(nums):
+    s = set(nums)
+    best = 0
+    for x in s:
+        if x - 1 not in s:
+            y = x
+            while y + 1 in s:
+                y += 1
+            best = max(best, y - x + 1)
+    return best
+
+
+def b3_three_sum_count(nums):
+    nums = sorted(nums)
+    n, cnt = len(nums), 0
+    for i in range(n - 2):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        l, r = i + 1, n - 1
+        while l < r:
+            s = nums[i] + nums[l] + nums[r]
+            if s < 0:
+                l += 1
+            elif s > 0:
+                r -= 1
+            else:
+                cnt += 1
+                l += 1
+                r -= 1
+                while l < r and nums[l] == nums[l - 1]:
+                    l += 1
+    return cnt
+
+
+def b3_decode_ways(s):
+    n = len(s)
+    dp = [0] * (n + 1)
+    dp[0] = 1
+    for i in range(1, n + 1):
+        if s[i - 1] != "0":
+            dp[i] += dp[i - 1]
+        if i >= 2 and "10" <= s[i - 2:i] <= "26":
+            dp[i] += dp[i - 2]
+    return dp[n]
+
+
+def b3_longest_valid_parens(s):
+    st, best = [-1], 0
+    for i, c in enumerate(s):
+        if c == "(":
+            st.append(i)
+        else:
+            st.pop()
+            if not st:
+                st.append(i)
+            else:
+                best = max(best, i - st[-1])
+    return best
+
+
+def b3_min_path_sum(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [[0] * n for _ in range(m)]
+    for i in range(m):
+        for j in range(n):
+            v = int(grid[i][j])
+            if i == 0 and j == 0:
+                dp[i][j] = v
+            elif i == 0:
+                dp[i][j] = dp[i][j - 1] + v
+            elif j == 0:
+                dp[i][j] = dp[i - 1][j] + v
+            else:
+                dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + v
+    return dp[-1][-1]
+
+
+def b3_unique_paths_two(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [0] * n
+    dp[0] = 1
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == "1":
+                dp[j] = 0
+            elif j:
+                dp[j] += dp[j - 1]
+    return dp[-1]
+
+
+def b3_maximal_square(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    best = 0
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if grid[i - 1][j - 1] == "1":
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+                best = max(best, dp[i][j])
+    return best * best
+
+
+def b3_rotting_oranges(grid):
+    m, n = len(grid), len(grid[0])
+    q = collections.deque()
+    fresh = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == "2":
+                q.append((i, j, 0))
+            elif grid[i][j] == "1":
+                fresh += 1
+    seen = {(i, j) for i, j, _ in q}
+    t = 0
+    while q:
+        i, j, t = q.popleft()
+        for a, b in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= a < m and 0 <= b < n and grid[a][b] == "1" and (a, b) not in seen:
+                seen.add((a, b))
+                fresh -= 1
+                q.append((a, b, t + 1))
+    return t if fresh == 0 else -1
+
+
+def b3_max_area_island(grid):
+    m, n = len(grid), len(grid[0])
+    seen = set()
+    best = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == "1" and (i, j) not in seen:
+                seen.add((i, j))
+                st, area = [(i, j)], 0
+                while st:
+                    x, y = st.pop()
+                    area += 1
+                    for a, b in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                        if 0 <= a < m and 0 <= b < n and grid[a][b] == "1" and (a, b) not in seen:
+                            seen.add((a, b))
+                            st.append((a, b))
+                best = max(best, area)
+    return best
+
+
+def b3_perfect_squares(n):
+    dp = [0] + [10**9] * n
+    for i in range(1, n + 1):
+        j = 1
+        while j * j <= i:
+            dp[i] = min(dp[i], dp[i - j * j] + 1)
+            j += 1
+    return dp[n]
+
+
+def b3_erase_overlap(intervals):
+    iv = sorted(intervals, key=lambda x: x[1])
+    end, keep = -10**9, 0
+    for s, e in iv:
+        if s >= end:
+            keep += 1
+            end = e
+    return len(iv) - keep
+
+
+def b3_meeting_rooms(intervals):
+    events = []
+    for s, e in intervals:
+        events.append((s, 1))
+        events.append((e, -1))
+    events.sort()
+    cur = best = 0
+    for _, d in events:
+        cur += d
+        best = max(best, cur)
+    return best
+
+
+def b3_insert_interval(intervals, new):
+    res, placed = [], False
+    s, e = new
+    for a, b in intervals:
+        if b < s:
+            res.append([a, b])
+        elif a > e:
+            if not placed:
+                res.append([s, e])
+                placed = True
+            res.append([a, b])
+        else:
+            s, e = min(s, a), max(e, b)
+    if not placed:
+        res.append([s, e])
+    return res
+
+
+def b3_koko(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum(-(-p // mid) for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def b3_ship_packages(weights, days):
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        d, cur = 1, 0
+        for w in weights:
+            if cur + w > mid:
+                d += 1
+                cur = 0
+            cur += w
+        if d <= days:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def b3_split_array(nums, k):
+    lo, hi = max(nums), sum(nums)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        parts, cur = 1, 0
+        for x in nums:
+            if cur + x > mid:
+                parts += 1
+                cur = 0
+            cur += x
+        if parts <= k:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def b3_partition_labels(s):
+    last = {c: i for i, c in enumerate(s)}
+    res, start, end = [], 0, 0
+    for i, c in enumerate(s):
+        end = max(end, last[c])
+        if i == end:
+            res.append(end - start + 1)
+            start = i + 1
+    return res
+
+
+def b3_min_size_subarray(target, nums):
+    best, left, s = 10**9, 0, 0
+    for r, x in enumerate(nums):
+        s += x
+        while s >= target:
+            best = min(best, r - left + 1)
+            s -= nums[left]
+            left += 1
+    return 0 if best == 10**9 else best
+
+
+def b3_char_replacement(s, k):
+    cnt = collections.Counter()
+    left = best = maxf = 0
+    for r, c in enumerate(s):
+        cnt[c] += 1
+        maxf = max(maxf, cnt[c])
+        while r - left + 1 - maxf > k:
+            cnt[s[left]] -= 1
+            left += 1
+        best = max(best, r - left + 1)
+    return best
+
+
+def b3_perm_in_string(s1, s2):
+    if len(s1) > len(s2):
+        return False
+    need = collections.Counter(s1)
+    win = collections.Counter(s2[:len(s1)])
+    if win == need:
+        return True
+    for i in range(len(s1), len(s2)):
+        win[s2[i]] += 1
+        out = s2[i - len(s1)]
+        win[out] -= 1
+        if win[out] == 0:
+            del win[out]
+        if win == need:
+            return True
+    return False
+
+
+def b3_sliding_max(nums, k):
+    dq, out = collections.deque(), []
+    for i, x in enumerate(nums):
+        while dq and nums[dq[-1]] <= x:
+            dq.pop()
+        dq.append(i)
+        if dq[0] <= i - k:
+            dq.popleft()
+        if i >= k - 1:
+            out.append(nums[dq[0]])
+    return out
+
+
+# ---- case generators
+def b3_rgrid(m, n, chars, weights=None):
+    return ["".join(rng.choices(chars, weights=weights, k=n)) for _ in range(m)]
+
+
+def b3_roman_cases():
+    cases = ["III", "LVIII", "MCMXCIV", "IV", "IX", "I", "MMMCMXCIX", "XL", "CD", "CM"]
+    for _ in range(3):
+        cases.append(b3_to_roman(rng.randint(1, 3999)))
+    return cases
+
+
+def b3_last_word_cases():
+    cases = ["Hello World", "fly me   to   the moon", "a", "luffy is still joyboy", "word  word"]
+    for n in (5, 30, 100):
+        words = ["".join(rng.choice("abcdefgh") for _ in range(rng.randint(1, 8))) for _ in range(n // 5 + 1)]
+        cases.append(" ".join(words))
+    return cases
+
+
+def b3_sorted_pair_cases():
+    cases = [([2, 7, 11, 15], 9), ([2, 3, 4], 6), ([-1, 0], -1), ([1, 2, 3, 4, 4, 9, 56, 90], 8)]
+    for n in (10, 100, 1000):
+        arr = sorted(rng.sample(range(-10**4, 10**4), n))
+        i, j = sorted(rng.sample(range(n), 2))
+        cases.append((arr, arr[i] + arr[j]))
+    return cases
+
+
+def b3_intersect_cases():
+    cases = [([1, 2, 2, 1], [2, 2]), ([4, 9, 5], [9, 4, 9, 8, 4]), ([1], [1]), ([3, 1, 2], [1, 3])]
+    for n, m in ((20, 30), (200, 150), (1000, 800)):
+        a, b = rand_arr(n, 0, 30), rand_arr(m, 0, 30)
+        cases.append((a, b))
+    return cases
+
+
+def b3_reverse_int_cases():
+    return [123, -123, 120, 0, 1534236469, -2147483648, 2147483647, 1463847412, -1563847412, 7, -10, 1000000003]
+
+
+def b3_jump2_cases():
+    cases = [[2, 3, 1, 1, 4], [2, 3, 0, 1, 4], [1], [1, 1, 1, 1], [5, 1, 1, 1, 1, 1]]
+    for n in (20, 200, 1000):
+        arr = [rng.randint(1, 5) for _ in range(n - 1)] + [0]
+        cases.append(arr)
+    return cases
+
+
+def b3_hindex_cases():
+    cases = [[3, 0, 6, 1, 5], [1, 3, 1], [0], [100], [0, 0, 0], [5, 5, 5, 5, 5]]
+    for n in (20, 200, 1000):
+        cases.append(rand_arr(n, 0, 600))
+    return cases
+
+
+def b3_gas_cases():
+    cases = [([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]), ([2, 3, 4], [3, 4, 3]), ([5], [4]), ([3, 1, 1], [1, 2, 2])]
+    for n in (10, 100, 1000):
+        while True:
+            gas, cost = rand_arr(n, 0, 20), rand_arr(n, 0, 20)
+            if rng.random() < 0.7:
+                cost = [min(c, g + rng.randint(0, 3)) for c, g in zip(cost, gas)]
+            if sum(gas) >= sum(cost) or rng.random() < 0.3:
+                cases.append((gas, cost))
+                break
+    return cases
+
+
+def b3_candy_cases():
+    cases = [[1, 0, 2], [1, 2, 2], [1], [1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 3, 2, 2, 1], [2, 2, 2]]
+    for n in (20, 200, 1000):
+        cases.append(rand_arr(n, 0, 50))
+    return cases
+
+
+def b3_consec_cases():
+    cases = [[100, 4, 200, 1, 3, 2], [0, 3, 7, 2, 5, 8, 4, 6, 0, 1], [1], [1, 2, 0, 1], [9, 1, 4, 7, 3, -1, 0, 5, 8, -1, 6]]
+    for n in (20, 200, 1000):
+        cases.append(rand_arr(n, -300, 300))
+    return cases
+
+
+def b3_three_sum_cases():
+    cases = [[-1, 0, 1, 2, -1, -4], [0, 1, 1], [0, 0, 0], [0, 0, 0, 0], [-2, 0, 1, 1, 2], [1, 2, 3]]
+    for n in (20, 100, 500):
+        cases.append(rand_arr(n, -60, 60))
+    return cases
+
+
+def b3_decode_cases():
+    cases = ["12", "226", "06", "0", "10", "27", "11106", "1", "2101", "100"]
+    for n in (10, 40, 100):
+        cases.append("".join(rng.choice("0123456789" if rng.random() < .3 else "12126") for _ in range(n)))
+    return cases
+
+
+def b3_vparen_cases():
+    cases = ["(()", ")()())", "", "()", "()(())", ")(", "(((", "()()", "(()()(()"]
+    cases = [c for c in cases if c]
+    for n in (20, 200, 1000):
+        cases.append("".join(rng.choice("()") for _ in range(n)))
+    return cases
+
+
+def b3_mps_cases():
+    return [b3_rgrid(3, 3, "0123456789"), ["1"], ["12", "51"], ["13", "11"], b3_rgrid(1, 7, "0123456789"), b3_rgrid(7, 1, "0123456789"),
+            b3_rgrid(10, 10, "0123456789"), b3_rgrid(30, 40, "0123456789"), b3_rgrid(50, 50, "0123456789")]
+
+
+def b3_up2_cases():
+    cases = [["000", "010", "000"], ["00", "10"], ["0"], ["1"], ["01", "00"], ["00", "01"]]
+    for m, n in ((5, 5), (8, 12), (12, 12)):
+        cases.append(b3_rgrid(m, n, "01", [9, 1]))
+    return cases
+
+
+def b3_square_cases():
+    cases = [["10100", "10111", "11111", "10010"], ["01", "10"], ["0"], ["1"], ["11", "11"]]
+    for m, n in ((6, 6), (15, 20), (50, 50)):
+        cases.append(b3_rgrid(m, n, "01", [1, 3]))
+    return cases
+
+
+def b3_rot_cases():
+    cases = [["211", "110", "011"], ["211", "011", "101"], ["02"], ["0"], ["1"], ["2"], ["1112"]]
+    for m, n in ((5, 5), (10, 12), (30, 30)):
+        cases.append(b3_rgrid(m, n, "012", [2, 6, 1]))
+    return cases
+
+
+def b3_island_cases():
+    cases = [["11000", "11000", "00100", "00011"], ["0"], ["1"], ["101", "010", "101"], ["111", "111"]]
+    for m, n in ((6, 6), (20, 20), (50, 50)):
+        cases.append(b3_rgrid(m, n, "01", [1, 1]))
+    return cases
+
+
+def b3_interval_pairs(n, hi=100, minlen=1, maxlen=20):
+    out = []
+    for _ in range(n):
+        s = rng.randint(0, hi)
+        out.append([s, s + rng.randint(minlen, maxlen)])
+    return out
+
+
+def b3_nonoverlap_cases():
+    cases = [[[1, 2], [2, 3], [3, 4], [1, 3]], [[1, 2], [1, 2], [1, 2]], [[1, 2], [2, 3]], [[0, 5]]]
+    for n in (10, 100, 190):
+        cases.append(b3_interval_pairs(n, 500, 1, 30))
+    return cases
+
+
+def b3_rooms_cases():
+    cases = [[[0, 30], [5, 10], [15, 20]], [[7, 10], [2, 4]], [[0, 5], [5, 10]], [[1, 2]], [[1, 5], [2, 6], [3, 7], [4, 8]]]
+    for n in (10, 100, 190):
+        cases.append(b3_interval_pairs(n, 500, 1, 60))
+    return cases
+
+
+def b3_insert_cases_iv():
+    cases = [([[1, 3], [6, 9]], [2, 5]), ([[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8]), ([[1, 5]], [2, 3]),
+             ([[1, 5]], [6, 8]), ([[3, 5]], [0, 1]), ([[1, 5]], [0, 6])]
+    for n in (10, 50, 150):
+        pts = sorted(rng.sample(range(0, 2000), n * 2))
+        iv = [[pts[2 * i], pts[2 * i + 1]] for i in range(n)]
+        s = rng.randint(0, 2000)
+        cases.append((iv, [s, s + rng.randint(0, 200)]))
+    return cases
+
+
+def b3_koko_cases():
+    cases = [([3, 6, 7, 11], 8), ([30, 11, 23, 4, 20], 5), ([30, 11, 23, 4, 20], 6), ([1], 1), ([10], 3)]
+    for n in (10, 100, 1000):
+        piles = rand_arr(n, 1, 10**4)
+        cases.append((piles, rng.randint(n, 3 * n)))
+    return cases
+
+
+def b3_ship_cases():
+    cases = [([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5), ([3, 2, 2, 4, 1, 4], 3), ([1, 2, 3, 1, 1], 4), ([5], 1)]
+    for n in (10, 100, 1000):
+        w = rand_arr(n, 1, 500)
+        cases.append((w, rng.randint(1, n)))
+    return cases
+
+
+def b3_split_cases():
+    cases = [([7, 2, 5, 10, 8], 2), ([1, 2, 3, 4, 5], 2), ([1, 4, 4], 3), ([10], 1), ([1, 1, 1, 1], 4)]
+    for n in (10, 100, 500):
+        a = rand_arr(n, 0, 1000)
+        cases.append((a, rng.randint(1, min(n, 50))))
+    return cases
+
+
+def b3_plabels_cases():
+    cases = ["ababcbacadefegdehijhklij", "eccbbbbdec", "a", "abc", "aaaa", "abab"]
+    for n in (30, 200, 500):
+        cases.append("".join(rng.choice("abcdefghijklmnop") for _ in range(n)))
+    return cases
+
+
+def b3_minsub_cases():
+    cases = [(7, [2, 3, 1, 2, 4, 3]), (4, [1, 4, 4]), (11, [1, 1, 1, 1, 1, 1, 1, 1]), (5, [5]), (3, [1, 1])]
+    for n in (10, 100, 1000):
+        a = rand_arr(n, 1, 100)
+        cases.append((rng.randint(1, sum(a) + 5), a))
+    return cases
+
+
+def b3_charrep_cases():
+    cases = [("ABAB", 2), ("AABABBA", 1), ("A", 0), ("ABC", 0), ("AAAA", 2), ("ABCDE", 4)]
+    for n in (30, 300, 1000):
+        cases.append(("".join(rng.choice("ABCDE") for _ in range(n)), rng.randint(0, 20)))
+    return cases
+
+
+def b3_perm_str_cases():
+    cases = [("ab", "eidbaooo"), ("ab", "eidboaoo"), ("a", "a"), ("abc", "ab"), ("adc", "dcda"), ("hello", "ooolleoooleh")]
+    for n, m in ((3, 40), (5, 300), (10, 800)):
+        s1 = "".join(rng.choice("abcd") for _ in range(n))
+        s2 = "".join(rng.choice("abcd") for _ in range(m))
+        if rng.random() < 0.5:
+            i = rng.randint(0, m - n)
+            p = list(s1)
+            rng.shuffle(p)
+            s2 = s2[:i] + "".join(p) + s2[i + n:]
+        cases.append((s1, s2))
+    return cases
+
+
+def b3_slidemax_cases():
+    cases = [([1, 3, -1, -3, 5, 3, 6, 7], 3), ([1], 1), ([9, 11], 2), ([4, 3, 2, 1], 2), ([1, 2, 3, 4], 4)]
+    for n in (20, 200, 1000):
+        cases.append((rand_arr(n, -10**4, 10**4), rng.randint(1, min(n, 100))))
+    return cases
+
+
+b3_NBITS = [0, 1, 2, 5, 16, 31, 100, 255, 1000, 5000]
+
+_B3_ALL = [
+    mk("roman-to-integer", "Roman to Integer", "EASY", ["math", "string"], [("s", "str")], "int", b3_roman_to_int,
+       b3_roman_cases(),
+       "Convert a Roman numeral to an integer. Symbols are `I=1, V=5, X=10, L=50, C=100, D=500, M=1000`. A smaller "
+       "symbol placed before a larger one is subtracted (`IV = 4`, `IX = 9`, `XL = 40`, `XC = 90`, `CD = 400`, "
+       "`CM = 900`).", "A single line containing the numeral.", "The integer value.",
+       ["The numeral is valid and represents a value from `1` to `3999`"]),
+    mk("length-of-last-word", "Length of Last Word", "EASY", ["string"], [("s", "str")], "int", b3_last_word,
+       b3_last_word_cases(),
+       "A string consists of words separated by one or more spaces. Return the length of the last word.",
+       "A single line containing `s` (no leading or trailing spaces).", "The length of the last word.",
+       ["`1 <= s.length <= 600`", "Lowercase letters and spaces; at least one word"]),
+    mk("happy-number", "Happy Number", "EASY", ["math", "hash-table"], [("n", "int")], "bool", b3_happy_number,
+       [19, 2, 1, 7, 4, 100, 116, 999, 1111111, 2147483647, 3, 10],
+       "Repeatedly replace `n` with the sum of the squares of its digits. `n` is happy if this process reaches `1`, "
+       "and unhappy if it loops forever in a cycle that does not include `1`.", "A single integer `n`.",
+       "`true` if `n` is happy, otherwise `false`.", ["`1 <= n <= 2^31 - 1`"]),
+    mk("power-of-two", "Power of Two", "EASY", ["math", "bit-manipulation"], [("n", "int")], "bool", b3_power_of_two,
+       [1, 16, 3, 0, -16, 2, 1024, 1023, 2147483647, -2147483648, 1073741824, 6],
+       "Return `true` if `n` is a power of two (`1, 2, 4, 8, …`).", "A single integer `n`.", "`true` or `false`.",
+       ["`-2^31 <= n <= 2^31 - 1`"]),
+    mk("counting-bits", "Counting Bits", "EASY", ["dynamic-programming", "bit-manipulation"], [("n", "int")], "int[]",
+       b3_counting_bits, b3_NBITS,
+       "For every `i` from `0` to `n`, count the number of `1` bits in the binary form of `i`. Return the `n + 1` "
+       "counts in order. A linear-time solution exists.", "A single integer `n`.",
+       "`n + 1` space-separated integers.", ["`0 <= n <= 5000`"]),
+    mk("best-time-to-buy-and-sell-stock-ii", "Best Time to Buy and Sell Stock II", "MEDIUM", ["array", "greedy"],
+       [("prices", "int[]")], "int", b3_stock_two,
+       [[7, 1, 5, 3, 6, 4], [1, 2, 3, 4, 5], [7, 6, 4, 3, 1], [1], [2, 1, 2, 0, 1], rand_arr(50, 0, 100),
+        rand_arr(500, 0, 10000), rand_arr(1000, 0, 10000)],
+       "You may buy and sell a stock many times, holding at most one share at any moment (you may sell and buy on "
+       "the same day). Return the maximum total profit.", ARR_IN, "The maximum profit.",
+       ["`1 <= n <= 1000`", "`0 <= prices[i] <= 10^4`"]),
+    mk("two-sum-ii-input-array-is-sorted", "Two Sum II - Input Array Is Sorted", "EASY", ["array", "two-pointers"],
+       [("numbers", "int[]"), ("target", "int")], "int[]", b3_two_sum_sorted, b3_sorted_pair_cases(),
+       "A **sorted** (non-decreasing) array is given. Find two numbers that add to `target` and return their "
+       "**1-based** indices `index1 < index2`. Exactly one solution exists; use only constant extra space.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `target`.", "`index1 index2`, separated by a space.",
+       ["`2 <= n <= 1000`", "A unique valid pair exists"]),
+    mk("intersection-of-two-arrays-ii", "Intersection of Two Arrays II", "EASY", ["array", "hash-table", "sorting"],
+       [("nums1", "int[]"), ("nums2", "int[]")], "int[]", b3_intersect_two, b3_intersect_cases(),
+       "Return the intersection of two arrays, where each value appears as many times as it appears in **both** "
+       "arrays. Print the result sorted ascending.",
+       "Line 1: length of `nums1`.\nLine 2: `nums1`.\nLine 3: length of `nums2`.\nLine 4: `nums2`.",
+       "The intersection, sorted ascending, space-separated.",
+       ["`1 <= length <= 1000`", "`0 <= value <= 1000`", "The intersection is never empty"]),
+    mk("reverse-integer", "Reverse Integer", "MEDIUM", ["math"], [("x", "int")], "int", b3_reverse_integer,
+       b3_reverse_int_cases(),
+       "Reverse the decimal digits of a signed 32-bit integer. If the reversed value falls outside "
+       "`[-2^31, 2^31 - 1]`, return `0`.", "A single integer `x`.", "The reversed integer, or `0` on overflow.",
+       ["`-2^31 <= x <= 2^31 - 1`"]),
+    mk("jump-game-ii", "Jump Game II", "MEDIUM", ["array", "greedy", "dynamic-programming"], [("nums", "int[]")],
+       "int", b3_jump_game_two, b3_jump2_cases(),
+       "You start at index `0`; `nums[i]` is the maximum jump length from `i`. Return the minimum number of jumps to "
+       "reach the last index. The last index is always reachable.", ARR_IN, "The minimum number of jumps.",
+       ["`1 <= n <= 1000`", "`0 <= nums[i] <= 1000`", "The end is reachable"]),
+    mk("h-index", "H-Index", "MEDIUM", ["array", "sorting", "counting-sort"], [("citations", "int[]")], "int", b3_h_index,
+       b3_hindex_cases(),
+       "`citations[i]` is the number of citations of the `i`-th paper. The h-index is the largest `h` such that the "
+       "researcher has at least `h` papers with at least `h` citations each.", ARR_IN, "The h-index.",
+       ["`1 <= n <= 1000`", "`0 <= citations[i] <= 1000`"]),
+    mk("gas-station", "Gas Station", "MEDIUM", ["array", "greedy"], [("gas", "int[]"), ("cost", "int[]")], "int",
+       b3_gas_station, b3_gas_cases(),
+       "There are `n` stations on a circular route. Station `i` gives `gas[i]` fuel and the trip to station `i + 1` "
+       "costs `cost[i]`. Starting with an empty tank, return the index of the station from which you can complete "
+       "one full lap clockwise, or `-1` if impossible. If a solution exists it is unique.",
+       "Line 1: `n`.\nLine 2: `gas`.\nLine 3: `n`.\nLine 4: `cost`.", "The starting index, or `-1`.",
+       ["`1 <= n <= 1000`", "`0 <= gas[i], cost[i] <= 100`"]),
+    mk("candy", "Candy", "HARD", ["array", "greedy"], [("ratings", "int[]")], "int", b3_candy, b3_candy_cases(),
+       "Children stand in a line, each with a rating. Give every child at least one candy, and any child with a "
+       "higher rating than an adjacent child must receive more candy than that neighbour. Return the minimum total "
+       "candy.", "Line 1: `n`.\nLine 2: `n` ratings.", "The minimum number of candies.",
+       ["`1 <= n <= 1000`", "`0 <= ratings[i] <= 10^4`"]),
+    mk("longest-consecutive-sequence", "Longest Consecutive Sequence", "MEDIUM", ["array", "hash-table", "union-find"],
+       [("nums", "int[]")], "int", b3_longest_consecutive, b3_consec_cases(),
+       "Return the length of the longest run of consecutive integers (such as `3, 4, 5, 6`) that can be formed from "
+       "the values of `nums`, in any order. Aim for `O(n)` time.", ARR_IN, "The length of the longest run.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("three-sum-count", "3Sum (Count)", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "int",
+       b3_three_sum_count, b3_three_sum_cases(),
+       "Count the **distinct value triplets** `(a, b, c)` taken from different indices such that `a + b + c = 0`. "
+       "Two triplets are the same if they contain the same multiset of values.", ARR_IN,
+       "The number of distinct triplets.", ["`3 <= n <= 500`", "`-10^5 <= nums[i] <= 10^5`"]),
+    mk("decode-ways", "Decode Ways", "MEDIUM", ["string", "dynamic-programming"], [("s", "str")], "int", b3_decode_ways,
+       b3_decode_cases(),
+       "Letters map to numbers (`A=1, B=2, …, Z=26`). Given a string of digits, return the number of ways to decode "
+       "it. A leading `0` cannot be decoded on its own, and `06` is not `6`.", "A single line of digits.",
+       "The number of decodings (`0` if none).", ["`1 <= s.length <= 100`", "Digits only", "The answer fits in 32 bits"]),
+    mk("longest-valid-parentheses", "Longest Valid Parentheses", "HARD", ["string", "stack", "dynamic-programming"],
+       [("s", "str")], "int", b3_longest_valid_parens, b3_vparen_cases(),
+       "Given a string of `(` and `)`, return the length of the longest contiguous substring that is a valid, "
+       "well-formed set of parentheses.", "A single line `s`.", "The length of the longest valid substring.",
+       ["`1 <= s.length <= 1000`"]),
+    mk("minimum-path-sum", "Minimum Path Sum", "MEDIUM", ["matrix", "dynamic-programming"], [("grid", "grid")], "int",
+       b3_min_path_sum, b3_mps_cases(),
+       "A grid of digits gives the cost of each cell. Moving only right or down from the top-left to the "
+       "bottom-right cell, return the minimum total cost of a path, including both endpoints.",
+       "Line 1: `rows cols`.\nNext `rows` lines: `cols` digits each.", "The minimum path sum.",
+       ["`1 <= rows, cols <= 50`", "Each cell is a digit `0`-`9`"]),
+    mk("unique-paths-ii", "Unique Paths II", "MEDIUM", ["matrix", "dynamic-programming"], [("grid", "grid")], "int",
+       b3_unique_paths_two, b3_up2_cases(),
+       "A robot moves only right or down from the top-left to the bottom-right of a grid. Cells marked `1` are "
+       "obstacles and cannot be entered. Return the number of distinct paths.",
+       "Line 1: `rows cols`.\nNext `rows` lines: `cols` characters, `0` (free) or `1` (obstacle).",
+       "The number of paths.", ["`1 <= rows, cols <= 12`", "The answer fits in 32 bits"]),
+    mk("maximal-square", "Maximal Square", "MEDIUM", ["matrix", "dynamic-programming"], [("matrix", "grid")], "int",
+       b3_maximal_square, b3_square_cases(),
+       "In a binary grid, find the largest square made only of `1` cells and return its **area**.",
+       "Line 1: `rows cols`.\nNext `rows` lines: `cols` characters, `0` or `1`.", "The area of the largest square.",
+       ["`1 <= rows, cols <= 50`"]),
+    mk("rotting-oranges", "Rotting Oranges", "MEDIUM", ["matrix", "breadth-first-search"], [("grid", "grid")], "int",
+       b3_rotting_oranges, b3_rot_cases(),
+       "A grid cell is `0` (empty), `1` (fresh orange) or `2` (rotten orange). Each minute every fresh orange next to "
+       "a rotten one (up, down, left, right) becomes rotten. Return the minutes until no fresh orange remains, or "
+       "`-1` if some can never rot.", "Line 1: `rows cols`.\nNext `rows` lines: `cols` characters from `0`, `1`, `2`.",
+       "The number of minutes, or `-1`.", ["`1 <= rows, cols <= 30`"]),
+    mk("max-area-of-island", "Max Area of Island", "MEDIUM", ["matrix", "depth-first-search"], [("grid", "grid")],
+       "int", b3_max_area_island, b3_island_cases(),
+       "An island is a group of `1` cells connected horizontally or vertically. Return the area (cell count) of the "
+       "largest island, or `0` if there is none.",
+       "Line 1: `rows cols`.\nNext `rows` lines: `cols` characters, `0` or `1`.", "The largest island area.",
+       ["`1 <= rows, cols <= 50`"]),
+    mk("perfect-squares", "Perfect Squares", "MEDIUM", ["math", "dynamic-programming"], [("n", "int")], "int",
+       b3_perfect_squares, [12, 13, 1, 2, 4, 7, 100, 9999, 10000, 5000, 3, 43],
+       "Return the least number of perfect square numbers (`1, 4, 9, 16, …`) that sum to `n`.",
+       "A single integer `n`.", "The minimum count.", ["`1 <= n <= 10000`"]),
+    mk("non-overlapping-intervals", "Non-overlapping Intervals", "MEDIUM", ["array", "greedy", "sorting"],
+       [("intervals", "int[][]")], "int", b3_erase_overlap, b3_nonoverlap_cases(),
+       "Return the minimum number of intervals to remove so that the remaining intervals do not overlap. Intervals "
+       "that only touch at an endpoint (`[1,2]` and `[2,3]`) do not overlap.",
+       "Line 1: `n`.\nNext `n` lines: `start end`.", "The minimum number of removals.",
+       ["`1 <= n <= 190`", "`start < end`"]),
+    mk("meeting-rooms-ii", "Meeting Rooms II", "MEDIUM", ["array", "heap", "greedy", "sorting"],
+       [("intervals", "int[][]")], "int", b3_meeting_rooms, b3_rooms_cases(),
+       "Given meeting time intervals `[start, end)`, return the minimum number of rooms needed. A meeting that ends "
+       "at time `t` frees its room for one that starts at `t`.", "Line 1: `n`.\nNext `n` lines: `start end`.",
+       "The minimum number of rooms.", ["`1 <= n <= 190`", "`start < end`"]),
+    mk("insert-interval", "Insert Interval", "MEDIUM", ["array", "intervals"],
+       [("intervals", "int[][]"), ("newInterval", "int[]")], "int[][]", b3_insert_interval, b3_insert_cases_iv(),
+       "A list of non-overlapping intervals is sorted by start. Insert `newInterval`, merging anything it overlaps "
+       "(touching intervals merge too), and return the resulting sorted, non-overlapping list.",
+       "Line 1: `n`.\nNext `n` lines: `start end`.\nThen a line containing `2`, then a line `start end` for "
+       "`newInterval`.", "The resulting intervals, one `start end` pair per line.",
+       ["`1 <= n <= 150`", "Input intervals are sorted and do not overlap"]),
+    mk("koko-eating-bananas", "Koko Eating Bananas", "MEDIUM", ["array", "binary-search"],
+       [("piles", "int[]"), ("h", "int")], "int", b3_koko, b3_koko_cases(),
+       "Koko has banana piles and `h` hours. Each hour she picks one pile and eats up to `k` bananas from it (finishing "
+       "early wastes the rest of that hour). Return the smallest integer `k` that lets her finish within `h` hours.",
+       "Line 1: `n`.\nLine 2: the piles.\nLine 3: `h`.", "The minimum speed `k`.",
+       ["`1 <= n <= 1000`", "`n <= h`", "`1 <= piles[i] <= 10^4`"]),
+    mk("capacity-to-ship-packages", "Capacity To Ship Packages Within D Days", "MEDIUM", ["array", "binary-search"],
+       [("weights", "int[]"), ("days", "int")], "int", b3_ship_packages, b3_ship_cases(),
+       "Packages must be shipped in the given order, loaded onto a ship each day up to its capacity. Return the "
+       "least ship capacity that delivers everything within `days` days.",
+       "Line 1: `n`.\nLine 2: the weights.\nLine 3: `days`.", "The minimum capacity.",
+       ["`1 <= days <= n <= 1000`", "`1 <= weights[i] <= 500`"]),
+    mk("split-array-largest-sum", "Split Array Largest Sum", "HARD", ["array", "binary-search", "dynamic-programming"],
+       [("nums", "int[]"), ("k", "int")], "int", b3_split_array, b3_split_cases(),
+       "Split `nums` into `k` non-empty contiguous subarrays so that the largest subarray sum is as small as "
+       "possible, and return that minimised sum.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.",
+       "The minimised largest sum.", ["`1 <= k <= n <= 500`", "`0 <= nums[i] <= 1000`"]),
+    mk("partition-labels", "Partition Labels", "MEDIUM", ["string", "greedy", "two-pointers"], [("s", "str")],
+       "int[]", b3_partition_labels, b3_plabels_cases(),
+       "Partition a string into as many parts as possible so that each letter appears in at most one part. Return "
+       "the sizes of the parts in order.", "A single line `s`.", "The part sizes, space-separated.",
+       ["`1 <= s.length <= 500`", "Lowercase letters"]),
+    mk("minimum-size-subarray-sum", "Minimum Size Subarray Sum", "MEDIUM", ["array", "sliding-window", "binary-search"],
+       [("target", "int"), ("nums", "int[]")], "int", b3_min_size_subarray, b3_minsub_cases(),
+       "Return the minimal length of a contiguous subarray of positive integers whose sum is at least `target`, or "
+       "`0` if no subarray qualifies.", "Line 1: `target`.\nLine 2: `n`.\nLine 3: `n` integers.",
+       "The minimal length, or `0`.", ["`1 <= n <= 1000`", "`1 <= nums[i] <= 100`"]),
+    mk("longest-repeating-character-replacement", "Longest Repeating Character Replacement", "MEDIUM",
+       ["string", "sliding-window"], [("s", "str"), ("k", "int")], "int", b3_char_replacement, b3_charrep_cases(),
+       "You may change at most `k` characters of `s` to any uppercase letter. Return the length of the longest "
+       "substring containing a single repeated letter after those changes.", "Line 1: `s`.\nLine 2: `k`.",
+       "The length of the longest such substring.", ["`1 <= s.length <= 1000`", "Uppercase letters", "`0 <= k <= s.length`"]),
+    mk("permutation-in-string", "Permutation in String", "MEDIUM", ["string", "sliding-window", "two-pointers"],
+       [("s1", "str"), ("s2", "str")], "bool", b3_perm_in_string, b3_perm_str_cases(),
+       "Return `true` if some permutation of `s1` appears as a contiguous substring of `s2`.",
+       "Line 1: `s1`.\nLine 2: `s2`.", "`true` or `false`.",
+       ["`1 <= s1.length, s2.length <= 1000`", "Lowercase letters"]),
+    mk("sliding-window-maximum", "Sliding Window Maximum", "HARD", ["array", "sliding-window", "heap", "monotonic-queue"],
+       [("nums", "int[]"), ("k", "int")], "int[]", b3_sliding_max, b3_slidemax_cases(),
+       "A window of size `k` slides from the left end to the right end of `nums`. Return the maximum of each window "
+       "position. Aim for `O(n)` time.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.",
+       "`n - k + 1` space-separated maxima.", ["`1 <= k <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+]
+
+
+_B3_KEEP = ["length-of-last-word", "best-time-to-buy-and-sell-stock-ii", "intersection-of-two-arrays-ii", "reverse-integer", "jump-game-ii", "h-index", "candy", "longest-consecutive-sequence", "longest-valid-parentheses", "minimum-path-sum", "max-area-of-island", "insert-interval", "koko-eating-bananas", "capacity-to-ship-packages", "split-array-largest-sum", "partition-labels"]
+PROBLEMS += [p for p in _B3_ALL if p["slug"] in _B3_KEEP]
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
