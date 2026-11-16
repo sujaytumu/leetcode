@@ -45,7 +45,7 @@ class ProblemApiTest {
     void filtersByDifficultyCaseInsensitively() throws Exception {
         mvc.perform(get("/api/problems").param("difficulty", "hard"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(9));
+                .andExpect(jsonPath("$.totalElements").value(11));
     }
 
     @Test
@@ -60,7 +60,7 @@ class ProblemApiTest {
     void searchesTitleAndSlugAndTreatsWildcardsLiterally() throws Exception {
         mvc.perform(get("/api/problems").param("q", "SUM"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(9))
+                .andExpect(jsonPath("$.totalElements").value(11))
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
 
         mvc.perform(get("/api/problems").param("q", "%"))
