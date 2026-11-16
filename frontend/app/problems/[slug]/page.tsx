@@ -58,6 +58,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [leftPct, setLeftPct] = useState(42);
   const [editorPct, setEditorPct] = useState(60);
   const [drag, setDrag] = useState<"" | "v" | "h">("");
+  const [focus, setFocus] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showKeys, setShowKeys] = useState(false);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLElement>(null);
 
@@ -151,6 +154,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     const h = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "'") { e.preventDefault(); runRef.current("run"); }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runRef.current("submit"); }
+      if (e.key === "Escape") { setShowKeys(false); setFocus(false); }
+      const el = e.target as HTMLElement | null;
+      const typing = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
+      if (e.key === "?" && !typing && !e.ctrlKey && !e.metaKey) setShowKeys((v) => !v);
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
@@ -162,6 +169,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       await api(`/api/problems/${slug}/bookmark`, { method: problem.bookmarked ? "DELETE" : "PUT" });
       setProblem({ ...problem, bookmarked: !problem.bookmarked });
     } catch (e) { setError((e as Error).message); }
+  }
+
+  async function copyCode() {
+    try { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1500); }
+    catch { setError("Could not copy: clipboard access was blocked by the browser."); }
   }
 
   function reset() {
@@ -224,9 +236,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <button onClick={checkExec}>Re-check</button>
         </div>
       )}
-      <div ref={workspaceRef} className={`workspace${drag ? " dragging" : ""}`}
-        style={{ gridTemplateColumns: `${leftPct}% 8px minmax(0, 1fr)` }}>
-        <section className="pane left">
+      <div ref={workspaceRef} className={`workspace${drag ? " dragging" : ""}${focus ? " focus" : ""}`}
+        style={{ gridTemplateColumns: focus ? "minmax(0, 1fr)" : `${leftPct}% 8px minmax(0, 1fr)` }}>
+        <section className="pane left" hidden={focus}>
           <div className="lctabs">
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
@@ -298,7 +310,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           </div>
         </section>
 
-        <div className={`vdivider${drag === "v" ? " drag" : ""}`} role="separator" aria-orientation="vertical"
+        <div hidden={focus} className={`vdivider${drag === "v" ? " drag" : ""}`} role="separator" aria-orientation="vertical"
           title="Drag to resize" onPointerDown={startDrag("v")} />
 
         <section className="right" ref={rightRef}>
@@ -309,7 +321,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <select value={fontSize} title="Editor font size" onChange={(e) => { setFontSize(Number(e.target.value)); localStorage.setItem("lc-font", e.target.value); }}>
               {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
             </select>
-            <button onClick={reset} title="Reset to starter code">Reset</button><span className="grow" />
+            <button onClick={reset} title="Reset to starter code">Reset</button>
+            <button onClick={copyCode} title="Copy your code">{copied ? "✔ Copied" : "Copy"}</button>
+            <button onClick={() => setFocus((f) => !f)} title="Hide the description and focus on the editor (Esc to exit)">
+              {focus ? "⤡ Exit focus" : "⤢ Focus"}
+            </button>
+            <button onClick={() => setShowKeys(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button>
+            <span className="grow" />
             <button disabled={!!busy} onClick={() => run("run")} title="Ctrl/⌘ + '">
               {busy === "run" ? `Running… ${elapsed}s` : custom ? "▶ Run custom" : "▶ Run"}
             </button>
@@ -404,6 +422,23 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           </div>
         </section>
       </div>
+      {showKeys && (
+        <div className="modal-back" onClick={() => setShowKeys(false)}>
+          <div className="modal" role="dialog" aria-label="Keyboard shortcuts" onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ marginTop: 0 }}>Keyboard shortcuts</h3>
+            <table>
+              <tbody>
+                <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>&apos;</kbd></td><td>Run on the console input</td></tr>
+                <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd></td><td>Submit</td></tr>
+                <tr><td><kbd>?</kbd></td><td>Show or hide this help</td></tr>
+                <tr><td><kbd>Esc</kbd></td><td>Close help / leave focus mode</td></tr>
+              </tbody>
+            </table>
+            <p className="mute" style={{ marginBottom: 0 }}>Drag the dividers to resize the panes; the layout is remembered.</p>
+            <div style={{ textAlign: "right", marginTop: 10 }}><button onClick={() => setShowKeys(false)}>Close</button></div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

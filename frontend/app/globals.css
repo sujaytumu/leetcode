@@ -130,3 +130,8 @@ pre { background:var(--code-bg); border:1px solid var(--line); border-radius:8px
 }
 .workspace.dragging { user-select:none; }
 .workspace.dragging .vdivider, .workspace.dragging .hdivider { z-index:3; }
+.workspace.focus .right { grid-column: 1; }
+.modal-back { position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; }
+.modal { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:18px 20px; max-width:440px; width:100%; }
+.modal td { padding:5px 8px 5px 0; }
+kbd { border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; font:12px/1.6 ui-monospace, monospace; background:var(--cell, transparent); }
