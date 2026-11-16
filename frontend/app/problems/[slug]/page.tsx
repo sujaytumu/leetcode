@@ -5,9 +5,8 @@ import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallbac
 import Link from "next/link";
 import {
   api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
-  Submission,
+  Study, Submission,
 } from "@/lib/api";
-import { STUDY } from "@/lib/study";
 import { loadAll, recordAccepted, swr } from "@/lib/local";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
@@ -58,6 +57,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [leftPct, setLeftPct] = useState(42);
   const [editorPct, setEditorPct] = useState(60);
   const [drag, setDrag] = useState<"" | "v" | "h">("");
+  const [study, setStudy] = useState<Study | null>(null);
   const [focus, setFocus] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showKeys, setShowKeys] = useState(false);
@@ -80,6 +80,14 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [slug]);
 
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
+  useEffect(() => {
+    let live = true;
+    setStudy(null);
+    api<Study | undefined>(`/api/problems/${slug}/study`)
+      .then((s) => { if (live) setStudy(s ?? null); })
+      .catch(() => { if (live) setStudy(null); });
+    return () => { live = false; };
+  }, [slug]);
   useEffect(() => { loadAll((items) => setAll(items), () => {}).catch(() => {}); }, []);
   useEffect(() => {
     const l = localStorage.getItem("lc-lang") as Lang | null;
@@ -217,7 +225,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }
 
   const execDown = exec && (!exec.enabled || !exec.reachable);
-  const study = STUDY[slug];
   const idx = all.findIndex((p) => p.slug === slug);
   const prev = idx > 0 ? all[idx - 1] : null;
   const next = idx >= 0 && idx + 1 < all.length ? all[idx + 1] : null;

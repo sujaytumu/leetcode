@@ -67,6 +67,9 @@ append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 | `GET /api/problems` | Search and filter (`q`, `difficulty`, `tag`, `status`, `bookmarked`, `page`, `size`) |
 | `GET /api/problems/{slug}` | Problem detail, starter code and sample cases |
 | `GET /api/tags` | All topic tags |
+| `GET /api/problems/{slug}/study` | Hints, approach and complexity (204 if a problem has no write-up) |
+| `GET /api/plans` | Curated study plans with their problems and your progress |
+| `GET /api/daily?date=YYYY-MM-DD` | Daily challenge for a day (same problem for everyone) |
 | `POST /api/problems/{slug}/run` | Run code against sample cases |
 | `POST /api/problems/{slug}/submit` | Judge against all cases and record the submission |
 | `GET /api/problems/{slug}/submissions` | Submission history |
@@ -97,3 +100,7 @@ mvn verify
 ```
 
 Tests use a fake code executor, so no Judge0 instance is needed.
+
+The frontend holds no problem content: problems, tags, hints, study plans and the daily challenge are all fetched from the API
+(hints and plans live in `backend/src/main/resources/seed/study.json` and `plans.json`). The last server response is cached in
+localStorage purely so pages paint instantly while the free-tier backend wakes up.

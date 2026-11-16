@@ -33,6 +33,11 @@ export interface Progress {
   total: number; solved: number; attempted: number; bookmarked: number;
   byDifficulty: Record<string, { total: number; solved: number }>;
 }
+export interface Study { hints: string[]; approach: string; time: string; space: string }
+export interface Plan {
+  id: string; title: string; blurb: string; total: number; solved: number; problems: ProblemSummary[];
+}
+export interface Daily { date: string; problem: ProblemSummary }
 export interface ExecutionStatus { enabled: boolean; reachable: boolean; provider: string; message: string }
 
 export class ApiError extends Error {
@@ -100,10 +105,7 @@ export async function fetchAllProblems(): Promise<ProblemSummary[]> {
   }
 }
 
-/** Same problem for everyone on a given local calendar day. */
-export function dailyIndex(count: number, d = new Date()): number {
-  const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-  let h = 2166136261;
-  for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
-  return count > 0 ? h % count : 0;
+/** The browser's own calendar day as YYYY-MM-DD, so the server picks the daily problem for the user's local date. */
+export function localDate(d = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
