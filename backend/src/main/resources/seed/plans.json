@@ -1,0 +1,114 @@
+[
+  {
+    "id": "warmup",
+    "title": "Easy warm-up",
+    "blurb": "Every easy problem. Build speed and confidence.",
+    "tags": [],
+    "difficulty": "EASY"
+  },
+  {
+    "id": "arrays",
+    "title": "Arrays & hashing",
+    "blurb": "Hash maps, prefix sums and sorting tricks.",
+    "tags": [
+      "array",
+      "hash-table",
+      "prefix-sum",
+      "sorting"
+    ]
+  },
+  {
+    "id": "pointers",
+    "title": "Two pointers, windows & binary search",
+    "blurb": "Linear-time scans and halving the search space.",
+    "tags": [
+      "two-pointers",
+      "sliding-window",
+      "binary-search"
+    ]
+  },
+  {
+    "id": "stacks",
+    "title": "Stacks & heaps",
+    "blurb": "Monotonic stacks, priority queues and selection.",
+    "tags": [
+      "stack",
+      "monotonic-stack",
+      "heap",
+      "quickselect"
+    ]
+  },
+  {
+    "id": "lists",
+    "title": "Linked lists",
+    "blurb": "Pointer rewiring: reversing, merging and fast/slow pointers.",
+    "tags": [
+      "linked-list"
+    ]
+  },
+  {
+    "id": "trees",
+    "title": "Binary trees",
+    "blurb": "DFS, BFS and binary-search-tree properties.",
+    "tags": [
+      "tree",
+      "bst"
+    ]
+  },
+  {
+    "id": "dp",
+    "title": "Dynamic programming",
+    "blurb": "From climbing stairs to harder state machines.",
+    "tags": [
+      "dynamic-programming"
+    ]
+  },
+  {
+    "id": "graphs",
+    "title": "Graphs & grids",
+    "blurb": "BFS, DFS, union-find and topological order.",
+    "tags": [
+      "graph",
+      "bfs",
+      "dfs",
+      "union-find",
+      "topological-sort",
+      "matrix"
+    ]
+  },
+  {
+    "id": "search",
+    "title": "Backtracking, greedy & intervals",
+    "blurb": "Explore, prune and choose locally-best moves.",
+    "tags": [
+      "backtracking",
+      "greedy",
+      "divide-and-conquer",
+      "intervals"
+    ]
+  },
+  {
+    "id": "bits",
+    "title": "Bits & math",
+    "blurb": "Bit tricks, number theory and sieves.",
+    "tags": [
+      "bit-manipulation",
+      "math",
+      "sieve"
+    ]
+  },
+  {
+    "id": "medium",
+    "title": "Medium grind",
+    "blurb": "The core of most interviews.",
+    "tags": [],
+    "difficulty": "MEDIUM"
+  },
+  {
+    "id": "hard",
+    "title": "Hard mode",
+    "blurb": "For when mediums feel easy.",
+    "tags": [],
+    "difficulty": "HARD"
+  }
+]

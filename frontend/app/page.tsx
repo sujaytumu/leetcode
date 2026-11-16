@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, dailyIndex, Page, Progress, ProblemSummary } from "@/lib/api";
+import { api, Daily, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import Activity from "@/components/Activity";
 
@@ -25,15 +25,17 @@ export default function Home() {
   const [saved, setSaved] = useState(false);
   const reqId = useRef(0);
   const [all, setAll] = useState<ProblemSummary[]>([]);
+  const [dailyData, setDailyData] = useState<Daily | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
     swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
     loadAll((items) => setAll(items), () => {}).catch(() => {});
+    swr<Daily | undefined>(`/api/daily?date=${localDate()}`, (d) => setDailyData(d ?? null), () => {}).catch(() => {});
   }, [reload]);
 
-  const daily = all.length ? all[dailyIndex(all.length)] : null;
+  const daily = dailyData?.problem ?? null;
   const pickRandom = () => {
     const unsolved = all.filter((p) => p.status !== "SOLVED");
     const pool = unsolved.length ? unsolved : all;
@@ -90,7 +92,7 @@ export default function Home() {
       {daily && (
         <div className="daily">
           <div>
-            <span className="mute">Daily challenge · {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+            <span className="mute">Daily challenge · {new Date(`${dailyData!.date}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
             <div><Link href={`/problems/${daily.slug}`}><b>{daily.number ?? daily.id}. {daily.title}</b></Link>{" "}
               <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
               {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
