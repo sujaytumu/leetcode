@@ -18,7 +18,7 @@ spring:
           time_zone: UTC
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   shutdown: graceful
   error:
     include-message: never
