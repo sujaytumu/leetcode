@@ -85,3 +85,21 @@ export async function apiWithWake<T>(
     }
   }
 }
+
+/** Every problem, following pagination (the server caps page size at 100). */
+export async function fetchAllProblems(): Promise<ProblemSummary[]> {
+  const out: ProblemSummary[] = [];
+  for (let page = 0; ; page++) {
+    const d = await api<Page<ProblemSummary>>(`/api/problems?page=${page}&size=100`, {}, 20000);
+    out.push(...d.items);
+    if (page + 1 >= d.totalPages) return out;
+  }
+}
+
+/** Same problem for everyone on a given local calendar day. */
+export function dailyIndex(count: number, d = new Date()): number {
+  const key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  return count > 0 ? h % count : 0;
+}
