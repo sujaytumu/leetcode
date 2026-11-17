@@ -271,3 +271,8 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .setting-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--line); cursor:pointer; }
 .setting-row:last-of-type { border-bottom:0; }
 .setting-row select { min-width:130px; }
+
+/* ---- like / dislike ---- */
+.votes { display:inline-flex; gap:6px; margin-left:auto; }
+.votes button { padding:2px 10px; border-radius:999px; font-size:13px; background:var(--cell); border:1px solid transparent; }
+.votes button.on { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--cell)); }

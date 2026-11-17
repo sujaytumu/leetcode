@@ -10,6 +10,7 @@ import {
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
+import VoteButtons from "@/components/VoteButtons";
 import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
@@ -273,6 +274,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 <div className="pmeta">
                   <span className={`pill ${problem.difficulty}`}>{title(problem.difficulty)}</span>
                   {problem.acceptance != null && <span className="mute">Acceptance {problem.acceptance.toFixed(1)}%</span>}
+                  <VoteButtons slug={slug} />
                 </div>
                 <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>
                 <div className="md"><Markdown>{problem.description}</Markdown></div>
