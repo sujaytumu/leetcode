@@ -7,6 +7,7 @@ const PAGES = [
   { label: "Problems", hint: "Browse all problems", href: "/" },
   { label: "Topics", hint: "Problems grouped by topic", href: "/topics" },
   { label: "For you", hint: "What to solve next and what to revisit", href: "/for-you" },
+  { label: "Daily challenge calendar", hint: "Every day's problem this month", href: "/daily" },
   { label: "Study plans", hint: "Curated learning paths", href: "/plans" },
   { label: "Profile", hint: "Your progress and activity", href: "/profile" },
 ];

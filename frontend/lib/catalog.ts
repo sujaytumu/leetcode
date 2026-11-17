@@ -7,7 +7,7 @@ const PUBLIC = [
   /^\/api\/tags(\?|$)/,
   /^\/api\/topics(\?|$)/,
   /^\/api\/plans(\?|$)/,
-  /^\/api\/daily(\?|$)/,
+  /^\/api\/daily(\/calendar)?(\?|$)/,
   /^\/api\/problems(\?|$)/,
   /^\/api\/problems\/[a-z0-9-]+(\/study)?(\?|$)/,
 ];

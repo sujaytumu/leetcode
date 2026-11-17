@@ -49,6 +49,8 @@ export interface Meta {
   difficulties: MetaOption[]; statuses: MetaOption[]; languages: LanguageOption[];
   defaultLanguage: string; pageSize: number;
 }
+export interface DailyDay { date: string; problem: ProblemSummary; solved: boolean }
+export interface DailyCalendar { month: string; total: number; solved: number; days: DailyDay[] }
 export interface Recommendation { problem: ProblemSummary; reason: string }
 export interface Recommendations { next: Recommendation[]; unfinished: Recommendation[]; revisit: Recommendation[] }
 export interface Topic { tag: string; total: number; solved: number; byDifficulty: Record<string, number> }

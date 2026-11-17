@@ -2,9 +2,11 @@ package com.sujaytumu.leetcode.study;
 
 import com.sujaytumu.leetcode.common.Headers;
 import com.sujaytumu.leetcode.study.StudyService.Daily;
+import com.sujaytumu.leetcode.study.StudyService.DailyCalendar;
 import com.sujaytumu.leetcode.study.StudyService.PlanView;
 import com.sujaytumu.leetcode.study.StudyService.Study;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -54,5 +56,20 @@ public class StudyController {
             }
         }
         return service.daily(clientId, day).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    /** Month view of the daily challenge; {@code month} is YYYY-MM, {@code today} (YYYY-MM-DD) bounds it to the user's own date. */
+    @GetMapping("/daily/calendar")
+    public DailyCalendar dailyCalendar(
+            @RequestParam(required = false) String month,
+            @RequestParam(required = false) String today,
+            @RequestHeader(value = Headers.CLIENT_ID, required = false) UUID clientId) {
+        try {
+            LocalDate end = today == null || today.isBlank() ? LocalDate.now(ZoneOffset.UTC) : LocalDate.parse(today.trim());
+            YearMonth ym = month == null || month.isBlank() ? YearMonth.from(end) : YearMonth.parse(month.trim());
+            return service.calendar(clientId, ym, end);
+        } catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException("month must be YYYY-MM and today YYYY-MM-DD");
+        }
     }
 }
