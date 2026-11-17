@@ -81,4 +81,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             group by s.clientId, p.difficulty
             """)
     List<Object[]> solvedByClientAndDifficulty(@Param("verdict") Verdict verdict);
+
+    /** Every submission to the given problems inside [from, to), oldest first (contest scoring). */
+    @Query("""
+            select s from Submission s
+            where s.problemId in :ids and s.createdAt >= :from and s.createdAt < :to
+            order by s.createdAt asc
+            """)
+    List<Submission> findInWindow(
+            @Param("ids") Collection<Long> ids, @Param("from") java.time.Instant from, @Param("to") java.time.Instant to);
 }
