@@ -75,8 +75,23 @@ append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 | `GET /api/problems/{slug}/submissions` | Submission history |
 | `PUT` / `DELETE /api/problems/{slug}/bookmark` | Bookmark toggle |
 | `GET /api/progress` | Solved / attempted counts |
+| `GET` / `POST /api/problems/{slug}/comments` | Discussion thread (`sort=top\|new`); post a comment or a reply (`parentId`) |
+| `PUT` / `DELETE /api/comments/{id}/vote` | Upvote a comment; `DELETE /api/comments/{id}` removes your own |
+| `GET /api/leaderboard?limit=` | Global ranking by points (Easy 10, Medium 20, Hard 40) plus your own rank |
+| `POST /api/playground/run` | Run any program once with custom stdin, nothing stored |
+| `GET /api/contests`, `GET /api/contests/{id}` | Weekly contest schedule, problems (after start) and live standings |
+| `GET /api/submissions?verdict=&page=` | Your submissions across all problems |
 
 Per-user state is keyed by an anonymous UUID sent in the `X-Client-Id` header.
+
+## Features
+
+Problem list with sorting, filters, study-path numbering and acceptance rates; a LeetCode-style workspace (resizable
+panes, Monaco editor, custom testcases, run/submit with runtime and memory percentiles, editorial, answers, notes,
+timer); Discuss tab with Markdown comments, replies and upvotes; topics, study plans and your own lists; mock
+interviews; weekly contests (Sundays 02:30 UTC, 90 minutes, 3/4/5/6 points, 5 minute penalties); leaderboard;
+playground; profile with heatmap, streaks, badges, global rank and a device sync code; command palette (Ctrl/⌘+K);
+light and dark themes; offline-first catalogue and PWA manifest.
 
 ## Status
 
