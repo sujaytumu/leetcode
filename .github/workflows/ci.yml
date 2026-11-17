@@ -57,5 +57,8 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      # The bundled offline problem data must match the seed file.
+      - run: python3 ../scripts/build-snapshot.py
+      - run: git diff --exit-code -- public/problems-snapshot.json
       # `next build` also type-checks the project.
       - run: npm run build
