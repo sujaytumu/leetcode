@@ -43,6 +43,24 @@ jobs:
       # python3 and g++ are preinstalled on ubuntu-latest runners.
       - run: node scripts/verify.js
 
+  answers:
+    name: Answers (verify against test cases in all languages)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: node scripts/verify-answers.js
+      - name: solutions.json is up to date
+        run: |
+          node scripts/build-solutions.js
+          git diff --exit-code backend/src/main/resources/seed/solutions.json
+
   frontend:
     name: Frontend (build)
     runs-on: ubuntu-latest
