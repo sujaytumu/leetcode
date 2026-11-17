@@ -26,6 +26,20 @@ for (const d of dirs) {
   out[slug] = { editorial: fs.existsSync(edFile) ? fs.readFileSync(edFile, "utf8").trim() : null, solutions };
 }
 
+// Answers for the seed problems that are not in problems/ yet (answers/*.txt, verified by scripts/verify-answers.js).
+// The explanation comes from the existing study notes (approach and complexity).
+const { loadAnswers } = require("./answers-lib");
+const study = JSON.parse(fs.readFileSync(path.join(root, "backend/src/main/resources/seed/study.json"), "utf8"));
+const ORDER = ["cpp", "java", "python", "javascript"];
+for (const [slug, byLang] of Object.entries(loadAnswers())) {
+  if (out[slug]) continue; // the verified problems/ pipeline wins
+  const st = study[slug];
+  out[slug] = {
+    editorial: st ? `## Approach\n\n${st.approach}\n\n**Complexity:** ${st.time} time, ${st.space} space.` : null,
+    solutions: Object.fromEntries(ORDER.filter((l) => byLang[l]).map((l) => [l, byLang[l]])),
+  };
+}
+
 const dest = path.join(root, "backend/src/main/resources/seed/solutions.json");
 fs.writeFileSync(dest, JSON.stringify(out, null, 1) + "\n");
 console.log(`wrote ${Object.keys(out).length} problems with answers -> ${path.relative(root, dest)}`);

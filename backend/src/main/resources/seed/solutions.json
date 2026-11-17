@@ -86,5 +86,131 @@
    "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int w = 0;\n        for (int x : nums)\n            if (x != 0) nums[w++] = x;\n        while (w < nums.length) nums[w++] = 0;\n    }\n}\n",
    "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        size_t w = 0;\n        for (int x : nums)\n            if (x != 0) nums[w++] = x;\n        while (w < nums.size()) nums[w++] = 0;\n    }\n};\n"
   }
+ },
+ "contains-duplicate": {
+  "editorial": "## Approach\n\nInsert each element into a set; if it is already present, return true. If the loop finishes, all values are distinct.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "bool solve(vector<int> nums) {\n    unordered_set<int> seen;\n    for (int x : nums) if (!seen.insert(x).second) return true;\n    return false;\n}\n",
+   "java": "static boolean solve(int[] nums) {\n    Set<Integer> seen = new HashSet<>();\n    for (int x : nums) if (!seen.add(x)) return true;\n    return false;\n}\n",
+   "python": "def solve(nums):\n    return len(set(nums)) != len(nums)\n",
+   "javascript": "function solve(nums) {\n  return new Set(nums).size !== nums.length;\n}\n"
+  }
+ },
+ "majority-element": {
+  "editorial": "## Approach\n\nBoyer–Moore voting: keep a candidate and a count. A matching element increments the count, a different one decrements it, and at zero the next element becomes the candidate. The guaranteed majority is what remains.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int candidate = 0, count = 0;\n    for (int x : nums) {\n        if (count == 0) candidate = x;\n        count += (x == candidate) ? 1 : -1;\n    }\n    return candidate;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int candidate = 0, count = 0;\n    for (int x : nums) {\n        if (count == 0) candidate = x;\n        count += (x == candidate) ? 1 : -1;\n    }\n    return candidate;\n}\n",
+   "python": "def solve(nums):\n    candidate, count = None, 0\n    for x in nums:\n        if count == 0:\n            candidate = x\n        count += 1 if x == candidate else -1\n    return candidate\n",
+   "javascript": "function solve(nums) {\n  let candidate = 0, count = 0;\n  for (const x of nums) {\n    if (count === 0) candidate = x;\n    count += x === candidate ? 1 : -1;\n  }\n  return candidate;\n}\n"
+  }
+ },
+ "valid-anagram": {
+  "editorial": "## Approach\n\nCompare letter counts: count up for one string, count down for the other, and check that every count returns to zero (or simply compare the sorted strings).\n\n**Complexity:** O(n) time, O(1) for a fixed alphabet space.",
+  "solutions": {
+   "cpp": "bool solve(string s, string t) {\n    sort(s.begin(), s.end());\n    sort(t.begin(), t.end());\n    return s == t;\n}\n",
+   "java": "static boolean solve(String s, String t) {\n    char[] a = s.toCharArray(), b = t.toCharArray();\n    Arrays.sort(a);\n    Arrays.sort(b);\n    return Arrays.equals(a, b);\n}\n",
+   "python": "def solve(s, t):\n    return sorted(s) == sorted(t)\n",
+   "javascript": "function solve(s, t) {\n  return s.split(\"\").sort().join(\"\") === t.split(\"\").sort().join(\"\");\n}\n"
+  }
+ },
+ "length-of-last-word": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(string s) {\n    int i = (int)s.size() - 1, length = 0;\n    while (i >= 0 && s[i] == ' ') i--;\n    while (i >= 0 && s[i] != ' ') { length++; i--; }\n    return length;\n}\n",
+   "java": "static int solve(String s) {\n    int i = s.length() - 1, length = 0;\n    while (i >= 0 && s.charAt(i) == ' ') i--;\n    while (i >= 0 && s.charAt(i) != ' ') { length++; i--; }\n    return length;\n}\n",
+   "python": "def solve(s):\n    return len(s.split()[-1])\n",
+   "javascript": "function solve(s) {\n  return s.trim().split(/\\s+/).pop().length;\n}\n"
+  }
+ },
+ "intersection-of-two-arrays-ii": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "vector<int> solve(vector<int> nums1, vector<int> nums2) {\n    unordered_map<int, int> counts;\n    for (int x : nums1) counts[x]++;\n    sort(nums2.begin(), nums2.end());\n    vector<int> out;\n    for (int x : nums2) {\n        auto it = counts.find(x);\n        if (it != counts.end() && it->second > 0) { out.push_back(x); it->second--; }\n    }\n    return out;\n}\n",
+   "java": "static int[] solve(int[] nums1, int[] nums2) {\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int x : nums1) counts.merge(x, 1, Integer::sum);\n    Arrays.sort(nums2);\n    List<Integer> out = new ArrayList<>();\n    for (int x : nums2) {\n        int c = counts.getOrDefault(x, 0);\n        if (c > 0) { out.add(x); counts.put(x, c - 1); }\n    }\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
+   "python": "def solve(nums1, nums2):\n    counts = {}\n    for x in nums1:\n        counts[x] = counts.get(x, 0) + 1\n    out = []\n    for x in sorted(nums2):\n        if counts.get(x, 0) > 0:\n            out.append(x)\n            counts[x] -= 1\n    return out\n",
+   "javascript": "function solve(nums1, nums2) {\n  const counts = new Map();\n  for (const x of nums1) counts.set(x, (counts.get(x) || 0) + 1);\n  const out = [];\n  for (const x of [...nums2].sort((a, b) => a - b)) {\n    if ((counts.get(x) || 0) > 0) {\n      out.push(x);\n      counts.set(x, counts.get(x) - 1);\n    }\n  }\n  return out;\n}\n"
+  }
+ },
+ "product-of-array-except-self": {
+  "editorial": "## Approach\n\nFill the output with prefix products (product of elements before i). Then sweep from the right keeping a running suffix product and multiply it into each position. No division is needed and zeros are handled naturally.\n\n**Complexity:** O(n) time, O(1) extra beyond the output space.",
+  "solutions": {
+   "cpp": "vector<int> solve(vector<int> nums) {\n    int n = nums.size();\n    vector<int> result(n, 1);\n    long long prefix = 1;\n    for (int i = 0; i < n; i++) { result[i] = (int)prefix; prefix *= nums[i]; }\n    long long suffix = 1;\n    for (int i = n - 1; i >= 0; i--) { result[i] = (int)(result[i] * suffix); suffix *= nums[i]; }\n    return result;\n}\n",
+   "java": "static int[] solve(int[] nums) {\n    int n = nums.length;\n    int[] result = new int[n];\n    long prefix = 1;\n    for (int i = 0; i < n; i++) { result[i] = (int) prefix; prefix *= nums[i]; }\n    long suffix = 1;\n    for (int i = n - 1; i >= 0; i--) { result[i] = (int) (result[i] * suffix); suffix *= nums[i]; }\n    return result;\n}\n",
+   "python": "def solve(nums):\n    n = len(nums)\n    result = [1] * n\n    prefix = 1\n    for i in range(n):\n        result[i] = prefix\n        prefix *= nums[i]\n    suffix = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= suffix\n        suffix *= nums[i]\n    return result\n",
+   "javascript": "function solve(nums) {\n  const n = nums.length, result = new Array(n).fill(1);\n  let prefix = 1;\n  for (let i = 0; i < n; i++) { result[i] = prefix; prefix *= nums[i]; }\n  let suffix = 1;\n  for (let i = n - 1; i >= 0; i--) { result[i] *= suffix; suffix *= nums[i]; }\n  return result;\n}\n"
+  }
+ },
+ "merge-intervals": {
+  "editorial": "## Approach\n\nSort by start. Walk the intervals: if the current start is at most the last merged end, extend that end to the maximum of the two ends; otherwise append a new interval.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "vector<vector<int>> solve(vector<vector<int>> intervals) {\n    sort(intervals.begin(), intervals.end());\n    vector<vector<int>> merged;\n    for (auto &v : intervals) {\n        if (!merged.empty() && v[0] <= merged.back()[1]) merged.back()[1] = max(merged.back()[1], v[1]);\n        else merged.push_back(v);\n    }\n    return merged;\n}\n",
+   "java": "static int[][] solve(int[][] intervals) {\n    Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n    List<int[]> merged = new ArrayList<>();\n    for (int[] v : intervals) {\n        if (!merged.isEmpty() && v[0] <= merged.get(merged.size() - 1)[1]) {\n            int[] last = merged.get(merged.size() - 1);\n            last[1] = Math.max(last[1], v[1]);\n        } else {\n            merged.add(new int[] {v[0], v[1]});\n        }\n    }\n    return merged.toArray(new int[0][]);\n}\n",
+   "python": "def solve(intervals):\n    merged = []\n    for start, end in sorted(intervals):\n        if merged and start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n",
+   "javascript": "function solve(intervals) {\n  const sorted = [...intervals].sort((a, b) => a[0] - b[0]);\n  const merged = [];\n  for (const [start, end] of sorted) {\n    if (merged.length && start <= merged[merged.length - 1][1]) {\n      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end);\n    } else {\n      merged.push([start, end]);\n    }\n  }\n  return merged;\n}\n"
+  }
+ },
+ "subarray-sum-equals-k": {
+  "editorial": "## Approach\n\nWalk the array maintaining the running prefix sum. Add the number of earlier prefixes equal to prefix − k to the answer, then record the current prefix in the map.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums, int k) {\n    unordered_map<long long, int> seen;\n    seen[0] = 1;\n    long long total = 0;\n    int count = 0;\n    for (int x : nums) {\n        total += x;\n        auto it = seen.find(total - k);\n        if (it != seen.end()) count += it->second;\n        seen[total]++;\n    }\n    return count;\n}\n",
+   "java": "static int solve(int[] nums, int k) {\n    Map<Long, Integer> seen = new HashMap<>();\n    seen.put(0L, 1);\n    long total = 0;\n    int count = 0;\n    for (int x : nums) {\n        total += x;\n        count += seen.getOrDefault(total - k, 0);\n        seen.merge(total, 1, Integer::sum);\n    }\n    return count;\n}\n",
+   "python": "def solve(nums, k):\n    seen = {0: 1}\n    total = count = 0\n    for x in nums:\n        total += x\n        count += seen.get(total - k, 0)\n        seen[total] = seen.get(total, 0) + 1\n    return count\n",
+   "javascript": "function solve(nums, k) {\n  const seen = new Map([[0, 1]]);\n  let total = 0, count = 0;\n  for (const x of nums) {\n    total += x;\n    count += seen.get(total - k) || 0;\n    seen.set(total, (seen.get(total) || 0) + 1);\n  }\n  return count;\n}\n"
+  }
+ },
+ "h-index": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(vector<int> citations) {\n    sort(citations.begin(), citations.end());\n    int n = citations.size();\n    for (int i = 0; i < n; i++) if (citations[i] >= n - i) return n - i;\n    return 0;\n}\n",
+   "java": "static int solve(int[] citations) {\n    int[] ordered = citations.clone();\n    Arrays.sort(ordered);\n    int n = ordered.length;\n    for (int i = 0; i < n; i++) if (ordered[i] >= n - i) return n - i;\n    return 0;\n}\n",
+   "python": "def solve(citations):\n    ordered = sorted(citations)\n    n = len(ordered)\n    for i, c in enumerate(ordered):\n        if c >= n - i:\n            return n - i\n    return 0\n",
+   "javascript": "function solve(citations) {\n  const ordered = [...citations].sort((a, b) => a - b);\n  const n = ordered.length;\n  for (let i = 0; i < n; i++) if (ordered[i] >= n - i) return n - i;\n  return 0;\n}\n"
+  }
+ },
+ "first-missing-positive": {
+  "editorial": "## Approach\n\nCyclic placement: for each index swap nums[i] into its home slot nums[v−1] while 1 <= v <= n and the target slot differs. Then the first index i with nums[i] != i + 1 gives answer i + 1, or n + 1 if all match. A hash set is a simpler O(n)-space version.\n\n**Complexity:** O(n) time, O(1) with in-place placement space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int n = nums.size();\n    for (int i = 0; i < n; i++) {\n        while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) swap(nums[i], nums[nums[i] - 1]);\n    }\n    for (int i = 0; i < n; i++) if (nums[i] != i + 1) return i + 1;\n    return n + 1;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int n = nums.length;\n    for (int i = 0; i < n; i++) {\n        while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {\n            int j = nums[i] - 1, tmp = nums[j];\n            nums[j] = nums[i];\n            nums[i] = tmp;\n        }\n    }\n    for (int i = 0; i < n; i++) if (nums[i] != i + 1) return i + 1;\n    return n + 1;\n}\n",
+   "python": "def solve(nums):\n    n = len(nums)\n    for i in range(n):\n        while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:\n            j = nums[i] - 1\n            nums[i], nums[j] = nums[j], nums[i]\n    for i in range(n):\n        if nums[i] != i + 1:\n            return i + 1\n    return n + 1\n",
+   "javascript": "function solve(nums) {\n  const n = nums.length;\n  for (let i = 0; i < n; i++) {\n    while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] !== nums[i]) {\n      const j = nums[i] - 1;\n      [nums[i], nums[j]] = [nums[j], nums[i]];\n    }\n  }\n  for (let i = 0; i < n; i++) if (nums[i] !== i + 1) return i + 1;\n  return n + 1;\n}\n"
+  }
+ },
+ "valid-palindrome": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "bool solve(string s) {\n    int i = 0, j = (int)s.size() - 1;\n    while (i < j) {\n        while (i < j && !isalnum((unsigned char)s[i])) i++;\n        while (i < j && !isalnum((unsigned char)s[j])) j--;\n        if (tolower((unsigned char)s[i]) != tolower((unsigned char)s[j])) return false;\n        i++; j--;\n    }\n    return true;\n}\n",
+   "java": "static boolean solve(String s) {\n    int i = 0, j = s.length() - 1;\n    while (i < j) {\n        while (i < j && !Character.isLetterOrDigit(s.charAt(i))) i++;\n        while (i < j && !Character.isLetterOrDigit(s.charAt(j))) j--;\n        if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) return false;\n        i++; j--;\n    }\n    return true;\n}\n",
+   "python": "def solve(s):\n    cleaned = [c.lower() for c in s if c.isalnum()]\n    return cleaned == cleaned[::-1]\n",
+   "javascript": "function solve(s) {\n  const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, \"\");\n  return cleaned === cleaned.split(\"\").reverse().join(\"\");\n}\n"
+  }
+ },
+ "remove-duplicates-from-sorted-array": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "vector<int> solve(vector<int> nums) {\n    vector<int> out;\n    for (int x : nums) if (out.empty() || out.back() != x) out.push_back(x);\n    return out;\n}\n",
+   "java": "static int[] solve(int[] nums) {\n    List<Integer> out = new ArrayList<>();\n    for (int x : nums) if (out.isEmpty() || out.get(out.size() - 1) != x) out.add(x);\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
+   "python": "def solve(nums):\n    out = []\n    for x in nums:\n        if not out or out[-1] != x:\n            out.append(x)\n    return out\n",
+   "javascript": "function solve(nums) {\n  const out = [];\n  for (const x of nums) if (!out.length || out[out.length - 1] !== x) out.push(x);\n  return out;\n}\n"
+  }
+ },
+ "3sum-count": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    sort(nums.begin(), nums.end());\n    int n = nums.size(), count = 0;\n    for (int i = 0; i + 2 < n; i++) {\n        if (i > 0 && nums[i] == nums[i - 1]) continue;\n        int lo = i + 1, hi = n - 1;\n        while (lo < hi) {\n            long long total = (long long)nums[i] + nums[lo] + nums[hi];\n            if (total < 0) lo++;\n            else if (total > 0) hi--;\n            else {\n                count++;\n                lo++; hi--;\n                while (lo < hi && nums[lo] == nums[lo - 1]) lo++;\n                while (lo < hi && nums[hi] == nums[hi + 1]) hi--;\n            }\n        }\n    }\n    return count;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int[] a = nums.clone();\n    Arrays.sort(a);\n    int n = a.length, count = 0;\n    for (int i = 0; i + 2 < n; i++) {\n        if (i > 0 && a[i] == a[i - 1]) continue;\n        int lo = i + 1, hi = n - 1;\n        while (lo < hi) {\n            long total = (long) a[i] + a[lo] + a[hi];\n            if (total < 0) lo++;\n            else if (total > 0) hi--;\n            else {\n                count++;\n                lo++; hi--;\n                while (lo < hi && a[lo] == a[lo - 1]) lo++;\n                while (lo < hi && a[hi] == a[hi + 1]) hi--;\n            }\n        }\n    }\n    return count;\n}\n",
+   "python": "def solve(nums):\n    nums = sorted(nums)\n    n, count = len(nums), 0\n    for i in range(n - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, n - 1\n        while lo < hi:\n            total = nums[i] + nums[lo] + nums[hi]\n            if total < 0:\n                lo += 1\n            elif total > 0:\n                hi -= 1\n            else:\n                count += 1\n                lo += 1\n                hi -= 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                while lo < hi and nums[hi] == nums[hi + 1]:\n                    hi -= 1\n    return count\n",
+   "javascript": "function solve(nums) {\n  const a = [...nums].sort((x, y) => x - y);\n  const n = a.length;\n  let count = 0;\n  for (let i = 0; i < n - 2; i++) {\n    if (i > 0 && a[i] === a[i - 1]) continue;\n    let lo = i + 1, hi = n - 1;\n    while (lo < hi) {\n      const total = a[i] + a[lo] + a[hi];\n      if (total < 0) lo++;\n      else if (total > 0) hi--;\n      else {\n        count++;\n        lo++; hi--;\n        while (lo < hi && a[lo] === a[lo - 1]) lo++;\n        while (lo < hi && a[hi] === a[hi + 1]) hi--;\n      }\n    }\n  }\n  return count;\n}\n"
+  }
+ },
+ "longest-substring-without-repeating-characters": {
+  "editorial": "## Approach\n\nSliding window with a map of last-seen indices. For each right, if its character was seen at or after left, set left to that index + 1. The answer is the largest right − left + 1.\n\n**Complexity:** O(n) time, O(k) for k distinct characters space.",
+  "solutions": {
+   "cpp": "int solve(string s) {\n    vector<int> last(256, -1);\n    int best = 0, start = 0;\n    for (int i = 0; i < (int)s.size(); i++) {\n        unsigned char ch = s[i];\n        if (last[ch] >= start) start = last[ch] + 1;\n        last[ch] = i;\n        best = max(best, i - start + 1);\n    }\n    return best;\n}\n",
+   "java": "static int solve(String s) {\n    int[] last = new int[256];\n    Arrays.fill(last, -1);\n    int best = 0, start = 0;\n    for (int i = 0; i < s.length(); i++) {\n        int ch = s.charAt(i) & 0xFF;\n        if (last[ch] >= start) start = last[ch] + 1;\n        last[ch] = i;\n        best = Math.max(best, i - start + 1);\n    }\n    return best;\n}\n",
+   "python": "def solve(s):\n    last = {}\n    best = start = 0\n    for i, ch in enumerate(s):\n        if ch in last and last[ch] >= start:\n            start = last[ch] + 1\n        last[ch] = i\n        best = max(best, i - start + 1)\n    return best\n",
+   "javascript": "function solve(s) {\n  const last = new Map();\n  let best = 0, start = 0;\n  for (let i = 0; i < s.length; i++) {\n    const ch = s[i];\n    if (last.has(ch) && last.get(ch) >= start) start = last.get(ch) + 1;\n    last.set(ch, i);\n    best = Math.max(best, i - start + 1);\n  }\n  return best;\n}\n"
+  }
  }
 }
