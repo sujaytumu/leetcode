@@ -687,5 +687,175 @@
     "approach": "height(node) returns -1 if either child is unbalanced or their heights differ by more than 1, else 1 + max of the child heights. The tree is balanced if height(root) != -1. Each node is visited once.",
     "time": "O(n)",
     "space": "O(h)"
+  },
+  "binary-tree-right-side-view": {
+    "hints": [
+      "For each depth you want the last node (rightmost) seen.",
+      "A level-order traversal gives you the levels directly.",
+      "Alternatively DFS visiting right before left and record the first node reached at each new depth."
+    ],
+    "approach": "BFS by levels: for every level keep the last node's value. Or DFS(root, depth) visiting right child first; if depth equals the number of recorded values, this is the first (rightmost) node at that depth, so record it.",
+    "time": "O(n)",
+    "space": "O(w) for BFS, O(h) for DFS"
+  },
+  "count-good-nodes-in-binary-tree": {
+    "hints": [
+      "A node is good if it is at least as large as every ancestor.",
+      "Carry the maximum value seen on the path as you descend.",
+      "Count the node when its value >= the path maximum, then pass the updated maximum to both children."
+    ],
+    "approach": "DFS(node, maxSoFar): if null return 0; good = node.val >= maxSoFar ? 1 : 0; newMax = max(maxSoFar, node.val); return good + DFS(left, newMax) + DFS(right, newMax). Start with maxSoFar = -infinity.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "validate-binary-search-tree": {
+    "hints": [
+      "Checking only the node against its direct children is not enough.",
+      "Every node must lie within an open interval (low, high) inherited from its ancestors.",
+      "Alternatively an inorder traversal of a valid BST is strictly increasing."
+    ],
+    "approach": "DFS(node, low, high): null is valid; require low < node.val < high; recurse left with (low, node.val) and right with (node.val, high). Use long or null bounds to avoid trouble with values at the integer limits. Equal values are invalid because the ordering is strict.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "kth-smallest-element-in-a-bst": {
+    "hints": [
+      "Inorder traversal of a BST visits values in ascending order.",
+      "You can stop as soon as you have visited k nodes.",
+      "Do it iteratively with a stack so you can return early, or keep a counter in the recursion."
+    ],
+    "approach": "Iterative inorder: push nodes going left; pop, decrement k, and when k reaches zero return that node's value; then move to the right child. If the tree is modified often and k varies, store subtree sizes in each node to answer in O(h).",
+    "time": "O(h + k)",
+    "space": "O(h)"
+  },
+  "lowest-common-ancestor-of-a-binary-search-tree": {
+    "hints": [
+      "Use the BST ordering instead of searching both subtrees.",
+      "If both values are smaller than the current node, the LCA is in the left subtree.",
+      "The first node whose value lies between p and q (inclusive) is the LCA."
+    ],
+    "approach": "Start at the root. While true: if both p and q are less than node.val go left, if both are greater go right, otherwise this node splits them (or equals one of them) and is the LCA. Iterative, no recursion needed.",
+    "time": "O(h)",
+    "space": "O(1)"
+  },
+  "lowest-common-ancestor-of-a-binary-tree": {
+    "hints": [
+      "Without ordering you must look in both subtrees.",
+      "Return a node up the recursion when it equals p or q.",
+      "If both the left and right recursive calls return non-null, the current node is the LCA."
+    ],
+    "approach": "lca(node): if null or node is p or q return node; l = lca(left), r = lca(right); if both are non-null return node, otherwise return whichever is non-null. The first node where the two targets appear on different sides is the answer; if one target is the ancestor of the other, it is returned as is.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "binary-tree-maximum-path-sum": {
+    "hints": [
+      "At each node, the best path that 'bends' there uses the best downward path from both children.",
+      "A negative downward contribution is better dropped (treat as 0).",
+      "Return to the parent only the best single-branch gain, but update a global maximum with the bending path."
+    ],
+    "approach": "DFS returns gain(node) = node.val + max(0, gain(left), gain(right)) — the best path that goes down one side. While computing it, candidate = node.val + max(0, gain(left)) + max(0, gain(right)); keep the global maximum. Initialise the maximum to -infinity because all values may be negative.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "last-stone-weight": {
+    "hints": [
+      "You repeatedly need the two largest remaining values.",
+      "A max-heap gives the largest element in O(log n).",
+      "Pop two, push back their difference if non-zero, repeat until at most one stone remains."
+    ],
+    "approach": "Put all stones in a max-heap. While the heap has at least two stones pop the heaviest two (x >= y); if x != y push x - y. The answer is the single remaining weight, or 0 when the heap is empty. (Languages with only min-heaps can store negated values.)",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "top-k-frequent-elements": {
+    "hints": [
+      "Count frequencies first with a hash map.",
+      "Then you need the k entries with the highest counts; sorting all of them is the simple option.",
+      "For linear time use bucket sort: index by frequency (at most n) and read buckets from high to low. Break ties by smaller value."
+    ],
+    "approach": "Count with a map, then sort the distinct values by (frequency descending, value ascending) and take k — O(m log m) for m distinct values. A size-k min-heap gives O(m log k), and bucketing by frequency gives O(n) if you only need any valid order; the tie-break here needs an ordering inside each bucket.",
+    "time": "O(m log m)",
+    "space": "O(m)"
+  },
+  "meeting-rooms-ii": {
+    "hints": [
+      "The answer is the largest number of meetings overlapping at one moment.",
+      "Sort by start time and track when rooms free up.",
+      "A min-heap of end times lets you reuse the room that frees first; reuse if its end <= the new start."
+    ],
+    "approach": "Sort meetings by start. Keep a min-heap of end times. For each meeting, if the earliest end <= its start pop it (the room is reused); push this meeting's end. The final heap size is the number of rooms. Alternative: sort starts and ends separately and sweep with two pointers.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "sliding-window-maximum": {
+    "hints": [
+      "Recomputing the max of every window is O(nk).",
+      "Keep candidates only: an older element smaller than a newer one can never be the maximum again.",
+      "Use a deque of indices with decreasing values; pop from the back while smaller, pop from the front when out of the window."
+    ],
+    "approach": "Monotonic deque storing indices whose values decrease from front to back. For each i: drop front indices <= i - k; pop back indices whose value <= nums[i]; push i. Once i >= k - 1 the front is the window maximum. Each index enters and leaves once.",
+    "time": "O(n)",
+    "space": "O(k)"
+  },
+  "word-search": {
+    "hints": [
+      "Try every cell as the starting point.",
+      "Use DFS and extend the match one letter at a time.",
+      "Mark a cell as used while exploring it and restore it when backtracking."
+    ],
+    "approach": "For each cell matching word[0] run DFS(r, c, i): if i == len(word) return true; reject out-of-bounds, used or mismatching cells; mark the cell, recurse in four directions, then unmark. Mutating the grid with a sentinel avoids a separate visited array. Exponential worst case, pruned heavily by the letter checks.",
+    "time": "O(R·C·4^L)",
+    "space": "O(L) recursion"
+  },
+  "count-subsets-with-sum": {
+    "hints": [
+      "Each element is either in the subset or not: 2^n possibilities.",
+      "Equal values count separately, so you cannot dedupe.",
+      "Use a DP over sums: ways[s] = number of subsets reaching sum s; update in descending order for each element."
+    ],
+    "approach": "0/1 knapsack counting: ways[0] = 1; for each x in nums, for s from target down to x: ways[s] += ways[s - x]. Iterating downwards ensures each element is used at most once. Plain backtracking also works for small n but is exponential. Beware negative numbers or zeros if the constraints allow them (zeros double the count).",
+    "time": "O(n · target)",
+    "space": "O(target)"
+  },
+  "distinct-permutations-count": {
+    "hints": [
+      "Duplicates make n! over-count.",
+      "Identical values can be swapped without changing the sequence.",
+      "The count is n! divided by the factorial of each value's multiplicity."
+    ],
+    "approach": "Count multiplicities c1..cm of the distinct values; the answer is n! / (c1! · c2! · … · cm!). Compute it with an incremental binomial product to avoid large intermediate factorials, or by backtracking with a frequency map.",
+    "time": "O(n)",
+    "space": "O(m)"
+  },
+  "generate-parentheses-count": {
+    "hints": [
+      "Think of the first '(' and the ')' that closes it.",
+      "What is inside those two parentheses, and what comes after?",
+      "That gives the recurrence C(n) = Σ C(i)·C(n-1-i): these are the Catalan numbers."
+    ],
+    "approach": "dp[0] = 1; dp[n] = Σ_{i=0}^{n-1} dp[i] · dp[n-1-i], i.e. the n-th Catalan number = C(2n, n)/(n+1). Backtracking that tracks open and close counts generates all strings but is exponential if you only need the count.",
+    "time": "O(n²)",
+    "space": "O(n)"
+  },
+  "palindrome-partitioning-count": {
+    "hints": [
+      "Define f(i) = number of ways to partition the suffix starting at i.",
+      "f(i) sums f(j + 1) over every j where s[i..j] is a palindrome.",
+      "Precompute which substrings are palindromes with a 2D table so each check is O(1)."
+    ],
+    "approach": "isPal[i][j] = s[i] == s[j] && (j - i < 2 || isPal[i+1][j-1]). Then dp[i] = Σ dp[j+1] for all j >= i with isPal[i][j], dp[n] = 1. The answer is dp[0]. The count can grow quickly; check the output limits.",
+    "time": "O(n²)",
+    "space": "O(n²)"
+  },
+  "n-queens-count": {
+    "hints": [
+      "Place one queen per row.",
+      "A column and both diagonals can each hold at most one queen.",
+      "Track used columns, r - c and r + c in sets or bitmasks and backtrack row by row."
+    ],
+    "approach": "Backtracking by row: for row r try every column c not in cols, diag (r - c) or anti-diag (r + c); mark, recurse to r + 1, unmark. Count the times you pass the last row. Bitmasks (cols | diags) make each step O(1) and are the fastest practical approach.",
+    "time": "O(n!) worst case",
+    "space": "O(n)"
   }
 }
