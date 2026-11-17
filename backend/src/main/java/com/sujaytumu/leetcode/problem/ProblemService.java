@@ -173,6 +173,23 @@ public class ProblemService {
         return result;
     }
 
+    /** Summaries for the given problem ids in that order (unknown ids are skipped), with the caller's progress. */
+    @Transactional(readOnly = true)
+    public List<ProblemSummary> summaries(List<Long> ids, UUID clientId) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        ClientState state = ClientState.load(clientId, submissions, bookmarks);
+        Map<Long, Double> acceptance = acceptanceByProblem(ids);
+        Map<Long, Problem> byId = new HashMap<>();
+        problems.findAllById(ids).forEach(p -> byId.put(p.getId(), p));
+        return ids.stream()
+                .map(byId::get)
+                .filter(java.util.Objects::nonNull)
+                .map(p -> toSummary(p, state, acceptance.get(p.getId())))
+                .toList();
+    }
+
     private static Integer numberOf(Problem problem) {
         return problem.getSortOrder() != null ? problem.getSortOrder() : Math.toIntExact(problem.getId());
     }
