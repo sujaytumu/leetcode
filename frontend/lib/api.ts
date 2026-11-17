@@ -33,6 +33,13 @@ export interface Progress {
   total: number; solved: number; attempted: number; bookmarked: number;
   byDifficulty: Record<string, { total: number; solved: number }>;
 }
+export interface DayCount { date: string; count: number }
+export interface RecentSolve { slug: string; title: string; difficulty: Difficulty; language: string; at: string }
+export interface Profile {
+  progress: Progress; attempting: number; submissionsPastYear: number; activeDays: number;
+  maxStreak: number; currentStreak: number; calendar: DayCount[]; recentAccepted: RecentSolve[];
+  skills: { tag: string; solved: number }[]; languages: { language: string; solved: number }[];
+}
 export interface Study { hints: string[]; approach: string; time: string; space: string }
 export interface Plan {
   id: string; title: string; blurb: string; total: number; solved: number; problems: ProblemSummary[];
@@ -109,3 +116,9 @@ export async function fetchAllProblems(): Promise<ProblemSummary[]> {
 export function localDate(d = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
+
+/** IANA time zone of the browser (e.g. Asia/Kolkata) so the server rolls days over at the user's midnight. */
+export function localZone(): string {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; } catch { return "UTC"; }
+}
+export const profilePath = () => `/api/profile?zone=${encodeURIComponent(localZone())}`;

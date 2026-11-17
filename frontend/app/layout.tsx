@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="nav">
           <Link href="/" className="brand">&lt;/&gt; LeetCode Practice</Link>
-          <nav><Link href="/">Problems</Link><Link href="/plans">Plans</Link><ThemeToggle /></nav>
+          <nav><Link href="/">Problems</Link><Link href="/plans">Plans</Link><Link href="/profile">Profile</Link><ThemeToggle /></nav>
         </header>
         <main>{children}</main>
       </body>

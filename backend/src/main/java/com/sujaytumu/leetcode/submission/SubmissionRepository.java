@@ -1,9 +1,11 @@
 package com.sujaytumu.leetcode.submission;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,4 +36,27 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             group by s.problemId
             """)
     List<Object[]> acceptanceStats(@Param("ids") Collection<Long> ids, @Param("accepted") Verdict accepted);
+
+    /** Timestamps of every submission by a client since the given instant (for the activity calendar). */
+    @Query("select s.createdAt from Submission s where s.clientId = :clientId and s.createdAt >= :since")
+    List<Instant> findSubmissionTimesSince(@Param("clientId") UUID clientId, @Param("since") Instant since);
+
+    /** Rows of [createdAt, slug, title, difficulty, language], newest first; page the result to limit it. */
+    @Query("""
+            select s.createdAt, p.slug, p.title, p.difficulty, s.language
+            from Submission s, Problem p
+            where p.id = s.problemId and s.clientId = :clientId and s.verdict = :verdict
+            order by s.createdAt desc
+            """)
+    List<Object[]> findRecentWithVerdict(
+            @Param("clientId") UUID clientId, @Param("verdict") Verdict verdict, Pageable pageable);
+
+    /** Rows of [language, distinct problems solved in it]. */
+    @Query("""
+            select s.language, count(distinct s.problemId)
+            from Submission s
+            where s.clientId = :clientId and s.verdict = :verdict
+            group by s.language
+            """)
+    List<Object[]> countSolvedByLanguage(@Param("clientId") UUID clientId, @Param("verdict") Verdict verdict);
 }

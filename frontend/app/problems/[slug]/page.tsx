@@ -7,7 +7,7 @@ import {
   api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Study, Submission,
 } from "@/lib/api";
-import { loadAll, recordAccepted, swr } from "@/lib/local";
+import { loadAll, swr } from "@/lib/local";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 import type { EditorProps } from "@monaco-editor/react";
@@ -41,7 +41,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
-  const [tab, setTab] = useState<"desc" | "history" | "notes">("desc");
+  const [tab, setTab] = useState<"desc" | "editorial" | "history" | "notes">("desc");
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -145,7 +145,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       const r = await api<RunResponse>(`/api/problems/${slug}/${kind}`,
         { method: "POST", body: JSON.stringify({ language: lang, code, ...(custom ? { customInput } : {}) }) }, 120000);
       setResult(r);
-      if (kind === "submit" && r.verdict === "ACCEPTED") recordAccepted();
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
       if (kind === "submit") loadHistory();
@@ -248,6 +247,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
         <section className="pane left" hidden={focus}>
           <div className="lctabs">
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
+            <button className={tab === "editorial" ? "on" : ""} onClick={() => setTab("editorial")}>Editorial</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
@@ -261,15 +261,20 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <div className="left-body">
             {tab === "desc" ? (
               <>
-                <h2 className="ptitle">{problem.number ?? problem.id}. {problem.title}</h2>
+                <div className="titlerow">
+                  <h2 className="ptitle">{problem.number ?? problem.id}. {problem.title}</h2>
+                  {problem.status === "SOLVED" && <span className="solved">Solved ✓</span>}
+                </div>
                 <div className="pmeta">
                   <span className={`pill ${problem.difficulty}`}>{title(problem.difficulty)}</span>
-                  {problem.status === "SOLVED" && <span className="pill EASY">✔ Solved</span>}
                   {problem.acceptance != null && <span className="mute">Acceptance {problem.acceptance.toFixed(1)}%</span>}
                 </div>
                 <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>
                 <div className="md"><Markdown>{problem.description}</Markdown></div>
-                {study && (
+              </>
+            ) : tab === "editorial" ? (
+              <div className="editorial">
+                {study ? (
                   <div className="study">
                     <h3>Hints</h3>
                     {study.hints.slice(0, hintsShown).map((h, i) => (
@@ -290,8 +295,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <button onClick={() => setShowApproach(true)}>Reveal approach (spoiler)</button>
                     )}
                   </div>
-                )}
-              </>
+                ) : <p className="mute">No editorial for this problem yet.</p>}
+              </div>
             ) : tab === "notes" ? (
               <>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
