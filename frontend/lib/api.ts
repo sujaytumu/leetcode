@@ -51,6 +51,10 @@ export interface Meta {
 }
 export interface DayCount { date: string; count: number }
 export interface RecentSolve { slug: string; title: string; difficulty: Difficulty; language: string; at: string }
+export interface ProfileInfo {
+  displayName: string; username: string; headline: string; company: string; location: string;
+  school: string; website: string; github: string; linkedin: string; tags: string[];
+}
 export interface Badge {
   id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;
 }
