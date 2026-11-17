@@ -9,7 +9,9 @@ import com.sujaytumu.leetcode.problem.ProblemDtos.ProblemSummary;
 import com.sujaytumu.leetcode.problem.ProblemDtos.SampleCase;
 import com.sujaytumu.leetcode.submission.SubmissionRepository;
 import com.sujaytumu.leetcode.submission.Verdict;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +41,15 @@ public class ProblemService {
 
     @Transactional(readOnly = true)
     public PageResponse<ProblemSummary> search(ProblemQuery query, UUID clientId, int page, int size) {
+        return search(query, clientId, page, size, "number", true);
+    }
+
+    /**
+     * @param sort one of number (study-path order, the default), title, difficulty, acceptance; unknown values mean number
+     */
+    @Transactional(readOnly = true)
+    public PageResponse<ProblemSummary> search(
+            ProblemQuery query, UUID clientId, int page, int size, String sort, boolean ascending) {
         boolean needsIdentity = query.status() != null || query.bookmarkedOnly();
         if (needsIdentity && clientId == null) {
             throw new IllegalArgumentException("status and bookmarked filters require the X-Client-Id header");
@@ -57,9 +68,50 @@ public class ProblemService {
             spec = spec.and(statusSpec(query.status(), state));
         }
 
-        Page<Problem> result = problems.findAll(spec, PageRequest.of(page, size, Sort.by("sortOrder").and(Sort.by("id"))));
+        String key = sort == null ? "number" : sort.toLowerCase(java.util.Locale.ROOT);
+        if (key.equals("difficulty") || key.equals("acceptance")) {
+            return searchSortedInMemory(spec, state, page, size, key, ascending);
+        }
+        Sort order = key.equals("title")
+                ? Sort.by(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, "title")
+                : Sort.by(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, "sortOrder", "id");
+        Page<Problem> result = problems.findAll(spec, PageRequest.of(page, size, order));
         Map<Long, Double> acceptance = acceptanceByProblem(result.getContent().stream().map(Problem::getId).toList());
         return PageResponse.of(result.map(problem -> toSummary(problem, state, acceptance.get(problem.getId()))));
+    }
+
+    /**
+     * Difficulty (an enum stored as text) and acceptance (computed from submissions) cannot be ordered by the
+     * database cheaply; the catalogue is small, so sort the filtered set here and slice the page.
+     */
+    private PageResponse<ProblemSummary> searchSortedInMemory(
+            Specification<Problem> spec, ClientState state, int page, int size, String key, boolean ascending) {
+        List<Problem> all = problems.findAll(spec, Sort.by("sortOrder", "id"));
+        Map<Long, Double> acceptance = acceptanceByProblem(all.stream().map(Problem::getId).toList());
+        Comparator<Problem> cmp;
+        if (key.equals("difficulty")) {
+            Comparator<Problem> byDifficulty = Comparator.comparingInt(p -> p.getDifficulty().ordinal());
+            cmp = ascending ? byDifficulty : byDifficulty.reversed();
+        } else {
+            // Problems nobody has submitted yet have no acceptance rate and always sort last.
+            Comparator<Problem> byRate = Comparator.comparingDouble(p -> acceptance.get(p.getId()));
+            Comparator<Problem> known = ascending ? byRate : byRate.reversed();
+            cmp = (a, b) -> {
+                boolean ha = acceptance.containsKey(a.getId());
+                boolean hb = acceptance.containsKey(b.getId());
+                if (ha != hb) {
+                    return ha ? -1 : 1;
+                }
+                return ha ? known.compare(a, b) : 0;
+            };
+        }
+        List<Problem> sorted = new ArrayList<>(all);
+        sorted.sort(cmp); // stable: ties keep study-path order
+        int from = (int) Math.min((long) page * size, sorted.size());
+        int to = Math.min(sorted.size(), from + size);
+        Page<Problem> slice = new org.springframework.data.domain.PageImpl<>(
+                sorted.subList(from, to), PageRequest.of(page, size), sorted.size());
+        return PageResponse.of(slice.map(problem -> toSummary(problem, state, acceptance.get(problem.getId()))));
     }
 
     @Transactional(readOnly = true)

@@ -240,3 +240,8 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .relbody { margin:10px 0 0; }
 .simlist { list-style:none; padding:0; display:grid; gap:6px; }
 .simlist li { display:flex; justify-content:space-between; gap:12px; font-size:14px; }
+
+/* sortable table headers */
+.sorth { all:unset; cursor:pointer; text-transform:inherit; letter-spacing:inherit; font:inherit; color:inherit; }
+.sorth:hover, th[aria-sort="ascending"] .sorth, th[aria-sort="descending"] .sorth { color:var(--text); }
+.sorth:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }

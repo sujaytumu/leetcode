@@ -34,6 +34,8 @@ public class ProblemController {
             @RequestParam(required = false) String tag,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "false") boolean bookmarked,
+            @RequestParam(defaultValue = "number") String sort,
+            @RequestParam(defaultValue = "asc") String dir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int size,
             @RequestHeader(value = Headers.CLIENT_ID, required = false) UUID clientId) {
@@ -41,7 +43,7 @@ public class ProblemController {
                 q, Difficulty.parse(difficulty), tag, StatusFilter.parse(status), bookmarked);
         int safePage = Math.max(0, page);
         int safeSize = Math.min(MAX_PAGE_SIZE, Math.max(1, size));
-        return service.search(query, clientId, safePage, safeSize);
+        return service.search(query, clientId, safePage, safeSize, sort, !"desc".equalsIgnoreCase(dir));
     }
 
     @GetMapping("/problems/{slug}")
