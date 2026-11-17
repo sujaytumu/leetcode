@@ -10,6 +10,8 @@ import com.sujaytumu.leetcode.problem.StatusFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,11 @@ public class StudyService {
             String id, String title, String blurb, int total, int solved, List<ProblemSummary> problems) {}
 
     public record Daily(String date, ProblemSummary problem) {}
+
+    public record DailyDay(String date, ProblemSummary problem, boolean solved) {}
+
+    /** A month of daily challenges up to {@code today}, each flagged with whether the caller has solved it. */
+    public record DailyCalendar(String month, int total, int solved, List<DailyDay> days) {}
 
     private final ProblemService problems;
     private final Map<String, Study> study;
@@ -73,6 +80,24 @@ public class StudyService {
             return Optional.empty();
         }
         return Optional.of(new Daily(day.toString(), all.get(dailyIndex(all.size(), day))));
+    }
+
+    /** Every day of {@code month} up to {@code today}: same pick as {@link #daily}, plus the caller's solved flag. */
+    public DailyCalendar calendar(UUID clientId, YearMonth month, LocalDate today) {
+        List<ProblemSummary> all = allProblems(clientId);
+        List<DailyDay> days = new ArrayList<>();
+        if (!all.isEmpty()) {
+            for (int day = 1; day <= month.lengthOfMonth(); day++) {
+                LocalDate date = month.atDay(day);
+                if (date.isAfter(today)) {
+                    break;
+                }
+                ProblemSummary problem = all.get(dailyIndex(all.size(), date));
+                days.add(new DailyDay(date.toString(), problem, problem.status() == StatusFilter.SOLVED));
+            }
+        }
+        int solved = (int) days.stream().filter(DailyDay::solved).count();
+        return new DailyCalendar(month.toString(), days.size(), solved, days);
     }
 
     /** 32-bit FNV-1a over "y-m-d", reduced modulo the catalogue size. */

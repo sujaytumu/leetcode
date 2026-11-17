@@ -368,3 +368,15 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .nav nav { min-width:0; overflow-x:auto; scrollbar-width:none; }
 .nav nav::-webkit-scrollbar { display:none; }
 .nav nav > * { flex:none; }
+
+/* ---- daily challenge calendar ---- */
+.daygrid { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:6px; }
+.dayhead { text-align:center; font-size:12px; color:var(--mute); padding:4px 0; text-transform:uppercase; letter-spacing:.05em; }
+.daycell { display:flex; flex-direction:column; gap:3px; min-height:92px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:inherit; text-decoration:none; transition:border-color .15s, transform .15s; overflow:hidden; }
+a.daycell:hover { border-color:var(--accent); transform:translateY(-1px); }
+.daycell.done { background:color-mix(in srgb, var(--easy) 12%, var(--panel)); border-color:color-mix(in srgb, var(--easy) 45%, var(--line)); }
+.daycell.today { box-shadow:0 0 0 2px var(--accent); }
+.daycell.future { opacity:.35; }
+.daynum { font-weight:600; font-size:13px; }
+.daytitle { font-size:12px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+@media (max-width:700px) { .daygrid { gap:3px; } .daycell { min-height:58px; padding:5px 6px; } .daytitle { display:none; } }

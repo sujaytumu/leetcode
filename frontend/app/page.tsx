@@ -151,7 +151,7 @@ export default function Home() {
           {daily && (
             <div className="card daily">
               <div>
-                <span className="mute">Daily challenge · {new Date(`${dailyData!.date}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                <span className="mute"><Link href="/daily" className="mute" title="Daily challenge calendar">Daily challenge ▦</Link> · {new Date(`${dailyData!.date}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
                 <div><Link href={`/problems/${daily.slug}`}><b style={{ display: "inline", fontSize: 15 }}>{daily.number ?? daily.id}. {daily.title}</b></Link>{" "}
                   <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
                   {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
