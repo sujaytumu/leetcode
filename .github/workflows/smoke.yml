@@ -9,7 +9,8 @@ jobs:
       - name: Smoke test live API
         run: |
           API="https://leetcode-api-i731.onrender.com"
-          ORIGINS="https://leetcode-frontend.vercel.app https://leetcode-frontend-sujays-projects-c5bb1f58.vercel.app https://leetcode-frontend-git-main-sujays-projects-c5bb1f58.vercel.app"
+          FAIL=0
+          ORIGINS="https://leetcode-frontend-gold.vercel.app https://leetcode-frontend-sujays-projects-c5bb1f58.vercel.app https://leetcode-frontend-git-main-sujays-projects-c5bb1f58.vercel.app"
           note() { echo "::notice title=$1::$(printf '%s' "$2" | tr '\n' ' ' | head -c 900)"; }
           t() { name="$1"; shift; m=$(curl -sS -o /tmp/out -w "%{http_code} in %{time_total}s" --max-time 180 "$@" 2>&1); note "$name" "$m | $(head -c 500 /tmp/out)"; }
           t "health-1 (cold start shows here)" "$API/actuator/health"
@@ -20,6 +21,7 @@ jobs:
             r=$(curl -sS -i -X OPTIONS "$API/api/problems/two-sum/run" -H "Origin: $o" \
               -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type,x-client-id" | grep -iE "^HTTP|access-control-allow-origin" | tr -d '\r')
             note "cors $o" "$r"
+            if ! printf '%s' "$r" | grep -qi "access-control-allow-origin: $o"; then echo "::error title=CORS blocked::$o"; FAIL=1; fi
           done
           cat > /tmp/sol.py <<'PY'
           import sys
@@ -38,3 +40,4 @@ jobs:
           PY
           t "RUN two-sum python" -X POST "$API/api/problems/two-sum/run" -H "Content-Type: application/json" -H "X-Client-Id: 11111111-1111-1111-1111-111111111111" -d @/tmp/body.json
           t "SUBMIT two-sum python" -X POST "$API/api/problems/two-sum/submit" -H "Content-Type: application/json" -H "X-Client-Id: 11111111-1111-1111-1111-111111111111" -d @/tmp/body.json
+          exit $FAIL
