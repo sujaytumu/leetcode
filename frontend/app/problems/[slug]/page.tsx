@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import { useCloudSync } from "@/lib/cloud";
 import { useMock } from "@/lib/mock";
 import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
@@ -90,6 +91,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const parts = useMemo(
     () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang) : null), [problem, lang]);
   const draftKey = (l: Lang) => `lc-draft2:${slug}:${l}`;
+  // Notes and code drafts are mirrored to the server so they follow the device sync code.
+  const langRef = useRef(lang); langRef.current = lang;
+  const cloud = useCloudSync(slug, {
+    onNotes: setNotes,
+    onDraft: (l, c) => { if (l === langRef.current) setCode(c); },
+  });
   const loadHistory = useCallback(
     () => api<Submission[]>(`/api/problems/${slug}/submissions`).then(setHistory).catch(() => {}), [slug]);
   const checkExec = useCallback(
@@ -170,7 +177,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     return () => clearInterval(t);
   }, [busy]);
 
-  const onChange = (v?: string) => { setCode(v ?? ""); localStorage.setItem(draftKey(lang), v ?? ""); };
+  const onChange = (v?: string) => { setCode(v ?? ""); localStorage.setItem(draftKey(lang), v ?? ""); cloud.saveDraft(lang, v ?? ""); };
 
   const run = useCallback(async (kind: "run" | "submit") => {
     if (busy) return;
@@ -223,7 +230,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   function reset() {
     if (!problem) return;
-    localStorage.removeItem(draftKey(lang)); setCode(parts ? parts.stub : problem.starterCode[lang] ?? "");
+    localStorage.removeItem(draftKey(lang)); cloud.clearDraft(lang); setCode(parts ? parts.stub : problem.starterCode[lang] ?? "");
   }
 
   function loadSubmission(s: Submission) {
@@ -233,7 +240,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       setConsoleTab("result");
       return;
     }
-    if (s.language === lang) { setCode(user); localStorage.setItem(draftKey(lang), user); }
+    if (s.language === lang) { setCode(user); localStorage.setItem(draftKey(lang), user); cloud.saveDraft(lang, user); }
     else { pendingRef.current = { lang: s.language, code: user }; setLang(s.language); }
     setTab("desc");
   }
@@ -402,7 +409,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
                 <textarea className="notes" placeholder="Your approach, mistakes, edge cases to remember…" value={notes}
-                  onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); }} />
+                  onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); cloud.saveNotes(e.target.value); }} />
               </>
             ) : (
               openSub ? (
