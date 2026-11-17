@@ -26,7 +26,25 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-      - run: mvn -B verify
+      - name: mvn verify
+        shell: bash
+        run: mvn -B verify 2>&1 | tee /tmp/mvn.log
+      - name: Show why the build failed (as readable annotations)
+        if: failure()
+        shell: bash
+        run: |
+          # failed tests: first lines of each failing surefire report
+          for f in target/surefire-reports/*.txt; do
+            [ -f "$f" ] || continue
+            if grep -q -E "<<< (FAILURE|ERROR)" "$f"; then
+              msg=$(grep -E -A4 "<<< (FAILURE|ERROR)" "$f" | head -c 1500 | tr '\n' ' ')
+              echo "::error title=Test failure in $(basename "$f")::$msg"
+            fi
+          done
+          # compile / context errors
+          msg=$(grep -E "\[ERROR\]" /tmp/mvn.log | head -n 12 | head -c 1800 | tr '\n' ' ')
+          [ -n "$msg" ] && echo "::error title=Maven errors::$msg"
+          exit 0
 
   problems:
     name: Problems (verify solutions in Python, C++ and Java)
