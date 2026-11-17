@@ -357,5 +357,135 @@
     "approach": "Monotonic stack of (start index, height). When a shorter bar arrives, pop taller bars and compute their area as height × (i − start); the popped bar's start carries over to the new bar. A final sentinel height of 0 flushes the stack.",
     "time": "O(n)",
     "space": "O(n)"
+  },
+  "length-of-last-word": {
+    "hints": [
+      "Trailing spaces are the only trap: the last word is not necessarily at the last index.",
+      "Walk backwards from the end and skip spaces first.",
+      "Then count characters until you hit another space or the start of the string."
+    ],
+    "approach": "Scan from the right: skip any trailing spaces, then count consecutive non-space characters until a space or index 0. No splitting or extra memory is needed.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "intersection-of-two-arrays-ii": {
+    "hints": [
+      "Each value should appear min(count in A, count in B) times.",
+      "Count the occurrences in one array with a hash map.",
+      "Walk the other array; when a value still has a positive count, emit it and decrement. Sort the output at the end."
+    ],
+    "approach": "Build a frequency map of the first array, then iterate the second: if the map still holds a positive count for the value, add it to the result and decrement the count. Sort the result for the required ascending output. Alternatively sort both arrays and merge with two pointers using O(1) extra space.",
+    "time": "O(n + m + k log k)",
+    "space": "O(min(n, m))"
+  },
+  "h-index": {
+    "hints": [
+      "The answer can never exceed the number of papers n.",
+      "Sorting makes it easy to ask 'how many papers have at least c citations?'.",
+      "Avoid the sort: cap each citation at n and count into buckets, then scan from high to low accumulating papers."
+    ],
+    "approach": "Counting sort: bucket[min(c, n)]++ for every citation. Scan h from n down to 0 keeping a running total of papers with at least h citations; the first h where the total is >= h is the answer. Sorting descending and finding the last index i with citations[i] >= i + 1 also works in O(n log n).",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "valid-palindrome": {
+    "hints": [
+      "Ignore everything that is not a letter or digit, and ignore case.",
+      "Use two pointers moving toward each other.",
+      "Skip non-alphanumeric characters on each side before comparing the lowercase characters."
+    ],
+    "approach": "Place one pointer at each end. Advance the left pointer past non-alphanumeric characters and retreat the right pointer likewise, then compare the two characters case-insensitively. Any mismatch means false; if the pointers cross, it is a palindrome. No cleaned copy of the string is needed.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "remove-duplicates-from-sorted-array": {
+    "hints": [
+      "Because the array is sorted, equal values are adjacent.",
+      "A value is new exactly when it differs from the previous kept value.",
+      "Keep a write index and only advance it when you meet a new value."
+    ],
+    "approach": "Two pointers: `write` marks the end of the distinct prefix, `read` scans. When nums[read] != nums[write - 1] copy it to nums[write] and increment write. The first `write` elements are the distinct values in order.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "move-zeroes": {
+    "hints": [
+      "Non-zero elements must keep their relative order.",
+      "Think of compacting the non-zero values to the front.",
+      "Keep a write index for the next non-zero slot, then fill the rest with zeros (or swap as you go)."
+    ],
+    "approach": "Single pass with a write pointer: every non-zero value is copied to nums[write++]. Afterwards fill positions write..n-1 with zeros. Swapping nums[read] with nums[write] instead does it in one pass with fewer writes when zeros are rare.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "3sum-count": {
+    "hints": [
+      "Brute force over triplets is O(n³); can fixing one number reduce the rest to a two-sum problem?",
+      "Sort the array so equal values are adjacent and two pointers can work.",
+      "Skip repeated values for the fixed element and for both pointers so each distinct triplet is counted once."
+    ],
+    "approach": "Sort. For each index i (skipping values equal to the previous i), run two pointers lo = i + 1, hi = n - 1. If the sum is below zero move lo up, above zero move hi down, and on a hit count it and advance both pointers past duplicates. The sort gives the O(n log n) base and the double loop O(n²) overall.",
+    "time": "O(n²)",
+    "space": "O(1) beyond the sort"
+  },
+  "minimum-size-subarray-sum": {
+    "hints": [
+      "All numbers are positive, so extending a window only increases its sum.",
+      "That monotonic behaviour is what makes a sliding window valid.",
+      "Grow the right end until the sum reaches the target, then shrink from the left while it still does, recording the shortest length."
+    ],
+    "approach": "Sliding window with a running sum: add nums[right]; while sum >= target, update the best length with right - left + 1 and subtract nums[left++]. Each index enters and leaves the window once. Return 0 if the best length was never updated. (A prefix-sum + binary search variant gives O(n log n).)",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "longest-repeating-character-replacement": {
+    "hints": [
+      "A window is valid if (window length − count of its most frequent letter) <= k.",
+      "Maintain letter counts for the current window.",
+      "You never need to shrink the recorded maximum: keep a running max frequency and slide the window by one when it becomes invalid."
+    ],
+    "approach": "Sliding window over uppercase letters. Track counts and `maxFreq`, the highest count seen in any window so far. After adding s[right], if (window size − maxFreq) > k, remove s[left] and move left once. The answer is the largest window size reached. Using a stale maxFreq is safe because the window only grows when a new maximum appears.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "permutation-in-string": {
+    "hints": [
+      "A permutation of s1 is a substring of the same length with identical letter counts.",
+      "Compare letter-count arrays of size 26.",
+      "Slide a window of length |s1| over s2, updating counts by adding the new character and removing the old one."
+    ],
+    "approach": "Count letters of s1. Slide a fixed window of length |s1| across s2, maintaining its counts incrementally. Track how many of the 26 letters currently match s1's count; when all 26 match, return true. Updating is O(1) per step so the whole scan is linear.",
+    "time": "O(n + m)",
+    "space": "O(1)"
+  },
+  "two-sum-ii-input-array-is-sorted": {
+    "hints": [
+      "The array is sorted, so you do not need a hash map.",
+      "Look at the sum of the smallest and largest remaining values.",
+      "If the sum is too small move the left pointer right; if too large move the right pointer left."
+    ],
+    "approach": "Two pointers at both ends. If numbers[l] + numbers[r] equals the target, return l + 1 and r + 1 (1-based). If it is smaller, increment l; if larger, decrement r. Each step discards a value that can no longer be part of the answer, giving linear time and constant space.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "koko-eating-bananas": {
+    "hints": [
+      "If Koko can finish at speed k, she can also finish at any speed above k.",
+      "That monotonic yes/no property is what binary search needs.",
+      "Search k between 1 and the largest pile; hours needed at speed k is the sum of ceil(pile / k)."
+    ],
+    "approach": "Binary search the answer. For a candidate speed k compute hours = Σ ceil(p / k). If hours <= h, k is feasible so try smaller; otherwise try larger. The search space is [1, max(piles)] so it takes O(log max) feasibility checks of O(n) each. Watch for integer overflow when summing hours.",
+    "time": "O(n log max)",
+    "space": "O(1)"
+  },
+  "capacity-to-ship-packages": {
+    "hints": [
+      "The capacity can never be below the heaviest package nor above the total weight.",
+      "If a capacity works, any larger capacity works too.",
+      "Binary search the capacity; to test one, greedily load packages in order and count the days used."
+    ],
+    "approach": "Binary search on capacity in [max(weights), sum(weights)]. Feasibility check: simulate loading in order, starting a new day whenever the next package would overflow the ship. If days used <= D, the capacity works so search lower, otherwise higher.",
+    "time": "O(n log(sum))",
+    "space": "O(1)"
   }
 }
