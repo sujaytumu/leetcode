@@ -90,4 +90,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             """)
     List<Submission> findInWindow(
             @Param("ids") Collection<Long> ids, @Param("from") java.time.Instant from, @Param("to") java.time.Instant to);
+
+    org.springframework.data.domain.Page<Submission> findByClientId(UUID clientId, org.springframework.data.domain.Pageable pageable);
+
+    org.springframework.data.domain.Page<Submission> findByClientIdAndVerdict(
+            UUID clientId, Verdict verdict, org.springframework.data.domain.Pageable pageable);
 }
