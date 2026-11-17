@@ -5,6 +5,7 @@ import Heatmap from "@/components/Heatmap";
 import SolvedCard from "@/components/SolvedCard";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
+import Skeleton from "@/components/Skeleton";
 import { swr } from "@/lib/local";
 
 function ago(iso: string): string {
@@ -21,29 +22,23 @@ function ago(iso: string): string {
 export default function ProfilePage() {
   const meta = useMeta();
   const [p, setP] = useState<Profile | null>(null);
-  const [saved, setSaved] = useState(false);
-  const [waking, setWaking] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    swr<Profile>(profilePath(), (d, fromCache) => { setP(d); setSaved(fromCache); }, () => setWaking(true))
-      .then(() => setWaking(false))
-      .catch((e) => { setError(e.message); setWaking(false); });
+    swr<Profile>(profilePath(), (d) => setP(d), () => {}).catch((e) => setError(e.message));
   }, []);
 
   if (!p) {
     return (
       <>
-        {waking && <div className="banner warn">Waking up the server (free hosting sleeps when idle). Retrying automatically…</div>}
         {error && <div className="banner err">{error}</div>}
-        {!waking && !error && <p className="mute">Loading…</p>}
+        {!error && <Skeleton lines={10} />}
       </>
     );
   }
 
   return (
     <>
-      {saved && <div className="banner warn">Showing a saved copy{waking ? " while the server wakes up — refreshing automatically…" : "."}</div>}
       <div className="pgrid">
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
