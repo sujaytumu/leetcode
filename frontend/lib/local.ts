@@ -27,6 +27,9 @@ async function snapshotFallback(path: string): Promise<unknown | null> {
     if (text) items = items.filter((p) => p.title.toLowerCase().includes(text));
     if (q.get("difficulty")) items = items.filter((p) => p.difficulty === q.get("difficulty"));
     if (q.get("tag")) items = items.filter((p) => p.tags.includes(q.get("tag")!));
+    const sort = q.get("sort"), sign = q.get("dir") === "desc" ? -1 : 1, rank = { EASY: 0, MEDIUM: 1, HARD: 2 };
+    if (sort === "title") items = [...items].sort((a, b) => sign * a.title.localeCompare(b.title));
+    else if (sort === "difficulty") items = [...items].sort((a, b) => sign * (rank[a.difficulty] - rank[b.difficulty]));
     const size = Number(q.get("size") ?? 20), page = Number(q.get("page") ?? 0);
     return { items: items.slice(page * size, page * size + size), page, size, totalElements: items.length,
       totalPages: Math.max(1, Math.ceil(items.length / size)) } satisfies Page<ProblemSummary>;

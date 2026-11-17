@@ -12,6 +12,8 @@ import { useMeta } from "@/lib/meta";
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
 
 export default function Home() {
+  const [sort, setSort] = useState("");
+  const [dir, setDir] = useState("asc");
   const [q, setQ] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [tag, setTag] = useState("");
@@ -48,11 +50,21 @@ export default function Home() {
     finally { setPicking(false); }
   };
 
+  const toggleSort = (key: string) => {
+    setPage(0);
+    if (sort !== key) { setSort(key); setDir("asc"); }
+    else if (dir === "asc") setDir("desc");
+    else { setSort(""); setDir("asc"); } // third click returns to the study-path order
+  };
+  const arrow = (key: string) => (sort === key ? (dir === "asc" ? " ▲" : " ▼") : "");
+  const ariaSort = (key: string) => (sort === key ? (dir === "asc" ? "ascending" : "descending") : "none");
+
   const fetchList = useCallback(() => {
     const p = new URLSearchParams({ page: String(page) });
     if (q) p.set("q", q); if (difficulty) p.set("difficulty", difficulty);
     if (tag) p.set("tag", tag); if (status) p.set("status", status);
     if (bookmarked) p.set("bookmarked", "true");
+    if (sort) { p.set("sort", sort); p.set("dir", dir); }
     setLoading(true); setError("");
     const my = ++reqId.current;
     swr<Page<ProblemSummary>>(`/api/problems?${p}`, (d) => {
@@ -60,7 +72,7 @@ export default function Home() {
     }, () => {})
       .catch((e) => { if (my === reqId.current) setError(e.message); })
       .finally(() => { if (my === reqId.current) setLoading(false); });
-  }, [q, difficulty, tag, status, bookmarked, page]);
+  }, [q, difficulty, tag, status, bookmarked, page, sort, dir]);
 
   useEffect(() => {
     const t = setTimeout(fetchList, 250);
@@ -101,7 +113,7 @@ export default function Home() {
               onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
           </div>
           <table>
-            <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th className="th-num">Acceptance</th><th>Difficulty</th></tr></thead>
+            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
             <tbody>
               {data?.items.map((p) => (
                 <tr key={p.id}>

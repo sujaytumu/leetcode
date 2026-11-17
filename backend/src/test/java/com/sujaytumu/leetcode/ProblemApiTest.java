@@ -119,4 +119,40 @@ class ProblemApiTest {
                 .andExpect(jsonPath("$[0]").value("array"))
                 .andExpect(jsonPath("$").value(hasItem("two-pointers")));
     }
+
+    @Test
+    void sortsByDifficultyAndKeepsStudyOrderWithinEachLevel() throws Exception {
+        mvc.perform(get("/api/problems").param("sort", "difficulty").param("dir", "desc").param("size", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(122))
+                .andExpect(jsonPath("$.items[0].difficulty").value("HARD"));
+        mvc.perform(get("/api/problems").param("sort", "difficulty").param("dir", "asc").param("size", "3"))
+                .andExpect(jsonPath("$.items[0].difficulty").value("EASY"))
+                .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
+        // a later page is sliced from the same sorted list
+        mvc.perform(get("/api/problems").param("sort", "difficulty").param("dir", "desc").param("page", "1").param("size", "10"))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.items.length()").value(10));
+    }
+
+    @Test
+    void sortsByTitleAndNumberInEitherDirection() throws Exception {
+        mvc.perform(get("/api/problems").param("sort", "title").param("size", "2"))
+                .andExpect(jsonPath("$.items[0].title").value("3Sum (Count Triplets)"));
+        mvc.perform(get("/api/problems").param("sort", "number").param("dir", "desc").param("size", "1"))
+                .andExpect(jsonPath("$.items[0].number").value(122));
+    }
+
+    @Test
+    void sortingByAcceptanceStillReturnsEveryProblemWhenNobodyHasSubmitted() throws Exception {
+        mvc.perform(get("/api/problems").param("sort", "acceptance").param("size", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(122));
+    }
+
+    @Test
+    void unknownSortFallsBackToStudyOrder() throws Exception {
+        mvc.perform(get("/api/problems").param("sort", "bogus").param("size", "1"))
+                .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
+    }
 }
