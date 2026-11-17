@@ -1,6 +1,6 @@
 package com.sujaytumu.leetcode.workspace;
 
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,7 +55,8 @@ class WorkspaceApiTest {
         UUID client = UUID.randomUUID();
         putJson(BASE + "/notes", client, Map.of("content", "use a hash map"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.updatedAt", greaterThan(0)));
+                .andExpect(jsonPath("$.updatedAt").isNumber())
+                .andExpect(jsonPath("$.updatedAt").value(not(0)));
         putJson(BASE + "/drafts/java", client, Map.of("code", "class Solution {}")).andExpect(status().isOk());
         putJson(BASE + "/drafts/python", client, Map.of("code", "pass")).andExpect(status().isOk());
         putJson(BASE + "/drafts/java", client, Map.of("code", "class Solution { int x; }")).andExpect(status().isOk());
