@@ -67,7 +67,10 @@ class ProfileApiTest {
                 .andExpect(jsonPath("$.recentAccepted[0].language").value("python"))
                 .andExpect(jsonPath("$.skills[*].tag").value(hasItem("array")))
                 .andExpect(jsonPath("$.languages[0].language").value("python"))
-                .andExpect(jsonPath("$.languages[0].solved").value(1));
+                .andExpect(jsonPath("$.languages[0].solved").value(1))
+                .andExpect(jsonPath("$.badges.length()").value(15))
+                .andExpect(jsonPath("$.badges[?(@.id=='solved-1')].earned").value(hasItem(true)))
+                .andExpect(jsonPath("$.badges[?(@.id=='solved-10')].earned").value(hasItem(false)));
     }
 
     @Test

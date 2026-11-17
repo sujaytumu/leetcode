@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class ProfileService {
     private static final int RECENT_LIMIT = 15;
 
     public record DayCount(String date, int count) {}
+
+    public record Badge(
+            String id, String title, String description, String category, int target, long progress, boolean earned) {}
 
     public record RecentSolve(String slug, String title, Difficulty difficulty, String language, Instant at) {}
 
@@ -48,7 +52,8 @@ public class ProfileService {
             List<DayCount> calendar,
             List<RecentSolve> recentAccepted,
             List<SkillCount> skills,
-            List<LanguageCount> languages) {}
+            List<LanguageCount> languages,
+            List<Badge> badges) {}
 
     private final ProgressService progressService;
     private final ProblemRepository problems;
@@ -67,10 +72,16 @@ public class ProfileService {
 
         LocalDate today = LocalDate.now(zone);
         Instant since = today.minusDays(WINDOW_DAYS - 1L).atStartOfDay(zone).toInstant();
-        List<Instant> times = submissions.findSubmissionTimesSince(clientId, since);
+        List<Instant> allTimes = submissions.findSubmissionTimesSince(clientId, Instant.EPOCH);
+        List<Instant> times = allTimes.stream().filter(time -> !time.isBefore(since)).toList();
         Map<LocalDate, Integer> perDay = new TreeMap<>();
-        for (Instant time : times) {
-            perDay.merge(time.atZone(zone).toLocalDate(), 1, Integer::sum);
+        Set<LocalDate> activeAllTime = new TreeSet<>();
+        for (Instant time : allTimes) {
+            LocalDate day = time.atZone(zone).toLocalDate();
+            activeAllTime.add(day);
+            if (!time.isBefore(since)) {
+                perDay.merge(day, 1, Integer::sum);
+            }
         }
 
         List<DayCount> calendar = perDay.entrySet().stream()
@@ -119,7 +130,12 @@ public class ProfileService {
                 calendar,
                 recent,
                 skills,
-                languages);
+                languages,
+                Badges.compute(
+                        progress.solved(),
+                        progress.byDifficulty().get(Difficulty.HARD).solved(),
+                        activeAllTime.size(),
+                        longestRun(activeAllTime)));
     }
 
     /** Longest run of consecutive active days. {@code days} must be sorted ascending. */

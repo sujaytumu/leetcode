@@ -51,10 +51,14 @@ export interface Meta {
 }
 export interface DayCount { date: string; count: number }
 export interface RecentSolve { slug: string; title: string; difficulty: Difficulty; language: string; at: string }
+export interface Badge {
+  id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;
+}
 export interface Profile {
   progress: Progress; attempting: number; submissionsPastYear: number; activeDays: number;
   maxStreak: number; currentStreak: number; calendar: DayCount[]; recentAccepted: RecentSolve[];
   skills: { tag: string; solved: number }[]; languages: { language: string; solved: number }[];
+  badges: Badge[];
 }
 export interface Study { hints: string[]; approach: string; time: string; space: string }
 export interface Plan {
