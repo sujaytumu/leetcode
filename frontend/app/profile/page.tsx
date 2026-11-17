@@ -2,14 +2,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
-import { Difficulty, Profile, profilePath } from "@/lib/api";
+import SolvedCard from "@/components/SolvedCard";
+import { Profile, profilePath } from "@/lib/api";
+import { useMeta } from "@/lib/meta";
 import { swr } from "@/lib/local";
-
-const DIFFS: { key: Difficulty; label: string; color: string }[] = [
-  { key: "EASY", label: "Easy", color: "var(--easy)" },
-  { key: "MEDIUM", label: "Med.", color: "var(--med)" },
-  { key: "HARD", label: "Hard", color: "var(--hard)" },
-];
 
 function ago(iso: string): string {
   const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
@@ -22,36 +18,8 @@ function ago(iso: string): string {
   return unit(Math.floor(s / (86400 * 365)), "year");
 }
 
-/** Donut split into Easy / Medium / Hard arcs, with the solved count in the middle. */
-function Ring({ p }: { p: Profile }) {
-  const R = 62, C = 2 * Math.PI * R, total = p.progress.total || 1;
-  let offset = 0;
-  const arcs = DIFFS.map((d) => {
-    const len = ((p.progress.byDifficulty[d.key]?.solved ?? 0) / total) * C;
-    const arc = (
-      <circle key={d.key} cx="80" cy="80" r={R} fill="none" stroke={d.color} strokeWidth="8" strokeLinecap="round"
-        strokeDasharray={`${Math.max(0, len - 3)} ${C - Math.max(0, len - 3)}`} strokeDashoffset={-offset}
-        transform="rotate(-90 80 80)" />
-    );
-    offset += len;
-    return len > 0 ? arc : null;
-  });
-  return (
-    <div className="ring">
-      <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label={`${p.progress.solved} of ${p.progress.total} solved`}>
-        <circle cx="80" cy="80" r={R} fill="none" stroke="var(--cell)" strokeWidth="8" />
-        {arcs}
-      </svg>
-      <div className="ring-mid">
-        <div><b>{p.progress.solved}</b><span className="mute">/{p.progress.total}</span></div>
-        <div className="mute" style={{ fontSize: 13 }}>✓ Solved</div>
-        <div className="mute" style={{ fontSize: 12, marginTop: 6 }}>{p.attempting} Attempting</div>
-      </div>
-    </div>
-  );
-}
-
 export default function ProfilePage() {
+  const meta = useMeta();
   const [p, setP] = useState<Profile | null>(null);
   const [saved, setSaved] = useState(false);
   const [waking, setWaking] = useState(false);
@@ -77,20 +45,7 @@ export default function ProfilePage() {
     <>
       {saved && <div className="banner warn">Showing a saved copy{waking ? " while the server wakes up — refreshing automatically…" : "."}</div>}
       <div className="pgrid">
-        <section className="card solvedcard">
-          <Ring p={p} />
-          <div className="diffboxes">
-            {DIFFS.map((d) => {
-              const x = p.progress.byDifficulty[d.key] ?? { total: 0, solved: 0 };
-              return (
-                <div key={d.key} className="diffbox">
-                  <div style={{ color: d.color, fontWeight: 600, fontSize: 13 }}>{d.label}</div>
-                  <div style={{ fontWeight: 600 }}>{x.solved}<span className="mute">/{x.total}</span></div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
         <section className="card activitycard">
           <div className="bar" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>

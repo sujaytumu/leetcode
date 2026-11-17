@@ -2,7 +2,8 @@ export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 export type Status = "TODO" | "ATTEMPTED" | "SOLVED";
-export type Lang = "java" | "python" | "javascript" | "cpp";
+/** Language key as served by GET /api/meta (e.g. "java", "cpp"); the set is owned by the backend. */
+export type Lang = string;
 
 export interface ProblemSummary {
   id: number; slug: string; title: string; difficulty: Difficulty;
@@ -32,6 +33,12 @@ export interface Submission {
 export interface Progress {
   total: number; solved: number; attempted: number; bookmarked: number;
   byDifficulty: Record<string, { total: number; solved: number }>;
+}
+export interface MetaOption { key: string; label: string }
+export interface LanguageOption { key: string; label: string; editorMode: string }
+export interface Meta {
+  difficulties: MetaOption[]; statuses: MetaOption[]; languages: LanguageOption[];
+  defaultLanguage: string; pageSize: number;
 }
 export interface DayCount { date: string; count: number }
 export interface RecentSolve { slug: string; title: string; difficulty: Difficulty; language: string; at: string }

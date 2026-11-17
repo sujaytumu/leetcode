@@ -8,6 +8,7 @@ import {
   Study, Submission,
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
+import { useMeta } from "@/lib/meta";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 import type { EditorProps } from "@monaco-editor/react";
@@ -16,10 +17,6 @@ const Editor = dynamic<EditorProps>(
   () => import("@monaco-editor/react").then((m) => m.default as unknown as ComponentType<EditorProps>), {
   ssr: false, loading: () => <p className="mute" style={{ padding: 16 }}>Loading editor…</p>,
 });
-const LANGS: { key: Lang; label: string; monaco: string }[] = [
-  { key: "java", label: "Java", monaco: "java" }, { key: "python", label: "Python", monaco: "python" },
-  { key: "javascript", label: "JavaScript", monaco: "javascript" }, { key: "cpp", label: "C++", monaco: "cpp" },
-];
 const title = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const norm = (t: string) => t.replace(/\s+$/, "");
@@ -32,7 +29,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [problem, setProblem] = useState<ProblemDetail | null>(null);
   const [loadError, setLoadError] = useState("");
   const [waking, setWaking] = useState(false);
-  const [lang, setLang] = useState<Lang>("java");
+  const meta = useMeta();
+  const [lang, setLang] = useState<Lang>("");
   const [code, setCode] = useState("");
   const [result, setResult] = useState<RunResponse | null>(null);
   const [mode, setMode] = useState<"run" | "submit">("run");
@@ -81,6 +79,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
   useEffect(() => {
+    if (!meta || lang) return;
+    const saved = localStorage.getItem("lc-lang");
+    setLang(saved && meta.languages.some((x) => x.key === saved) ? saved : meta.defaultLanguage);
+  }, [meta, lang]);
+  useEffect(() => {
     let live = true;
     setStudy(null);
     api<Study | undefined>(`/api/problems/${slug}/study`)
@@ -90,8 +93,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [slug]);
   useEffect(() => { loadAll((items) => setAll(items), () => {}).catch(() => {}); }, []);
   useEffect(() => {
-    const l = localStorage.getItem("lc-lang") as Lang | null;
-    if (l && LANGS.some((x) => x.key === l)) setLang(l);
     const f = Number(localStorage.getItem("lc-font"));
     if (f >= 11 && f <= 24) setFontSize(f);
     try {
@@ -223,6 +224,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     );
   }
 
+  // Offer the languages the backend supports for this problem (those it has starter code for).
+  const supported = meta?.languages.filter((l) => l.key in problem.starterCode) ?? [];
+  const languages = supported.length ? supported : (meta?.languages ?? []);
   const execDown = exec && (!exec.enabled || !exec.reachable);
   const idx = all.findIndex((p) => p.slug === slug);
   const prev = idx > 0 ? all[idx - 1] : null;
@@ -327,8 +331,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
         <section className="right" ref={rightRef}>
           <div className="bar actionbar" style={{ marginBottom: 8 }}>
-            <select value={lang} onChange={(e) => { setLang(e.target.value as Lang); localStorage.setItem("lc-lang", e.target.value); }}>
-              {LANGS.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
+            <select value={lang} onChange={(e) => { setLang(e.target.value); localStorage.setItem("lc-lang", e.target.value); }}>
+              {languages.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
             </select>
             <select value={fontSize} title="Editor font size" onChange={(e) => { setFontSize(Number(e.target.value)); localStorage.setItem("lc-font", e.target.value); }}>
               {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
@@ -349,7 +353,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           </div>
           <div className="pane editor-wrap" style={{ flex: `0 0 ${editorPct}%` }}>
             <Editor height="100%" theme={theme === "light" ? "vs" : "vs-dark"}
-              language={LANGS.find((l) => l.key === lang)!.monaco}
+              language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"}
               value={code} onChange={onChange}
               options={{ minimap: { enabled: false }, fontSize, automaticLayout: true, scrollBeyondLastLine: false }} />
           </div>
