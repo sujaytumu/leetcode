@@ -1,4 +1,5 @@
 "use client";
+import SyncCard from "@/components/SyncCard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
@@ -57,6 +58,8 @@ export default function ProfilePage() {
           </div>
           <Heatmap calendar={p.calendar} />
         </section>
+
+        <SyncCard />
 
         <section className="card badgescard">
           <div className="bar" style={{ marginBottom: 10 }}>
