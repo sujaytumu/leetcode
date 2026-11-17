@@ -32,7 +32,7 @@ class DiscussApiTest {
     @Autowired
     ObjectMapper json;
 
-    private long post(String slug, String client, String body, Long parent) throws Exception {
+    private long addComment(String slug, String client, String body, Long parent) throws Exception {
         String payload = json.writeValueAsString(java.util.Map.of("body", body, "parentId", parent == null ? "" : parent))
                 .replace("\"parentId\":\"\"", "\"parentId\":null");
         String res = mvc.perform(post("/api/problems/" + slug + "/comments").header(CLIENT, client)
@@ -48,9 +48,9 @@ class DiscussApiTest {
         String alice = UUID.randomUUID().toString();
         String bob = UUID.randomUUID().toString();
 
-        long first = post(slug, alice, "Use a stack.", null);
-        long second = post(slug, bob, "A counter is enough for one bracket type.", null);
-        long reply = post(slug, bob, "Agreed, stack it is.", first);
+        long first = addComment(slug, alice, "Use a stack.", null);
+        long second = addComment(slug, bob, "A counter is enough for one bracket type.", null);
+        long reply = addComment(slug, bob, "Agreed, stack it is.", first);
 
         mvc.perform(put("/api/comments/" + second + "/vote").header(CLIENT, alice)).andExpect(status().isNoContent());
         mvc.perform(put("/api/comments/" + second + "/vote").header(CLIENT, alice)).andExpect(status().isNoContent()); // idempotent
@@ -83,8 +83,8 @@ class DiscussApiTest {
         String slug = "two-sum";
         String alice = UUID.randomUUID().toString();
         String bob = UUID.randomUUID().toString();
-        long mine = post(slug, alice, "Hash map, O(n).", null);
-        long theirReply = post(slug, bob, "Nice.", mine);
+        long mine = addComment(slug, alice, "Hash map, O(n).", null);
+        long theirReply = addComment(slug, bob, "Nice.", mine);
 
         mvc.perform(post("/api/problems/" + slug + "/comments").header(CLIENT, alice)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"body\":\"   \"}"))
