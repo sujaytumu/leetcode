@@ -115,7 +115,7 @@
   }
  },
  "length-of-last-word": {
-  "editorial": null,
+  "editorial": "## Approach\n\nScan from the right: skip any trailing spaces, then count consecutive non-space characters until a space or index 0. No splitting or extra memory is needed.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(string s) {\n    int i = (int)s.size() - 1, length = 0;\n    while (i >= 0 && s[i] == ' ') i--;\n    while (i >= 0 && s[i] != ' ') { length++; i--; }\n    return length;\n}\n",
    "java": "static int solve(String s) {\n    int i = s.length() - 1, length = 0;\n    while (i >= 0 && s.charAt(i) == ' ') i--;\n    while (i >= 0 && s.charAt(i) != ' ') { length++; i--; }\n    return length;\n}\n",
@@ -124,7 +124,7 @@
   }
  },
  "intersection-of-two-arrays-ii": {
-  "editorial": null,
+  "editorial": "## Approach\n\nBuild a frequency map of the first array, then iterate the second: if the map still holds a positive count for the value, add it to the result and decrement the count. Sort the result for the required ascending output. Alternatively sort both arrays and merge with two pointers using O(1) extra space.\n\n**Complexity:** O(n + m + k log k) time, O(min(n, m)) space.",
   "solutions": {
    "cpp": "vector<int> solve(vector<int> nums1, vector<int> nums2) {\n    unordered_map<int, int> counts;\n    for (int x : nums1) counts[x]++;\n    sort(nums2.begin(), nums2.end());\n    vector<int> out;\n    for (int x : nums2) {\n        auto it = counts.find(x);\n        if (it != counts.end() && it->second > 0) { out.push_back(x); it->second--; }\n    }\n    return out;\n}\n",
    "java": "static int[] solve(int[] nums1, int[] nums2) {\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int x : nums1) counts.merge(x, 1, Integer::sum);\n    Arrays.sort(nums2);\n    List<Integer> out = new ArrayList<>();\n    for (int x : nums2) {\n        int c = counts.getOrDefault(x, 0);\n        if (c > 0) { out.add(x); counts.put(x, c - 1); }\n    }\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
@@ -160,7 +160,7 @@
   }
  },
  "h-index": {
-  "editorial": null,
+  "editorial": "## Approach\n\nCounting sort: bucket[min(c, n)]++ for every citation. Scan h from n down to 0 keeping a running total of papers with at least h citations; the first h where the total is >= h is the answer. Sorting descending and finding the last index i with citations[i] >= i + 1 also works in O(n log n).\n\n**Complexity:** O(n) time, O(n) space.",
   "solutions": {
    "cpp": "int solve(vector<int> citations) {\n    sort(citations.begin(), citations.end());\n    int n = citations.size();\n    for (int i = 0; i < n; i++) if (citations[i] >= n - i) return n - i;\n    return 0;\n}\n",
    "java": "static int solve(int[] citations) {\n    int[] ordered = citations.clone();\n    Arrays.sort(ordered);\n    int n = ordered.length;\n    for (int i = 0; i < n; i++) if (ordered[i] >= n - i) return n - i;\n    return 0;\n}\n",
@@ -178,7 +178,7 @@
   }
  },
  "valid-palindrome": {
-  "editorial": null,
+  "editorial": "## Approach\n\nPlace one pointer at each end. Advance the left pointer past non-alphanumeric characters and retreat the right pointer likewise, then compare the two characters case-insensitively. Any mismatch means false; if the pointers cross, it is a palindrome. No cleaned copy of the string is needed.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "bool solve(string s) {\n    int i = 0, j = (int)s.size() - 1;\n    while (i < j) {\n        while (i < j && !isalnum((unsigned char)s[i])) i++;\n        while (i < j && !isalnum((unsigned char)s[j])) j--;\n        if (tolower((unsigned char)s[i]) != tolower((unsigned char)s[j])) return false;\n        i++; j--;\n    }\n    return true;\n}\n",
    "java": "static boolean solve(String s) {\n    int i = 0, j = s.length() - 1;\n    while (i < j) {\n        while (i < j && !Character.isLetterOrDigit(s.charAt(i))) i++;\n        while (i < j && !Character.isLetterOrDigit(s.charAt(j))) j--;\n        if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) return false;\n        i++; j--;\n    }\n    return true;\n}\n",
@@ -187,7 +187,7 @@
   }
  },
  "remove-duplicates-from-sorted-array": {
-  "editorial": null,
+  "editorial": "## Approach\n\nTwo pointers: `write` marks the end of the distinct prefix, `read` scans. When nums[read] != nums[write - 1] copy it to nums[write] and increment write. The first `write` elements are the distinct values in order.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "vector<int> solve(vector<int> nums) {\n    vector<int> out;\n    for (int x : nums) if (out.empty() || out.back() != x) out.push_back(x);\n    return out;\n}\n",
    "java": "static int[] solve(int[] nums) {\n    List<Integer> out = new ArrayList<>();\n    for (int x : nums) if (out.isEmpty() || out.get(out.size() - 1) != x) out.add(x);\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
@@ -196,7 +196,7 @@
   }
  },
  "3sum-count": {
-  "editorial": null,
+  "editorial": "## Approach\n\nSort. For each index i (skipping values equal to the previous i), run two pointers lo = i + 1, hi = n - 1. If the sum is below zero move lo up, above zero move hi down, and on a hit count it and advance both pointers past duplicates. The sort gives the O(n log n) base and the double loop O(n²) overall.\n\n**Complexity:** O(n²) time, O(1) beyond the sort space.",
   "solutions": {
    "cpp": "int solve(vector<int> nums) {\n    sort(nums.begin(), nums.end());\n    int n = nums.size(), count = 0;\n    for (int i = 0; i + 2 < n; i++) {\n        if (i > 0 && nums[i] == nums[i - 1]) continue;\n        int lo = i + 1, hi = n - 1;\n        while (lo < hi) {\n            long long total = (long long)nums[i] + nums[lo] + nums[hi];\n            if (total < 0) lo++;\n            else if (total > 0) hi--;\n            else {\n                count++;\n                lo++; hi--;\n                while (lo < hi && nums[lo] == nums[lo - 1]) lo++;\n                while (lo < hi && nums[hi] == nums[hi + 1]) hi--;\n            }\n        }\n    }\n    return count;\n}\n",
    "java": "static int solve(int[] nums) {\n    int[] a = nums.clone();\n    Arrays.sort(a);\n    int n = a.length, count = 0;\n    for (int i = 0; i + 2 < n; i++) {\n        if (i > 0 && a[i] == a[i - 1]) continue;\n        int lo = i + 1, hi = n - 1;\n        while (lo < hi) {\n            long total = (long) a[i] + a[lo] + a[hi];\n            if (total < 0) lo++;\n            else if (total > 0) hi--;\n            else {\n                count++;\n                lo++; hi--;\n                while (lo < hi && a[lo] == a[lo - 1]) lo++;\n                while (lo < hi && a[hi] == a[hi + 1]) hi--;\n            }\n        }\n    }\n    return count;\n}\n",
@@ -214,7 +214,7 @@
   }
  },
  "minimum-size-subarray-sum": {
-  "editorial": null,
+  "editorial": "## Approach\n\nSliding window with a running sum: add nums[right]; while sum >= target, update the best length with right - left + 1 and subtract nums[left++]. Each index enters and leaves the window once. Return 0 if the best length was never updated. (A prefix-sum + binary search variant gives O(n log n).)\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(int target, vector<int> nums) {\n    int n = nums.size(), best = n + 1, left = 0;\n    long long total = 0;\n    for (int right = 0; right < n; right++) {\n        total += nums[right];\n        while (total >= target) {\n            best = min(best, right - left + 1);\n            total -= nums[left++];\n        }\n    }\n    return best == n + 1 ? 0 : best;\n}\n",
    "java": "static int solve(int target, int[] nums) {\n    int n = nums.length, best = n + 1, left = 0;\n    long total = 0;\n    for (int right = 0; right < n; right++) {\n        total += nums[right];\n        while (total >= target) {\n            best = Math.min(best, right - left + 1);\n            total -= nums[left++];\n        }\n    }\n    return best == n + 1 ? 0 : best;\n}\n",
@@ -223,7 +223,7 @@
   }
  },
  "longest-repeating-character-replacement": {
-  "editorial": null,
+  "editorial": "## Approach\n\nSliding window over uppercase letters. Track counts and `maxFreq`, the highest count seen in any window so far. After adding s[right], if (window size − maxFreq) > k, remove s[left] and move left once. The answer is the largest window size reached. Using a stale maxFreq is safe because the window only grows when a new maximum appears.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(string s, int k) {\n    vector<int> counts(26, 0);\n    int best = 0, left = 0, most = 0;\n    for (int right = 0; right < (int)s.size(); right++) {\n        most = max(most, ++counts[s[right] - 'A']);\n        while (right - left + 1 - most > k) counts[s[left++] - 'A']--;\n        best = max(best, right - left + 1);\n    }\n    return best;\n}\n",
    "java": "static int solve(String s, int k) {\n    int[] counts = new int[26];\n    int best = 0, left = 0, most = 0;\n    for (int right = 0; right < s.length(); right++) {\n        most = Math.max(most, ++counts[s.charAt(right) - 'A']);\n        while (right - left + 1 - most > k) counts[s.charAt(left++) - 'A']--;\n        best = Math.max(best, right - left + 1);\n    }\n    return best;\n}\n",
@@ -232,7 +232,7 @@
   }
  },
  "permutation-in-string": {
-  "editorial": null,
+  "editorial": "## Approach\n\nCount letters of s1. Slide a fixed window of length |s1| across s2, maintaining its counts incrementally. Track how many of the 26 letters currently match s1's count; when all 26 match, return true. Updating is O(1) per step so the whole scan is linear.\n\n**Complexity:** O(n + m) time, O(1) space.",
   "solutions": {
    "cpp": "bool solve(string s1, string s2) {\n    int n = s1.size(), m = s2.size();\n    if (n > m) return false;\n    vector<int> need(26, 0), window(26, 0);\n    for (int i = 0; i < n; i++) { need[s1[i] - 'a']++; window[s2[i] - 'a']++; }\n    if (need == window) return true;\n    for (int i = n; i < m; i++) {\n        window[s2[i] - 'a']++;\n        window[s2[i - n] - 'a']--;\n        if (need == window) return true;\n    }\n    return false;\n}\n",
    "java": "static boolean solve(String s1, String s2) {\n    int n = s1.length(), m = s2.length();\n    if (n > m) return false;\n    int[] need = new int[26], window = new int[26];\n    for (int i = 0; i < n; i++) { need[s1.charAt(i) - 'a']++; window[s2.charAt(i) - 'a']++; }\n    if (Arrays.equals(need, window)) return true;\n    for (int i = n; i < m; i++) {\n        window[s2.charAt(i) - 'a']++;\n        window[s2.charAt(i - n) - 'a']--;\n        if (Arrays.equals(need, window)) return true;\n    }\n    return false;\n}\n",
@@ -313,7 +313,7 @@
   }
  },
  "two-sum-ii-input-array-is-sorted": {
-  "editorial": null,
+  "editorial": "## Approach\n\nTwo pointers at both ends. If numbers[l] + numbers[r] equals the target, return l + 1 and r + 1 (1-based). If it is smaller, increment l; if larger, decrement r. Each step discards a value that can no longer be part of the answer, giving linear time and constant space.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "vector<int> solve(vector<int> numbers, int target) {\n    int lo = 0, hi = (int)numbers.size() - 1;\n    while (lo < hi) {\n        long long total = (long long)numbers[lo] + numbers[hi];\n        if (total == target) return {lo + 1, hi + 1};\n        if (total < target) lo++;\n        else hi--;\n    }\n    return {};\n}\n",
    "java": "static int[] solve(int[] numbers, int target) {\n    int lo = 0, hi = numbers.length - 1;\n    while (lo < hi) {\n        long total = (long) numbers[lo] + numbers[hi];\n        if (total == target) return new int[] {lo + 1, hi + 1};\n        if (total < target) lo++;\n        else hi--;\n    }\n    return new int[0];\n}\n",
@@ -322,7 +322,7 @@
   }
  },
  "koko-eating-bananas": {
-  "editorial": null,
+  "editorial": "## Approach\n\nBinary search the answer. For a candidate speed k compute hours = Σ ceil(p / k). If hours <= h, k is feasible so try smaller; otherwise try larger. The search space is [1, max(piles)] so it takes O(log max) feasibility checks of O(n) each. Watch for integer overflow when summing hours.\n\n**Complexity:** O(n log max) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(vector<int> piles, int h) {\n    int lo = 1, hi = *max_element(piles.begin(), piles.end());\n    while (lo < hi) {\n        int k = lo + (hi - lo) / 2;\n        long long hours = 0;\n        for (int p : piles) hours += (p + k - 1) / k;\n        if (hours <= h) hi = k;\n        else lo = k + 1;\n    }\n    return lo;\n}\n",
    "java": "static int solve(int[] piles, int h) {\n    int lo = 1, hi = Arrays.stream(piles).max().getAsInt();\n    while (lo < hi) {\n        int k = lo + (hi - lo) / 2;\n        long hours = 0;\n        for (int p : piles) hours += (p + k - 1) / k;\n        if (hours <= h) hi = k;\n        else lo = k + 1;\n    }\n    return lo;\n}\n",
@@ -331,7 +331,7 @@
   }
  },
  "capacity-to-ship-packages": {
-  "editorial": null,
+  "editorial": "## Approach\n\nBinary search on capacity in [max(weights), sum(weights)]. Feasibility check: simulate loading in order, starting a new day whenever the next package would overflow the ship. If days used <= D, the capacity works so search lower, otherwise higher.\n\n**Complexity:** O(n log(sum)) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(vector<int> weights, int days) {\n    long long lo = *max_element(weights.begin(), weights.end()), hi = 0;\n    for (int w : weights) hi += w;\n    while (lo < hi) {\n        long long cap = (lo + hi) / 2, load = 0;\n        int need = 1;\n        for (int w : weights) {\n            if (load + w > cap) { need++; load = 0; }\n            load += w;\n        }\n        if (need <= days) hi = cap;\n        else lo = cap + 1;\n    }\n    return (int)lo;\n}\n",
    "java": "static int solve(int[] weights, int days) {\n    long lo = Arrays.stream(weights).max().getAsInt(), hi = Arrays.stream(weights).asLongStream().sum();\n    while (lo < hi) {\n        long cap = (lo + hi) / 2, load = 0;\n        int need = 1;\n        for (int w : weights) {\n            if (load + w > cap) { need++; load = 0; }\n            load += w;\n        }\n        if (need <= days) hi = cap;\n        else lo = cap + 1;\n    }\n    return (int) lo;\n}\n",
@@ -340,7 +340,7 @@
   }
  },
  "merge-two-sorted-lists": {
-  "editorial": null,
+  "editorial": "## Approach\n\nCreate a dummy node and a tail pointer. While both lists are non-empty, link the smaller head to tail and advance that list. Finally link whichever list still has nodes. Return dummy.next. Nodes are reused, so no new nodes besides the dummy are allocated.\n\n**Complexity:** O(n + m) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * list1, ListNode * list2) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    while (list1 && list2) {\n        if (list1->val <= list2->val) { tail->next = list1; list1 = list1->next; }\n        else { tail->next = list2; list2 = list2->next; }\n        tail = tail->next;\n    }\n    tail->next = list1 ? list1 : list2;\n    return dummy.next;\n}\n",
    "java": "static ListNode solve(ListNode list1, ListNode list2) {\n    ListNode dummy = new ListNode(0), tail = dummy;\n    while (list1 != null && list2 != null) {\n        if (list1.val <= list2.val) { tail.next = list1; list1 = list1.next; }\n        else { tail.next = list2; list2 = list2.next; }\n        tail = tail.next;\n    }\n    tail.next = list1 != null ? list1 : list2;\n    return dummy.next;\n}\n",
@@ -349,7 +349,7 @@
   }
  },
  "middle-of-the-linked-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nFast and slow pointers: slow advances one node, fast two. When fast is null or has no next, slow is the middle; for an even length this lands on the second middle node as required.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }\n    return slow;\n}\n",
    "java": "static ListNode solve(ListNode head) {\n    ListNode slow = head, fast = head;\n    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }\n    return slow;\n}\n",
@@ -358,7 +358,7 @@
   }
  },
  "palindrome-linked-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nUse fast/slow pointers to find the middle, reverse the second half, then walk both halves together comparing values. If every pair matches it is a palindrome. This is O(n) time and O(1) extra space; re-reverse the second half if the input must stay intact.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "bool solve(ListNode * head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }\n    ListNode *prev = nullptr;\n    while (slow) { ListNode *next = slow->next; slow->next = prev; prev = slow; slow = next; }\n    for (ListNode *left = head, *right = prev; right; left = left->next, right = right->next)\n        if (left->val != right->val) return false;\n    return true;\n}\n",
    "java": "static boolean solve(ListNode head) {\n    ListNode slow = head, fast = head;\n    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }\n    ListNode prev = null;\n    while (slow != null) { ListNode next = slow.next; slow.next = prev; prev = slow; slow = next; }\n    for (ListNode left = head, right = prev; right != null; left = left.next, right = right.next)\n        if (left.val != right.val) return false;\n    return true;\n}\n",
@@ -367,7 +367,7 @@
   }
  },
  "remove-duplicates-from-sorted-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nWalk with cur. While cur.next exists: if cur.next.val == cur.val set cur.next = cur.next.next, else cur = cur.next. Only the first node of each run is kept. No dummy is required because the head is never removed.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head) {\n    ListNode *node = head;\n    while (node && node->next) {\n        if (node->val == node->next->val) node->next = node->next->next;\n        else node = node->next;\n    }\n    return head;\n}\n",
    "java": "static ListNode solve(ListNode head) {\n    ListNode node = head;\n    while (node != null && node.next != null) {\n        if (node.val == node.next.val) node.next = node.next.next;\n        else node = node.next;\n    }\n    return head;\n}\n",
@@ -376,7 +376,7 @@
   }
  },
  "remove-nth-node-from-end-of-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nDummy node before head so removing the first node is not special. Advance `fast` n steps, then advance `fast` and `slow` together until fast.next is null. slow.next is the target; set slow.next = slow.next.next. One pass.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head, int n) {\n    ListNode dummy(0);\n    dummy.next = head;\n    ListNode *fast = &dummy, *slow = &dummy;\n    for (int i = 0; i < n; i++) fast = fast->next;\n    while (fast->next) { fast = fast->next; slow = slow->next; }\n    slow->next = slow->next->next;\n    return dummy.next;\n}\n",
    "java": "static ListNode solve(ListNode head, int n) {\n    ListNode dummy = new ListNode(0);\n    dummy.next = head;\n    ListNode fast = dummy, slow = dummy;\n    for (int i = 0; i < n; i++) fast = fast.next;\n    while (fast.next != null) { fast = fast.next; slow = slow.next; }\n    slow.next = slow.next.next;\n    return dummy.next;\n}\n",
@@ -385,7 +385,7 @@
   }
  },
  "swap-nodes-in-pairs": {
-  "editorial": null,
+  "editorial": "## Approach\n\nWith dummy -> head, while prev.next and prev.next.next exist let a = prev.next, b = a.next; set a.next = b.next, b.next = a, prev.next = b, then prev = a. The dummy also handles the new head.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head) {\n    ListNode dummy(0);\n    dummy.next = head;\n    ListNode *prev = &dummy;\n    while (prev->next && prev->next->next) {\n        ListNode *first = prev->next, *second = prev->next->next;\n        first->next = second->next;\n        second->next = first;\n        prev->next = second;\n        prev = first;\n    }\n    return dummy.next;\n}\n",
    "java": "static ListNode solve(ListNode head) {\n    ListNode dummy = new ListNode(0);\n    dummy.next = head;\n    ListNode prev = dummy;\n    while (prev.next != null && prev.next.next != null) {\n        ListNode first = prev.next, second = prev.next.next;\n        first.next = second.next;\n        second.next = first;\n        prev.next = second;\n        prev = first;\n    }\n    return dummy.next;\n}\n",
@@ -394,7 +394,7 @@
   }
  },
  "odd-even-linked-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nSet odd = head, even = head.next, evenHead = even. While even and even.next exist: odd.next = even.next; odd = odd.next; even.next = odd.next; even = even.next. Finally odd.next = evenHead. Each node is touched once and nothing is allocated.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head) {\n    if (!head || !head->next) return head;\n    ListNode *odd = head, *even = head->next, *evenHead = even;\n    while (even && even->next) {\n        odd->next = even->next;\n        odd = odd->next;\n        even->next = odd->next;\n        even = even->next;\n    }\n    odd->next = evenHead;\n    return head;\n}\n",
    "java": "static ListNode solve(ListNode head) {\n    if (head == null || head.next == null) return head;\n    ListNode odd = head, even = head.next, evenHead = even;\n    while (even != null && even.next != null) {\n        odd.next = even.next;\n        odd = odd.next;\n        even.next = odd.next;\n        even = even.next;\n    }\n    odd.next = evenHead;\n    return head;\n}\n",
@@ -403,7 +403,7 @@
   }
  },
  "sort-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nTop-down merge sort: find the middle (stop slow before the second half), cut the list in two, recursively sort each half and merge. Recursion depth is O(log n). A bottom-up version that merges runs of size 1, 2, 4, … reaches O(1) extra space.\n\n**Complexity:** O(n log n) time, O(log n) recursion (O(1) bottom-up) space.",
   "solutions": {
    "cpp": "ListNode * merge(ListNode *a, ListNode *b) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    while (a && b) {\n        if (a->val <= b->val) { tail->next = a; a = a->next; }\n        else { tail->next = b; b = b->next; }\n        tail = tail->next;\n    }\n    tail->next = a ? a : b;\n    return dummy.next;\n}\n\nListNode * solve(ListNode * head) {\n    if (!head || !head->next) return head;\n    ListNode *slow = head, *fast = head->next;\n    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }\n    ListNode *second = slow->next;\n    slow->next = nullptr;\n    return merge(solve(head), solve(second));\n}\n",
    "java": "static ListNode merge(ListNode a, ListNode b) {\n    ListNode dummy = new ListNode(0), tail = dummy;\n    while (a != null && b != null) {\n        if (a.val <= b.val) { tail.next = a; a = a.next; }\n        else { tail.next = b; b = b.next; }\n        tail = tail.next;\n    }\n    tail.next = a != null ? a : b;\n    return dummy.next;\n}\n\nstatic ListNode solve(ListNode head) {\n    if (head == null || head.next == null) return head;\n    ListNode slow = head, fast = head.next;\n    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }\n    ListNode second = slow.next;\n    slow.next = null;\n    return merge(solve(head), solve(second));\n}\n",
@@ -412,7 +412,7 @@
   }
  },
  "reorder-list": {
-  "editorial": null,
+  "editorial": "## Approach\n\nThree steps: (1) find the middle with fast/slow pointers and cut the list there, (2) reverse the second half, (3) weave the two lists: first.next = second, second.next = firstNext, and so on. All done by relinking nodes in place.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head) {\n    if (!head || !head->next) return head;\n    ListNode *slow = head, *fast = head;\n    while (fast->next && fast->next->next) { slow = slow->next; fast = fast->next->next; }\n    ListNode *second = slow->next, *prev = nullptr;\n    slow->next = nullptr;\n    while (second) { ListNode *next = second->next; second->next = prev; prev = second; second = next; }\n    ListNode *first = head;\n    second = prev;\n    while (second) {\n        ListNode *a = first->next, *b = second->next;\n        first->next = second;\n        second->next = a;\n        first = a;\n        second = b;\n    }\n    return head;\n}\n",
    "java": "static ListNode solve(ListNode head) {\n    if (head == null || head.next == null) return head;\n    ListNode slow = head, fast = head;\n    while (fast.next != null && fast.next.next != null) { slow = slow.next; fast = fast.next.next; }\n    ListNode second = slow.next, prev = null;\n    slow.next = null;\n    while (second != null) { ListNode next = second.next; second.next = prev; prev = second; second = next; }\n    ListNode first = head;\n    second = prev;\n    while (second != null) {\n        ListNode a = first.next, b = second.next;\n        first.next = second;\n        second.next = a;\n        first = a;\n        second = b;\n    }\n    return head;\n}\n",
@@ -421,7 +421,7 @@
   }
  },
  "reverse-nodes-in-k-group": {
-  "editorial": null,
+  "editorial": "## Approach\n\nUse a dummy and `groupPrev`. For each group, find the k-th node (stop if there are fewer than k). Reverse the k nodes between groupPrev and kth.next, then set groupPrev.next to kth, move groupPrev to the old group head (now the tail) and repeat.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
    "cpp": "ListNode * solve(ListNode * head, int k) {\n    ListNode dummy(0);\n    dummy.next = head;\n    ListNode *groupPrev = &dummy;\n    while (true) {\n        ListNode *kth = groupPrev;\n        for (int i = 0; i < k; i++) {\n            kth = kth->next;\n            if (!kth) return dummy.next;\n        }\n        ListNode *groupNext = kth->next, *prev = groupNext, *node = groupPrev->next;\n        while (node != groupNext) { ListNode *next = node->next; node->next = prev; prev = node; node = next; }\n        ListNode *first = groupPrev->next;\n        groupPrev->next = kth;\n        groupPrev = first;\n    }\n}\n",
    "java": "static ListNode solve(ListNode head, int k) {\n    ListNode dummy = new ListNode(0);\n    dummy.next = head;\n    ListNode groupPrev = dummy;\n    while (true) {\n        ListNode kth = groupPrev;\n        for (int i = 0; i < k; i++) {\n            kth = kth.next;\n            if (kth == null) return dummy.next;\n        }\n        ListNode groupNext = kth.next, prev = groupNext, node = groupPrev.next;\n        while (node != groupNext) { ListNode next = node.next; node.next = prev; prev = node; node = next; }\n        ListNode first = groupPrev.next;\n        groupPrev.next = kth;\n        groupPrev = first;\n    }\n}\n",
@@ -430,7 +430,7 @@
   }
  },
  "invert-binary-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\ninvert(node): if null return null; swap node.left and node.right after (or before) inverting both subtrees; return node. An iterative BFS with a queue does the same swap at every dequeued node.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "TreeNode * solve(TreeNode * root) {\n    if (!root) return nullptr;\n    TreeNode *left = solve(root->left), *right = solve(root->right);\n    root->left = right;\n    root->right = left;\n    return root;\n}\n",
    "java": "static TreeNode solve(TreeNode root) {\n    if (root == null) return null;\n    TreeNode left = solve(root.left), right = solve(root.right);\n    root.left = right;\n    root.right = left;\n    return root;\n}\n",
@@ -439,7 +439,7 @@
   }
  },
  "symmetric-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nisMirror(a, b): both null is true; exactly one null or different values is false; otherwise isMirror(a.left, b.right) && isMirror(a.right, b.left). Start with isMirror(root.left, root.right). An iterative version pushes mirrored pairs on a queue.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "bool mirror(TreeNode *a, TreeNode *b) {\n    if (!a && !b) return true;\n    if (!a || !b || a->val != b->val) return false;\n    return mirror(a->left, b->right) && mirror(a->right, b->left);\n}\n\nbool solve(TreeNode * root) {\n    return mirror(root, root);\n}\n",
    "java": "static boolean mirror(TreeNode a, TreeNode b) {\n    if (a == null && b == null) return true;\n    if (a == null || b == null || a.val != b.val) return false;\n    return mirror(a.left, b.right) && mirror(a.right, b.left);\n}\n\nstatic boolean solve(TreeNode root) {\n    return mirror(root, root);\n}\n",
@@ -448,7 +448,7 @@
   }
  },
  "same-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nsame(p, q): if both null return true; if only one is null or values differ return false; else return same(p.left, q.left) && same(p.right, q.right). Structure and values must both match.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "bool solve(TreeNode * p, TreeNode * q) {\n    if (!p && !q) return true;\n    if (!p || !q || p->val != q->val) return false;\n    return solve(p->left, q->left) && solve(p->right, q->right);\n}\n",
    "java": "static boolean solve(TreeNode p, TreeNode q) {\n    if (p == null && q == null) return true;\n    if (p == null || q == null || p.val != q.val) return false;\n    return solve(p.left, q.left) && solve(p.right, q.right);\n}\n",
@@ -457,7 +457,7 @@
   }
  },
  "diameter-of-binary-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nDFS returns the height of each subtree (edges to the deepest leaf). At every node the longest path through it is left + right, so keep a running maximum. The answer is that maximum, which need not pass through the root. One traversal suffices.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "int height(TreeNode *node, int &best) {\n    if (!node) return 0;\n    int left = height(node->left, best), right = height(node->right, best);\n    best = max(best, left + right);\n    return 1 + max(left, right);\n}\n\nint solve(TreeNode * root) {\n    int best = 0;\n    height(root, best);\n    return best;\n}\n",
    "java": "static int height(TreeNode node, int[] best) {\n    if (node == null) return 0;\n    int left = height(node.left, best), right = height(node.right, best);\n    best[0] = Math.max(best[0], left + right);\n    return 1 + Math.max(left, right);\n}\n\nstatic int solve(TreeNode root) {\n    int[] best = {0};\n    height(root, best);\n    return best[0];\n}\n",
