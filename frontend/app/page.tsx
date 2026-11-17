@@ -31,6 +31,11 @@ export default function Home() {
   const [dailyData, setDailyData] = useState<Daily | null>(null);
   const router = useRouter();
   const meta = useMeta();
+  // /?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tag");
+    if (t) setTag(t);
+  }, []);
 
   useEffect(() => {
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});

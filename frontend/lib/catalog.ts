@@ -5,6 +5,7 @@
 const PUBLIC = [
   /^\/api\/meta(\?|$)/,
   /^\/api\/tags(\?|$)/,
+  /^\/api\/topics(\?|$)/,
   /^\/api\/plans(\?|$)/,
   /^\/api\/daily(\?|$)/,
   /^\/api\/problems(\?|$)/,
