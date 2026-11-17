@@ -352,3 +352,5 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .me-row td { background:var(--hover); }
 .play-io { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
 @media (max-width:900px) { .play-io { grid-template-columns:1fr; } }
+.contest-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.countdown { text-align:right; } .countdown b { font:600 22px/1.2 ui-monospace, monospace; }
