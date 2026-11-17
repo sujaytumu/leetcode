@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import Skeleton from "@/components/Skeleton";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 import type { EditorProps } from "@monaco-editor/react";
@@ -28,7 +29,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const { slug } = use(params);
   const [problem, setProblem] = useState<ProblemDetail | null>(null);
   const [loadError, setLoadError] = useState("");
-  const [waking, setWaking] = useState(false);
   const meta = useMeta();
   const [lang, setLang] = useState<Lang>("");
   const [code, setCode] = useState("");
@@ -43,7 +43,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
-  const [stale, setStale] = useState(false);
   const [fontSize, setFontSize] = useState(14);
   const [history, setHistory] = useState<Submission[]>([]);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
@@ -71,10 +70,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   const loadProblem = useCallback(() => {
     setLoadError("");
-    swr<ProblemDetail>(`/api/problems/${slug}`, (p, fromCache) => {
-      setProblem(p); setStale(fromCache); if (!fromCache) setWaking(false);
-    }, () => setWaking(true))
-      .catch((e) => { setLoadError(e.message); setWaking(false); });
+    swr<ProblemDetail>(`/api/problems/${slug}`, (p) => setProblem(p), () => {})
+      .catch((e) => setLoadError(e.message));
   }, [slug]);
 
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
@@ -91,7 +88,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       .catch(() => { if (live) setStudy(null); });
     return () => { live = false; };
   }, [slug]);
-  useEffect(() => { loadAll((items) => setAll(items), () => {}).catch(() => {}); }, []);
+  const hasProblem = problem !== null;
+  useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
     const f = Number(localStorage.getItem("lc-font"));
     if (f >= 11 && f <= 24) setFontSize(f);
@@ -217,9 +215,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   if (!problem) {
     return (
       <>
-        {waking && <div className="banner warn">Waking up the server (free hosting sleeps when idle). Retrying automatically — up to ~3 minutes…</div>}
         {loadError && <div className="banner err">{loadError} <button onClick={loadProblem}>Retry</button></div>}
-        {!waking && !loadError && <p className="mute">Loading…</p>}
+        {!loadError && <Skeleton lines={12} />}
       </>
     );
   }
@@ -239,7 +236,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   return (
     <>
-      {stale && <div className="banner warn">Showing a saved copy while the server wakes up (1–3 min). Run and Submit work once it is back.</div>}
       {execDown && (
         <div className="banner warn">
           Code execution is unavailable: {exec.message} Run and Submit will show an error until it is back.

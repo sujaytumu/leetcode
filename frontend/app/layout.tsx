@@ -2,6 +2,8 @@ import "./globals.css";
 import Link from "next/link";
 import type { Metadata, Viewport } from "next";
 import ThemeToggle from "@/components/ThemeToggle";
+import LoadingIndicator from "@/components/LoadingIndicator";
+import NavLinks from "@/components/NavLinks";
 
 export const metadata: Metadata = {
   title: "LeetCode Practice", description: "Practice coding problems",
@@ -15,12 +17,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
-        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html:
+          "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" +
+          // Start waking the (free-tier) backend the moment the page arrives, before any app code runs.
+          `try{fetch(${JSON.stringify((process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") + "/actuator/health")},{mode:'no-cors',keepalive:true})}catch(e){}` }} />
       </head>
       <body>
         <header className="nav">
           <Link href="/" className="brand">&lt;/&gt; LeetCode Practice</Link>
-          <nav><Link href="/">Problems</Link><Link href="/plans">Plans</Link><Link href="/profile">Profile</Link><ThemeToggle /></nav>
+          <nav><LoadingIndicator /><NavLinks /><ThemeToggle /></nav>
         </header>
         <main>{children}</main>
       </body>

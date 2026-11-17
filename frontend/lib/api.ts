@@ -1,3 +1,5 @@
+import { loading } from "./loading";
+
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
@@ -66,6 +68,12 @@ export function clientId(): string {
 
 /** Every failure becomes an ApiError with a message that can be shown to the user as-is. */
 export async function api<T>(path: string, init: RequestInit = {}, timeoutMs = 30000): Promise<T> {
+  const tracked = !init.method || init.method === "GET";
+  if (tracked) loading.start();
+  try { return await request<T>(path, init, timeoutMs); } finally { if (tracked) loading.end(); }
+}
+
+async function request<T>(path: string, init: RequestInit, timeoutMs: number): Promise<T> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let res: Response;
@@ -79,8 +87,8 @@ export async function api<T>(path: string, init: RequestInit = {}, timeoutMs = 3
     const aborted = (e as Error).name === "AbortError";
     throw new ApiError(
       aborted
-        ? "The server took too long to respond. It may still be waking up (free tier) — try again in a minute."
-        : "Can't reach the server. It may be waking up (free tier takes 1–3 min) or you're offline.",
+        ? "The server is slow to respond."
+        : "Can't reach the server.",
       0, true);
   } finally {
     clearTimeout(timer);
@@ -89,7 +97,7 @@ export async function api<T>(path: string, init: RequestInit = {}, timeoutMs = 3
     let msg = "";
     try { const j = await res.json(); msg = j.detail || j.message || j.title || ""; } catch {}
     const transient = res.status === 502 || res.status === 503 || res.status === 504;
-    if (!msg) msg = transient ? "The server is starting up or busy. Try again shortly." : `Request failed (HTTP ${res.status}).`;
+    if (!msg) msg = transient ? "The server is starting up." : `Request failed (HTTP ${res.status}).`;
     throw new ApiError(msg, res.status, transient);
   }
   return res.status === 204 ? (undefined as T) : res.json();
@@ -99,14 +107,17 @@ export async function api<T>(path: string, init: RequestInit = {}, timeoutMs = 3
 export async function apiWithWake<T>(
   path: string, onWaiting: (attempt: number) => void, tries = 12, delayMs = 8000,
 ): Promise<T> {
-  for (let attempt = 1; ; attempt++) {
-    try { return await api<T>(path, {}, 20000); }
-    catch (e) {
-      if (!(e instanceof ApiError) || !e.transient || attempt >= tries) throw e;
-      onWaiting(attempt);
-      await new Promise((r) => setTimeout(r, delayMs));
+  loading.start(); // stays "loading" across silent retries while a sleeping server wakes up
+  try {
+    for (let attempt = 1; ; attempt++) {
+      try { return await api<T>(path, {}, 20000); }
+      catch (e) {
+        if (!(e instanceof ApiError) || !e.transient || attempt >= tries) throw e;
+        onWaiting(attempt);
+        await new Promise((r) => setTimeout(r, delayMs));
+      }
     }
-  }
+  } finally { loading.end(); }
 }
 
 /** Every problem, following pagination (the server caps page size at 100). */

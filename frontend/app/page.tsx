@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, Daily, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
-import { loadAll, swr } from "@/lib/local";
+import { api, Daily, fetchAllProblems, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
+import { swr } from "@/lib/local";
 import Activity from "@/components/Activity";
 import SolvedCard from "@/components/SolvedCard";
 import { useMeta } from "@/lib/meta";
@@ -21,12 +21,10 @@ export default function Home() {
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState("");
-  const [waking, setWaking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
-  const [saved, setSaved] = useState(false);
   const reqId = useRef(0);
-  const [all, setAll] = useState<ProblemSummary[]>([]);
+  const [picking, setPicking] = useState(false);
   const [dailyData, setDailyData] = useState<Daily | null>(null);
   const router = useRouter();
   const meta = useMeta();
@@ -34,15 +32,19 @@ export default function Home() {
   useEffect(() => {
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
     swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
-    loadAll((items) => setAll(items), () => {}).catch(() => {});
     swr<Daily | undefined>(`/api/daily?date=${localDate()}`, (d) => setDailyData(d ?? null), () => {}).catch(() => {});
   }, [reload]);
 
   const daily = dailyData?.problem ?? null;
-  const pickRandom = () => {
-    const unsolved = all.filter((p) => p.status !== "SOLVED");
-    const pool = unsolved.length ? unsolved : all;
-    if (pool.length) router.push(`/problems/${pool[Math.floor(Math.random() * pool.length)].slug}`);
+  const pickRandom = async () => {
+    setPicking(true);
+    try {
+      const items = await fetchAllProblems();
+      const unsolved = items.filter((p) => p.status !== "SOLVED");
+      const pool = unsolved.length ? unsolved : items;
+      if (pool.length) router.push(`/problems/${pool[Math.floor(Math.random() * pool.length)].slug}`);
+    } catch { /* the nav indicator and list error banner already cover connectivity problems */ }
+    finally { setPicking(false); }
   };
 
   const fetchList = useCallback(() => {
@@ -52,11 +54,10 @@ export default function Home() {
     if (bookmarked) p.set("bookmarked", "true");
     setLoading(true); setError("");
     const my = ++reqId.current;
-    swr<Page<ProblemSummary>>(`/api/problems?${p}`, (d, fromCache) => {
-      if (my !== reqId.current) return;
-      setData(d); setSaved(fromCache); if (!fromCache) setWaking(false);
-    }, () => { if (my === reqId.current) setWaking(true); })
-      .catch((e) => { if (my === reqId.current) { setError(e.message); setWaking(false); } })
+    swr<Page<ProblemSummary>>(`/api/problems?${p}`, (d) => {
+      if (my === reqId.current) setData(d);
+    }, () => {})
+      .catch((e) => { if (my === reqId.current) setError(e.message); })
       .finally(() => { if (my === reqId.current) setLoading(false); });
   }, [q, difficulty, tag, status, bookmarked, page]);
 
@@ -69,12 +70,6 @@ export default function Home() {
 
   return (
     <>
-      {waking && (
-        <div className="banner warn">
-          {saved ? "Showing a saved copy — the server is waking up (free hosting sleeps when idle, 1–3 min). Refreshing automatically…"
-            : "Waking up the server (free hosting sleeps when idle). This can take 1–3 minutes — retrying automatically…"}
-        </div>
-      )}
       {error && (
         <div className="banner err">
           {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
@@ -118,7 +113,9 @@ export default function Home() {
                 </tr>
               ))}
               {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
-              {loading && !data && <tr><td colSpan={5} className="mute">Loading…</td></tr>}
+              {loading && !data && Array.from({ length: 10 }, (_, i) => (
+                <tr key={i}><td colSpan={5}><div className="skel" style={{ width: `${50 + ((i * 13) % 40)}%` }} /></td></tr>
+              ))}
             </tbody>
           </table>
           {data && data.totalPages > 1 && (
@@ -144,7 +141,7 @@ export default function Home() {
                 </div>
               </div>
               <span className="grow" />
-              <button onClick={pickRandom} disabled={!all.length} title="Open a random problem you have not solved yet">🎲 Pick one</button>
+              <button onClick={pickRandom} disabled={picking} title="Open a random problem you have not solved yet">🎲 Pick one</button>
             </div>
           )}
           <Activity />

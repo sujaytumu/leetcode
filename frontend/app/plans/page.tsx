@@ -2,28 +2,24 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Plan } from "@/lib/api";
+import Skeleton from "@/components/Skeleton";
 import { swr } from "@/lib/local";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "○" } as const;
 
 export default function PlansPage() {
   const [plans, setPlans] = useState<Plan[] | null>(null);
-  const [saved, setSaved] = useState(false);
-  const [waking, setWaking] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    swr<Plan[]>("/api/plans", (d, fromCache) => { setPlans(d); setSaved(fromCache); }, () => setWaking(true))
-      .then(() => setWaking(false))
-      .catch((e) => { setError(e.message); setWaking(false); });
+    swr<Plan[]>("/api/plans", (d) => setPlans(d), () => {}).catch((e) => setError(e.message));
   }, []);
 
   return (
     <>
       <h2 style={{ marginTop: 0 }}>Study plans</h2>
-      {saved && !error && <div className="banner warn">Showing a saved copy{waking ? " while the server wakes up (1–3 min) — refreshing automatically…" : "."}</div>}
       {error && <div className="banner err">{error}</div>}
-      {!plans && !error && <p className="mute">Loading…</p>}
+      {!plans && !error && <Skeleton lines={8} />}
       <div className="plans">
         {plans?.map((plan) => {
           const pct = Math.round((plan.solved / plan.total) * 100);
