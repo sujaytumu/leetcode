@@ -1,9 +1,9 @@
-# Render's free web service sleeps after ~15 min idle. Pinging it every 10 minutes keeps it awake
+# Render's free web service sleeps after ~15 min idle. Pinging it every 5 minutes keeps it awake
 # (free for public repos). The job fails loudly if the API is down, so GitHub emails you.
 name: keep-alive
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 jobs:
   ping:
