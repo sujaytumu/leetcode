@@ -230,3 +230,13 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .stathint { font-size:11px; margin-top:4px; }
 .subrow { cursor:pointer; }
 .subcode { max-height:320px; font-size:12.5px; margin:4px 0 12px; white-space:pre; }
+
+/* ---- related topics / similar questions ---- */
+.related { margin-top:22px; border-top:1px solid var(--line); }
+.related details { border-bottom:1px solid var(--line); padding:10px 0; }
+.related summary { cursor:pointer; color:var(--text); font-weight:600; list-style:none; display:flex; align-items:center; gap:8px; }
+.related summary::before { content:"▸"; color:var(--mute); transition:transform .15s; } .related details[open] summary::before { transform:rotate(90deg); }
+.related summary::-webkit-details-marker { display:none; }
+.relbody { margin:10px 0 0; }
+.simlist { list-style:none; padding:0; display:grid; gap:6px; }
+.simlist li { display:flex; justify-content:space-between; gap:12px; font-size:14px; }
