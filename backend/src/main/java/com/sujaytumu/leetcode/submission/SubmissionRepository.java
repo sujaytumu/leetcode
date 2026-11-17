@@ -72,4 +72,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             group by s.language
             """)
     List<Object[]> countSolvedByLanguage(@Param("clientId") UUID clientId, @Param("verdict") Verdict verdict);
+
+    /** Rows of [clientId, difficulty, distinct problems solved] for every client with an accepted submission. */
+    @Query("""
+            select s.clientId, p.difficulty, count(distinct s.problemId)
+            from Submission s, Problem p
+            where p.id = s.problemId and s.verdict = :verdict
+            group by s.clientId, p.difficulty
+            """)
+    List<Object[]> solvedByClientAndDifficulty(@Param("verdict") Verdict verdict);
 }

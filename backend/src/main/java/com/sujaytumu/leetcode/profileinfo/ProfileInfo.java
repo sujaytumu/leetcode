@@ -56,6 +56,7 @@ public class ProfileInfo {
         this.clientId = clientId;
     }
 
+    public UUID getClientId() { return clientId; }
     public String getDisplayName() { return displayName; }
     public String getUsername() { return username; }
     public String getHeadline() { return headline; }

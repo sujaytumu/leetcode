@@ -348,3 +348,5 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .cactions { display:flex; gap:6px; }
 .cactions button { font-size:12px; padding:2px 8px; }
 .cactions button.on, .bar button.on { border-color:var(--accent); color:var(--accent); }
+
+.me-row td { background:var(--hover); }
