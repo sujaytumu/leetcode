@@ -1,4 +1,5 @@
 "use client";
+import Markdown from "react-markdown";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 
@@ -64,7 +65,7 @@ export default function Discuss({ slug }: { slug: string }) {
   const row = (c: CommentView, nested: boolean) => (
     <div className={`comment${nested ? " nested" : ""}`} key={c.id}>
       <div className="chead"><b>{c.author}</b>{c.mine && <span className="pill MEDIUM">you</span>}<span className="mute"> · {ago(c.createdAt)}</span></div>
-      <div className="cbody">{c.body}</div>
+      <div className="cbody md"><Markdown>{c.body}</Markdown></div>
       <div className="cactions">
         <button className={c.voted ? "on" : ""} onClick={() => toggleVote(c)} aria-pressed={c.voted}
           title={c.voted ? "Remove your upvote" : "Upvote"}>▲ {c.score}</button>
@@ -87,7 +88,7 @@ export default function Discuss({ slug }: { slug: string }) {
   return (
     <div className="discuss">
       <div className="reply-box">
-        <textarea value={draft} maxLength={MAX} placeholder="Share your approach, a hint, or a question…" onChange={(e) => setDraft(e.target.value)} />
+        <textarea value={draft} maxLength={MAX} placeholder="Share your approach, a hint, or a question… Markdown works; wrap code in ``` fences." onChange={(e) => setDraft(e.target.value)} />
         <div className="bar">
           <span className="mute">{draft.length}/{MAX}</span><span className="grow" />
           <button className="primary" disabled={busy || !draft.trim()} onClick={() => submit(draft, null)}>Post</button>
