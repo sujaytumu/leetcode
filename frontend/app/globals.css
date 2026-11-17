@@ -313,3 +313,11 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .topic:hover { border-color:var(--accent); transform:translateY(-1px); }
 .topic .progress { margin:8px 0; }
 .topic-diff { display:flex; gap:12px; font-size:12px; }
+/* free-space loader + answer tab */
+.free-space { min-height:38vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:24px; }
+.free-space.compact { min-height:140px; }
+.free-msg.err { color:var(--hard); max-width:420px; }
+.free-slow { max-width:360px; font-size:13px; }
+.spinner { width:34px; height:34px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent); animation:lcspin .8s linear infinite; }
+@keyframes lcspin { to { transform:rotate(360deg); } }
+.answer-code { white-space:pre; overflow:auto; max-height:60vh; font:13px/1.5 ui-monospace, monospace; }
