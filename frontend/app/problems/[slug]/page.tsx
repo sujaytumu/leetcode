@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import { useMock } from "@/lib/mock";
 import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
@@ -63,6 +64,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [openSub, setOpenSub] = useState<Submission | null>(null);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
+  const { locked } = useMock();
   const [hintsShown, setHintsShown] = useState(0);
   const [showApproach, setShowApproach] = useState(false);
   const [timer, setTimer] = useState({ on: false, secs: 0 });
@@ -133,6 +135,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, []);
   useEffect(() => { setNotes(localStorage.getItem(`lc-notes:${slug}`) ?? ""); }, [slug]);
   useEffect(() => { setAnswer({ status: "idle" }); setAnswerLang(""); }, [slug]);
+  useEffect(() => { if (locked(slug) && (tab === "editorial" || tab === "answer")) setTab("desc"); }, [locked, slug, tab]);
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
@@ -310,8 +313,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
         <section className="pane left" hidden={focus}>
           <div className="lctabs">
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
-            <button className={tab === "editorial" ? "on" : ""} onClick={() => setTab("editorial")}>Editorial</button>
-            <button className={tab === "answer" ? "on" : ""} onClick={() => setTab("answer")}>Answer</button>
+            <button className={tab === "editorial" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("editorial")}>Editorial</button>
+            <button className={tab === "answer" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("answer")}>Answer</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
