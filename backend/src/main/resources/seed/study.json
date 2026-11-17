@@ -1027,5 +1027,165 @@
     "approach": "Binary search on S in [max(nums), sum(nums)]. feasible(S): greedily pack numbers, starting a new subarray when the running sum would exceed S, and check pieces <= k. The smallest feasible S is the answer. A DP over (index, pieces) also works in O(k·n²) but is slower.",
     "time": "O(n log(sum))",
     "space": "O(1)"
+  },
+  "assign-cookies": {
+    "hints": [
+      "Giving a huge cookie to a child who needs a tiny one wastes it.",
+      "Sort both lists.",
+      "Walk the cookies from smallest to largest, giving each to the least greedy unsatisfied child it can satisfy."
+    ],
+    "approach": "Sort greed factors g and cookie sizes s. Pointer i over children; for each cookie j in ascending order, if s[j] >= g[i] satisfy child i and advance i. The final i is the answer. Using the smallest sufficient cookie per child is optimal by an exchange argument.",
+    "time": "O(n log n + m log m)",
+    "space": "O(1) beyond sorting"
+  },
+  "gas-station": {
+    "hints": [
+      "If total gas < total cost, no start can work.",
+      "If you run out of fuel going from i to j, no station between i and j can be a valid start either.",
+      "So after a failure at j, restart from j + 1 and reset the tank."
+    ],
+    "approach": "One pass: keep `tank` and `start`. Add gas[i] - cost[i]; if tank < 0, set start = i + 1 and tank = 0. Also track the total difference; if it is negative return -1, otherwise start is the unique answer.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "best-time-to-buy-and-sell-stock-ii": {
+    "hints": [
+      "You may trade as often as you like.",
+      "Any upward move between consecutive days can be captured.",
+      "Profit equals the sum of every positive day-to-day difference."
+    ],
+    "approach": "Greedy: for each i add max(0, prices[i] - prices[i-1]). Buying at every valley and selling at every peak yields exactly that sum, and splitting a rising run into daily trades gives the same profit.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "partition-labels": {
+    "hints": [
+      "Each letter's last occurrence tells you how far its part must extend.",
+      "Record the last index of every character.",
+      "Sweep, extending the current part's end to the farthest last occurrence; close the part when i reaches that end."
+    ],
+    "approach": "last[c] = last index of each letter. Sweep i with `end` = max last occurrence of letters seen in the current part. When i == end, the part [start, end] is closed: record end - start + 1 and set start = i + 1. Greedy cuts at the earliest valid points give the maximum number of parts.",
+    "time": "O(n)",
+    "space": "O(1) (26 letters)"
+  },
+  "candy": {
+    "hints": [
+      "Handle the left-neighbour rule and the right-neighbour rule separately.",
+      "First pass left to right: if rating[i] > rating[i-1], candy[i] = candy[i-1] + 1.",
+      "Second pass right to left: if rating[i] > rating[i+1], candy[i] = max(candy[i], candy[i+1] + 1). Sum the array."
+    ],
+    "approach": "Initialise every child with 1 candy. A left-to-right pass enforces the constraint against the left neighbour, a right-to-left pass enforces it against the right neighbour while keeping the larger value so both constraints hold. The sum is minimal. A one-pass O(1)-space version tracks rising and falling run lengths.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "non-overlapping-intervals": {
+    "hints": [
+      "Minimising removals equals maximising the number of intervals you keep.",
+      "Sort by end time, not by start.",
+      "Keep an interval if it starts at or after the end of the last kept one; otherwise remove it."
+    ],
+    "approach": "Sort by end. Track `lastEnd`; for each interval, if start >= lastEnd keep it and update lastEnd, else count a removal. Picking the earliest-finishing interval leaves the most room for the rest (classic activity selection). Touching intervals do not overlap.",
+    "time": "O(n log n)",
+    "space": "O(1) beyond sorting"
+  },
+  "insert-interval": {
+    "hints": [
+      "The input is already sorted and disjoint, so scan once.",
+      "Everything that ends before the new interval starts is copied unchanged.",
+      "Merge every interval that overlaps it by taking min start and max end, then copy the rest."
+    ],
+    "approach": "Three phases: (1) append intervals with end < new.start; (2) while the next interval's start <= new.end, merge by new.start = min, new.end = max; append the merged interval; (3) append the remaining intervals. Touching endpoints count as overlapping, hence <=.",
+    "time": "O(n)",
+    "space": "O(n) for the output"
+  },
+  "number-of-1-bits": {
+    "hints": [
+      "Check one bit at a time with n & 1 and shift, or find something faster.",
+      "n & (n - 1) clears the lowest set bit.",
+      "Count how many times you can clear a bit before n becomes 0."
+    ],
+    "approach": "Brian Kernighan: while n != 0 { n &= n - 1; count++ }. It runs once per set bit. Bit-twiddling population count or a built-in (Integer.bitCount, bin(n).count('1'), __builtin_popcount) are equivalent.",
+    "time": "O(number of set bits)",
+    "space": "O(1)"
+  },
+  "power-of-two": {
+    "hints": [
+      "A power of two has exactly one bit set.",
+      "Zero and negative numbers are not powers of two.",
+      "n & (n - 1) removes the lowest set bit, so it is 0 exactly for powers of two."
+    ],
+    "approach": "Return n > 0 && (n & (n - 1)) == 0. Be careful that n must be positive: 0 & -1 is 0, which would wrongly pass without the n > 0 guard.",
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "happy-number": {
+    "hints": [
+      "Repeatedly replacing by the digit-square sum either reaches 1 or falls into a cycle.",
+      "Detect the cycle with a set of seen values.",
+      "Floyd's tortoise and hare avoids the set."
+    ],
+    "approach": "Iterate next(n) = Σ digit². Keep a set of seen numbers; if you reach 1 return true, if a number repeats return false. Alternatively use slow/fast pointers on the sequence. Values stay small (below about 243 after the first step), so it terminates quickly.",
+    "time": "O(log n) per step, few steps",
+    "space": "O(1) with Floyd"
+  },
+  "roman-to-integer": {
+    "hints": [
+      "Map each symbol to its value.",
+      "A smaller value placed before a larger one is subtracted.",
+      "Scan left to right: if the current value is less than the next one, subtract it, otherwise add it."
+    ],
+    "approach": "Lookup table I=1, V=5, X=10, L=50, C=100, D=500, M=1000. For each index i: if i + 1 < n and val[s[i]] < val[s[i+1]] subtract val[s[i]], else add it. This handles IV, IX, XL, XC, CD and CM without special cases.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "excel-sheet-column-number": {
+    "hints": [
+      "It is a base-26 number system with digits A..Z mapped to 1..26 (no zero).",
+      "Process the title from left to right.",
+      "result = result * 26 + (letter - 'A' + 1)."
+    ],
+    "approach": "Horner's rule: start with 0 and for each character multiply by 26 and add its value 1..26. For example 'AA' gives 1*26 + 1 = 27. Long titles may need 64-bit integers.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "fast-power-mod": {
+    "hints": [
+      "Multiplying base exp times is far too slow for exp up to 10^9.",
+      "Square the base and halve the exponent.",
+      "Reduce mod after every multiplication and use a 64-bit type so products do not overflow."
+    ],
+    "approach": "Binary exponentiation: result = 1 % mod; base %= mod; while exp > 0: if exp is odd result = result * base % mod; base = base * base % mod; exp >>= 1. About 30 iterations. Use long/int64 (or Python integers) for the products; 0^0 = 1 per the statement.",
+    "time": "O(log exp)",
+    "space": "O(1)"
+  },
+  "reverse-integer": {
+    "hints": [
+      "Pop the last digit with % 10 and push it onto the result.",
+      "Check for overflow before the multiplication, not after.",
+      "Result must stay within [-2^31, 2^31 - 1]; otherwise return 0."
+    ],
+    "approach": "While x != 0: digit = x % 10 (sign-preserving in C-like languages); before result = result * 10 + digit check result > INT_MAX/10 (or < INT_MIN/10), including the boundary digit; if it would overflow return 0. In languages with big integers, reverse then range-check.",
+    "time": "O(log |x|)",
+    "space": "O(1)"
+  },
+  "island-perimeter": {
+    "hints": [
+      "Each land cell contributes up to 4 edges.",
+      "An edge shared with another land cell is not part of the perimeter.",
+      "Count 4 per land cell and subtract 2 for every pair of adjacent land cells (check only right and down)."
+    ],
+    "approach": "Single scan: for each land cell add 4; if the cell above is also land subtract 2, and if the cell to the left is also land subtract 2. Each shared edge is removed once from both cells. No DFS is required because only one island exists by definition.",
+    "time": "O(R·C)",
+    "space": "O(1)"
+  },
+  "max-area-of-island": {
+    "hints": [
+      "Treat each island as a connected component and measure its size.",
+      "DFS or BFS from every unvisited land cell.",
+      "Mark cells visited (for example set them to 0) so each cell is counted once."
+    ],
+    "approach": "For every land cell start a flood fill (DFS with recursion or an explicit stack, or BFS) that counts and sinks the cells it visits in four directions; track the largest count seen. Each cell is processed once. Prefer an explicit stack if recursion depth could be large.",
+    "time": "O(R·C)",
+    "space": "O(R·C) worst case"
   }
 }
