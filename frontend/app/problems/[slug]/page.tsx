@@ -9,6 +9,8 @@ import {
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import EditorSettingsModal from "@/components/EditorSettingsModal";
+import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
@@ -45,7 +47,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
-  const [fontSize, setFontSize] = useState(14);
+  const [ed, setEd, resetEd] = useEditorSettings();
+  const fontSize = ed.fontSize;
+  const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<Submission[]>([]);
   const [openSub, setOpenSub] = useState<Submission | null>(null);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
@@ -94,8 +98,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const hasProblem = problem !== null;
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
-    const f = Number(localStorage.getItem("lc-font"));
-    if (f >= 11 && f <= 24) setFontSize(f);
     try {
       const saved = JSON.parse(localStorage.getItem("lc-layout") ?? "null") as { leftPct?: number; editorPct?: number } | null;
       if (saved?.leftPct) setLeftPct(clamp(saved.leftPct, 22, 70));
@@ -163,7 +165,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     const h = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "'") { e.preventDefault(); runRef.current("run"); }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runRef.current("submit"); }
-      if (e.key === "Escape") { setShowKeys(false); setFocus(false); }
+      if (e.key === "Escape") { setShowKeys(false); setShowSettings(false); setFocus(false); }
       const el = e.target as HTMLElement | null;
       const typing = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
       if (e.key === "?" && !typing && !e.ctrlKey && !e.metaKey) setShowKeys((v) => !v);
@@ -348,7 +350,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <select value={lang} onChange={(e) => { setLang(e.target.value); localStorage.setItem("lc-lang", e.target.value); }}>
               {languages.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
             </select>
-            <select value={fontSize} title="Editor font size" onChange={(e) => { setFontSize(Number(e.target.value)); localStorage.setItem("lc-font", e.target.value); }}>
+            <select value={fontSize} title="Editor font size" onChange={(e) => setEd({ fontSize: Number(e.target.value) })}>
               {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
             </select>
             <button onClick={reset} title="Reset to starter code">Reset</button>
@@ -356,6 +358,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <button onClick={() => setFocus((f) => !f)} title="Hide the description and focus on the editor (Esc to exit)">
               {focus ? "⤡ Exit focus" : "⤢ Focus"}
             </button>
+            <button onClick={() => setShowSettings(true)} title="Editor settings" aria-label="Editor settings">⚙</button>
             <button onClick={() => setShowKeys(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button>
             <span className="grow" />
             <button disabled={!!busy} onClick={() => run("run")} title="Ctrl/⌘ + '">
@@ -366,10 +369,14 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             </button>
           </div>
           <div className="pane editor-wrap" style={{ flex: `0 0 ${editorPct}%` }}>
-            <Editor height="100%" theme={theme === "light" ? "vs" : "vs-dark"}
+            <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}
               language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"}
               value={code} onChange={onChange}
-              options={{ minimap: { enabled: false }, fontSize, automaticLayout: true, scrollBeyondLastLine: false }} />
+              options={{
+                minimap: { enabled: ed.minimap }, fontSize, tabSize: ed.tabSize, insertSpaces: true,
+                wordWrap: ed.wordWrap ? "on" : "off", lineNumbers: ed.lineNumbers ? "on" : "off",
+                automaticLayout: true, scrollBeyondLastLine: false,
+              }} />
           </div>
           <div className={`hdivider${drag === "h" ? " drag" : ""}`} role="separator" aria-orientation="horizontal"
             title="Drag to resize" onPointerDown={startDrag("h")} />
@@ -453,6 +460,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           </div>
         </section>
       </div>
+      {showSettings && <EditorSettingsModal settings={ed} onChange={setEd} onReset={resetEd} onClose={() => setShowSettings(false)} />}
       {showKeys && (
         <div className="modal-back" onClick={() => setShowKeys(false)}>
           <div className="modal" role="dialog" aria-label="Keyboard shortcuts" onClick={(e) => e.stopPropagation()}>

@@ -266,3 +266,8 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .badge.locked .badge-icon { filter:grayscale(1); }
 .badge-progress { width:70%; height:4px; border-radius:4px; background:var(--hover); overflow:hidden; }
 .badge-progress > div { height:100%; background:var(--accent); border-radius:4px; }
+
+/* ---- editor settings dialog ---- */
+.setting-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--line); cursor:pointer; }
+.setting-row:last-of-type { border-bottom:0; }
+.setting-row select { min-width:130px; }
