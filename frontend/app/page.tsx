@@ -86,16 +86,17 @@ export default function Home() {
           </div>
 
           <table className="ptable">
-            <thead><tr><th>Status</th><th>Title</th><th className="tg">Topics</th><th className="dif">Difficulty</th></tr></thead>
+            <thead><tr><th>Status</th><th>Title</th><th className="tg">Topics</th><th className="acc">Acceptance</th><th className="dif">Difficulty</th></tr></thead>
             <tbody>
               {!ready && !loadError && Array.from({ length: 10 }, (_, i) => (
-                <tr className="skeleton" key={i}><td><div style={{ width: 16, margin: "0 auto" }} /></td><td><div style={{ width: `${40 + (i * 13) % 35}%` }} /></td><td className="tg"><div style={{ width: "50%" }} /></td><td><div style={{ width: 50 }} /></td></tr>
+                <tr className="skeleton" key={i}><td><div style={{ width: 16, margin: "0 auto" }} /></td><td><div style={{ width: `${40 + (i * 13) % 35}%` }} /></td><td className="tg"><div style={{ width: "50%" }} /></td><td className="acc"><div style={{ width: 36, marginLeft: "auto" }} /></td><td><div style={{ width: 50 }} /></td></tr>
               ))}
               {rows.map((p) => (
                 <tr key={p.slug}>
                   <td><StatusIcon status={p.status} /></td>
                   <td><Link className="ttl" href={`/problems/${p.slug}`}>{p.id}. {p.title}</Link>{p.bookmarked && <span title="Bookmarked" style={{ color: "var(--accent)", marginLeft: 6 }}>★</span>}</td>
                   <td className="tg mute" style={{ fontSize: 12 }}>{p.tags.slice(0, 3).join(" · ")}</td>
+                  <td className="acc">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
                   <td className={`dif ${p.difficulty}`}>{cap(p.difficulty)}</td>
                 </tr>
               ))}
