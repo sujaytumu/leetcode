@@ -1,6 +1,7 @@
 import { loading } from "./loading";
 
-export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+/** Same-origin: next.config.mjs rewrites /api/* to the backend, so there is no CORS and no preflight. */
+export const API = "";
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 export type Status = "TODO" | "ATTEMPTED" | "SOLVED";
@@ -111,7 +112,7 @@ async function request<T>(path: string, init: RequestInit, timeoutMs: number): P
 
 /** Retries transient failures (cold start) so a sleeping free-tier server recovers without the user doing anything. */
 export async function apiWithWake<T>(
-  path: string, onWaiting: (attempt: number) => void, tries = 12, delayMs = 8000,
+  path: string, onWaiting: (attempt: number) => void, tries = 30, delayMs = 6000,
 ): Promise<T> {
   loading.start(); // stays "loading" across silent retries while a sleeping server wakes up
   try {
