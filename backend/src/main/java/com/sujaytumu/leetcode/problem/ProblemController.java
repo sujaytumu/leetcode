@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ProblemController {
 
+    public static final String DEFAULT_PAGE_SIZE = "20";
     private static final int MAX_PAGE_SIZE = 100;
 
     private final ProblemService service;
@@ -34,7 +35,7 @@ public class ProblemController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "false") boolean bookmarked,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int size,
             @RequestHeader(value = Headers.CLIENT_ID, required = false) UUID clientId) {
         ProblemQuery query = new ProblemQuery(
                 q, Difficulty.parse(difficulty), tag, StatusFilter.parse(status), bookmarked);

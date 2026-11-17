@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { api, Daily, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import Activity from "@/components/Activity";
+import SolvedCard from "@/components/SolvedCard";
+import { useMeta } from "@/lib/meta";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
 
@@ -27,6 +29,7 @@ export default function Home() {
   const [all, setAll] = useState<ProblemSummary[]>([]);
   const [dailyData, setDailyData] = useState<Daily | null>(null);
   const router = useRouter();
+  const meta = useMeta();
 
   useEffect(() => {
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
@@ -43,7 +46,7 @@ export default function Home() {
   };
 
   const fetchList = useCallback(() => {
-    const p = new URLSearchParams({ page: String(page), size: "20" });
+    const p = new URLSearchParams({ page: String(page) });
     if (q) p.set("q", q); if (difficulty) p.set("difficulty", difficulty);
     if (tag) p.set("tag", tag); if (status) p.set("status", status);
     if (bookmarked) p.set("bookmarked", "true");
@@ -77,77 +80,76 @@ export default function Home() {
           {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
         </div>
       )}
-      {progress && (
-        <div className="cards">
-          <div className="card"><span className="mute">Solved</span><b>{progress.solved}/{progress.total}</b></div>
-          {(["EASY", "MEDIUM", "HARD"] as const).map((d) => (
-            <div className="card" key={d}><span className={d}>{d}</span>
-              <b>{progress.byDifficulty?.[d]?.solved ?? 0}/{progress.byDifficulty?.[d]?.total ?? 0}</b></div>
-          ))}
-          <div className="card"><span className="mute">Attempted</span><b>{progress.attempted}</b></div>
-          <div className="card"><span className="mute">Bookmarked</span><b>{progress.bookmarked}</b></div>
-        </div>
-      )}
-      <Activity />
-      {daily && (
-        <div className="daily">
-          <div>
-            <span className="mute">Daily challenge · {new Date(`${dailyData!.date}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
-            <div><Link href={`/problems/${daily.slug}`}><b>{daily.number ?? daily.id}. {daily.title}</b></Link>{" "}
-              <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
-              {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
-            </div>
+      <div className="home">
+        <div className="home-main">
+          <div className="chips">
+            <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
+            {tags.map((t) => (
+              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{t}</button>
+            ))}
           </div>
-          <span className="grow" />
-          <button onClick={pickRandom} disabled={!all.length} title="Open a random problem you have not solved yet">🎲 Pick one</button>
+          <div className="filters">
+            <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
+            <select value={difficulty} onChange={(e) => reset(setDifficulty)(e.target.value)}>
+              <option value="">All difficulties</option>
+              {meta?.difficulties.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
+            </select>
+            <select value={tag} onChange={(e) => reset(setTag)(e.target.value)}>
+              <option value="">All topics</option>{tags.map((t) => <option key={t}>{t}</option>)}
+            </select>
+            <select value={status} onChange={(e) => reset(setStatus)(e.target.value)}>
+              <option value="">Any status</option>
+              {meta?.statuses.map((x) => <option key={x.key} value={x.key}>{x.label}</option>)}
+            </select>
+            <label className="bar"><input type="checkbox" checked={bookmarked}
+              onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
+          </div>
+          <table>
+            <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th className="th-num">Acceptance</th><th>Difficulty</th></tr></thead>
+            <tbody>
+              {data?.items.map((p) => (
+                <tr key={p.id}>
+                  <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
+                  <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+                    <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
+                  <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
+                  <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
+                  <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
+                </tr>
+              ))}
+              {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
+              {loading && !data && <tr><td colSpan={5} className="mute">Loading…</td></tr>}
+            </tbody>
+          </table>
+          {data && data.totalPages > 1 && (
+            <div className="pager">
+              <button disabled={page === 0} onClick={() => setPage(page - 1)}>Prev</button>
+              <span className="mute">Page {data.page + 1} / {data.totalPages}</span>
+              <button disabled={page + 1 >= data.totalPages} onClick={() => setPage(page + 1)}>Next</button>
+            </div>
+          )}
         </div>
-      )}
-      <div className="chips">
-        <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
-        {tags.map((t) => (
-          <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{t}</button>
-        ))}
+
+        <aside className="home-side">
+          {progress && meta && (
+            <SolvedCard progress={progress} attempting={Math.max(0, progress.attempted - progress.solved)} difficulties={meta.difficulties} />
+          )}
+          {daily && (
+            <div className="card daily">
+              <div>
+                <span className="mute">Daily challenge · {new Date(`${dailyData!.date}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                <div><Link href={`/problems/${daily.slug}`}><b style={{ display: "inline", fontSize: 15 }}>{daily.number ?? daily.id}. {daily.title}</b></Link>{" "}
+                  <span className={daily.difficulty}>{daily.difficulty[0] + daily.difficulty.slice(1).toLowerCase()}</span>
+                  {daily.status === "SOLVED" && <span className="EASY"> ✔ solved</span>}
+                </div>
+              </div>
+              <span className="grow" />
+              <button onClick={pickRandom} disabled={!all.length} title="Open a random problem you have not solved yet">🎲 Pick one</button>
+            </div>
+          )}
+          <Activity />
+        </aside>
       </div>
-      <div className="filters">
-        <input placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
-        <select value={difficulty} onChange={(e) => reset(setDifficulty)(e.target.value)}>
-          <option value="">All difficulties</option><option value="EASY">Easy</option>
-          <option value="MEDIUM">Medium</option><option value="HARD">Hard</option>
-        </select>
-        <select value={tag} onChange={(e) => reset(setTag)(e.target.value)}>
-          <option value="">All topics</option>{tags.map((t) => <option key={t}>{t}</option>)}
-        </select>
-        <select value={status} onChange={(e) => reset(setStatus)(e.target.value)}>
-          <option value="">Any status</option><option value="TODO">Todo</option>
-          <option value="ATTEMPTED">Attempted</option><option value="SOLVED">Solved</option>
-        </select>
-        <label className="bar"><input type="checkbox" checked={bookmarked}
-          onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
-      </div>
-      <table>
-        <thead><tr><th style={{ width: 40 }}></th><th>Title</th><th className="hide-sm">Topics</th><th className="th-num">Acceptance</th><th>Difficulty</th></tr></thead>
-        <tbody>
-          {data?.items.map((p) => (
-            <tr key={p.id}>
-              <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
-              <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
-                <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
-              <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
-              <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
-              <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
-            </tr>
-          ))}
-          {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
-          {loading && !data && <tr><td colSpan={5} className="mute">Loading…</td></tr>}
-        </tbody>
-      </table>
-      {data && data.totalPages > 1 && (
-        <div className="pager">
-          <button disabled={page === 0} onClick={() => setPage(page - 1)}>Prev</button>
-          <span className="mute">Page {data.page + 1} / {data.totalPages}</span>
-          <button disabled={page + 1 >= data.totalPages} onClick={() => setPage(page + 1)}>Next</button>
-        </div>
-      )}
     </>
   );
 }
