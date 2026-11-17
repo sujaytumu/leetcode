@@ -10,6 +10,7 @@ import {
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import Skeleton from "@/components/Skeleton";
+import SimilarProblems from "@/components/SimilarProblems";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
@@ -273,6 +274,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 </div>
                 <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>
                 <div className="md"><Markdown>{problem.description}</Markdown></div>
+                <SimilarProblems current={problem} all={all} />
               </>
             ) : tab === "editorial" ? (
               <div className="editorial">
