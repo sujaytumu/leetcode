@@ -9,8 +9,11 @@ import com.sujaytumu.leetcode.problem.ProblemDtos.ProblemSummary;
 import com.sujaytumu.leetcode.problem.ProblemDtos.SampleCase;
 import com.sujaytumu.leetcode.submission.SubmissionRepository;
 import com.sujaytumu.leetcode.submission.Verdict;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -55,7 +58,8 @@ public class ProblemService {
         }
 
         Page<Problem> result = problems.findAll(spec, PageRequest.of(page, size, Sort.by("id")));
-        return PageResponse.of(result.map(problem -> toSummary(problem, state)));
+        Map<Long, Double> acceptance = acceptanceByProblem(result.getContent().stream().map(Problem::getId).toList());
+        return PageResponse.of(result.map(problem -> toSummary(problem, state, acceptance.get(problem.getId()))));
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +83,8 @@ public class ProblemService {
                 problem.getStarterCode(),
                 samples,
                 state.statusOf(problem.getId()),
-                state.bookmarked.contains(problem.getId()));
+                state.bookmarked.contains(problem.getId()),
+                acceptanceByProblem(List.of(problem.getId())).get(problem.getId()));
     }
 
     @Transactional(readOnly = true)
@@ -99,7 +104,23 @@ public class ProblemService {
         };
     }
 
-    private ProblemSummary toSummary(Problem problem, ClientState state) {
+    /** Accepted / total submissions as a percentage (one decimal). Problems nobody has submitted are absent. */
+    private Map<Long, Double> acceptanceByProblem(Collection<Long> ids) {
+        if (ids.isEmpty()) {
+            return Map.of();
+        }
+        Map<Long, Double> result = new HashMap<>();
+        for (Object[] row : submissions.acceptanceStats(ids, Verdict.ACCEPTED)) {
+            long total = ((Number) row[1]).longValue();
+            long accepted = ((Number) row[2]).longValue();
+            if (total > 0) {
+                result.put(((Number) row[0]).longValue(), Math.round(accepted * 1000.0 / total) / 10.0);
+            }
+        }
+        return result;
+    }
+
+    private ProblemSummary toSummary(Problem problem, ClientState state, Double acceptance) {
         return new ProblemSummary(
                 problem.getId(),
                 problem.getSlug(),
@@ -107,7 +128,8 @@ public class ProblemService {
                 problem.getDifficulty(),
                 List.copyOf(problem.getTags()),
                 state.statusOf(problem.getId()),
-                state.bookmarked.contains(problem.getId()));
+                state.bookmarked.contains(problem.getId()),
+                acceptance);
     }
 
     /** Snapshot of one client's progress; empty for anonymous requests. */

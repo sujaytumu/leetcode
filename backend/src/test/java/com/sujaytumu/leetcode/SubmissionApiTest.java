@@ -79,14 +79,14 @@ class SubmissionApiTest {
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
 
         mvc.perform(get("/api/problems").param("status", "todo").header(CLIENT, client.toString()))
-                .andExpect(jsonPath("$.totalElements").value(94));
+                .andExpect(jsonPath("$.totalElements").value(121));
 
         mvc.perform(get("/api/progress").header(CLIENT, client.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.total").value(95))
+                .andExpect(jsonPath("$.total").value(122))
                 .andExpect(jsonPath("$.solved").value(1))
                 .andExpect(jsonPath("$.attempted").value(1))
-                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(30))
+                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(43))
                 .andExpect(jsonPath("$.byDifficulty.EASY.solved").value(1))
                 .andExpect(jsonPath("$.byDifficulty.HARD.solved").value(0));
     }
@@ -177,6 +177,81 @@ class SubmissionApiTest {
     void bookmarkingUnknownProblemIs404() throws Exception {
         mvc.perform(put("/api/problems/nope/bookmark").header(CLIENT, UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void customInputRunsOnceAgainstThatInputAndIsNotPersisted() throws Exception {
+        UUID client = UUID.randomUUID();
+        mvc.perform(post("/api/problems/two-sum/run")
+                        .header(CLIENT, client.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.writeValueAsString(Map.of(
+                                "language", "python",
+                                "code", TestExecutorConfig.SOLVE_TWO_SUM,
+                                "customInput", "5\n1 2 3 4 5\n9"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verdict").value("ACCEPTED"))
+                .andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.cases.length()").value(1))
+                // a trailing newline is added to the custom stdin
+                .andExpect(jsonPath("$.cases[0].input").value("5\n1 2 3 4 5\n9\n"))
+                .andExpect(jsonPath("$.cases[0].actual").value("3 4\n"))
+                .andExpect(jsonPath("$.cases[0].expected").value(nullValue()))
+                .andExpect(jsonPath("$.submissionId").value(nullValue()));
+
+        mvc.perform(get("/api/problems/two-sum/submissions").header(CLIENT, client.toString()))
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void customInputReportsRuntimeErrors() throws Exception {
+        mvc.perform(post("/api/problems/two-sum/run")
+                        .header(CLIENT, UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.writeValueAsString(Map.of(
+                                "language", "python",
+                                "code", TestExecutorConfig.RUNTIME_ERROR,
+                                "customInput", "1\n1\n1"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verdict").value("RUNTIME_ERROR"))
+                .andExpect(jsonPath("$.passed").value(0))
+                .andExpect(jsonPath("$.message").value("Runtime error on your custom input."))
+                .andExpect(jsonPath("$.cases[0].error").value(containsString("IndexError")));
+    }
+
+    @Test
+    void blankCustomInputFallsBackToSampleCases() throws Exception {
+        mvc.perform(post("/api/problems/two-sum/run")
+                        .header(CLIENT, UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.writeValueAsString(Map.of(
+                                "language", "python",
+                                "code", TestExecutorConfig.SOLVE_TWO_SUM,
+                                "customInput", "   "))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(2));
+    }
+
+    @Test
+    void acceptanceRateAppearsAfterSubmissions() throws Exception {
+        // climbing-stairs is not used by any other test, so it starts without submissions.
+        mvc.perform(get("/api/problems/climbing-stairs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.acceptance").value(nullValue()));
+
+        mvc.perform(post("/api/problems/climbing-stairs/submit")
+                        .header(CLIENT, UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.writeValueAsString(
+                                Map.of("language", "python", "code", TestExecutorConfig.WRONG_ANSWER))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verdict").value("WRONG_ANSWER"));
+
+        mvc.perform(get("/api/problems/climbing-stairs"))
+                .andExpect(jsonPath("$.acceptance").value(0.0));
+        mvc.perform(get("/api/problems").param("q", "climbing-stairs"))
+                .andExpect(jsonPath("$.items[0].slug").value("climbing-stairs"))
+                .andExpect(jsonPath("$.items[0].acceptance").value(0.0));
     }
 
     @Test

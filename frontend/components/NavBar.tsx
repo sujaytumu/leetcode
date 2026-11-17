@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -47,6 +48,7 @@ export default function NavBar() {
       <span className={`srv ${server}`} title="Run and Submit need the backend, which sleeps on free hosting when idle">
         <i /> <span className="t">{LABEL[server]}</span>
       </span>
+      <ThemeToggle />
     </header>
   );
 }

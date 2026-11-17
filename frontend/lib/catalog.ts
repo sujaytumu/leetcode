@@ -3,26 +3,32 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { API, apiWithWake, ExecutionStatus, ProblemDetail, ProblemSummary } from "./api";
 import { cacheGet, loadAll } from "./local";
 
-// The catalog and problem text ship with the site (frontend/public/data, generated from the backend seed), so the
-// problem list and every problem page render instantly. The backend only adds progress and bookmarks, and runs code.
+// Every problem (text, starter code, samples) ships with the site as frontend/public/problems-snapshot.json, generated from
+// the backend seed by scripts/build-snapshot.py. The problem list and every problem page render instantly from it; the
+// backend only adds progress and bookmarks, and runs code.
 
 type CatalogRow = Pick<ProblemSummary, "id" | "slug" | "title" | "difficulty" | "tags">;
 export type StaticProblem = Pick<ProblemDetail, "description" | "starterCode" | "samples">;
+type SnapshotRow = CatalogRow & StaticProblem;
 
-let catalogPromise: Promise<CatalogRow[]> | null = null;
-export function fetchCatalog(): Promise<CatalogRow[]> {
-  if (!catalogPromise) {
-    catalogPromise = fetch("/data/catalog.json")
-      .then((r) => { if (!r.ok) throw new Error(`catalog ${r.status}`); return r.json() as Promise<CatalogRow[]>; })
-      .catch((e) => { catalogPromise = null; throw e; });
+let snapPromise: Promise<SnapshotRow[]> | null = null;
+function fetchSnapshot(): Promise<SnapshotRow[]> {
+  if (!snapPromise) {
+    snapPromise = fetch("/problems-snapshot.json")
+      .then((r) => { if (!r.ok) throw new Error(`problem data ${r.status}`); return r.json() as Promise<SnapshotRow[]>; })
+      .catch((e) => { snapPromise = null; throw e; });
   }
-  return catalogPromise;
+  return snapPromise;
+}
+
+export function fetchCatalog(): Promise<CatalogRow[]> {
+  return fetchSnapshot().then((rows) => rows.map(({ id, slug, title, difficulty, tags }) => ({ id, slug, title, difficulty, tags })));
 }
 
 export async function fetchStaticProblem(slug: string): Promise<StaticProblem | null> {
   try {
-    const r = await fetch(`/data/problems/${encodeURIComponent(slug)}.json`);
-    return r.ok ? ((await r.json()) as StaticProblem) : null;
+    const row = (await fetchSnapshot()).find((p) => p.slug === slug);
+    return row ? { description: row.description, starterCode: row.starterCode, samples: row.samples } : null;
   } catch { return null; }
 }
 
@@ -52,7 +58,7 @@ export function useCatalog() {
   const items: ProblemSummary[] = useMemo(
     () => base.map((b) => {
       const o = overlay.get(b.slug);
-      return { ...b, status: o?.status ?? "TODO", bookmarked: o?.bookmarked ?? false };
+      return { ...b, status: o?.status ?? "TODO", bookmarked: o?.bookmarked ?? false, acceptance: o?.acceptance ?? null };
     }),
     [base, overlay],
   );

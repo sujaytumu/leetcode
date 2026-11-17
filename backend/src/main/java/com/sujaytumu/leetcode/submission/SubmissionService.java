@@ -13,6 +13,10 @@ import com.sujaytumu.leetcode.submission.SubmissionDtos.RunResponse;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.SubmissionView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,13 @@ public class SubmissionService {
 
     private static final int MAX_OUTPUT_CHARS = 1_000;
     private static final int MAX_ERROR_CHARS = 2_000;
+
+    /** Test cases are independent, so they run concurrently; a small pool keeps load on the free sandbox modest. */
+    private static final ExecutorService JUDGE_POOL = Executors.newFixedThreadPool(4, runnable -> {
+        Thread thread = new Thread(runnable, "judge-worker");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private final ProblemRepository problems;
     private final SubmissionRepository submissions;
@@ -42,10 +53,16 @@ public class SubmissionService {
         this.rateLimiter = rateLimiter;
     }
 
-    /** Runs against sample cases only; nothing is persisted. */
-    public RunResponse run(String slug, UUID clientId, Language language, String code) {
+    /**
+     * Runs against sample cases only, or once against {@code customInput} when it is non-blank.
+     * Nothing is persisted either way.
+     */
+    public RunResponse run(String slug, UUID clientId, Language language, String code, String customInput) {
         Problem problem = requireProblem(slug);
         rateLimiter.check(clientId);
+        if (customInput != null && !customInput.isBlank()) {
+            return runCustom(language, code, customInput);
+        }
         List<TestCase> cases = problem.getTestCases().stream().filter(TestCase::isSample).toList();
         return judge(problem, clientId, language, code, cases, false);
     }
@@ -73,9 +90,10 @@ public class SubmissionService {
         double maxSeconds = 0;
         boolean sawTime = false;
 
+        List<ExecutionResult> executions = executeAll(language, code, cases);
         for (int i = 0; i < cases.size(); i++) {
             TestCase testCase = cases.get(i);
-            ExecutionResult execution = executor.execute(language, code, testCase.getInput());
+            ExecutionResult execution = executions.get(i);
             if (execution.timeSeconds() != null) {
                 maxSeconds = Math.max(maxSeconds, execution.timeSeconds());
                 sawTime = true;
@@ -113,6 +131,74 @@ public class SubmissionService {
             submissionId = saved.getId();
         }
         return new RunResponse(verdict, passed, cases.size(), runtimeMs, message, results, submissionId);
+    }
+
+    /** Single execution with user-supplied stdin. There is no expected output, so "passed" means it ran cleanly. */
+    private RunResponse runCustom(Language language, String code, String customInput) {
+        String stdin = customInput.endsWith("\n") ? customInput : customInput + "\n";
+        ExecutionResult execution = executor.execute(language, code, stdin);
+        Integer timeMs = execution.timeSeconds() == null ? null : (int) Math.round(execution.timeSeconds() * 1000);
+
+        Verdict verdict;
+        String error = null;
+        switch (execution.status()) {
+            case OK -> verdict = Verdict.ACCEPTED;
+            case COMPILE_ERROR -> {
+                verdict = Verdict.COMPILE_ERROR;
+                error = truncate(execution.compileOutput(), MAX_ERROR_CHARS);
+            }
+            case RUNTIME_ERROR -> {
+                verdict = Verdict.RUNTIME_ERROR;
+                error = truncate(execution.stderr(), MAX_ERROR_CHARS);
+            }
+            case TIME_LIMIT_EXCEEDED -> verdict = Verdict.TIME_LIMIT_EXCEEDED;
+            default -> {
+                verdict = Verdict.INTERNAL_ERROR;
+                error = truncate(execution.stderr(), MAX_ERROR_CHARS);
+            }
+        }
+        boolean ok = verdict == Verdict.ACCEPTED;
+        String message = ok
+                ? null
+                : switch (verdict) {
+                    case COMPILE_ERROR -> "Compilation failed.";
+                    case RUNTIME_ERROR -> "Runtime error on your custom input.";
+                    case TIME_LIMIT_EXCEEDED -> "Time limit exceeded on your custom input.";
+                    default -> "The judge hit an internal error.";
+                };
+        CaseResult result = new CaseResult(
+                1, true, ok, verdict, stdin, null, truncate(execution.stdout(), MAX_OUTPUT_CHARS), error, timeMs);
+        return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, message, List.of(result), null);
+    }
+
+    private List<ExecutionResult> executeAll(Language language, String code, List<TestCase> cases) {
+        if (cases.isEmpty()) {
+            return List.of();
+        }
+        // Judge the first case alone: a compile error or wrong answer there ends the run without fanning out.
+        ExecutionResult first = executor.execute(language, code, cases.get(0).getInput());
+        if (cases.size() == 1 || evaluate(first, cases.get(0)).verdict != Verdict.ACCEPTED) {
+            return List.of(first);
+        }
+        List<CompletableFuture<ExecutionResult>> futures = new ArrayList<>();
+        for (TestCase testCase : cases.subList(1, cases.size())) {
+            String input = testCase.getInput(); // read on the request thread, before handing off
+            futures.add(CompletableFuture.supplyAsync(() -> executor.execute(language, code, input), JUDGE_POOL));
+        }
+        List<ExecutionResult> results = new ArrayList<>();
+        results.add(first);
+        for (CompletableFuture<ExecutionResult> future : futures) {
+            try {
+                results.add(future.join());
+            } catch (CompletionException ex) {
+                futures.forEach(f -> f.cancel(false));
+                if (ex.getCause() instanceof RuntimeException runtime) {
+                    throw runtime;
+                }
+                throw ex;
+            }
+        }
+        return results;
     }
 
     private CaseVerdict evaluate(ExecutionResult execution, TestCase testCase) {
