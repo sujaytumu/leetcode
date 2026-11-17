@@ -10,6 +10,7 @@ import {
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import Skeleton from "@/components/Skeleton";
+import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 import type { EditorProps } from "@monaco-editor/react";
@@ -45,6 +46,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [notes, setNotes] = useState("");
   const [fontSize, setFontSize] = useState(14);
   const [history, setHistory] = useState<Submission[]>([]);
+  const [openSub, setOpenSub] = useState<Submission | null>(null);
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
   const [hintsShown, setHintsShown] = useState(0);
@@ -304,20 +306,34 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); }} />
               </>
             ) : (
+              openSub ? (
+                <div className="subdetail">
+                  <button className="ghost" onClick={() => setOpenSub(null)}>← All submissions</button>
+                  <h3 className={`verdict ${openSub.verdict}`} style={{ marginTop: 10 }}>{title(openSub.verdict)}</h3>
+                  <div className="vstats">
+                    {openSub.passed} / {openSub.total} testcases passed · {openSub.language} · {new Date(openSub.createdAt).toLocaleString()}
+                  </div>
+                  {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
+                  <div className="iolabel" style={{ marginTop: 14 }}>Code</div>
+                  <pre className="subcode">{openSub.code}</pre>
+                  <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>
+                </div>
+              ) : (
               <table>
-                <thead><tr><th>Status</th><th>Language</th><th>Passed</th><th>Runtime</th><th>Submitted</th><th></th></tr></thead>
+                <thead><tr><th>Status</th><th>Language</th><th>Runtime</th><th>Memory</th><th>Submitted</th><th></th></tr></thead>
                 <tbody>
                   {history.map((s) => (
-                    <tr key={s.id}>
-                      <td className={s.verdict}><b>{title(s.verdict)}</b></td><td>{s.language}</td>
-                      <td>{s.passed}/{s.total}</td><td>{s.runtimeMs ?? "-"} ms</td>
+                    <tr key={s.id} className="subrow" onClick={() => setOpenSub(s)} title="Open details">
+                      <td className={s.verdict}><b>{title(s.verdict)}</b><div className="mute" style={{ fontSize: 12 }}>{s.passed}/{s.total} passed</div></td><td>{s.language}</td>
+                      <td>{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td><td>{s.memoryKb != null ? fmtMem(s.memoryKb) : "N/A"}</td>
                       <td className="mute">{new Date(s.createdAt).toLocaleString()}</td>
-                      <td><button onClick={() => { setLang(s.language); setCode(s.code); setTab("desc"); }}>Load</button></td>
+                      <td><button onClick={(e) => { e.stopPropagation(); setLang(s.language); setCode(s.code); setTab("desc"); }}>Load</button></td>
                     </tr>
                   ))}
                   {history.length === 0 && <tr><td colSpan={6} className="mute">No submissions yet.</td></tr>}
                 </tbody>
               </table>
+              )
             )}
           </div>
         </section>
@@ -400,8 +416,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         {customRun
                           ? "Custom input"
                           : `${result.passed} / ${result.total} testcases passed${mode === "run" ? " · sample cases only" : ""}`}
-                        {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}
+                        {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
+                      {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <SubmissionStatsPanel id={result.submissionId} />}
                       {result.message && <div className={result.verdict === "ACCEPTED" ? "" : "err"}>{result.message}</div>}
                       {result.cases.length > 1 && (
                         <div className="casechips" style={{ marginTop: 8 }}>

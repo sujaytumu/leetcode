@@ -38,7 +38,7 @@ public class TestExecutorConfig {
                     return ExecutionResult.ok("9 9\n", 0.01);
                 }
                 if (sourceCode.contains(SOLVE_TWO_SUM)) {
-                    return ExecutionResult.ok(twoSum(stdin), 0.02);
+                    return new ExecutionResult(Status.OK, twoSum(stdin), "", "", 0.02, 2048);
                 }
                 return ExecutionResult.ok("", 0.01);
             }

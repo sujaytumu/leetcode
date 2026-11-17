@@ -20,7 +20,13 @@ public interface CodeExecutor {
         INTERNAL_ERROR
     }
 
-    record ExecutionResult(Status status, String stdout, String stderr, String compileOutput, Double timeSeconds) {
+    record ExecutionResult(
+            Status status, String stdout, String stderr, String compileOutput, Double timeSeconds, Integer memoryKb) {
+
+        /** Result without a memory reading (executors that cannot measure it). */
+        public ExecutionResult(Status status, String stdout, String stderr, String compileOutput, Double timeSeconds) {
+            this(status, stdout, stderr, compileOutput, timeSeconds, null);
+        }
 
         public static ExecutionResult ok(String stdout, Double timeSeconds) {
             return new ExecutionResult(Status.OK, stdout, "", "", timeSeconds);

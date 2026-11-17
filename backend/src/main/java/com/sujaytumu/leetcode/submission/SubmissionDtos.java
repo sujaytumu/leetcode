@@ -40,6 +40,7 @@ public final class SubmissionDtos {
             int passed,
             int total,
             Integer runtimeMs,
+            Integer memoryKb,
             String message,
             List<CaseResult> cases,
             Long submissionId) {}
@@ -51,6 +52,7 @@ public final class SubmissionDtos {
             int passed,
             int total,
             Integer runtimeMs,
+            Integer memoryKb,
             Instant createdAt,
             String code) {
 
@@ -62,8 +64,21 @@ public final class SubmissionDtos {
                     s.getPassedCount(),
                     s.getTotalCount(),
                     s.getRuntimeMs(),
+                    s.getMemoryKb(),
                     s.getCreatedAt(),
                     s.getCode());
         }
     }
+
+    /** One histogram bucket: values in [from, to) (the last bucket includes its upper bound). */
+    public record Bin(int from, int to, int count) {}
+
+    /**
+     * How one measurement compares with other accepted submissions in the same language.
+     * {@code beatsPercent} is the share of the others that were strictly worse (null with no one to compare to).
+     */
+    public record Distribution(Integer value, Double beatsPercent, int userBin, List<Bin> bins) {}
+
+    public record SubmissionStats(
+            Long submissionId, Language language, int sampleSize, Distribution runtime, Distribution memory) {}
 }

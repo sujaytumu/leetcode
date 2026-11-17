@@ -11,6 +11,8 @@ import com.sujaytumu.leetcode.problem.TestCase;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.CaseResult;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.RunResponse;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.SubmissionView;
+import com.sujaytumu.leetcode.submission.SubmissionDtos.Distribution;
+import com.sujaytumu.leetcode.submission.SubmissionDtos.SubmissionStats;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -81,6 +83,43 @@ public class SubmissionService {
                 .toList();
     }
 
+    /** Cap on how many accepted submissions are compared, so the histogram query stays cheap. */
+    private static final int STATS_SAMPLE = 5000;
+
+    public SubmissionStats stats(long id, UUID clientId) {
+        Submission mine = submissions.findById(id)
+                .filter(s -> s.getClientId().equals(clientId) && s.getVerdict() == Verdict.ACCEPTED)
+                .orElseThrow(() -> new NotFoundException("No accepted submission " + id + " for this client"));
+        List<Object[]> rows = submissions.findMeasurements(
+                mine.getProblemId(), mine.getLanguage(), Verdict.ACCEPTED,
+                org.springframework.data.domain.PageRequest.of(0, STATS_SAMPLE));
+        List<Integer> times = new ArrayList<>();
+        List<Integer> memories = new ArrayList<>();
+        boolean included = false;
+        for (Object[] row : rows) {
+            included |= ((Number) row[0]).longValue() == mine.getId();
+            if (row[1] != null) {
+                times.add(((Number) row[1]).intValue());
+            }
+            if (row[2] != null) {
+                memories.add(((Number) row[2]).intValue());
+            }
+        }
+        int sample = rows.size();
+        if (!included) { // an older submission can fall outside the newest-STATS_SAMPLE window
+            sample++;
+            if (mine.getRuntimeMs() != null) {
+                times.add(mine.getRuntimeMs());
+            }
+            if (mine.getMemoryKb() != null) {
+                memories.add(mine.getMemoryKb());
+            }
+        }
+        Distribution runtime = mine.getRuntimeMs() == null ? null : StatsMath.distribution(times, mine.getRuntimeMs());
+        Distribution memory = mine.getMemoryKb() == null ? null : StatsMath.distribution(memories, mine.getMemoryKb());
+        return new SubmissionStats(mine.getId(), mine.getLanguage(), sample, runtime, memory);
+    }
+
     private RunResponse judge(
             Problem problem, UUID clientId, Language language, String code, List<TestCase> cases, boolean persist) {
         List<CaseResult> results = new ArrayList<>();
@@ -89,6 +128,8 @@ public class SubmissionService {
         int passed = 0;
         double maxSeconds = 0;
         boolean sawTime = false;
+        int maxMemoryKb = 0;
+        boolean sawMemory = false;
 
         List<ExecutionResult> executions = executeAll(language, code, cases);
         for (int i = 0; i < cases.size(); i++) {
@@ -97,6 +138,10 @@ public class SubmissionService {
             if (execution.timeSeconds() != null) {
                 maxSeconds = Math.max(maxSeconds, execution.timeSeconds());
                 sawTime = true;
+            }
+            if (execution.memoryKb() != null) {
+                maxMemoryKb = Math.max(maxMemoryKb, execution.memoryKb());
+                sawMemory = true;
             }
             Integer timeMs = execution.timeSeconds() == null ? null : (int) Math.round(execution.timeSeconds() * 1000);
 
@@ -124,13 +169,14 @@ public class SubmissionService {
         }
 
         Integer runtimeMs = sawTime ? (int) Math.round(maxSeconds * 1000) : null;
+        Integer memoryKb = sawMemory ? maxMemoryKb : null;
         Long submissionId = null;
         if (persist) {
             Submission saved = submissions.save(new Submission(
-                    clientId, problem.getId(), language, code, verdict, passed, cases.size(), runtimeMs));
+                    clientId, problem.getId(), language, code, verdict, passed, cases.size(), runtimeMs, memoryKb));
             submissionId = saved.getId();
         }
-        return new RunResponse(verdict, passed, cases.size(), runtimeMs, message, results, submissionId);
+        return new RunResponse(verdict, passed, cases.size(), runtimeMs, memoryKb, message, results, submissionId);
     }
 
     /** Single execution with user-supplied stdin. There is no expected output, so "passed" means it ran cleanly. */
@@ -168,7 +214,7 @@ public class SubmissionService {
                 };
         CaseResult result = new CaseResult(
                 1, true, ok, verdict, stdin, null, truncate(execution.stdout(), MAX_OUTPUT_CHARS), error, timeMs);
-        return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, message, List.of(result), null);
+        return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, execution.memoryKb(), message, List.of(result), null);
     }
 
     private List<ExecutionResult> executeAll(Language language, String code, List<TestCase> cases) {

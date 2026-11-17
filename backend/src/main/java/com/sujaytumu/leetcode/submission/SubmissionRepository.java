@@ -37,6 +37,19 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             """)
     List<Object[]> acceptanceStats(@Param("ids") Collection<Long> ids, @Param("accepted") Verdict accepted);
 
+    /** Rows of [id, runtimeMs, memoryKb] (newest first) of accepted submissions for a problem in one language (all clients). */
+    @Query("""
+            select s.id, s.runtimeMs, s.memoryKb
+            from Submission s
+            where s.problemId = :problemId and s.language = :language and s.verdict = :verdict
+            order by s.id desc
+            """)
+    List<Object[]> findMeasurements(
+            @Param("problemId") Long problemId,
+            @Param("language") com.sujaytumu.leetcode.judge.Language language,
+            @Param("verdict") Verdict verdict,
+            Pageable pageable);
+
     /** Timestamps of every submission by a client since the given instant (for the activity calendar). */
     @Query("select s.createdAt from Submission s where s.clientId = :clientId and s.createdAt >= :since")
     List<Instant> findSubmissionTimesSince(@Param("clientId") UUID clientId, @Param("since") Instant since);
