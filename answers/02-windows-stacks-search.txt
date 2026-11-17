@@ -1,0 +1,718 @@
+=== minimum-size-subarray-sum
+--- py
+def solve(target, nums):
+    best = len(nums) + 1
+    left = total = 0
+    for right, x in enumerate(nums):
+        total += x
+        while total >= target:
+            best = min(best, right - left + 1)
+            total -= nums[left]
+            left += 1
+    return 0 if best == len(nums) + 1 else best
+--- js
+function solve(target, nums) {
+  let best = nums.length + 1, left = 0, total = 0;
+  for (let right = 0; right < nums.length; right++) {
+    total += nums[right];
+    while (total >= target) {
+      best = Math.min(best, right - left + 1);
+      total -= nums[left++];
+    }
+  }
+  return best === nums.length + 1 ? 0 : best;
+}
+--- cpp
+int solve(int target, vector<int> nums) {
+    int n = nums.size(), best = n + 1, left = 0;
+    long long total = 0;
+    for (int right = 0; right < n; right++) {
+        total += nums[right];
+        while (total >= target) {
+            best = min(best, right - left + 1);
+            total -= nums[left++];
+        }
+    }
+    return best == n + 1 ? 0 : best;
+}
+--- java
+static int solve(int target, int[] nums) {
+    int n = nums.length, best = n + 1, left = 0;
+    long total = 0;
+    for (int right = 0; right < n; right++) {
+        total += nums[right];
+        while (total >= target) {
+            best = Math.min(best, right - left + 1);
+            total -= nums[left++];
+        }
+    }
+    return best == n + 1 ? 0 : best;
+}
+=== longest-repeating-character-replacement
+--- py
+def solve(s, k):
+    counts = {}
+    best = left = most = 0
+    for right, ch in enumerate(s):
+        counts[ch] = counts.get(ch, 0) + 1
+        most = max(most, counts[ch])
+        while (right - left + 1) - most > k:
+            counts[s[left]] -= 1
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+--- js
+function solve(s, k) {
+  const counts = new Array(26).fill(0);
+  let best = 0, left = 0, most = 0;
+  for (let right = 0; right < s.length; right++) {
+    const c = s.charCodeAt(right) - 65;
+    most = Math.max(most, ++counts[c]);
+    while (right - left + 1 - most > k) counts[s.charCodeAt(left++) - 65]--;
+    best = Math.max(best, right - left + 1);
+  }
+  return best;
+}
+--- cpp
+int solve(string s, int k) {
+    vector<int> counts(26, 0);
+    int best = 0, left = 0, most = 0;
+    for (int right = 0; right < (int)s.size(); right++) {
+        most = max(most, ++counts[s[right] - 'A']);
+        while (right - left + 1 - most > k) counts[s[left++] - 'A']--;
+        best = max(best, right - left + 1);
+    }
+    return best;
+}
+--- java
+static int solve(String s, int k) {
+    int[] counts = new int[26];
+    int best = 0, left = 0, most = 0;
+    for (int right = 0; right < s.length(); right++) {
+        most = Math.max(most, ++counts[s.charAt(right) - 'A']);
+        while (right - left + 1 - most > k) counts[s.charAt(left++) - 'A']--;
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+=== permutation-in-string
+--- py
+def solve(s1, s2):
+    n, m = len(s1), len(s2)
+    if n > m:
+        return False
+    need = [0] * 26
+    window = [0] * 26
+    for i in range(n):
+        need[ord(s1[i]) - 97] += 1
+        window[ord(s2[i]) - 97] += 1
+    if need == window:
+        return True
+    for i in range(n, m):
+        window[ord(s2[i]) - 97] += 1
+        window[ord(s2[i - n]) - 97] -= 1
+        if need == window:
+            return True
+    return False
+--- js
+function solve(s1, s2) {
+  const n = s1.length, m = s2.length;
+  if (n > m) return false;
+  const need = new Array(26).fill(0), window = new Array(26).fill(0);
+  for (let i = 0; i < n; i++) { need[s1.charCodeAt(i) - 97]++; window[s2.charCodeAt(i) - 97]++; }
+  const same = () => need.every((v, i) => v === window[i]);
+  if (same()) return true;
+  for (let i = n; i < m; i++) {
+    window[s2.charCodeAt(i) - 97]++;
+    window[s2.charCodeAt(i - n) - 97]--;
+    if (same()) return true;
+  }
+  return false;
+}
+--- cpp
+bool solve(string s1, string s2) {
+    int n = s1.size(), m = s2.size();
+    if (n > m) return false;
+    vector<int> need(26, 0), window(26, 0);
+    for (int i = 0; i < n; i++) { need[s1[i] - 'a']++; window[s2[i] - 'a']++; }
+    if (need == window) return true;
+    for (int i = n; i < m; i++) {
+        window[s2[i] - 'a']++;
+        window[s2[i - n] - 'a']--;
+        if (need == window) return true;
+    }
+    return false;
+}
+--- java
+static boolean solve(String s1, String s2) {
+    int n = s1.length(), m = s2.length();
+    if (n > m) return false;
+    int[] need = new int[26], window = new int[26];
+    for (int i = 0; i < n; i++) { need[s1.charAt(i) - 'a']++; window[s2.charAt(i) - 'a']++; }
+    if (Arrays.equals(need, window)) return true;
+    for (int i = n; i < m; i++) {
+        window[s2.charAt(i) - 'a']++;
+        window[s2.charAt(i - n) - 'a']--;
+        if (Arrays.equals(need, window)) return true;
+    }
+    return false;
+}
+=== daily-temperatures
+--- py
+def solve(temperatures):
+    answer = [0] * len(temperatures)
+    stack = []
+    for i, t in enumerate(temperatures):
+        while stack and temperatures[stack[-1]] < t:
+            j = stack.pop()
+            answer[j] = i - j
+        stack.append(i)
+    return answer
+--- js
+function solve(temperatures) {
+  const answer = new Array(temperatures.length).fill(0), stack = [];
+  for (let i = 0; i < temperatures.length; i++) {
+    while (stack.length && temperatures[stack[stack.length - 1]] < temperatures[i]) {
+      const j = stack.pop();
+      answer[j] = i - j;
+    }
+    stack.push(i);
+  }
+  return answer;
+}
+--- cpp
+vector<int> solve(vector<int> temperatures) {
+    int n = temperatures.size();
+    vector<int> answer(n, 0), stack;
+    for (int i = 0; i < n; i++) {
+        while (!stack.empty() && temperatures[stack.back()] < temperatures[i]) {
+            int j = stack.back();
+            stack.pop_back();
+            answer[j] = i - j;
+        }
+        stack.push_back(i);
+    }
+    return answer;
+}
+--- java
+static int[] solve(int[] temperatures) {
+    int n = temperatures.length;
+    int[] answer = new int[n];
+    Deque<Integer> stack = new ArrayDeque<>();
+    for (int i = 0; i < n; i++) {
+        while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {
+            int j = stack.pop();
+            answer[j] = i - j;
+        }
+        stack.push(i);
+    }
+    return answer;
+}
+=== trapping-rain-water
+--- py
+def solve(height):
+    left, right = 0, len(height) - 1
+    left_max = right_max = water = 0
+    while left < right:
+        if height[left] < height[right]:
+            left_max = max(left_max, height[left])
+            water += left_max - height[left]
+            left += 1
+        else:
+            right_max = max(right_max, height[right])
+            water += right_max - height[right]
+            right -= 1
+    return water
+--- js
+function solve(height) {
+  let left = 0, right = height.length - 1, leftMax = 0, rightMax = 0, water = 0;
+  while (left < right) {
+    if (height[left] < height[right]) {
+      leftMax = Math.max(leftMax, height[left]);
+      water += leftMax - height[left++];
+    } else {
+      rightMax = Math.max(rightMax, height[right]);
+      water += rightMax - height[right--];
+    }
+  }
+  return water;
+}
+--- cpp
+int solve(vector<int> height) {
+    int left = 0, right = (int)height.size() - 1, leftMax = 0, rightMax = 0;
+    long long water = 0;
+    while (left < right) {
+        if (height[left] < height[right]) {
+            leftMax = max(leftMax, height[left]);
+            water += leftMax - height[left++];
+        } else {
+            rightMax = max(rightMax, height[right]);
+            water += rightMax - height[right--];
+        }
+    }
+    return (int)water;
+}
+--- java
+static int solve(int[] height) {
+    int left = 0, right = height.length - 1, leftMax = 0, rightMax = 0;
+    long water = 0;
+    while (left < right) {
+        if (height[left] < height[right]) {
+            leftMax = Math.max(leftMax, height[left]);
+            water += leftMax - height[left++];
+        } else {
+            rightMax = Math.max(rightMax, height[right]);
+            water += rightMax - height[right--];
+        }
+    }
+    return (int) water;
+}
+=== largest-rectangle-in-histogram
+--- py
+def solve(heights):
+    best = 0
+    stack = []  # indices of bars with increasing heights
+    for i, h in enumerate(heights + [0]):
+        start = i
+        while stack and stack[-1][1] >= h:
+            index, height = stack.pop()
+            best = max(best, height * (i - index))
+            start = index
+        stack.append((start, h))
+    return best
+--- js
+function solve(heights) {
+  let best = 0;
+  const stack = []; // [startIndex, height] with increasing heights
+  const bars = [...heights, 0];
+  for (let i = 0; i < bars.length; i++) {
+    let start = i;
+    while (stack.length && stack[stack.length - 1][1] >= bars[i]) {
+      const [index, height] = stack.pop();
+      best = Math.max(best, height * (i - index));
+      start = index;
+    }
+    stack.push([start, bars[i]]);
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> heights) {
+    long long best = 0;
+    heights.push_back(0);
+    vector<pair<int, int>> stack;  // {start index, height}
+    for (int i = 0; i < (int)heights.size(); i++) {
+        int start = i;
+        while (!stack.empty() && stack.back().second >= heights[i]) {
+            auto [index, height] = stack.back();
+            stack.pop_back();
+            best = max(best, (long long)height * (i - index));
+            start = index;
+        }
+        stack.push_back({start, heights[i]});
+    }
+    return (int)best;
+}
+--- java
+static int solve(int[] heights) {
+    long best = 0;
+    int n = heights.length;
+    Deque<int[]> stack = new ArrayDeque<>();  // {start index, height}
+    for (int i = 0; i <= n; i++) {
+        int h = i == n ? 0 : heights[i], start = i;
+        while (!stack.isEmpty() && stack.peek()[1] >= h) {
+            int[] top = stack.pop();
+            best = Math.max(best, (long) top[1] * (i - top[0]));
+            start = top[0];
+        }
+        stack.push(new int[] {start, h});
+    }
+    return (int) best;
+}
+=== binary-search
+--- py
+def solve(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+--- js
+function solve(nums, target) {
+  let lo = 0, hi = nums.length - 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (nums[mid] === target) return mid;
+    if (nums[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
+}
+--- cpp
+int solve(vector<int> nums, int target) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+--- java
+static int solve(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+=== search-insert-position
+--- py
+def solve(nums, target):
+    lo, hi = 0, len(nums)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+--- js
+function solve(nums, target) {
+  let lo = 0, hi = nums.length;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (nums[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+--- cpp
+int solve(vector<int> nums, int target) {
+    int lo = 0, hi = nums.size();
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] < target) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+--- java
+static int solve(int[] nums, int target) {
+    int lo = 0, hi = nums.length;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] < target) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+=== sqrt-x
+--- py
+def solve(x):
+    lo, hi = 0, x
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if mid * mid <= x:
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+--- js
+function solve(x) {
+  let lo = 0, hi = x;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi + 1) / 2);
+    if (mid * mid <= x) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+--- cpp
+int solve(int x) {
+    long long lo = 0, hi = x;
+    while (lo < hi) {
+        long long mid = (lo + hi + 1) / 2;
+        if (mid * mid <= x) lo = mid;
+        else hi = mid - 1;
+    }
+    return (int)lo;
+}
+--- java
+static int solve(int x) {
+    long lo = 0, hi = x;
+    while (lo < hi) {
+        long mid = (lo + hi + 1) / 2;
+        if (mid * mid <= x) lo = mid;
+        else hi = mid - 1;
+    }
+    return (int) lo;
+}
+=== find-minimum-in-rotated-sorted-array
+--- py
+def solve(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+--- js
+function solve(nums) {
+  let lo = 0, hi = nums.length - 1;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (nums[mid] > nums[hi]) lo = mid + 1;
+    else hi = mid;
+  }
+  return nums[lo];
+}
+--- cpp
+int solve(vector<int> nums) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] > nums[hi]) lo = mid + 1;
+        else hi = mid;
+    }
+    return nums[lo];
+}
+--- java
+static int solve(int[] nums) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] > nums[hi]) lo = mid + 1;
+        else hi = mid;
+    }
+    return nums[lo];
+}
+=== search-in-rotated-sorted-array
+--- py
+def solve(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:  # left half is sorted
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:  # right half is sorted
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+--- js
+function solve(nums, target) {
+  let lo = 0, hi = nums.length - 1;
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (nums[mid] === target) return mid;
+    if (nums[lo] <= nums[mid]) {
+      if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+      else lo = mid + 1;
+    } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
+}
+--- cpp
+int solve(vector<int> nums, int target) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[lo] <= nums[mid]) {
+            if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+--- java
+static int solve(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[lo] <= nums[mid]) {
+            if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+=== two-sum-ii-input-array-is-sorted
+--- py
+def solve(numbers, target):
+    lo, hi = 0, len(numbers) - 1
+    while lo < hi:
+        total = numbers[lo] + numbers[hi]
+        if total == target:
+            return [lo + 1, hi + 1]
+        if total < target:
+            lo += 1
+        else:
+            hi -= 1
+    return []
+--- js
+function solve(numbers, target) {
+  let lo = 0, hi = numbers.length - 1;
+  while (lo < hi) {
+    const total = numbers[lo] + numbers[hi];
+    if (total === target) return [lo + 1, hi + 1];
+    if (total < target) lo++;
+    else hi--;
+  }
+  return [];
+}
+--- cpp
+vector<int> solve(vector<int> numbers, int target) {
+    int lo = 0, hi = (int)numbers.size() - 1;
+    while (lo < hi) {
+        long long total = (long long)numbers[lo] + numbers[hi];
+        if (total == target) return {lo + 1, hi + 1};
+        if (total < target) lo++;
+        else hi--;
+    }
+    return {};
+}
+--- java
+static int[] solve(int[] numbers, int target) {
+    int lo = 0, hi = numbers.length - 1;
+    while (lo < hi) {
+        long total = (long) numbers[lo] + numbers[hi];
+        if (total == target) return new int[] {lo + 1, hi + 1};
+        if (total < target) lo++;
+        else hi--;
+    }
+    return new int[0];
+}
+=== koko-eating-bananas
+--- py
+def solve(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        k = (lo + hi) // 2
+        hours = sum((p + k - 1) // k for p in piles)
+        if hours <= h:
+            hi = k
+        else:
+            lo = k + 1
+    return lo
+--- js
+function solve(piles, h) {
+  let lo = 1, hi = Math.max(...piles);
+  while (lo < hi) {
+    const k = Math.floor((lo + hi) / 2);
+    let hours = 0;
+    for (const p of piles) hours += Math.ceil(p / k);
+    if (hours <= h) hi = k;
+    else lo = k + 1;
+  }
+  return lo;
+}
+--- cpp
+int solve(vector<int> piles, int h) {
+    int lo = 1, hi = *max_element(piles.begin(), piles.end());
+    while (lo < hi) {
+        int k = lo + (hi - lo) / 2;
+        long long hours = 0;
+        for (int p : piles) hours += (p + k - 1) / k;
+        if (hours <= h) hi = k;
+        else lo = k + 1;
+    }
+    return lo;
+}
+--- java
+static int solve(int[] piles, int h) {
+    int lo = 1, hi = Arrays.stream(piles).max().getAsInt();
+    while (lo < hi) {
+        int k = lo + (hi - lo) / 2;
+        long hours = 0;
+        for (int p : piles) hours += (p + k - 1) / k;
+        if (hours <= h) hi = k;
+        else lo = k + 1;
+    }
+    return lo;
+}
+=== capacity-to-ship-packages
+--- py
+def solve(weights, days):
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        cap = (lo + hi) // 2
+        need, load = 1, 0
+        for w in weights:
+            if load + w > cap:
+                need += 1
+                load = 0
+            load += w
+        if need <= days:
+            hi = cap
+        else:
+            lo = cap + 1
+    return lo
+--- js
+function solve(weights, days) {
+  let lo = Math.max(...weights), hi = weights.reduce((a, b) => a + b, 0);
+  while (lo < hi) {
+    const cap = Math.floor((lo + hi) / 2);
+    let need = 1, load = 0;
+    for (const w of weights) {
+      if (load + w > cap) { need++; load = 0; }
+      load += w;
+    }
+    if (need <= days) hi = cap;
+    else lo = cap + 1;
+  }
+  return lo;
+}
+--- cpp
+int solve(vector<int> weights, int days) {
+    long long lo = *max_element(weights.begin(), weights.end()), hi = 0;
+    for (int w : weights) hi += w;
+    while (lo < hi) {
+        long long cap = (lo + hi) / 2, load = 0;
+        int need = 1;
+        for (int w : weights) {
+            if (load + w > cap) { need++; load = 0; }
+            load += w;
+        }
+        if (need <= days) hi = cap;
+        else lo = cap + 1;
+    }
+    return (int)lo;
+}
+--- java
+static int solve(int[] weights, int days) {
+    long lo = Arrays.stream(weights).max().getAsInt(), hi = Arrays.stream(weights).asLongStream().sum();
+    while (lo < hi) {
+        long cap = (lo + hi) / 2, load = 0;
+        int need = 1;
+        for (int w : weights) {
+            if (load + w > cap) { need++; load = 0; }
+            load += w;
+        }
+        if (need <= days) hi = cap;
+        else lo = cap + 1;
+    }
+    return (int) lo;
+}

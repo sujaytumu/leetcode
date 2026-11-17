@@ -212,5 +212,131 @@
    "python": "def solve(s):\n    last = {}\n    best = start = 0\n    for i, ch in enumerate(s):\n        if ch in last and last[ch] >= start:\n            start = last[ch] + 1\n        last[ch] = i\n        best = max(best, i - start + 1)\n    return best\n",
    "javascript": "function solve(s) {\n  const last = new Map();\n  let best = 0, start = 0;\n  for (let i = 0; i < s.length; i++) {\n    const ch = s[i];\n    if (last.has(ch) && last.get(ch) >= start) start = last.get(ch) + 1;\n    last.set(ch, i);\n    best = Math.max(best, i - start + 1);\n  }\n  return best;\n}\n"
   }
+ },
+ "minimum-size-subarray-sum": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(int target, vector<int> nums) {\n    int n = nums.size(), best = n + 1, left = 0;\n    long long total = 0;\n    for (int right = 0; right < n; right++) {\n        total += nums[right];\n        while (total >= target) {\n            best = min(best, right - left + 1);\n            total -= nums[left++];\n        }\n    }\n    return best == n + 1 ? 0 : best;\n}\n",
+   "java": "static int solve(int target, int[] nums) {\n    int n = nums.length, best = n + 1, left = 0;\n    long total = 0;\n    for (int right = 0; right < n; right++) {\n        total += nums[right];\n        while (total >= target) {\n            best = Math.min(best, right - left + 1);\n            total -= nums[left++];\n        }\n    }\n    return best == n + 1 ? 0 : best;\n}\n",
+   "python": "def solve(target, nums):\n    best = len(nums) + 1\n    left = total = 0\n    for right, x in enumerate(nums):\n        total += x\n        while total >= target:\n            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1\n    return 0 if best == len(nums) + 1 else best\n",
+   "javascript": "function solve(target, nums) {\n  let best = nums.length + 1, left = 0, total = 0;\n  for (let right = 0; right < nums.length; right++) {\n    total += nums[right];\n    while (total >= target) {\n      best = Math.min(best, right - left + 1);\n      total -= nums[left++];\n    }\n  }\n  return best === nums.length + 1 ? 0 : best;\n}\n"
+  }
+ },
+ "longest-repeating-character-replacement": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(string s, int k) {\n    vector<int> counts(26, 0);\n    int best = 0, left = 0, most = 0;\n    for (int right = 0; right < (int)s.size(); right++) {\n        most = max(most, ++counts[s[right] - 'A']);\n        while (right - left + 1 - most > k) counts[s[left++] - 'A']--;\n        best = max(best, right - left + 1);\n    }\n    return best;\n}\n",
+   "java": "static int solve(String s, int k) {\n    int[] counts = new int[26];\n    int best = 0, left = 0, most = 0;\n    for (int right = 0; right < s.length(); right++) {\n        most = Math.max(most, ++counts[s.charAt(right) - 'A']);\n        while (right - left + 1 - most > k) counts[s.charAt(left++) - 'A']--;\n        best = Math.max(best, right - left + 1);\n    }\n    return best;\n}\n",
+   "python": "def solve(s, k):\n    counts = {}\n    best = left = most = 0\n    for right, ch in enumerate(s):\n        counts[ch] = counts.get(ch, 0) + 1\n        most = max(most, counts[ch])\n        while (right - left + 1) - most > k:\n            counts[s[left]] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "javascript": "function solve(s, k) {\n  const counts = new Array(26).fill(0);\n  let best = 0, left = 0, most = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s.charCodeAt(right) - 65;\n    most = Math.max(most, ++counts[c]);\n    while (right - left + 1 - most > k) counts[s.charCodeAt(left++) - 65]--;\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}\n"
+  }
+ },
+ "permutation-in-string": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "bool solve(string s1, string s2) {\n    int n = s1.size(), m = s2.size();\n    if (n > m) return false;\n    vector<int> need(26, 0), window(26, 0);\n    for (int i = 0; i < n; i++) { need[s1[i] - 'a']++; window[s2[i] - 'a']++; }\n    if (need == window) return true;\n    for (int i = n; i < m; i++) {\n        window[s2[i] - 'a']++;\n        window[s2[i - n] - 'a']--;\n        if (need == window) return true;\n    }\n    return false;\n}\n",
+   "java": "static boolean solve(String s1, String s2) {\n    int n = s1.length(), m = s2.length();\n    if (n > m) return false;\n    int[] need = new int[26], window = new int[26];\n    for (int i = 0; i < n; i++) { need[s1.charAt(i) - 'a']++; window[s2.charAt(i) - 'a']++; }\n    if (Arrays.equals(need, window)) return true;\n    for (int i = n; i < m; i++) {\n        window[s2.charAt(i) - 'a']++;\n        window[s2.charAt(i - n) - 'a']--;\n        if (Arrays.equals(need, window)) return true;\n    }\n    return false;\n}\n",
+   "python": "def solve(s1, s2):\n    n, m = len(s1), len(s2)\n    if n > m:\n        return False\n    need = [0] * 26\n    window = [0] * 26\n    for i in range(n):\n        need[ord(s1[i]) - 97] += 1\n        window[ord(s2[i]) - 97] += 1\n    if need == window:\n        return True\n    for i in range(n, m):\n        window[ord(s2[i]) - 97] += 1\n        window[ord(s2[i - n]) - 97] -= 1\n        if need == window:\n            return True\n    return False\n",
+   "javascript": "function solve(s1, s2) {\n  const n = s1.length, m = s2.length;\n  if (n > m) return false;\n  const need = new Array(26).fill(0), window = new Array(26).fill(0);\n  for (let i = 0; i < n; i++) { need[s1.charCodeAt(i) - 97]++; window[s2.charCodeAt(i) - 97]++; }\n  const same = () => need.every((v, i) => v === window[i]);\n  if (same()) return true;\n  for (let i = n; i < m; i++) {\n    window[s2.charCodeAt(i) - 97]++;\n    window[s2.charCodeAt(i - n) - 97]--;\n    if (same()) return true;\n  }\n  return false;\n}\n"
+  }
+ },
+ "daily-temperatures": {
+  "editorial": "## Approach\n\nMonotonic stack of indices with decreasing temperatures. When today is warmer than the day on top, pop it and set its answer to the index difference. Push today afterwards.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "vector<int> solve(vector<int> temperatures) {\n    int n = temperatures.size();\n    vector<int> answer(n, 0), stack;\n    for (int i = 0; i < n; i++) {\n        while (!stack.empty() && temperatures[stack.back()] < temperatures[i]) {\n            int j = stack.back();\n            stack.pop_back();\n            answer[j] = i - j;\n        }\n        stack.push_back(i);\n    }\n    return answer;\n}\n",
+   "java": "static int[] solve(int[] temperatures) {\n    int n = temperatures.length;\n    int[] answer = new int[n];\n    Deque<Integer> stack = new ArrayDeque<>();\n    for (int i = 0; i < n; i++) {\n        while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {\n            int j = stack.pop();\n            answer[j] = i - j;\n        }\n        stack.push(i);\n    }\n    return answer;\n}\n",
+   "python": "def solve(temperatures):\n    answer = [0] * len(temperatures)\n    stack = []\n    for i, t in enumerate(temperatures):\n        while stack and temperatures[stack[-1]] < t:\n            j = stack.pop()\n            answer[j] = i - j\n        stack.append(i)\n    return answer\n",
+   "javascript": "function solve(temperatures) {\n  const answer = new Array(temperatures.length).fill(0), stack = [];\n  for (let i = 0; i < temperatures.length; i++) {\n    while (stack.length && temperatures[stack[stack.length - 1]] < temperatures[i]) {\n      const j = stack.pop();\n      answer[j] = i - j;\n    }\n    stack.push(i);\n  }\n  return answer;\n}\n"
+  }
+ },
+ "trapping-rain-water": {
+  "editorial": "## Approach\n\nKeep left and right pointers with their running maxima. Always advance the side whose maximum is smaller, since that side's water level is already determined; add max − height at that pointer.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> height) {\n    int left = 0, right = (int)height.size() - 1, leftMax = 0, rightMax = 0;\n    long long water = 0;\n    while (left < right) {\n        if (height[left] < height[right]) {\n            leftMax = max(leftMax, height[left]);\n            water += leftMax - height[left++];\n        } else {\n            rightMax = max(rightMax, height[right]);\n            water += rightMax - height[right--];\n        }\n    }\n    return (int)water;\n}\n",
+   "java": "static int solve(int[] height) {\n    int left = 0, right = height.length - 1, leftMax = 0, rightMax = 0;\n    long water = 0;\n    while (left < right) {\n        if (height[left] < height[right]) {\n            leftMax = Math.max(leftMax, height[left]);\n            water += leftMax - height[left++];\n        } else {\n            rightMax = Math.max(rightMax, height[right]);\n            water += rightMax - height[right--];\n        }\n    }\n    return (int) water;\n}\n",
+   "python": "def solve(height):\n    left, right = 0, len(height) - 1\n    left_max = right_max = water = 0\n    while left < right:\n        if height[left] < height[right]:\n            left_max = max(left_max, height[left])\n            water += left_max - height[left]\n            left += 1\n        else:\n            right_max = max(right_max, height[right])\n            water += right_max - height[right]\n            right -= 1\n    return water\n",
+   "javascript": "function solve(height) {\n  let left = 0, right = height.length - 1, leftMax = 0, rightMax = 0, water = 0;\n  while (left < right) {\n    if (height[left] < height[right]) {\n      leftMax = Math.max(leftMax, height[left]);\n      water += leftMax - height[left++];\n    } else {\n      rightMax = Math.max(rightMax, height[right]);\n      water += rightMax - height[right--];\n    }\n  }\n  return water;\n}\n"
+  }
+ },
+ "largest-rectangle-in-histogram": {
+  "editorial": "## Approach\n\nMonotonic stack of (start index, height). When a shorter bar arrives, pop taller bars and compute their area as height × (i − start); the popped bar's start carries over to the new bar. A final sentinel height of 0 flushes the stack.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> heights) {\n    long long best = 0;\n    heights.push_back(0);\n    vector<pair<int, int>> stack;  // {start index, height}\n    for (int i = 0; i < (int)heights.size(); i++) {\n        int start = i;\n        while (!stack.empty() && stack.back().second >= heights[i]) {\n            auto [index, height] = stack.back();\n            stack.pop_back();\n            best = max(best, (long long)height * (i - index));\n            start = index;\n        }\n        stack.push_back({start, heights[i]});\n    }\n    return (int)best;\n}\n",
+   "java": "static int solve(int[] heights) {\n    long best = 0;\n    int n = heights.length;\n    Deque<int[]> stack = new ArrayDeque<>();  // {start index, height}\n    for (int i = 0; i <= n; i++) {\n        int h = i == n ? 0 : heights[i], start = i;\n        while (!stack.isEmpty() && stack.peek()[1] >= h) {\n            int[] top = stack.pop();\n            best = Math.max(best, (long) top[1] * (i - top[0]));\n            start = top[0];\n        }\n        stack.push(new int[] {start, h});\n    }\n    return (int) best;\n}\n",
+   "python": "def solve(heights):\n    best = 0\n    stack = []  # indices of bars with increasing heights\n    for i, h in enumerate(heights + [0]):\n        start = i\n        while stack and stack[-1][1] >= h:\n            index, height = stack.pop()\n            best = max(best, height * (i - index))\n            start = index\n        stack.append((start, h))\n    return best\n",
+   "javascript": "function solve(heights) {\n  let best = 0;\n  const stack = []; // [startIndex, height] with increasing heights\n  const bars = [...heights, 0];\n  for (let i = 0; i < bars.length; i++) {\n    let start = i;\n    while (stack.length && stack[stack.length - 1][1] >= bars[i]) {\n      const [index, height] = stack.pop();\n      best = Math.max(best, height * (i - index));\n      start = index;\n    }\n    stack.push([start, bars[i]]);\n  }\n  return best;\n}\n"
+  }
+ },
+ "binary-search": {
+  "editorial": "## Approach\n\nCompare the middle element with the target. If equal, return it; if the middle is smaller, search the right half, otherwise the left half. Stop when the range is empty and return −1.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums, int target) {\n    int lo = 0, hi = (int)nums.size() - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] == target) return mid;\n        if (nums[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n",
+   "java": "static int solve(int[] nums, int target) {\n    int lo = 0, hi = nums.length - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] == target) return mid;\n        if (nums[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n",
+   "python": "def solve(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+   "javascript": "function solve(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo <= hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}\n"
+  }
+ },
+ "search-insert-position": {
+  "editorial": "## Approach\n\nBinary search for the first index where nums[i] >= target (a lower bound). That index is both the match position and the insertion point.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums, int target) {\n    int lo = 0, hi = nums.size();\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] < target) lo = mid + 1;\n        else hi = mid;\n    }\n    return lo;\n}\n",
+   "java": "static int solve(int[] nums, int target) {\n    int lo = 0, hi = nums.length;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] < target) lo = mid + 1;\n        else hi = mid;\n    }\n    return lo;\n}\n",
+   "python": "def solve(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+   "javascript": "function solve(nums, target) {\n  let lo = 0, hi = nums.length;\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (nums[mid] < target) lo = mid + 1;\n    else hi = mid;\n  }\n  return lo;\n}\n"
+  }
+ },
+ "sqrt-x": {
+  "editorial": "## Approach\n\nBinary search on y in [0, x]. If y × y <= x remember y and go right, otherwise go left. Compare using y <= x / y or a 64-bit product to prevent overflow.\n\n**Complexity:** O(log x) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(int x) {\n    long long lo = 0, hi = x;\n    while (lo < hi) {\n        long long mid = (lo + hi + 1) / 2;\n        if (mid * mid <= x) lo = mid;\n        else hi = mid - 1;\n    }\n    return (int)lo;\n}\n",
+   "java": "static int solve(int x) {\n    long lo = 0, hi = x;\n    while (lo < hi) {\n        long mid = (lo + hi + 1) / 2;\n        if (mid * mid <= x) lo = mid;\n        else hi = mid - 1;\n    }\n    return (int) lo;\n}\n",
+   "python": "def solve(x):\n    lo, hi = 0, x\n    while lo < hi:\n        mid = (lo + hi + 1) // 2\n        if mid * mid <= x:\n            lo = mid\n        else:\n            hi = mid - 1\n    return lo\n",
+   "javascript": "function solve(x) {\n  let lo = 0, hi = x;\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi + 1) / 2);\n    if (mid * mid <= x) lo = mid;\n    else hi = mid - 1;\n  }\n  return lo;\n}\n"
+  }
+ },
+ "find-minimum-in-rotated-sorted-array": {
+  "editorial": "## Approach\n\nBinary search: if nums[mid] > nums[hi] the rotation point is right of mid so set lo = mid + 1, otherwise the minimum is at mid or left of it so set hi = mid. When lo == hi it is the minimum.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int lo = 0, hi = (int)nums.size() - 1;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] > nums[hi]) lo = mid + 1;\n        else hi = mid;\n    }\n    return nums[lo];\n}\n",
+   "java": "static int solve(int[] nums) {\n    int lo = 0, hi = nums.length - 1;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] > nums[hi]) lo = mid + 1;\n        else hi = mid;\n    }\n    return nums[lo];\n}\n",
+   "python": "def solve(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\n",
+   "javascript": "function solve(nums) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (nums[mid] > nums[hi]) lo = mid + 1;\n    else hi = mid;\n  }\n  return nums[lo];\n}\n"
+  }
+ },
+ "search-in-rotated-sorted-array": {
+  "editorial": "## Approach\n\nBinary search. If nums[lo] <= nums[mid] the left half is sorted: go left when the target is in [nums[lo], nums[mid]), else right. Otherwise the right half is sorted and the symmetric test applies.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums, int target) {\n    int lo = 0, hi = (int)nums.size() - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] == target) return mid;\n        if (nums[lo] <= nums[mid]) {\n            if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;\n            else lo = mid + 1;\n        } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n",
+   "java": "static int solve(int[] nums, int target) {\n    int lo = 0, hi = nums.length - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] == target) return mid;\n        if (nums[lo] <= nums[mid]) {\n            if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;\n            else lo = mid + 1;\n        } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n",
+   "python": "def solve(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:  # left half is sorted\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:  # right half is sorted\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\n",
+   "javascript": "function solve(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo <= hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[lo] <= nums[mid]) {\n      if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;\n      else lo = mid + 1;\n    } else if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}\n"
+  }
+ },
+ "two-sum-ii-input-array-is-sorted": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "vector<int> solve(vector<int> numbers, int target) {\n    int lo = 0, hi = (int)numbers.size() - 1;\n    while (lo < hi) {\n        long long total = (long long)numbers[lo] + numbers[hi];\n        if (total == target) return {lo + 1, hi + 1};\n        if (total < target) lo++;\n        else hi--;\n    }\n    return {};\n}\n",
+   "java": "static int[] solve(int[] numbers, int target) {\n    int lo = 0, hi = numbers.length - 1;\n    while (lo < hi) {\n        long total = (long) numbers[lo] + numbers[hi];\n        if (total == target) return new int[] {lo + 1, hi + 1};\n        if (total < target) lo++;\n        else hi--;\n    }\n    return new int[0];\n}\n",
+   "python": "def solve(numbers, target):\n    lo, hi = 0, len(numbers) - 1\n    while lo < hi:\n        total = numbers[lo] + numbers[hi]\n        if total == target:\n            return [lo + 1, hi + 1]\n        if total < target:\n            lo += 1\n        else:\n            hi -= 1\n    return []\n",
+   "javascript": "function solve(numbers, target) {\n  let lo = 0, hi = numbers.length - 1;\n  while (lo < hi) {\n    const total = numbers[lo] + numbers[hi];\n    if (total === target) return [lo + 1, hi + 1];\n    if (total < target) lo++;\n    else hi--;\n  }\n  return [];\n}\n"
+  }
+ },
+ "koko-eating-bananas": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(vector<int> piles, int h) {\n    int lo = 1, hi = *max_element(piles.begin(), piles.end());\n    while (lo < hi) {\n        int k = lo + (hi - lo) / 2;\n        long long hours = 0;\n        for (int p : piles) hours += (p + k - 1) / k;\n        if (hours <= h) hi = k;\n        else lo = k + 1;\n    }\n    return lo;\n}\n",
+   "java": "static int solve(int[] piles, int h) {\n    int lo = 1, hi = Arrays.stream(piles).max().getAsInt();\n    while (lo < hi) {\n        int k = lo + (hi - lo) / 2;\n        long hours = 0;\n        for (int p : piles) hours += (p + k - 1) / k;\n        if (hours <= h) hi = k;\n        else lo = k + 1;\n    }\n    return lo;\n}\n",
+   "python": "def solve(piles, h):\n    lo, hi = 1, max(piles)\n    while lo < hi:\n        k = (lo + hi) // 2\n        hours = sum((p + k - 1) // k for p in piles)\n        if hours <= h:\n            hi = k\n        else:\n            lo = k + 1\n    return lo\n",
+   "javascript": "function solve(piles, h) {\n  let lo = 1, hi = Math.max(...piles);\n  while (lo < hi) {\n    const k = Math.floor((lo + hi) / 2);\n    let hours = 0;\n    for (const p of piles) hours += Math.ceil(p / k);\n    if (hours <= h) hi = k;\n    else lo = k + 1;\n  }\n  return lo;\n}\n"
+  }
+ },
+ "capacity-to-ship-packages": {
+  "editorial": null,
+  "solutions": {
+   "cpp": "int solve(vector<int> weights, int days) {\n    long long lo = *max_element(weights.begin(), weights.end()), hi = 0;\n    for (int w : weights) hi += w;\n    while (lo < hi) {\n        long long cap = (lo + hi) / 2, load = 0;\n        int need = 1;\n        for (int w : weights) {\n            if (load + w > cap) { need++; load = 0; }\n            load += w;\n        }\n        if (need <= days) hi = cap;\n        else lo = cap + 1;\n    }\n    return (int)lo;\n}\n",
+   "java": "static int solve(int[] weights, int days) {\n    long lo = Arrays.stream(weights).max().getAsInt(), hi = Arrays.stream(weights).asLongStream().sum();\n    while (lo < hi) {\n        long cap = (lo + hi) / 2, load = 0;\n        int need = 1;\n        for (int w : weights) {\n            if (load + w > cap) { need++; load = 0; }\n            load += w;\n        }\n        if (need <= days) hi = cap;\n        else lo = cap + 1;\n    }\n    return (int) lo;\n}\n",
+   "python": "def solve(weights, days):\n    lo, hi = max(weights), sum(weights)\n    while lo < hi:\n        cap = (lo + hi) // 2\n        need, load = 1, 0\n        for w in weights:\n            if load + w > cap:\n                need += 1\n                load = 0\n            load += w\n        if need <= days:\n            hi = cap\n        else:\n            lo = cap + 1\n    return lo\n",
+   "javascript": "function solve(weights, days) {\n  let lo = Math.max(...weights), hi = weights.reduce((a, b) => a + b, 0);\n  while (lo < hi) {\n    const cap = Math.floor((lo + hi) / 2);\n    let need = 1, load = 0;\n    for (const w of weights) {\n      if (load + w > cap) { need++; load = 0; }\n      load += w;\n    }\n    if (need <= days) hi = cap;\n    else lo = cap + 1;\n  }\n  return lo;\n}\n"
+  }
  }
 }
