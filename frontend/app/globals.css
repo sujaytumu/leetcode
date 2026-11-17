@@ -344,7 +344,9 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .comment { border-bottom:1px solid var(--line); padding:10px 0; }
 .comment.nested { margin:8px 0 0 18px; padding:8px 0 0 12px; border-bottom:0; border-left:2px solid var(--line); }
 .chead { display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:13px; }
-.cbody { white-space:pre-wrap; overflow-wrap:anywhere; margin:4px 0; }
+.cbody { overflow-wrap:anywhere; margin:4px 0; }
+.cbody > :first-child { margin-top:0; } .cbody > :last-child { margin-bottom:0; }
+.cbody pre { overflow-x:auto; }
 .cactions { display:flex; gap:6px; }
 .cactions button { font-size:12px; padding:2px 8px; }
 .cactions button.on, .bar button.on { border-color:var(--accent); color:var(--accent); }
@@ -354,3 +356,5 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 @media (max-width:900px) { .play-io { grid-template-columns:1fr; } }
 .contest-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .countdown { text-align:right; } .countdown b { font:600 22px/1.2 ui-monospace, monospace; }
+.contest-head b { display:inline; }
+.contest-head .countdown b { display:block; }
