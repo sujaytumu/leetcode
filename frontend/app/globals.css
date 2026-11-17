@@ -358,3 +358,13 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .countdown { text-align:right; } .countdown b { font:600 22px/1.2 ui-monospace, monospace; }
 .contest-head b { display:inline; }
 .contest-head .countdown b { display:block; }
+
+/* ---- for-you page ---- */
+.recs { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:10px; }
+.rec { display:block; color:inherit; text-decoration:none; transition:border-color .15s, transform .15s; }
+.rec:hover { border-color:var(--accent); transform:translateY(-1px); }
+
+/* ---- many nav links: scroll sideways instead of clipping (phones/small laptops) ---- */
+.nav nav { min-width:0; overflow-x:auto; scrollbar-width:none; }
+.nav nav::-webkit-scrollbar { display:none; }
+.nav nav > * { flex:none; }

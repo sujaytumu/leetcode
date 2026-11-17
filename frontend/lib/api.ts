@@ -49,6 +49,8 @@ export interface Meta {
   difficulties: MetaOption[]; statuses: MetaOption[]; languages: LanguageOption[];
   defaultLanguage: string; pageSize: number;
 }
+export interface Recommendation { problem: ProblemSummary; reason: string }
+export interface Recommendations { next: Recommendation[]; unfinished: Recommendation[]; revisit: Recommendation[] }
 export interface Topic { tag: string; total: number; solved: number; byDifficulty: Record<string, number> }
 /** "hash-table" -> "Hash Table" */
 export const tagLabel = (tag: string): string => tag.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
