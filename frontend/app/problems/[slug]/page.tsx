@@ -16,6 +16,7 @@ import VoteButtons from "@/components/VoteButtons";
 import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
+import Discuss from "@/components/Discuss";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import FreeSpace from "@/components/FreeSpace";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
@@ -53,7 +54,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
-  const [tab, setTab] = useState<"desc" | "editorial" | "answer" | "history" | "notes">("desc");
+  const [tab, setTab] = useState<"desc" | "editorial" | "answer" | "discuss" | "history" | "notes">("desc");
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -315,6 +316,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
             <button className={tab === "editorial" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("editorial")}>Editorial</button>
             <button className={tab === "answer" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("answer")}>Answer</button>
+            <button className={tab === "discuss" ? "on" : ""} onClick={() => setTab("discuss")}>Discuss</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
@@ -394,6 +396,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   </>
                 )}
               </div>
+            ) : tab === "discuss" ? (
+              <Discuss slug={slug} />
             ) : tab === "notes" ? (
               <>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
