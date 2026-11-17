@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
 import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
@@ -320,6 +321,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
             </button>
             <button onClick={toggleBookmark}>{problem.bookmarked ? "★ Bookmarked" : "☆ Bookmark"}</button>
+            <AddToList slug={slug} />
           </div>
           <div className="left-body">
             {tab === "desc" ? (

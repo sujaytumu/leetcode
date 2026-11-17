@@ -321,3 +321,15 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .spinner { width:34px; height:34px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent); animation:lcspin .8s linear infinite; }
 @keyframes lcspin { to { transform:rotate(360deg); } }
 .answer-code { white-space:pre; overflow:auto; max-height:60vh; font:13px/1.5 ui-monospace, monospace; }
+
+/* ---- my lists ---- */
+.addlist { position:relative; display:inline-block; }
+.addlist-pop { position:absolute; right:0; top:calc(100% + 6px); z-index:30; width:260px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+.addlist-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; font-size:13px; }
+.addlist-pop ul { list-style:none; margin:0 0 8px; padding:0; max-height:180px; overflow:auto; }
+.addlist-pop li { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:4px 0; font-size:13px; }
+.addlist-pop label { display:flex; align-items:center; gap:6px; cursor:pointer; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.addlist-new { display:flex; gap:6px; } .addlist-new input { flex:1; min-width:0; }
+.listrow { display:flex; align-items:baseline; gap:6px; }
+.linklike { background:none; border:none; color:var(--mute); cursor:pointer; font-size:12px; padding:0 4px; } .linklike:hover { color:var(--hard); }
+@media (max-width:700px) { .addlist-pop { position:fixed; left:12px; right:12px; top:auto; bottom:12px; width:auto; } }
