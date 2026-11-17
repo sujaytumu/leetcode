@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
+import ProfileCard from "@/components/ProfileCard";
 import SolvedCard from "@/components/SolvedCard";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
@@ -41,6 +42,8 @@ export default function ProfilePage() {
 
   return (
     <>
+      <div className="playout">
+      <ProfileCard />
       <div className="pgrid">
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
@@ -103,6 +106,7 @@ export default function ProfilePage() {
           {p.skills.length === 0 && <p className="mute">Topics you solve appear here.</p>}
           <div>{p.skills.map((s) => <span key={s.tag} className="tag skill">{s.tag} <span className="mute">×{s.solved}</span></span>)}</div>
         </aside>
+      </div>
       </div>
     </>
   );
