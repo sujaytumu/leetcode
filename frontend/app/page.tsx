@@ -6,6 +6,7 @@ import { api, Daily, fetchAllProblems, localDate, Page, Progress, ProblemSummary
 import { swr } from "@/lib/local";
 import Activity from "@/components/Activity";
 import SolvedCard from "@/components/SolvedCard";
+import Skeleton from "@/components/Skeleton";
 import { useMeta } from "@/lib/meta";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
@@ -128,9 +129,9 @@ export default function Home() {
         </div>
 
         <aside className="home-side">
-          {progress && meta && (
+          {progress && meta ? (
             <SolvedCard progress={progress} attempting={Math.max(0, progress.attempted - progress.solved)} difficulties={meta.difficulties} />
-          )}
+          ) : <div className="card"><Skeleton lines={6} /></div>}
           {daily && (
             <div className="card daily">
               <div>
