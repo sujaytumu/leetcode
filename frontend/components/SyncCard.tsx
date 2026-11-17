@@ -43,7 +43,7 @@ export default function SyncCard() {
         {board?.me
           ? <>Global rank <b style={{ display: "inline", fontSize: 16 }}>#{board.me.rank}</b> of {board.participants} · {board.me.points} points · </>
           : <span className="mute">Solve a problem to get a global rank. </span>}
-        <Link href="/leaderboard">View leaderboard</Link>
+        <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link>
       </p>
       <div className="iolabel">Your sync code</div>
       <div className="bar" style={{ flexWrap: "wrap" }}>
