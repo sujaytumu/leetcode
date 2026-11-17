@@ -33,8 +33,8 @@ class StudyApiTest {
     }
 
     @Test
-    void returnsNoContentWhenAProblemHasNoStudyWriteUp() throws Exception {
-        mvc.perform(get("/api/problems/find-if-path-exists-in-graph/study")).andExpect(status().isNoContent());
+    void returnsNoContentWhenThereIsNoStudyWriteUp() throws Exception {
+        mvc.perform(get("/api/problems/no-such-problem/study")).andExpect(status().isNoContent());
     }
 
     @Test

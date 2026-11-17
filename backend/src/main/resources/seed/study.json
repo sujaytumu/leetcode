@@ -857,5 +857,175 @@
     "approach": "Backtracking by row: for row r try every column c not in cols, diag (r - c) or anti-diag (r + c); mark, recurse to r + 1, unmark. Count the times you pass the last row. Bitmasks (cols | diags) make each step O(1) and are the fastest practical approach.",
     "time": "O(n!) worst case",
     "space": "O(n)"
+  },
+  "find-if-path-exists-in-graph": {
+    "hints": [
+      "This asks only whether two nodes are connected, not for the path.",
+      "Build an adjacency list from the edge list.",
+      "Run BFS or DFS from the source with a visited set, or use union-find over all edges and compare roots."
+    ],
+    "approach": "Adjacency list + BFS from source marking visited nodes; return true on reaching the destination. Union-find is equally good: union every edge, then check find(source) == find(destination). Handle source == destination as true.",
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "course-schedule": {
+    "hints": [
+      "Think of courses as nodes and prerequisites as directed edges.",
+      "You can finish all courses exactly when the graph has no cycle.",
+      "Kahn's algorithm: repeatedly take courses with in-degree 0; if you process all of them there is no cycle."
+    ],
+    "approach": "Topological sort (Kahn): compute in-degrees, queue every node with in-degree 0, pop one, decrement in-degrees of its neighbours and queue those that reach 0. Count the processed nodes; the answer is true iff count == numCourses. DFS with three colours (unvisited, in-stack, done) detects the cycle as well.",
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "number-of-connected-components": {
+    "hints": [
+      "A component is a maximal set of nodes reachable from each other.",
+      "Every time you start a fresh search from an unvisited node you have found a new component.",
+      "Union-find also works: start with n components and decrement on each successful union."
+    ],
+    "approach": "DFS/BFS over an adjacency list: for each unvisited node increment the count and flood-fill its component. Or union-find with path compression, counting merges: components = n - successfulUnions.",
+    "time": "O(V + E)",
+    "space": "O(V + E)"
+  },
+  "rotting-oranges": {
+    "hints": [
+      "Rot spreads outward one step per minute from all rotten oranges simultaneously.",
+      "That is a multi-source BFS: put every initially rotten orange in the queue.",
+      "Process the queue level by level; each level is one minute. Count fresh oranges to know whether any are left unreached."
+    ],
+    "approach": "Count fresh oranges and enqueue all rotten ones. BFS in rounds: each round rots the fresh 4-neighbours, decrementing the fresh count and adding them to the queue; increment minutes only for rounds that rot something. If fresh > 0 at the end return -1.",
+    "time": "O(R·C)",
+    "space": "O(R·C)"
+  },
+  "shortest-path-in-binary-matrix": {
+    "hints": [
+      "All moves cost the same, so BFS finds the shortest path.",
+      "Moves go in 8 directions, and the answer counts cells, not edges.",
+      "Return -1 immediately if the start or the end is blocked; mark cells visited when enqueuing."
+    ],
+    "approach": "BFS from (0,0) with distance 1 over the 8 neighbours, marking cells as visited (or overwriting them with 1) when pushed. The first time the bottom-right cell is dequeued its distance is the answer; if the queue empties return -1.",
+    "time": "O(n²)",
+    "space": "O(n²)"
+  },
+  "perfect-squares": {
+    "hints": [
+      "It resembles coin change where the coins are the perfect squares.",
+      "dp[i] = 1 + min(dp[i - s]) over squares s <= i.",
+      "BFS over remainders also works; Lagrange's four-square theorem bounds the answer by 4."
+    ],
+    "approach": "dp[0] = 0; for i in 1..n: dp[i] = min over j with j*j <= i of dp[i - j*j] + 1. The answer is dp[n]. A number-theory solution checks for 1 square, 2 squares (sum of two squares), the 4^a(8b+7) form (4), else 3 in O(sqrt n).",
+    "time": "O(n√n)",
+    "space": "O(n)"
+  },
+  "longest-consecutive-sequence": {
+    "hints": [
+      "Sorting is O(n log n); the problem asks for linear time.",
+      "Put all numbers into a hash set.",
+      "Only start counting from a number whose predecessor (x - 1) is absent, then walk x, x + 1, x + 2, … while present."
+    ],
+    "approach": "Insert all values into a set. For each x with x - 1 not in the set, extend upward while the next value exists and track the longest run. Each number is visited at most twice (once as a candidate start check, once while being counted), which gives linear time.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "counting-bits": {
+    "hints": [
+      "Counting bits of each number independently costs O(n log n).",
+      "i and i >> 1 differ only in the lowest bit.",
+      "bits[i] = bits[i >> 1] + (i & 1)."
+    ],
+    "approach": "DP over the answer array: bits[0] = 0 and bits[i] = bits[i >> 1] + (i & 1). Another form is bits[i] = bits[i & (i - 1)] + 1 (remove the lowest set bit). Linear time with the output as the only storage.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "is-subsequence": {
+    "hints": [
+      "You only need to match characters of s in order inside t.",
+      "Two pointers, one in each string.",
+      "Advance the pointer in t always; advance the pointer in s only on a match."
+    ],
+    "approach": "i over s, j over t. For each character t[j], if i < |s| and s[i] == t[j] increment i. At the end s is a subsequence iff i == |s|. For many queries against one t, precompute next-occurrence indices and binary search.",
+    "time": "O(|t|)",
+    "space": "O(1)"
+  },
+  "maximal-square": {
+    "hints": [
+      "Let dp[i][j] be the side of the largest square whose bottom-right corner is at (i, j).",
+      "A square at (i, j) needs squares ending at its top, left and top-left cells.",
+      "dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) when the cell is 1."
+    ],
+    "approach": "Bottom-right-corner DP: for a '1' cell take 1 plus the minimum of the three neighbours (up, left, up-left), otherwise 0. Track the largest side and return side². Only the previous row is needed, so space can be reduced to O(C).",
+    "time": "O(R·C)",
+    "space": "O(C)"
+  },
+  "decode-ways": {
+    "hints": [
+      "Define ways(i) as the number of decodings of the first i characters.",
+      "The last one or two digits can form a valid letter.",
+      "A single digit is valid if it is 1-9; a pair is valid if it is 10-26."
+    ],
+    "approach": "dp[0] = 1, dp[1] = (s[0] != '0'). For i >= 2: add dp[i-1] if s[i-1] != '0'; add dp[i-2] if the two digits form a number between 10 and 26. Only the last two values are needed. A string starting with '0' or containing an isolated '0' gives 0.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "unique-paths-ii": {
+    "hints": [
+      "Without obstacles the paths to a cell are the sum of paths to its top and left cells.",
+      "An obstacle cell has zero paths through it.",
+      "Watch the first row and column and obstacles at the start or end."
+    ],
+    "approach": "dp[r][c] = 0 on obstacles, otherwise dp[r-1][c] + dp[r][c-1], with dp[0][0] = 1 if the start is open. A single row array updated left to right suffices. Counts can be large; check whether the output needs a modulus.",
+    "time": "O(R·C)",
+    "space": "O(C)"
+  },
+  "house-robber-ii": {
+    "hints": [
+      "The circle means the first and last houses cannot both be robbed.",
+      "Break the circle into two linear problems.",
+      "Solve House Robber on houses[0..n-2] and on houses[1..n-1] and take the larger; handle n = 1 separately."
+    ],
+    "approach": "Linear helper rob(a, b) with prev/cur rolling variables: cur = max(cur, prev + x). The answer is max(rob(0, n-2), rob(1, n-1)); if n == 1 return nums[0]. One of the two ranges always excludes whichever of the first or last house the optimal solution skips.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "jump-game-ii": {
+    "hints": [
+      "A DP over every reachable index is O(n²).",
+      "Think in terms of BFS levels: positions reachable with j jumps form a contiguous range.",
+      "Greedy: track the farthest reachable index and extend the jump count when you pass the end of the current range."
+    ],
+    "approach": "Greedy BFS without a queue: keep `curEnd` (end of the current jump's range) and `farthest`. For i in 0..n-2: farthest = max(farthest, i + nums[i]); when i == curEnd, increment jumps and set curEnd = farthest. The jump count at the end is minimal.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "minimum-path-sum": {
+    "hints": [
+      "Each cell can only be reached from above or from the left.",
+      "The cheapest way to reach a cell is its cost plus the cheaper of those two.",
+      "Initialise the first row and column as prefix sums."
+    ],
+    "approach": "dp[r][c] = grid[r][c] + min(dp[r-1][c], dp[r][c-1]) with the edge cases for the first row and column. The answer is dp[R-1][C-1]. A single row array can overwrite the grid in place or be kept separately.",
+    "time": "O(R·C)",
+    "space": "O(C)"
+  },
+  "longest-valid-parentheses": {
+    "hints": [
+      "Matching parentheses are naturally handled by a stack.",
+      "Push indices rather than characters so you can measure lengths.",
+      "Keep a base index at the bottom of the stack for the last unmatched ')' and compute length as i - stack.top after each pop."
+    ],
+    "approach": "Stack of indices initialised with -1. For '(' push i. For ')' pop; if the stack is now empty push i as the new base, otherwise best = max(best, i - stack.top). A two-pass counter scan (left to right, then right to left) solves it in O(1) space.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "split-array-largest-sum": {
+    "hints": [
+      "If a maximum allowed subarray sum S works, any larger S works too.",
+      "That makes S binary-searchable between max(nums) and sum(nums).",
+      "To test S, greedily extend each piece until adding the next number would exceed S and count how many pieces you need."
+    ],
+    "approach": "Binary search on S in [max(nums), sum(nums)]. feasible(S): greedily pack numbers, starting a new subarray when the running sum would exceed S, and check pieces <= k. The smallest feasible S is the answer. A DP over (index, pieces) also works in O(k·n²) but is slower.",
+    "time": "O(n log(sum))",
+    "space": "O(1)"
   }
 }
