@@ -487,5 +487,205 @@
     "approach": "Binary search on capacity in [max(weights), sum(weights)]. Feasibility check: simulate loading in order, starting a new day whenever the next package would overflow the ship. If days used <= D, the capacity works so search lower, otherwise higher.",
     "time": "O(n log(sum))",
     "space": "O(1)"
+  },
+  "reverse-linked-list": {
+    "hints": [
+      "You only need to change where each node's next pointer points.",
+      "Keep track of the previous node as you walk forward.",
+      "Before overwriting node.next, save the original next node so you do not lose the rest of the list."
+    ],
+    "approach": "Iterative: prev = null, cur = head. While cur exists: save nxt = cur.next, set cur.next = prev, then prev = cur and cur = nxt. prev is the new head. The recursive form reverses the tail first and then makes head.next.next = head, using O(n) stack.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "merge-two-sorted-lists": {
+    "hints": [
+      "Always the smaller of the two current heads goes next.",
+      "A dummy head node removes the special case for the first element.",
+      "When one list runs out, attach the remainder of the other directly."
+    ],
+    "approach": "Create a dummy node and a tail pointer. While both lists are non-empty, link the smaller head to tail and advance that list. Finally link whichever list still has nodes. Return dummy.next. Nodes are reused, so no new nodes besides the dummy are allocated.",
+    "time": "O(n + m)",
+    "space": "O(1)"
+  },
+  "middle-of-the-linked-list": {
+    "hints": [
+      "You do not know the length up front.",
+      "Two pointers moving at different speeds meet your need.",
+      "Move one pointer two steps and the other one step; when the fast one reaches the end the slow one is in the middle."
+    ],
+    "approach": "Fast and slow pointers: slow advances one node, fast two. When fast is null or has no next, slow is the middle; for an even length this lands on the second middle node as required.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "palindrome-linked-list": {
+    "hints": [
+      "Comparing with a copy of the list in an array works but uses O(n) space.",
+      "Find the middle, then reverse the second half in place.",
+      "Compare the two halves node by node; optionally restore the list afterwards."
+    ],
+    "approach": "Use fast/slow pointers to find the middle, reverse the second half, then walk both halves together comparing values. If every pair matches it is a palindrome. This is O(n) time and O(1) extra space; re-reverse the second half if the input must stay intact.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "remove-duplicates-from-sorted-list": {
+    "hints": [
+      "Duplicates are adjacent because the list is sorted.",
+      "Compare each node with its next node.",
+      "If they are equal, skip the next node by pointing cur.next past it; otherwise advance."
+    ],
+    "approach": "Walk with cur. While cur.next exists: if cur.next.val == cur.val set cur.next = cur.next.next, else cur = cur.next. Only the first node of each run is kept. No dummy is required because the head is never removed.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "remove-nth-node-from-end-of-list": {
+    "hints": [
+      "Removing from the end is easier if you know where the end is relative to a pointer.",
+      "Keep two pointers exactly n nodes apart.",
+      "Start both at a dummy head; move the lead pointer n steps, then move both until the lead hits the last node. The trailing pointer is just before the node to delete."
+    ],
+    "approach": "Dummy node before head so removing the first node is not special. Advance `fast` n steps, then advance `fast` and `slow` together until fast.next is null. slow.next is the target; set slow.next = slow.next.next. One pass.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "add-two-numbers": {
+    "hints": [
+      "The digits are already stored least-significant first, which is the order you add in.",
+      "Carry the overflow to the next digit.",
+      "Keep looping while either list has nodes or a carry remains; treat a missing node as 0."
+    ],
+    "approach": "Walk both lists together with a carry. sum = a + b + carry; append sum % 10 to the result and set carry = sum / 10. Continue until both lists are exhausted and carry is zero. A dummy head simplifies building the result.",
+    "time": "O(max(n, m))",
+    "space": "O(1) beyond the output"
+  },
+  "swap-nodes-in-pairs": {
+    "hints": [
+      "You must relink nodes, so the node before each pair matters.",
+      "Use a dummy node and a pointer `prev` to the node before the current pair.",
+      "For each pair a -> b, rewire prev -> b -> a -> next, then move prev to a."
+    ],
+    "approach": "With dummy -> head, while prev.next and prev.next.next exist let a = prev.next, b = a.next; set a.next = b.next, b.next = a, prev.next = b, then prev = a. The dummy also handles the new head.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "odd-even-linked-list": {
+    "hints": [
+      "Build two chains: nodes at odd positions and nodes at even positions.",
+      "Remember where the even chain starts.",
+      "After the loop, link the end of the odd chain to the head of the even chain."
+    ],
+    "approach": "Set odd = head, even = head.next, evenHead = even. While even and even.next exist: odd.next = even.next; odd = odd.next; even.next = odd.next; even = even.next. Finally odd.next = evenHead. Each node is touched once and nothing is allocated.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "sort-list": {
+    "hints": [
+      "Arrays are sorted with random access; for linked lists merge sort is the natural fit.",
+      "Split the list in the middle with fast/slow pointers.",
+      "Sort both halves recursively and merge them with the merge-two-sorted-lists routine."
+    ],
+    "approach": "Top-down merge sort: find the middle (stop slow before the second half), cut the list in two, recursively sort each half and merge. Recursion depth is O(log n). A bottom-up version that merges runs of size 1, 2, 4, … reaches O(1) extra space.",
+    "time": "O(n log n)",
+    "space": "O(log n) recursion (O(1) bottom-up)"
+  },
+  "reorder-list": {
+    "hints": [
+      "The result interleaves the first half with the reversed second half.",
+      "Find the middle, reverse the second half.",
+      "Then merge the two halves alternately, taking one node from each."
+    ],
+    "approach": "Three steps: (1) find the middle with fast/slow pointers and cut the list there, (2) reverse the second half, (3) weave the two lists: first.next = second, second.next = firstNext, and so on. All done by relinking nodes in place.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "reverse-nodes-in-k-group": {
+    "hints": [
+      "First check whether k nodes are actually available; otherwise leave the tail alone.",
+      "Reverse exactly k nodes with the standard iterative reversal.",
+      "Reconnect: the previous group's tail must point to the new head of this group, and this group's old head (now its tail) to the next group."
+    ],
+    "approach": "Use a dummy and `groupPrev`. For each group, find the k-th node (stop if there are fewer than k). Reverse the k nodes between groupPrev and kth.next, then set groupPrev.next to kth, move groupPrev to the old group head (now the tail) and repeat.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "maximum-depth-of-binary-tree": {
+    "hints": [
+      "The depth of a tree is 1 plus the larger depth of its two subtrees.",
+      "An empty tree has depth 0.",
+      "Recursion is the shortest solution; a level-order BFS counting levels also works."
+    ],
+    "approach": "depth(node) = 0 if null else 1 + max(depth(left), depth(right)). Equivalent BFS: process level by level and count levels. Mind the recursion depth on skewed trees; use the BFS or an explicit stack if it is a concern.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "invert-binary-tree": {
+    "hints": [
+      "Inverting means swapping the left and right child of every node.",
+      "Do it for every node, in any traversal order.",
+      "Recursively invert the children and then swap them (or swap first, then recurse)."
+    ],
+    "approach": "invert(node): if null return null; swap node.left and node.right after (or before) inverting both subtrees; return node. An iterative BFS with a queue does the same swap at every dequeued node.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "symmetric-tree": {
+    "hints": [
+      "A tree is symmetric if its left subtree is a mirror of its right subtree.",
+      "Write a helper that compares two nodes at once.",
+      "Two nodes mirror each other if their values match, a.left mirrors b.right and a.right mirrors b.left."
+    ],
+    "approach": "isMirror(a, b): both null is true; exactly one null or different values is false; otherwise isMirror(a.left, b.right) && isMirror(a.right, b.left). Start with isMirror(root.left, root.right). An iterative version pushes mirrored pairs on a queue.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "same-tree": {
+    "hints": [
+      "Compare two trees node by node in lock step.",
+      "Handle the null cases first.",
+      "Equal if both null, or both non-null with equal values and equal left and right subtrees."
+    ],
+    "approach": "same(p, q): if both null return true; if only one is null or values differ return false; else return same(p.left, q.left) && same(p.right, q.right). Structure and values must both match.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "diameter-of-binary-tree": {
+    "hints": [
+      "The longest path through a node uses its deepest left chain plus its deepest right chain.",
+      "Compute heights bottom-up with DFS.",
+      "While returning the height, update a global best with leftHeight + rightHeight."
+    ],
+    "approach": "DFS returns the height of each subtree (edges to the deepest leaf). At every node the longest path through it is left + right, so keep a running maximum. The answer is that maximum, which need not pass through the root. One traversal suffices.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "binary-tree-inorder-traversal": {
+    "hints": [
+      "Inorder means left subtree, node, right subtree.",
+      "Recursion is trivial; try the iterative version with your own stack.",
+      "Push nodes while going left; pop to visit, then move to the right child."
+    ],
+    "approach": "Iterative: cur = root, stack empty. While cur or stack non-empty: go as far left as possible pushing nodes; pop a node, record its value, set cur = node.right. For a BST this yields sorted order. Morris traversal achieves O(1) space by threading.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "path-sum": {
+    "hints": [
+      "A valid path must end at a leaf, not at any node.",
+      "Subtract the node value from the target as you go down.",
+      "At a leaf, check whether the remaining target equals the leaf's value."
+    ],
+    "approach": "hasPath(node, remaining): null is false; if node is a leaf return remaining == node.val; otherwise recurse on both children with remaining - node.val and OR the results.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "balanced-binary-tree": {
+    "hints": [
+      "Balanced means every node's subtree heights differ by at most 1.",
+      "Computing height at each node separately is O(n²) on skewed trees.",
+      "Compute height and balance in the same DFS, returning a sentinel (such as -1) when a subtree is unbalanced."
+    ],
+    "approach": "height(node) returns -1 if either child is unbalanced or their heights differ by more than 1, else 1 + max of the child heights. The tree is balanced if height(root) != -1. Each node is visited once.",
+    "time": "O(n)",
+    "space": "O(h)"
   }
 }
