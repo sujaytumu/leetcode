@@ -339,3 +339,12 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .mockclock { font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; } .mockclock.low { color:var(--hard); }
 .mockprobs { display:flex; gap:10px; } .mockprobs a.on { font-weight:700; text-decoration:underline; }
 .mockresult { list-style:none; margin:10px 0; padding:0; display:grid; gap:4px; }
+
+.discuss textarea, .reply-box textarea { width:100%; min-height:72px; resize:vertical; box-sizing:border-box; background:var(--code-bg); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:8px; font:inherit; }
+.comment { border-bottom:1px solid var(--line); padding:10px 0; }
+.comment.nested { margin:8px 0 0 18px; padding:8px 0 0 12px; border-bottom:0; border-left:2px solid var(--line); }
+.chead { display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:13px; }
+.cbody { white-space:pre-wrap; overflow-wrap:anywhere; margin:4px 0; }
+.cactions { display:flex; gap:6px; }
+.cactions button { font-size:12px; padding:2px 8px; }
+.cactions button.on, .bar button.on { border-color:var(--accent); color:var(--accent); }
