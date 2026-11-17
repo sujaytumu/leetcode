@@ -8,6 +8,8 @@ import { useMeta } from "@/lib/meta";
 import Skeleton from "@/components/Skeleton";
 import { swr } from "@/lib/local";
 
+const BADGE_ICON: Record<string, string> = { SOLVED: "🎯", HARD: "💎", STREAK: "🔥", ACTIVE: "📅" };
+
 function ago(iso: string): string {
   const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
   const unit = (n: number, name: string) => (n === 1 ? `a ${name} ago` : `${n} ${name}s ago`);
@@ -51,6 +53,28 @@ export default function ProfilePage() {
             <span className="mute" style={{ fontSize: 13 }}>Current: <b style={{ display: "inline", fontSize: 13 }}>{p.currentStreak}</b></span>
           </div>
           <Heatmap calendar={p.calendar} />
+        </section>
+
+        <section className="card badgescard">
+          <div className="bar" style={{ marginBottom: 10 }}>
+            <h3 style={{ margin: 0 }}>Badges</h3>
+            <b style={{ display: "inline", fontSize: 18 }}>{p.badges.filter((b) => b.earned).length}</b>
+            <span className="mute">/ {p.badges.length}</span>
+          </div>
+          <div className="badges">
+            {[...p.badges].sort((a, b) => Number(b.earned) - Number(a.earned)).map((b) => (
+              <div key={b.id} className={`badge ${b.earned ? "earned" : "locked"} cat-${b.category}`} title={b.description}>
+                <div className="badge-icon" aria-hidden="true">{BADGE_ICON[b.category] ?? "🏅"}</div>
+                <div className="badge-title">{b.title}</div>
+                {!b.earned && (
+                  <div className="badge-progress" aria-label={`${b.progress} of ${b.target}`}>
+                    <div style={{ width: `${(b.progress / b.target) * 100}%` }} />
+                  </div>
+                )}
+                <div className="mute" style={{ fontSize: 11 }}>{b.earned ? "Earned" : `${b.progress}/${b.target}`}</div>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="card recentcard">
