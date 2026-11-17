@@ -1,0 +1,90 @@
+{
+ "two-sum": {
+  "editorial": "## Approach: one pass with a hash map\n\nBrute force tries all pairs: O(n²) time. We can do better by remembering what we have already seen.\n\nWhile scanning, for each `x = nums[i]` the partner we need is `target - x`. If that value is already in the map, we are done. Otherwise store `x -> i` and move on.\n\nStoring *after* the lookup guarantees we never pair an element with itself.\n\n**Complexity:** O(n) time, O(n) space.\n\n**Pitfall:** `target - x` can overflow a 32-bit int in C++/Java when values reach ±10⁹, so the solutions widen to 64-bit first.",
+  "solutions": {
+   "python": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        seen = {}\n        for i, x in enumerate(nums):\n            if target - x in seen:\n                return [seen[target - x], i]\n            seen[x] = i\n        return []\n",
+   "java": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Long, Integer> seen = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            Integer j = seen.get((long) target - nums[i]);\n            if (j != null) return new int[]{j, i};\n            seen.put((long) nums[i], i);\n        }\n        return new int[0];\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<long long, int> seen;\n        for (int i = 0; i < (int)nums.size(); i++) {\n            auto it = seen.find((long long)target - nums[i]);\n            if (it != seen.end()) return {it->second, i};\n            seen[nums[i]] = i;\n        }\n        return {};\n    }\n};\n"
+  }
+ },
+ "add-two-numbers": {
+  "editorial": "## Approach: digit-by-digit simulation\n\nWalk both lists together, summing the two digits plus the carry. Append `sum % 10` to the result and carry `sum / 10`. Continue while either list or the carry is non-zero.\n\nA dummy head avoids special-casing the first node.\n\n**Complexity:** O(max(m, n)) time, O(1) extra space beyond the output.",
+  "solutions": {
+   "python": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        dummy = ListNode(0)\n        cur, carry = dummy, 0\n        while l1 or l2 or carry:\n            s = carry\n            if l1:\n                s += l1.val\n                l1 = l1.next\n            if l2:\n                s += l2.val\n                l2 = l2.next\n            carry, d = divmod(s, 10)\n            cur.next = ListNode(d)\n            cur = cur.next\n        return dummy.next\n",
+   "java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0), cur = dummy;\n        int carry = 0;\n        while (l1 != null || l2 != null || carry != 0) {\n            int s = carry;\n            if (l1 != null) { s += l1.val; l1 = l1.next; }\n            if (l2 != null) { s += l2.val; l2 = l2.next; }\n            carry = s / 10;\n            cur.next = new ListNode(s % 10);\n            cur = cur.next;\n        }\n        return dummy.next;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {\n        ListNode dummy(0);\n        ListNode* cur = &dummy;\n        int carry = 0;\n        while (l1 || l2 || carry) {\n            int s = carry;\n            if (l1) { s += l1->val; l1 = l1->next; }\n            if (l2) { s += l2->val; l2 = l2->next; }\n            carry = s / 10;\n            cur->next = new ListNode(s % 10);\n            cur = cur->next;\n        }\n        return dummy.next;\n    }\n};\n"
+  }
+ },
+ "palindrome-number": {
+  "editorial": "## Approach: reverse half the digits\n\nNegative numbers and numbers ending in 0 (other than 0) cannot be palindromes. Otherwise peel digits off the end into `rev` until `rev >= x`; now `rev` holds the reversed second half. The number is a palindrome if `x == rev` (even length) or `x == rev / 10` (odd length).\n\nHalf-reversing also sidesteps integer overflow.\n\n**Complexity:** O(log₁₀ n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        if x < 0 or (x % 10 == 0 and x != 0):\n            return False\n        rev = 0\n        while x > rev:\n            rev = rev * 10 + x % 10\n            x //= 10\n        return x == rev or x == rev // 10\n",
+   "java": "class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) return false;\n        int rev = 0;\n        while (x > rev) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return x == rev || x == rev / 10;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    bool isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) return false;\n        int rev = 0;\n        while (x > rev) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return x == rev || x == rev / 10;\n    }\n};\n"
+  }
+ },
+ "valid-parentheses": {
+  "editorial": "## Approach: stack\n\nPush every opening bracket. On a closing bracket, the stack must be non-empty and its top must be the matching opener; pop it. At the end the stack must be empty.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        pair = {')': '(', ']': '[', '}': '{'}\n        st = []\n        for c in s:\n            if c in pair:\n                if not st or st.pop() != pair[c]:\n                    return False\n            else:\n                st.append(c)\n        return not st\n",
+   "java": "class Solution {\n    public boolean isValid(String s) {\n        Deque<Character> st = new ArrayDeque<>();\n        for (char c : s.toCharArray()) {\n            if (c == '(' || c == '[' || c == '{') st.push(c);\n            else {\n                if (st.isEmpty()) return false;\n                char o = st.pop();\n                if ((c == ')' && o != '(') || (c == ']' && o != '[') || (c == '}' && o != '{')) return false;\n            }\n        }\n        return st.isEmpty();\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    bool isValid(string s) {\n        string st;\n        for (char c : s) {\n            if (c == '(' || c == '[' || c == '{') st.push_back(c);\n            else {\n                if (st.empty()) return false;\n                char o = st.back();\n                st.pop_back();\n                if ((c == ')' && o != '(') || (c == ']' && o != '[') || (c == '}' && o != '{')) return false;\n            }\n        }\n        return st.empty();\n    }\n};\n"
+  }
+ },
+ "maximum-subarray": {
+  "editorial": "## Approach: Kadane's algorithm\n\nKeep `cur`, the best sum of a subarray ending at the current element: `cur = max(x, cur + x)`. Track the maximum `cur` seen.\n\nIf the running sum becomes worse than starting fresh at `x`, restarting is always better.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        cur = best = nums[0]\n        for x in nums[1:]:\n            cur = max(x, cur + x)\n            best = max(best, cur)\n        return best\n",
+   "java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int cur = nums[0], best = nums[0];\n        for (int i = 1; i < nums.length; i++) {\n            cur = Math.max(nums[i], cur + nums[i]);\n            best = Math.max(best, cur);\n        }\n        return best;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int cur = nums[0], best = nums[0];\n        for (size_t i = 1; i < nums.size(); i++) {\n            cur = max(nums[i], cur + nums[i]);\n            best = max(best, cur);\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "climbing-stairs": {
+  "editorial": "## Approach: Fibonacci recurrence\n\n`ways(n) = ways(n-1) + ways(n-2)` with `ways(1) = 1`, `ways(2) = 2`. Only the previous two values are needed, so keep two variables.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def climbStairs(self, n: int) -> int:\n        a, b = 1, 1\n        for _ in range(n - 1):\n            a, b = b, a + b\n        return b\n",
+   "java": "class Solution {\n    public int climbStairs(int n) {\n        int a = 1, b = 1;\n        for (int i = 1; i < n; i++) {\n            int c = a + b;\n            a = b;\n            b = c;\n        }\n        return b;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    int climbStairs(int n) {\n        int a = 1, b = 1;\n        for (int i = 1; i < n; i++) {\n            int c = a + b;\n            a = b;\n            b = c;\n        }\n        return b;\n    }\n};\n"
+  }
+ },
+ "maximum-depth-of-binary-tree": {
+  "editorial": "## Approach: recursion (or BFS)\n\n`depth(node) = 0` for null, otherwise `1 + max(depth(left), depth(right))`.\n\nFor very deep, skewed trees an iterative level-order traversal avoids recursion limits.\n\n**Complexity:** O(n) time, O(h) space for the recursion stack.",
+  "solutions": {
+   "python": "class Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        depth = 0\n        level = [root]\n        while level:\n            depth += 1\n            nxt = []\n            for n in level:\n                if n.left: nxt.append(n.left)\n                if n.right: nxt.append(n.right)\n            level = nxt\n        return depth\n",
+   "java": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        int depth = 0;\n        Queue<TreeNode> q = new ArrayDeque<>();\n        q.add(root);\n        while (!q.isEmpty()) {\n            depth++;\n            for (int i = q.size(); i > 0; i--) {\n                TreeNode n = q.poll();\n                if (n.left != null) q.add(n.left);\n                if (n.right != null) q.add(n.right);\n            }\n        }\n        return depth;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (!root) return 0;\n        int depth = 0;\n        queue<TreeNode*> q;\n        q.push(root);\n        while (!q.empty()) {\n            depth++;\n            for (size_t i = q.size(); i > 0; i--) {\n                TreeNode* n = q.front();\n                q.pop();\n                if (n->left) q.push(n->left);\n                if (n->right) q.push(n->right);\n            }\n        }\n        return depth;\n    }\n};\n"
+  }
+ },
+ "best-time-to-buy-and-sell-stock": {
+  "editorial": "## Approach: single pass\n\nTrack the minimum price so far. The best profit selling today is `price - minSoFar`; keep the maximum of those.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        lo, best = prices[0], 0\n        for p in prices[1:]:\n            best = max(best, p - lo)\n            lo = min(lo, p)\n        return best\n",
+   "java": "class Solution {\n    public int maxProfit(int[] prices) {\n        int lo = prices[0], best = 0;\n        for (int i = 1; i < prices.length; i++) {\n            best = Math.max(best, prices[i] - lo);\n            lo = Math.min(lo, prices[i]);\n        }\n        return best;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int lo = prices[0], best = 0;\n        for (size_t i = 1; i < prices.size(); i++) {\n            best = max(best, prices[i] - lo);\n            lo = min(lo, prices[i]);\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "number-of-islands": {
+  "editorial": "## Approach: flood fill\n\nScan every cell. On unvisited land, increment the answer and sink the whole island (mark visited) with an explicit stack, which avoids recursion-depth problems on a 300×300 all-land grid.\n\n**Complexity:** O(m·n) time, O(m·n) space worst case.",
+  "solutions": {
+   "python": "class Solution:\n    def numIslands(self, grid: List[List[str]]) -> int:\n        m, n = len(grid), len(grid[0])\n        seen = [[False] * n for _ in range(m)]\n        count = 0\n        for i in range(m):\n            for j in range(n):\n                if grid[i][j] == '1' and not seen[i][j]:\n                    count += 1\n                    seen[i][j] = True\n                    st = [(i, j)]\n                    while st:\n                        x, y = st.pop()\n                        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                            a, b = x + dx, y + dy\n                            if 0 <= a < m and 0 <= b < n and grid[a][b] == '1' and not seen[a][b]:\n                                seen[a][b] = True\n                                st.append((a, b))\n        return count\n",
+   "java": "class Solution {\n    public int numIslands(char[][] grid) {\n        int m = grid.length, n = grid[0].length, count = 0;\n        boolean[][] seen = new boolean[m][n];\n        int[] dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1};\n        for (int i = 0; i < m; i++)\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] != '1' || seen[i][j]) continue;\n                count++;\n                seen[i][j] = true;\n                Deque<int[]> st = new ArrayDeque<>();\n                st.push(new int[]{i, j});\n                while (!st.isEmpty()) {\n                    int[] c = st.pop();\n                    for (int d = 0; d < 4; d++) {\n                        int a = c[0] + dx[d], b = c[1] + dy[d];\n                        if (a >= 0 && a < m && b >= 0 && b < n && grid[a][b] == '1' && !seen[a][b]) {\n                            seen[a][b] = true;\n                            st.push(new int[]{a, b});\n                        }\n                    }\n                }\n            }\n        return count;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        int m = grid.size(), n = grid[0].size(), count = 0;\n        vector<vector<char>> seen(m, vector<char>(n, 0));\n        int dx[4] = {1, -1, 0, 0}, dy[4] = {0, 0, 1, -1};\n        for (int i = 0; i < m; i++)\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] != '1' || seen[i][j]) continue;\n                count++;\n                seen[i][j] = 1;\n                vector<pair<int, int>> st{{i, j}};\n                while (!st.empty()) {\n                    auto [x, y] = st.back();\n                    st.pop_back();\n                    for (int d = 0; d < 4; d++) {\n                        int a = x + dx[d], b = y + dy[d];\n                        if (a >= 0 && a < m && b >= 0 && b < n && grid[a][b] == '1' && !seen[a][b]) {\n                            seen[a][b] = 1;\n                            st.push_back({a, b});\n                        }\n                    }\n                }\n            }\n        return count;\n    }\n};\n"
+  }
+ },
+ "reverse-linked-list": {
+  "editorial": "## Approach: iterative pointer reversal\n\nWalk the list with `prev` (initially null) and `cur`. For each node save `next`, point `cur.next` at `prev`, then advance both.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        prev = None\n        while head:\n            head.next, prev, head = prev, head, head.next\n        return prev\n",
+   "java": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        while (head != null) {\n            ListNode nxt = head.next;\n            head.next = prev;\n            prev = head;\n            head = nxt;\n        }\n        return prev;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* prev = nullptr;\n        while (head) {\n            ListNode* nxt = head->next;\n            head->next = prev;\n            prev = head;\n            head = nxt;\n        }\n        return prev;\n    }\n};\n"
+  }
+ },
+ "move-zeroes": {
+  "editorial": "## Approach: two pointers\n\nKeep `w`, the next write position. For every non-zero element, copy it to `nums[w++]`. After the scan, set the remaining positions to zero. This performs the fewest writes while preserving order.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "python": "class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        \"\"\"\n        Do not return anything, modify nums in-place instead.\n        \"\"\"\n        w = 0\n        for x in nums:\n            if x != 0:\n                nums[w] = x\n                w += 1\n        for i in range(w, len(nums)):\n            nums[i] = 0\n",
+   "java": "class Solution {\n    public void moveZeroes(int[] nums) {\n        int w = 0;\n        for (int x : nums)\n            if (x != 0) nums[w++] = x;\n        while (w < nums.length) nums[w++] = 0;\n    }\n}\n",
+   "cpp": "class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        size_t w = 0;\n        for (int x : nums)\n            if (x != 0) nums[w++] = x;\n        while (w < nums.size()) nums[w++] = 0;\n    }\n};\n"
+  }
+ }
+}

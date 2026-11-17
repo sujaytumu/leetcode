@@ -72,6 +72,7 @@ export interface Plan {
   id: string; title: string; blurb: string; total: number; solved: number; problems: ProblemSummary[];
 }
 export interface Daily { date: string; problem: ProblemSummary }
+export interface Answer { editorial: string | null; solutions: Record<string, string> }
 export interface ExecutionStatus { enabled: boolean; reachable: boolean; provider: string; message: string }
 
 export class ApiError extends Error {

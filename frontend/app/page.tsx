@@ -7,6 +7,7 @@ import { swr } from "@/lib/local";
 import Activity from "@/components/Activity";
 import SolvedCard from "@/components/SolvedCard";
 import Skeleton from "@/components/Skeleton";
+import FreeSpace from "@/components/FreeSpace";
 import { useMeta } from "@/lib/meta";
 
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
@@ -88,11 +89,6 @@ export default function Home() {
 
   return (
     <>
-      {error && (
-        <div className="banner err">
-          {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
-        </div>
-      )}
       <div className="home">
         <div className="home-main">
           <div className="chips">
@@ -131,11 +127,14 @@ export default function Home() {
                 </tr>
               ))}
               {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
-              {loading && !data && Array.from({ length: 10 }, (_, i) => (
-                <tr key={i}><td colSpan={5}><div className="skel" style={{ width: `${50 + ((i * 13) % 40)}%` }} /></td></tr>
-              ))}
             </tbody>
           </table>
+          {!data && <FreeSpace loading={loading} error={error} onRetry={() => setReload((n) => n + 1)} label="Loading problems…" />}
+          {data && error && (
+            <div className="banner err" style={{ marginTop: 10 }}>
+              {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
+            </div>
+          )}
           {data && data.totalPages > 1 && (
             <div className="pager">
               <button disabled={page === 0} onClick={() => setPage(page - 1)}>Prev</button>

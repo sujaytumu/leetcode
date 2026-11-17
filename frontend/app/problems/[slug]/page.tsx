@@ -1,10 +1,10 @@
 "use client";
 import dynamic from "next/dynamic";
 import Markdown from "react-markdown";
-import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useRef, useState } from "react";
+import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
+  Answer, api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Study, Submission,
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
@@ -15,6 +15,8 @@ import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
+import FreeSpace from "@/components/FreeSpace";
+import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 import type { EditorProps } from "@monaco-editor/react";
@@ -23,8 +25,13 @@ const Editor = dynamic<EditorProps>(
   () => import("@monaco-editor/react").then((m) => m.default as unknown as ComponentType<EditorProps>), {
   ssr: false, loading: () => <p className="mute" style={{ padding: 16 }}>Loading editor…</p>,
 });
+const ANSWER_ORDER = ["cpp", "java", "python", "javascript"];
+const LANG_LABEL: Record<string, string> = { cpp: "C++", java: "Java", python: "Python", javascript: "JavaScript" };
+type AnswerState = { status: "idle" | "loading" | "ready" | "none" | "error"; data?: Answer; error?: string };
 const title = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const answerKeys = (a: Answer) =>
+  ANSWER_ORDER.filter((k) => k in a.solutions).concat(Object.keys(a.solutions).filter((k) => !ANSWER_ORDER.includes(k)));
 const norm = (t: string) => t.replace(/\s+$/, "");
 /** True when the console text is not (just) one of the problem's sample inputs. */
 const isCustomInput = (p: ProblemDetail | null, text: string) =>
@@ -44,7 +51,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
-  const [tab, setTab] = useState<"desc" | "editorial" | "history" | "notes">("desc");
+  const [tab, setTab] = useState<"desc" | "editorial" | "answer" | "history" | "notes">("desc");
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -66,10 +73,19 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [focus, setFocus] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showKeys, setShowKeys] = useState(false);
+  const [answer, setAnswer] = useState<AnswerState>({ status: "idle" });
+  const [answerLang, setAnswerLang] = useState("");
+  const [runParts, setRunParts] = useState<Parts | null>(null);
+  const pendingRef = useRef<{ lang: string; code: string } | null>(null);
+  const slugRef = useRef(slug);
+  slugRef.current = slug;
   const workspaceRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLElement>(null);
 
-  const draftKey = (l: Lang) => `lc-draft:${slug}:${l}`;
+  // The editor shows only the user's part; the judge gets the full program (hidden shell + user code).
+  const parts = useMemo(
+    () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang) : null), [problem, lang]);
+  const draftKey = (l: Lang) => `lc-draft2:${slug}:${l}`;
   const loadHistory = useCallback(
     () => api<Submission[]>(`/api/problems/${slug}/submissions`).then(setHistory).catch(() => {}), [slug]);
   const checkExec = useCallback(
@@ -115,6 +131,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     return () => window.removeEventListener("lc-theme", sync);
   }, []);
   useEffect(() => { setNotes(localStorage.getItem(`lc-notes:${slug}`) ?? ""); }, [slug]);
+  useEffect(() => { setAnswer({ status: "idle" }); setAnswerLang(""); }, [slug]);
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
@@ -128,9 +145,18 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [timer.on]);
 
   useEffect(() => {
-    if (problem) setCode(localStorage.getItem(draftKey(lang)) ?? problem.starterCode[lang] ?? "");
+    if (!problem || !lang) return;
+    const pending = pendingRef.current;
+    if (pending && pending.lang === lang) {
+      pendingRef.current = null;
+      setCode(pending.code);
+      localStorage.setItem(draftKey(lang), pending.code);
+      return;
+    }
+    const initial = parts ? parts.stub : problem.starterCode[lang] ?? "";
+    setCode(localStorage.getItem(draftKey(lang)) ?? initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [problem, lang]);
+  }, [problem, lang, parts]);
 
   useEffect(() => {
     if (!busy) return;
@@ -146,9 +172,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     const custom = kind === "run" && isCustomInput(problem, customInput);
     setBusy(kind); setError(""); setMode(kind); setCustomRun(custom); setResult(null); setCaseTab(0);
     setConsoleTab("result");
+    setRunParts(parts);
     try {
+      const source = parts ? composeProgram(parts, code) : code;
       const r = await api<RunResponse>(`/api/problems/${slug}/${kind}`,
-        { method: "POST", body: JSON.stringify({ language: lang, code, ...(custom ? { customInput } : {}) }) }, 120000);
+        { method: "POST", body: JSON.stringify({ language: lang, code: source, ...(custom ? { customInput } : {}) }) }, 120000);
       setResult(r);
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
@@ -158,7 +186,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       setError((e as Error).message);
       checkExec();
     } finally { setBusy(""); }
-  }, [busy, slug, lang, code, problem, customInput, loadHistory, checkExec]);
+  }, [busy, slug, lang, code, parts, problem, customInput, loadHistory, checkExec]);
 
   const runRef = useRef(run);
   runRef.current = run;
@@ -190,7 +218,39 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   function reset() {
     if (!problem) return;
-    localStorage.removeItem(draftKey(lang)); setCode(problem.starterCode[lang] ?? "");
+    localStorage.removeItem(draftKey(lang)); setCode(parts ? parts.stub : problem.starterCode[lang] ?? "");
+  }
+
+  function loadSubmission(s: Submission) {
+    const user = extractUser(s.code, s.language) ?? splitTemplate(s.code, s.language)?.stub ?? null;
+    if (user === null) {
+      setError("This older submission was saved as a full program and can't be opened in the simplified editor.");
+      setConsoleTab("result");
+      return;
+    }
+    if (s.language === lang) { setCode(user); localStorage.setItem(draftKey(lang), user); }
+    else { pendingRef.current = { lang: s.language, code: user }; setLang(s.language); }
+    setTab("desc");
+  }
+
+  async function revealAnswer() {
+    const forSlug = slug;
+    setAnswer({ status: "loading" });
+    try {
+      const a = await api<Answer | undefined>(`/api/problems/${forSlug}/solution`, {}, 30000);
+      if (slugRef.current !== forSlug) return;
+      if (!a) { setAnswer({ status: "none" }); return; }
+      const keys = answerKeys(a);
+      setAnswerLang(keys.includes(lang) ? lang : keys[0]);
+      setAnswer({ status: "ready", data: a });
+    } catch (e) {
+      if (slugRef.current === forSlug) setAnswer({ status: "error", error: (e as Error).message });
+    }
+  }
+
+  async function copyAnswer(text: string) {
+    try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }
+    catch { setError("Could not copy: clipboard access was blocked by the browser."); }
   }
 
   /** Drag a divider: "v" resizes description/editor, "h" resizes editor/console. */
@@ -219,12 +279,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }
 
   if (!problem) {
-    return (
-      <>
-        {loadError && <div className="banner err">{loadError} <button onClick={loadProblem}>Retry</button></div>}
-        {!loadError && <Skeleton lines={12} />}
-      </>
-    );
+    return <FreeSpace loading={!loadError} error={loadError} onRetry={loadProblem} label="Loading problem…" />;
   }
 
   // Offer the languages the backend supports for this problem (those it has starter code for).
@@ -236,6 +291,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const next = idx >= 0 && idx + 1 < all.length ? all[idx + 1] : null;
   const clock = `${String(Math.floor(timer.secs / 60)).padStart(2, "0")}:${String(timer.secs % 60).padStart(2, "0")}`;
   const cur = result?.cases[caseTab];
+  const fix = (t: string) => (runParts ? shiftErrorLines(t, runParts) : t);
   const custom = isCustomInput(problem, customInput);
   const sampleIdx = problem.samples.findIndex((s) => norm(s.input) === norm(customInput));
   const verdictText = customRun && result?.verdict === "ACCEPTED" ? "Finished" : title(result?.verdict ?? "");
@@ -254,6 +310,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <div className="lctabs">
             <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
             <button className={tab === "editorial" ? "on" : ""} onClick={() => setTab("editorial")}>Editorial</button>
+            <button className={tab === "answer" ? "on" : ""} onClick={() => setTab("answer")}>Answer</button>
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
@@ -305,6 +362,33 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   </div>
                 ) : <p className="mute">No editorial for this problem yet.</p>}
               </div>
+            ) : tab === "answer" ? (
+              <div className="answer">
+                {answer.status === "idle" && (
+                  <>
+                    <p className="mute">Spoiler: try it yourself first. The Editorial tab has hints that do not give it away.</p>
+                    <button className="primary" onClick={revealAnswer}>Show answer</button>
+                  </>
+                )}
+                {answer.status === "loading" && <FreeSpace loading compact label="Loading answer…" />}
+                {answer.status === "none" && <p className="mute">No answer has been published for this problem yet. They are added in batches.</p>}
+                {answer.status === "error" && <div className="banner err">{answer.error} <button onClick={revealAnswer}>Retry</button></div>}
+                {answer.status === "ready" && answer.data && (
+                  <>
+                    <div className="casechips">
+                      {answerKeys(answer.data).map((k) => (
+                        <button key={k} className={answerLang === k ? "on" : ""} onClick={() => setAnswerLang(k)}>
+                          {languages.find((l) => l.key === k)?.label ?? LANG_LABEL[k] ?? k}
+                        </button>
+                      ))}
+                      <span className="grow" />
+                      <button onClick={() => copyAnswer(answer.data!.solutions[answerLang] ?? "")}>{copied ? "✔ Copied" : "Copy"}</button>
+                    </div>
+                    <pre className="answer-code">{answer.data.solutions[answerLang]}</pre>
+                    {answer.data.editorial && <div className="md"><Markdown>{answer.data.editorial}</Markdown></div>}
+                  </>
+                )}
+              </div>
             ) : tab === "notes" ? (
               <>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
@@ -333,7 +417,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <td className={s.verdict}><b>{title(s.verdict)}</b><div className="mute" style={{ fontSize: 12 }}>{s.passed}/{s.total} passed</div></td><td>{s.language}</td>
                       <td>{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td><td>{s.memoryKb != null ? fmtMem(s.memoryKb) : "N/A"}</td>
                       <td className="mute">{new Date(s.createdAt).toLocaleString()}</td>
-                      <td><button onClick={(e) => { e.stopPropagation(); setLang(s.language); setCode(s.code); setTab("desc"); }}>Load</button></td>
+                      <td><button onClick={(e) => { e.stopPropagation(); loadSubmission(s); }}>Load</button></td>
                     </tr>
                   ))}
                   {history.length === 0 && <tr><td colSpan={6} className="mute">No submissions yet.</td></tr>}
@@ -430,7 +514,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
                       {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <SubmissionStatsPanel id={result.submissionId} />}
-                      {result.message && <div className={result.verdict === "ACCEPTED" ? "" : "err"}>{result.message}</div>}
+                      {result.message && <div className={result.verdict === "ACCEPTED" ? "" : "err"}>{fix(result.message)}</div>}
                       {result.cases.length > 1 && (
                         <div className="casechips" style={{ marginTop: 8 }}>
                           {result.cases.map((c, i) => (
@@ -445,12 +529,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                           <div className="iolabel">Input</div><pre>{cur.input}</pre>
                           <div className="iolabel">Output</div><pre>{cur.actual || "(empty)"}</pre>
                           {cur.expected != null && <><div className="iolabel">Expected</div><pre>{cur.expected}</pre></>}
-                          {cur.error && <><div className="iolabel">Error</div><pre className="err">{cur.error}</pre></>}
+                          {cur.error && <><div className="iolabel">Error</div><pre className="err">{fix(cur.error)}</pre></>}
                         </>
                       ) : (
                         <>
                           <div className="mute">Hidden test case — details are not shown.</div>
-                          {cur.error && <pre className="err">{cur.error}</pre>}
+                          {cur.error && <pre className="err">{fix(cur.error)}</pre>}
                         </>
                       ))}
                     </>
