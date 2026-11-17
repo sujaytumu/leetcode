@@ -1,0 +1,695 @@
+=== merge-two-sorted-lists
+--- py
+def solve(list1, list2):
+    dummy = tail = ListNode()
+    while list1 and list2:
+        if list1.val <= list2.val:
+            tail.next, list1 = list1, list1.next
+        else:
+            tail.next, list2 = list2, list2.next
+        tail = tail.next
+    tail.next = list1 or list2
+    return dummy.next
+--- js
+function solve(list1, list2) {
+  const dummy = new ListNode();
+  let tail = dummy;
+  while (list1 && list2) {
+    if (list1.val <= list2.val) { tail.next = list1; list1 = list1.next; }
+    else { tail.next = list2; list2 = list2.next; }
+    tail = tail.next;
+  }
+  tail.next = list1 || list2;
+  return dummy.next;
+}
+--- cpp
+ListNode * solve(ListNode * list1, ListNode * list2) {
+    ListNode dummy(0);
+    ListNode *tail = &dummy;
+    while (list1 && list2) {
+        if (list1->val <= list2->val) { tail->next = list1; list1 = list1->next; }
+        else { tail->next = list2; list2 = list2->next; }
+        tail = tail->next;
+    }
+    tail->next = list1 ? list1 : list2;
+    return dummy.next;
+}
+--- java
+static ListNode solve(ListNode list1, ListNode list2) {
+    ListNode dummy = new ListNode(0), tail = dummy;
+    while (list1 != null && list2 != null) {
+        if (list1.val <= list2.val) { tail.next = list1; list1 = list1.next; }
+        else { tail.next = list2; list2 = list2.next; }
+        tail = tail.next;
+    }
+    tail.next = list1 != null ? list1 : list2;
+    return dummy.next;
+}
+=== middle-of-the-linked-list
+--- py
+def solve(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow, fast = slow.next, fast.next.next
+    return slow
+--- js
+function solve(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }
+  return slow;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }
+    return slow;
+}
+--- java
+static ListNode solve(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }
+    return slow;
+}
+=== palindrome-linked-list
+--- py
+def solve(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow, fast = slow.next, fast.next.next
+    prev = None
+    while slow:  # reverse the second half
+        slow.next, prev, slow = prev, slow, slow.next
+    left, right = head, prev
+    while right:
+        if left.val != right.val:
+            return False
+        left, right = left.next, right.next
+    return True
+--- js
+function solve(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }
+  let prev = null;
+  while (slow) { const next = slow.next; slow.next = prev; prev = slow; slow = next; }
+  let left = head, right = prev;
+  while (right) {
+    if (left.val !== right.val) return false;
+    left = left.next; right = right.next;
+  }
+  return true;
+}
+--- cpp
+bool solve(ListNode * head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }
+    ListNode *prev = nullptr;
+    while (slow) { ListNode *next = slow->next; slow->next = prev; prev = slow; slow = next; }
+    for (ListNode *left = head, *right = prev; right; left = left->next, right = right->next)
+        if (left->val != right->val) return false;
+    return true;
+}
+--- java
+static boolean solve(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }
+    ListNode prev = null;
+    while (slow != null) { ListNode next = slow.next; slow.next = prev; prev = slow; slow = next; }
+    for (ListNode left = head, right = prev; right != null; left = left.next, right = right.next)
+        if (left.val != right.val) return false;
+    return true;
+}
+=== remove-duplicates-from-sorted-list
+--- py
+def solve(head):
+    node = head
+    while node and node.next:
+        if node.val == node.next.val:
+            node.next = node.next.next
+        else:
+            node = node.next
+    return head
+--- js
+function solve(head) {
+  let node = head;
+  while (node && node.next) {
+    if (node.val === node.next.val) node.next = node.next.next;
+    else node = node.next;
+  }
+  return head;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    ListNode *node = head;
+    while (node && node->next) {
+        if (node->val == node->next->val) node->next = node->next->next;
+        else node = node->next;
+    }
+    return head;
+}
+--- java
+static ListNode solve(ListNode head) {
+    ListNode node = head;
+    while (node != null && node.next != null) {
+        if (node.val == node.next.val) node.next = node.next.next;
+        else node = node.next;
+    }
+    return head;
+}
+=== remove-nth-node-from-end-of-list
+--- py
+def solve(head, n):
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    for _ in range(n):
+        fast = fast.next
+    while fast.next:
+        fast, slow = fast.next, slow.next
+    slow.next = slow.next.next
+    return dummy.next
+--- js
+function solve(head, n) {
+  const dummy = new ListNode(0, head);
+  let fast = dummy, slow = dummy;
+  for (let i = 0; i < n; i++) fast = fast.next;
+  while (fast.next) { fast = fast.next; slow = slow.next; }
+  slow.next = slow.next.next;
+  return dummy.next;
+}
+--- cpp
+ListNode * solve(ListNode * head, int n) {
+    ListNode dummy(0);
+    dummy.next = head;
+    ListNode *fast = &dummy, *slow = &dummy;
+    for (int i = 0; i < n; i++) fast = fast->next;
+    while (fast->next) { fast = fast->next; slow = slow->next; }
+    slow->next = slow->next->next;
+    return dummy.next;
+}
+--- java
+static ListNode solve(ListNode head, int n) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode fast = dummy, slow = dummy;
+    for (int i = 0; i < n; i++) fast = fast.next;
+    while (fast.next != null) { fast = fast.next; slow = slow.next; }
+    slow.next = slow.next.next;
+    return dummy.next;
+}
+=== swap-nodes-in-pairs
+--- py
+def solve(head):
+    dummy = ListNode(0, head)
+    prev = dummy
+    while prev.next and prev.next.next:
+        first, second = prev.next, prev.next.next
+        first.next = second.next
+        second.next = first
+        prev.next = second
+        prev = first
+    return dummy.next
+--- js
+function solve(head) {
+  const dummy = new ListNode(0, head);
+  let prev = dummy;
+  while (prev.next && prev.next.next) {
+    const first = prev.next, second = prev.next.next;
+    first.next = second.next;
+    second.next = first;
+    prev.next = second;
+    prev = first;
+  }
+  return dummy.next;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    ListNode dummy(0);
+    dummy.next = head;
+    ListNode *prev = &dummy;
+    while (prev->next && prev->next->next) {
+        ListNode *first = prev->next, *second = prev->next->next;
+        first->next = second->next;
+        second->next = first;
+        prev->next = second;
+        prev = first;
+    }
+    return dummy.next;
+}
+--- java
+static ListNode solve(ListNode head) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode prev = dummy;
+    while (prev.next != null && prev.next.next != null) {
+        ListNode first = prev.next, second = prev.next.next;
+        first.next = second.next;
+        second.next = first;
+        prev.next = second;
+        prev = first;
+    }
+    return dummy.next;
+}
+=== odd-even-linked-list
+--- py
+def solve(head):
+    if not head or not head.next:
+        return head
+    odd, even = head, head.next
+    even_head = even
+    while even and even.next:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    odd.next = even_head
+    return head
+--- js
+function solve(head) {
+  if (!head || !head.next) return head;
+  let odd = head, even = head.next;
+  const evenHead = even;
+  while (even && even.next) {
+    odd.next = even.next;
+    odd = odd.next;
+    even.next = odd.next;
+    even = even.next;
+  }
+  odd.next = evenHead;
+  return head;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    if (!head || !head->next) return head;
+    ListNode *odd = head, *even = head->next, *evenHead = even;
+    while (even && even->next) {
+        odd->next = even->next;
+        odd = odd->next;
+        even->next = odd->next;
+        even = even->next;
+    }
+    odd->next = evenHead;
+    return head;
+}
+--- java
+static ListNode solve(ListNode head) {
+    if (head == null || head.next == null) return head;
+    ListNode odd = head, even = head.next, evenHead = even;
+    while (even != null && even.next != null) {
+        odd.next = even.next;
+        odd = odd.next;
+        even.next = odd.next;
+        even = even.next;
+    }
+    odd.next = evenHead;
+    return head;
+}
+=== sort-list
+--- py
+def merge(a, b):
+    dummy = tail = ListNode()
+    while a and b:
+        if a.val <= b.val:
+            tail.next, a = a, a.next
+        else:
+            tail.next, b = b, b.next
+        tail = tail.next
+    tail.next = a or b
+    return dummy.next
+
+
+def solve(head):
+    if not head or not head.next:
+        return head
+    slow, fast = head, head.next
+    while fast and fast.next:
+        slow, fast = slow.next, fast.next.next
+    second, slow.next = slow.next, None
+    return merge(solve(head), solve(second))
+--- js
+function merge(a, b) {
+  const dummy = new ListNode();
+  let tail = dummy;
+  while (a && b) {
+    if (a.val <= b.val) { tail.next = a; a = a.next; }
+    else { tail.next = b; b = b.next; }
+    tail = tail.next;
+  }
+  tail.next = a || b;
+  return dummy.next;
+}
+
+function solve(head) {
+  if (!head || !head.next) return head;
+  let slow = head, fast = head.next;
+  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }
+  const second = slow.next;
+  slow.next = null;
+  return merge(solve(head), solve(second));
+}
+--- cpp
+ListNode * merge(ListNode *a, ListNode *b) {
+    ListNode dummy(0);
+    ListNode *tail = &dummy;
+    while (a && b) {
+        if (a->val <= b->val) { tail->next = a; a = a->next; }
+        else { tail->next = b; b = b->next; }
+        tail = tail->next;
+    }
+    tail->next = a ? a : b;
+    return dummy.next;
+}
+
+ListNode * solve(ListNode * head) {
+    if (!head || !head->next) return head;
+    ListNode *slow = head, *fast = head->next;
+    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }
+    ListNode *second = slow->next;
+    slow->next = nullptr;
+    return merge(solve(head), solve(second));
+}
+--- java
+static ListNode merge(ListNode a, ListNode b) {
+    ListNode dummy = new ListNode(0), tail = dummy;
+    while (a != null && b != null) {
+        if (a.val <= b.val) { tail.next = a; a = a.next; }
+        else { tail.next = b; b = b.next; }
+        tail = tail.next;
+    }
+    tail.next = a != null ? a : b;
+    return dummy.next;
+}
+
+static ListNode solve(ListNode head) {
+    if (head == null || head.next == null) return head;
+    ListNode slow = head, fast = head.next;
+    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }
+    ListNode second = slow.next;
+    slow.next = null;
+    return merge(solve(head), solve(second));
+}
+=== reorder-list
+--- py
+def solve(head):
+    if not head or not head.next:
+        return head
+    slow, fast = head, head
+    while fast.next and fast.next.next:
+        slow, fast = slow.next, fast.next.next
+    second, slow.next = slow.next, None
+    prev = None
+    while second:  # reverse the second half
+        second.next, prev, second = prev, second, second.next
+    first, second = head, prev
+    while second:
+        first.next, first = second, first.next
+        second.next, second = first, second.next
+    return head
+--- js
+function solve(head) {
+  if (!head || !head.next) return head;
+  let slow = head, fast = head;
+  while (fast.next && fast.next.next) { slow = slow.next; fast = fast.next.next; }
+  let second = slow.next;
+  slow.next = null;
+  let prev = null;
+  while (second) { const next = second.next; second.next = prev; prev = second; second = next; }
+  let first = head;
+  second = prev;
+  while (second) {
+    const a = first.next, b = second.next;
+    first.next = second;
+    second.next = a;
+    first = a;
+    second = b;
+  }
+  return head;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    if (!head || !head->next) return head;
+    ListNode *slow = head, *fast = head;
+    while (fast->next && fast->next->next) { slow = slow->next; fast = fast->next->next; }
+    ListNode *second = slow->next, *prev = nullptr;
+    slow->next = nullptr;
+    while (second) { ListNode *next = second->next; second->next = prev; prev = second; second = next; }
+    ListNode *first = head;
+    second = prev;
+    while (second) {
+        ListNode *a = first->next, *b = second->next;
+        first->next = second;
+        second->next = a;
+        first = a;
+        second = b;
+    }
+    return head;
+}
+--- java
+static ListNode solve(ListNode head) {
+    if (head == null || head.next == null) return head;
+    ListNode slow = head, fast = head;
+    while (fast.next != null && fast.next.next != null) { slow = slow.next; fast = fast.next.next; }
+    ListNode second = slow.next, prev = null;
+    slow.next = null;
+    while (second != null) { ListNode next = second.next; second.next = prev; prev = second; second = next; }
+    ListNode first = head;
+    second = prev;
+    while (second != null) {
+        ListNode a = first.next, b = second.next;
+        first.next = second;
+        second.next = a;
+        first = a;
+        second = b;
+    }
+    return head;
+}
+=== reverse-nodes-in-k-group
+--- py
+def solve(head, k):
+    dummy = ListNode(0, head)
+    group_prev = dummy
+    while True:
+        kth = group_prev
+        for _ in range(k):
+            kth = kth.next
+            if not kth:
+                return dummy.next
+        group_next = kth.next
+        prev, node = group_next, group_prev.next
+        while node is not group_next:
+            node.next, prev, node = prev, node, node.next
+        first = group_prev.next
+        group_prev.next = kth
+        group_prev = first
+--- js
+function solve(head, k) {
+  const dummy = new ListNode(0, head);
+  let groupPrev = dummy;
+  while (true) {
+    let kth = groupPrev;
+    for (let i = 0; i < k; i++) {
+      kth = kth.next;
+      if (!kth) return dummy.next;
+    }
+    const groupNext = kth.next;
+    let prev = groupNext, node = groupPrev.next;
+    while (node !== groupNext) { const next = node.next; node.next = prev; prev = node; node = next; }
+    const first = groupPrev.next;
+    groupPrev.next = kth;
+    groupPrev = first;
+  }
+}
+--- cpp
+ListNode * solve(ListNode * head, int k) {
+    ListNode dummy(0);
+    dummy.next = head;
+    ListNode *groupPrev = &dummy;
+    while (true) {
+        ListNode *kth = groupPrev;
+        for (int i = 0; i < k; i++) {
+            kth = kth->next;
+            if (!kth) return dummy.next;
+        }
+        ListNode *groupNext = kth->next, *prev = groupNext, *node = groupPrev->next;
+        while (node != groupNext) { ListNode *next = node->next; node->next = prev; prev = node; node = next; }
+        ListNode *first = groupPrev->next;
+        groupPrev->next = kth;
+        groupPrev = first;
+    }
+}
+--- java
+static ListNode solve(ListNode head, int k) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode groupPrev = dummy;
+    while (true) {
+        ListNode kth = groupPrev;
+        for (int i = 0; i < k; i++) {
+            kth = kth.next;
+            if (kth == null) return dummy.next;
+        }
+        ListNode groupNext = kth.next, prev = groupNext, node = groupPrev.next;
+        while (node != groupNext) { ListNode next = node.next; node.next = prev; prev = node; node = next; }
+        ListNode first = groupPrev.next;
+        groupPrev.next = kth;
+        groupPrev = first;
+    }
+}
+=== invert-binary-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def solve(root):
+    if root:
+        root.left, root.right = solve(root.right), solve(root.left)
+    return root
+--- js
+function solve(root) {
+  if (root) [root.left, root.right] = [solve(root.right), solve(root.left)];
+  return root;
+}
+--- cpp
+TreeNode * solve(TreeNode * root) {
+    if (!root) return nullptr;
+    TreeNode *left = solve(root->left), *right = solve(root->right);
+    root->left = right;
+    root->right = left;
+    return root;
+}
+--- java
+static TreeNode solve(TreeNode root) {
+    if (root == null) return null;
+    TreeNode left = solve(root.left), right = solve(root.right);
+    root.left = right;
+    root.right = left;
+    return root;
+}
+=== symmetric-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def mirror(a, b):
+    if not a and not b:
+        return True
+    if not a or not b or a.val != b.val:
+        return False
+    return mirror(a.left, b.right) and mirror(a.right, b.left)
+
+
+def solve(root):
+    return mirror(root, root)
+--- js
+function mirror(a, b) {
+  if (!a && !b) return true;
+  if (!a || !b || a.val !== b.val) return false;
+  return mirror(a.left, b.right) && mirror(a.right, b.left);
+}
+
+function solve(root) {
+  return mirror(root, root);
+}
+--- cpp
+bool mirror(TreeNode *a, TreeNode *b) {
+    if (!a && !b) return true;
+    if (!a || !b || a->val != b->val) return false;
+    return mirror(a->left, b->right) && mirror(a->right, b->left);
+}
+
+bool solve(TreeNode * root) {
+    return mirror(root, root);
+}
+--- java
+static boolean mirror(TreeNode a, TreeNode b) {
+    if (a == null && b == null) return true;
+    if (a == null || b == null || a.val != b.val) return false;
+    return mirror(a.left, b.right) && mirror(a.right, b.left);
+}
+
+static boolean solve(TreeNode root) {
+    return mirror(root, root);
+}
+=== same-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def solve(p, q):
+    if not p and not q:
+        return True
+    if not p or not q or p.val != q.val:
+        return False
+    return solve(p.left, q.left) and solve(p.right, q.right)
+--- js
+function solve(p, q) {
+  if (!p && !q) return true;
+  if (!p || !q || p.val !== q.val) return false;
+  return solve(p.left, q.left) && solve(p.right, q.right);
+}
+--- cpp
+bool solve(TreeNode * p, TreeNode * q) {
+    if (!p && !q) return true;
+    if (!p || !q || p->val != q->val) return false;
+    return solve(p->left, q->left) && solve(p->right, q->right);
+}
+--- java
+static boolean solve(TreeNode p, TreeNode q) {
+    if (p == null && q == null) return true;
+    if (p == null || q == null || p.val != q.val) return false;
+    return solve(p.left, q.left) && solve(p.right, q.right);
+}
+=== diameter-of-binary-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def solve(root):
+    best = 0
+
+    def height(node):
+        nonlocal best
+        if not node:
+            return 0
+        left, right = height(node.left), height(node.right)
+        best = max(best, left + right)
+        return 1 + max(left, right)
+
+    height(root)
+    return best
+--- js
+function solve(root) {
+  let best = 0;
+  const height = (node) => {
+    if (!node) return 0;
+    const left = height(node.left), right = height(node.right);
+    best = Math.max(best, left + right);
+    return 1 + Math.max(left, right);
+  };
+  height(root);
+  return best;
+}
+--- cpp
+int height(TreeNode *node, int &best) {
+    if (!node) return 0;
+    int left = height(node->left, best), right = height(node->right, best);
+    best = max(best, left + right);
+    return 1 + max(left, right);
+}
+
+int solve(TreeNode * root) {
+    int best = 0;
+    height(root, best);
+    return best;
+}
+--- java
+static int height(TreeNode node, int[] best) {
+    if (node == null) return 0;
+    int left = height(node.left, best), right = height(node.right, best);
+    best[0] = Math.max(best[0], left + right);
+    return 1 + Math.max(left, right);
+}
+
+static int solve(TreeNode root) {
+    int[] best = {0};
+    height(root, best);
+    return best[0];
+}
