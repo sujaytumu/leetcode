@@ -135,3 +135,26 @@ pre { background:var(--code-bg); border:1px solid var(--line); border-radius:8px
 .modal { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:18px 20px; max-width:440px; width:100%; }
 .modal td { padding:5px 8px 5px 0; }
 kbd { border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; font:12px/1.6 ui-monospace, monospace; background:var(--cell, transparent); }
+
+/* profile page + problem title row */
+.pgrid { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:12px; }
+.solvedcard { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+.ring { position:relative; width:160px; height:160px; flex:none; }
+.ring-mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.ring-mid b { display:inline; font-size:30px; }
+.diffboxes { display:grid; gap:8px; flex:1; min-width:120px; }
+.diffbox { background:var(--cell); border-radius:8px; padding:6px 12px; text-align:center; }
+.activitycard { overflow:hidden; }
+.heatwrap { overflow-x:auto; padding-bottom:2px; }
+.heat-months { display:grid; grid-auto-flow:column; grid-auto-columns:11px; gap:3px; font-size:11px; color:var(--mute); height:14px; }
+.heat-months span { white-space:nowrap; overflow:visible; }
+.recentcard { grid-column:1 / 2; }
+.recentrow { display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; border-radius:8px; background:var(--cell); color:inherit; text-decoration:none; }
+.recentrow:hover { background:var(--hover); }
+.sidecard { grid-column:2 / 3; }
+.skill { margin-bottom:6px; }
+.titlerow { display:flex; align-items:baseline; gap:12px; }
+.titlerow .ptitle { flex:1; margin:0 0 6px; }
+.solved { color:var(--easy); font-size:14px; white-space:nowrap; }
+.editorial .study { margin-top:0; border-top:0; }
+@media (max-width:900px) { .pgrid { grid-template-columns:1fr; } .recentcard, .sidecard { grid-column:auto; } }
