@@ -24,7 +24,7 @@ export default function ThemeToggle() {
   return (
     <button className="theme-btn" onClick={toggle} title="Switch light / dark theme"
       aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
-      {theme === "dark" ? "☀ Light" : "🌙 Dark"}
+      <span aria-hidden="true">{theme === "dark" ? "☀" : "🌙"}</span><span className="theme-label"> {theme === "dark" ? "Light" : "Dark"}</span>
     </button>
   );
 }

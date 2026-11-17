@@ -16,7 +16,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"} />
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
         <script dangerouslySetInnerHTML={{ __html:
           "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" +
@@ -25,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <header className="nav">
-          <Link href="/" className="brand">&lt;/&gt; LeetCode Practice</Link>
+          <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /><ThemeToggle /></nav>
         </header>
         <main>{children}</main>
