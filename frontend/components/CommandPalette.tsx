@@ -5,6 +5,7 @@ import { api, Page, ProblemSummary } from "@/lib/api";
 
 const PAGES = [
   { label: "Problems", hint: "Browse all problems", href: "/" },
+  { label: "Topics", hint: "Problems grouped by topic", href: "/topics" },
   { label: "Study plans", hint: "Curated learning paths", href: "/plans" },
   { label: "Profile", hint: "Your progress and activity", href: "/profile" },
 ];

@@ -306,3 +306,10 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .palette-hint { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .palette-foot { padding:8px 14px; border-top:1px solid var(--line); font-size:12px; }
 @media (max-width:700px) { .palette-back { padding-top:6vh; } .palette-btn { padding:6px 10px; } }
+
+/* ---- topics page ---- */
+.topics { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+.topic { display:block; color:inherit; text-decoration:none; transition:border-color .15s, transform .15s; }
+.topic:hover { border-color:var(--accent); transform:translateY(-1px); }
+.topic .progress { margin:8px 0; }
+.topic-diff { display:flex; gap:12px; font-size:12px; }
