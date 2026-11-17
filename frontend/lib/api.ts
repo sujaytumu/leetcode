@@ -25,12 +25,18 @@ export interface CaseResult {
   input: string | null; expected: string | null; actual: string | null; error: string | null; timeMs: number | null;
 }
 export interface RunResponse {
-  verdict: string; passed: number; total: number; runtimeMs: number | null;
+  verdict: string; passed: number; total: number; runtimeMs: number | null; memoryKb?: number | null;
   message: string | null; cases: CaseResult[]; submissionId: number | null;
 }
 export interface Submission {
   id: number; language: Lang; verdict: string; passed: number; total: number;
-  runtimeMs: number | null; createdAt: string; code: string;
+  runtimeMs: number | null; memoryKb?: number | null; createdAt: string; code: string;
+}
+export interface Bin { from: number; to: number; count: number }
+/** How one measurement compares with other accepted submissions in the same language. */
+export interface Distribution { value: number; beatsPercent: number | null; userBin: number; bins: Bin[] }
+export interface SubmissionStats {
+  submissionId: number; language: Lang; sampleSize: number; runtime: Distribution | null; memory: Distribution | null;
 }
 export interface Progress {
   total: number; solved: number; attempted: number; bookmarked: number;

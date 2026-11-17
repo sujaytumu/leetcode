@@ -58,6 +58,30 @@ class SubmissionApiTest {
     }
 
     @Test
+    void acceptedSubmissionRecordsMemoryAndServesStatsOnlyToItsOwner() throws Exception {
+        UUID client = UUID.randomUUID();
+        String body = mvc.perform(judge("submit", client, "java", TestExecutorConfig.SOLVE_TWO_SUM))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.runtimeMs").value(20))
+                .andExpect(jsonPath("$.memoryKb").value(2048))
+                .andReturn().getResponse().getContentAsString();
+        long id = json.readTree(body).get("submissionId").asLong();
+
+        mvc.perform(get("/api/problems/two-sum/submissions").header(CLIENT, client.toString()))
+                .andExpect(jsonPath("$[0].memoryKb").value(2048));
+
+        mvc.perform(get("/api/submissions/" + id + "/stats").header(CLIENT, client.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.submissionId").value(id))
+                .andExpect(jsonPath("$.runtime.value").value(20))
+                .andExpect(jsonPath("$.memory.value").value(2048))
+                .andExpect(jsonPath("$.runtime.bins").isArray());
+
+        mvc.perform(get("/api/submissions/" + id + "/stats").header(CLIENT, UUID.randomUUID().toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void submitCorrectCodeRunsAllCasesAndMarksSolved() throws Exception {
         UUID client = UUID.randomUUID();
         mvc.perform(judge("submit", client, "java", TestExecutorConfig.SOLVE_TWO_SUM))

@@ -43,25 +43,26 @@ public class Judge0CodeExecutor implements CodeExecutor {
 
         int statusId = response.status().id();
         Double time = parseTime(response.time());
+        Integer memory = response.memory();
         String stdout = nullToEmpty(response.stdout());
         String stderr = nullToEmpty(response.stderr());
         String compile = nullToEmpty(response.compileOutput());
 
         if (statusId == ACCEPTED) {
-            return new ExecutionResult(Status.OK, stdout, stderr, compile, time);
+            return new ExecutionResult(Status.OK, stdout, stderr, compile, time, memory);
         }
         if (statusId == TIME_LIMIT_EXCEEDED) {
-            return new ExecutionResult(Status.TIME_LIMIT_EXCEEDED, stdout, stderr, compile, time);
+            return new ExecutionResult(Status.TIME_LIMIT_EXCEEDED, stdout, stderr, compile, time, memory);
         }
         if (statusId == COMPILATION_ERROR) {
-            return new ExecutionResult(Status.COMPILE_ERROR, stdout, stderr, compile, time);
+            return new ExecutionResult(Status.COMPILE_ERROR, stdout, stderr, compile, time, memory);
         }
         if (statusId >= FIRST_RUNTIME_ERROR && statusId <= LAST_RUNTIME_ERROR) {
             String detail = stderr.isBlank() ? nullToEmpty(response.status().description()) : stderr;
-            return new ExecutionResult(Status.RUNTIME_ERROR, stdout, detail, compile, time);
+            return new ExecutionResult(Status.RUNTIME_ERROR, stdout, detail, compile, time, memory);
         }
         return new ExecutionResult(
-                Status.INTERNAL_ERROR, stdout, nullToEmpty(response.message()), compile, time);
+                Status.INTERNAL_ERROR, stdout, nullToEmpty(response.message()), compile, time, memory);
     }
 
     private static final int MAX_ATTEMPTS = 3;
@@ -140,6 +141,7 @@ public class Judge0CodeExecutor implements CodeExecutor {
             String stderr,
             @JsonProperty("compile_output") String compileOutput,
             String time,
+            Integer memory,
             String message) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)

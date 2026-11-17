@@ -49,6 +49,10 @@ public class Submission {
     @Column(name = "runtime_ms")
     private Integer runtimeMs;
 
+    /** Peak memory in KB as reported by the judge; null for submissions made before it was recorded. */
+    @Column(name = "memory_kb")
+    private Integer memoryKb;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -71,6 +75,24 @@ public class Submission {
         this.passedCount = passedCount;
         this.totalCount = totalCount;
         this.runtimeMs = runtimeMs;
+    }
+
+    public Submission(
+            UUID clientId,
+            Long problemId,
+            Language language,
+            String code,
+            Verdict verdict,
+            int passedCount,
+            int totalCount,
+            Integer runtimeMs,
+            Integer memoryKb) {
+        this(clientId, problemId, language, code, verdict, passedCount, totalCount, runtimeMs);
+        this.memoryKb = memoryKb;
+    }
+
+    public Integer getMemoryKb() {
+        return memoryKb;
     }
 
     public Long getId() {
