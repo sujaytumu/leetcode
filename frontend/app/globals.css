@@ -333,3 +333,9 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc
 .listrow { display:flex; align-items:baseline; gap:6px; }
 .linklike { background:none; border:none; color:var(--mute); cursor:pointer; font-size:12px; padding:0 4px; } .linklike:hover { color:var(--hard); }
 @media (max-width:700px) { .addlist-pop { position:fixed; left:12px; right:12px; top:auto; bottom:12px; width:auto; } }
+
+/* ---- mock interview ---- */
+.mockbar { position:sticky; top:var(--nav-h); z-index:19; display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:6px 28px; background:color-mix(in srgb, var(--accent) 16%, var(--panel)); border-bottom:1px solid var(--accent); font-size:13px; }
+.mockclock { font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; } .mockclock.low { color:var(--hard); }
+.mockprobs { display:flex; gap:10px; } .mockprobs a.on { font-weight:700; text-decoration:underline; }
+.mockresult { list-style:none; margin:10px 0; padding:0; display:grid; gap:4px; }
