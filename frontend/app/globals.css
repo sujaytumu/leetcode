@@ -391,3 +391,4 @@ a.daycell:hover { border-color:var(--accent); transform:translateY(-1px); }
 .drawer-list li.on { background:color-mix(in srgb, var(--accent) 16%, transparent); }
 .drawer-title { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 @media (prefers-reduced-motion:reduce) { .drawer { animation:none; } }
+.stack { display:flex; flex-direction:column; gap:12px; min-width:0; }
