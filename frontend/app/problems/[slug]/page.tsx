@@ -10,6 +10,7 @@ import {
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import { useCloudSync } from "@/lib/cloud";
+import ProblemListDrawer from "@/components/ProblemListDrawer";
 import { useMock } from "@/lib/mock";
 import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
@@ -78,6 +79,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [focus, setFocus] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showKeys, setShowKeys] = useState(false);
+  const [showList, setShowList] = useState(false);
   const [answer, setAnswer] = useState<AnswerState>({ status: "idle" });
   const [answerLang, setAnswerLang] = useState("");
   const [runParts, setRunParts] = useState<Parts | null>(null);
@@ -327,6 +329,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
             <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
             <span className="grow" />
+            <button onClick={() => setShowList(true)} title="Problem list">☰ List</button>
             {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title}>← Prev</Link> : <span className="navbtn off">← Prev</span>}
             {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title}>Next →</Link> : <span className="navbtn off">Next →</span>}
             <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
@@ -563,6 +566,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
         </section>
       </div>
       {showSettings && <EditorSettingsModal settings={ed} onChange={setEd} onReset={resetEd} onClose={() => setShowSettings(false)} />}
+      <ProblemListDrawer open={showList} onClose={() => setShowList(false)} problems={all} currentSlug={slug} />
       {showKeys && (
         <div className="modal-back" onClick={() => setShowKeys(false)}>
           <div className="modal" role="dialog" aria-label="Keyboard shortcuts" onClick={(e) => e.stopPropagation()}>

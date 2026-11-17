@@ -380,3 +380,14 @@ a.daycell:hover { border-color:var(--accent); transform:translateY(-1px); }
 .daynum { font-weight:600; font-size:13px; }
 .daytitle { font-size:12px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 @media (max-width:700px) { .daygrid { gap:3px; } .daycell { min-height:58px; padding:5px 6px; } .daytitle { display:none; } }
+
+/* ---- problem list drawer ---- */
+.drawer-back { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:55; display:flex; justify-content:flex-start; }
+.drawer { width:400px; max-width:90vw; height:100%; background:var(--panel); border-right:1px solid var(--line); padding:14px; display:flex; flex-direction:column; gap:8px; animation:lcdrawer .18s ease-out; }
+@keyframes lcdrawer { from { transform:translateX(-30px); opacity:.4; } to { transform:none; opacity:1; } }
+.drawer-list { list-style:none; margin:0; padding:0; overflow-y:auto; flex:1; }
+.drawer-list li { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; cursor:pointer; }
+.drawer-list li:hover { background:var(--hover); }
+.drawer-list li.on { background:color-mix(in srgb, var(--accent) 16%, transparent); }
+.drawer-title { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (prefers-reduced-motion:reduce) { .drawer { animation:none; } }
