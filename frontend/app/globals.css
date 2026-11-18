@@ -555,3 +555,20 @@ nav button { cursor: pointer; }
 .prow-when { font-size:14px; white-space:nowrap; }
 .plist-items { padding:6px 18px 10px; }
 .plist-item { display:flex; gap:10px; padding:10px 0; color:var(--text); text-decoration:none; border-top:1px solid var(--line); }
+
+/* ---- Laptop-first profile layout ---- */
+.pgrid .solvedcard, .pgrid .badgescard { grid-column:auto; }
+.pgrid .activitycard { grid-column:1 / -1; }
+.pgrid .recentcard { grid-column:1 / -1; }
+.pextras { grid-column:1 / -1; }
+.pextras .stack { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (min-width:901px) {
+  .pgrid { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
+  .ratingcol { grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:16px; }
+  /* the whole year fits the card: cell size follows the card width */
+  .hm { container-type:inline-size; overflow-x:hidden; }
+  .hm { --cell-size:clamp(11px, calc((100cqw - (var(--months) - 1) * 12px) / var(--cols) - 4px), 18px); }
+  .hm-grid { grid-template-rows:repeat(7, var(--cell-size)); grid-auto-columns:var(--cell-size); }
+  .hm .cell { width:var(--cell-size); height:var(--cell-size); }
+}
+@media (max-width:900px) { .pextras .stack { grid-template-columns:1fr; } .pgrid .solvedcard, .pgrid .badgescard { grid-column:1 / -1; } }

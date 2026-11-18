@@ -30,8 +30,9 @@ export default function Heatmap({ calendar, weeks = 53, year }: { calendar: DayC
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { if (ref.current && !year) ref.current.scrollLeft = ref.current.scrollWidth; }, [year, calendar]);
 
+  const cols = months.reduce((n, { y, m }) => n + Math.ceil((new Date(y, m, 1).getDay() + new Date(y, m + 1, 0).getDate()) / 7), 0);
   return (
-    <div className="hm" ref={ref}>
+    <div className="hm" ref={ref} style={{ "--cols": cols, "--months": months.length } as React.CSSProperties}>
       {months.map(({ y, m }) => {
         const first = new Date(y, m, 1);
         const days = new Date(y, m + 1, 0).getDate();
