@@ -21,6 +21,7 @@ import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import FreeSpace from "@/components/FreeSpace";
+import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
@@ -71,6 +72,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [hintsShown, setHintsShown] = useState(0);
   const [showApproach, setShowApproach] = useState(false);
   const [timer, setTimer] = useState({ on: false, secs: 0 });
+  const timerRef = useRef(timer); timerRef.current = timer;
+  const [solveTime, setSolveTime] = useState<{ rec: TimeRecord; improved: boolean; secs: number } | null>(null);
   const [theme, setTheme] = useState<ThemeName>("dark");
   const [leftPct, setLeftPct] = useState(42);
   const [editorPct, setEditorPct] = useState(60);
@@ -149,7 +152,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
-    if (problem) { setCustomInput(problem.samples[0]?.input ?? ""); setResult(null); setConsoleTab("case"); }
+    if (problem) { setCustomInput(problem.samples[0]?.input ?? ""); setResult(null); setSolveTime(null); setConsoleTab("case"); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problem?.slug]);
   useEffect(() => {
@@ -194,7 +197,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       setResult(r);
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
-      if (kind === "submit") loadHistory();
+      if (kind === "submit") {
+        loadHistory();
+        // Only a running or paused timer with time on it counts as a timed solve.
+        const secs = timerRef.current.secs;
+        if (r.verdict === "ACCEPTED" && !custom && secs > 0) setSolveTime({ ...recordTime(slug, secs), secs });
+        else setSolveTime(null);
+      }
       checkExec();
     } catch (e) {
       setError((e as Error).message);
@@ -533,6 +542,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
                       {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <SubmissionStatsPanel id={result.submissionId} />}
+                      {mode === "submit" && result.verdict === "ACCEPTED" && solveTime && (
+                        <div className="vstats" style={{ marginTop: 6 }}>⏱ Solved in <b style={{ display: "inline", fontSize: 14 }}>{fmtSecs(solveTime.secs)}</b>
+                          {solveTime.improved ? " · new personal best" : ` · best ${fmtSecs(solveTime.rec.best)}`} ({solveTime.rec.runs} timed solve{solveTime.rec.runs === 1 ? "" : "s"})</div>
+                      )}
                       {result.message && <div className={result.verdict === "ACCEPTED" ? "" : "err"}>{fix(result.message)}</div>}
                       {result.cases.length > 1 && (
                         <div className="casechips" style={{ marginTop: 8 }}>
