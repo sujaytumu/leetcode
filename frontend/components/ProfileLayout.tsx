@@ -57,23 +57,6 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
         <div className="stack ratingcol"><ContestRating path={ratingPath} /></div>
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
-        <section className="card activitycard">
-          <div className="act-title"><b>{p.submissionsPastYear}</b> <span>submissions in the past one year</span></div>
-          <div className="act-stats">
-            <span className="mute">Total active<br />days: <b>{p.activeDays}</b></span>
-            <span className="mute">Max<br />streak: <b>{p.maxStreak}</b></span>
-            <span className="grow" />
-            <select className="act-year" aria-label="Calendar range" value={String(year)}
-              onChange={(e) => setYear(e.target.value === "current" ? "current" : Number(e.target.value))}>
-              <option value="current">Current</option>
-              {years.map((y) => <option key={y} value={y}>{y}</option>)}
-            </select>
-          </div>
-          <Heatmap calendar={p.calendar} year={year === "current" ? undefined : year} />
-        </section>
-
-        {extras}
-
         <section className="card badgescard">
           <div className="bar" style={{ marginBottom: 10 }}>
             <h3 style={{ margin: 0 }}>Badges</h3>
@@ -96,7 +79,26 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
           </div>
         </section>
 
+        <section className="card activitycard">
+          <div className="act-title"><b>{p.submissionsPastYear}</b> <span>submissions in the past one year</span></div>
+          <div className="act-stats">
+            <span className="mute">Total active<br />days: <b>{p.activeDays}</b></span>
+            <span className="mute">Max<br />streak: <b>{p.maxStreak}</b></span>
+            <span className="grow" />
+            <select className="act-year" aria-label="Calendar range" value={String(year)}
+              onChange={(e) => setYear(e.target.value === "current" ? "current" : Number(e.target.value))}>
+              <option value="current">Current</option>
+              {years.map((y) => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+          <Heatmap calendar={p.calendar} year={year === "current" ? undefined : year} />
+        </section>
+
+
+
         <div className="recentcard"><ProfileTabs p={p} own={own} /></div>
+
+        {extras && <div className="pextras">{extras}</div>}
 
       </div>
       </div>
