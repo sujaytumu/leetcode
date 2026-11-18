@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { clientId } from "@/lib/api";
+import { authHeaders } from "@/lib/auth";
 
 /** Downloads every accepted solution as a zip (one folder per problem + README index), ready for a GitHub repo. */
 export default function ExportCard() {
@@ -10,7 +11,7 @@ export default function ExportCard() {
   async function download() {
     setBusy(true); setMsg("");
     try {
-      const res = await fetch("/api/export/solutions.zip", { headers: { "X-Client-Id": clientId() } });
+      const res = await fetch("/api/export/solutions.zip", { headers: { "X-Client-Id": clientId(), ...authHeaders() } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const url = URL.createObjectURL(await res.blob());
       const a = document.createElement("a");

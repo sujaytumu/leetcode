@@ -11,6 +11,18 @@ public final class ApiExceptions {
         }
     }
 
+    public static class ConflictException extends RuntimeException {
+        public ConflictException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
+
     public static class TooManyRequestsException extends RuntimeException {
         public TooManyRequestsException(String message) {
             super(message);

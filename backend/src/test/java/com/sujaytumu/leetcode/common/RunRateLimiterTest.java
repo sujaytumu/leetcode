@@ -16,7 +16,8 @@ class RunRateLimiterTest {
                 new AppProperties.Cors(List.of()),
                 new AppProperties.Seed(false),
                 new AppProperties.RateLimit(perMinute),
-                new AppProperties.Judge0("", "", 2.0, 20));
+                new AppProperties.Judge0("", "", 2.0, 20),
+                new AppProperties.Auth("", 30, 8));
         return new RunRateLimiter(props);
     }
 

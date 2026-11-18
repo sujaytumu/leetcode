@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, clientId } from "@/lib/api";
+import { authToken, authUser } from "@/lib/auth";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -13,9 +14,11 @@ export default function SyncCard() {
   const [board, setBoard] = useState<Board | null>(null);
   const [entered, setEntered] = useState("");
   const [msg, setMsg] = useState("");
+  const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
     setCode(clientId());
+    setUser(authToken() ? authUser() : null);
     api<Board>("/api/leaderboard?limit=1").then(setBoard).catch(() => {});
   }, []);
 
@@ -45,6 +48,10 @@ export default function SyncCard() {
           : <span className="mute">Solve a problem to get a global rank. </span>}
         <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link>
       </p>
+      {user ? (
+        <p className="mute" style={{ margin: 0 }}>Signed in as <b style={{ display: "inline", fontSize: 14 }}>{user}</b>. Log in with your username on any device to get this progress; no sync code needed.</p>
+      ) : (<>
+      <p className="mute" style={{ margin: "0 0 10px" }}><Link href="/login">Create an account</Link> to protect this progress with a password. A sync code lets anyone who has it use your progress.</p>
       <div className="iolabel">Your sync code</div>
       <div className="bar" style={{ flexWrap: "wrap" }}>
         <code style={{ overflowWrap: "anywhere" }}>{code}</code>
@@ -55,6 +62,7 @@ export default function SyncCard() {
         <input value={entered} placeholder="paste sync code" onChange={(e) => setEntered(e.target.value)} style={{ flex: 1, minWidth: 220 }} />
         <button disabled={!entered.trim()} onClick={restore}>Restore</button>
       </div>
+      </>)}
       {msg && <p className="mute" style={{ margin: "8px 0 0" }}>{msg}</p>}
     </section>
   );
