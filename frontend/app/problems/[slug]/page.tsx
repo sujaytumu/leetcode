@@ -22,6 +22,7 @@ import Discuss from "@/components/Discuss";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
+import { rememberProblem } from "@/components/ContinueBanner";
 import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
@@ -130,6 +131,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       .catch(() => { if (live) setStudy(null); });
     return () => { live = false; };
   }, [slug]);
+  useEffect(() => { if (problem) rememberProblem(problem.slug, problem.title); }, [problem]);
   const hasProblem = problem !== null;
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
@@ -203,6 +205,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
         loadHistory();
         // Only a running or paused timer with time on it counts as a timed solve.
         const secs = timerRef.current.secs;
+        if (r.verdict === "ACCEPTED" && !custom) { try { localStorage.removeItem("lc-last-problem"); } catch { /* ignore */ } }
         if (r.verdict === "ACCEPTED" && !custom && secs > 0) setSolveTime({ ...recordTime(slug, secs), secs });
         else setSolveTime(null);
       }
