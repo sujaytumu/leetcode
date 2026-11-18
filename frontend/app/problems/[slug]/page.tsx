@@ -24,6 +24,8 @@ import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel"
 import FreeSpace from "@/components/FreeSpace";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
+import { rememberProblem } from "@/components/ContinueCard";
+import { lineDiff } from "@/lib/lineDiff";
 
 import type { EditorProps } from "@monaco-editor/react";
 // Without this, next/dynamic infers ComponentType<never> for Monaco's Editor and the production build fails type-checking.
@@ -126,6 +128,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       .catch(() => { if (live) setStudy(null); });
     return () => { live = false; };
   }, [slug]);
+  useEffect(() => { if (problem && problem.slug === slug) rememberProblem(slug, problem.title); }, [problem, slug]);
+  const [showDiff, setShowDiff] = useState(false);
   const hasProblem = problem !== null;
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
@@ -428,8 +432,17 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   </div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
                   <div className="iolabel" style={{ marginTop: 14 }}>Code</div>
-                  <pre className="subcode">{openSub.code}</pre>
-                  <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>
+                  {showDiff ? (
+                    <>
+                      <div className="mute" style={{ fontSize: 12, marginBottom: 4 }}>Submission → your editor ({lang})</div>
+                      <pre className="subcode diff">{lineDiff(openSub.code, code).map((r, i) => (
+                        <div key={i} className={`dl ${r.kind}`}>{r.kind === "add" ? "+ " : r.kind === "del" ? "- " : "  "}{r.text}</div>
+                      ))}</pre>
+                    </>
+                  ) : <pre className="subcode">{openSub.code}</pre>}
+                  <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>{" "}
+                  <button className="ghost" disabled={openSub.language !== lang} title={openSub.language !== lang ? "Switch the editor to this submission's language to compare" : "Compare with the code in your editor"}
+                    onClick={() => setShowDiff((v) => !v)}>{showDiff ? "Hide diff" : "Diff vs editor"}</button>
                 </div>
               ) : (
               <table>
