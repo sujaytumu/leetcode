@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import dynamic from "next/dynamic";
 import { type ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import type { EditorProps } from "@monaco-editor/react";
@@ -30,6 +31,7 @@ const safeGet = (k: string) => { try { return localStorage.getItem(k); } catch {
 const safeSet = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* storage blocked */ } };
 
 export default function Playground() {
+  usePageTitle("Playground");
   const meta = useMeta();
   const [ed] = useEditorSettings();
   const [theme, setTheme] = useState<ThemeName>("dark");

@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { loadAll } from "@/lib/local";
@@ -36,6 +37,7 @@ function Result({ s, items }: { s: MockSession; items: ProblemSummary[] }) {
 }
 
 export default function MockPage() {
+  usePageTitle("Mock interview");
   const { session, running, remaining } = useMock();
   const [items, setItems] = useState<ProblemSummary[]>([]);
   const [past, setPast] = useState<MockSession[]>([]);

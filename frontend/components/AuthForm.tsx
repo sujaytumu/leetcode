@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 import { authToken, Session, setSession } from "@/lib/auth";
 
 type Mode = "login" | "register";
-const LAST_USER = "lc-last-username";
+const LAST_USER = "lc-last-email";
 
 /** Only same-site paths: stops "?next=https://evil" from bouncing a freshly logged-in user off-site. */
 function nextPath(): string {
@@ -18,7 +18,7 @@ function nextPath(): string {
 /** One focused form per page (/login, /register). On success the user lands on the main page. */
 export default function AuthForm({ mode }: { mode: Mode }) {
   const register = mode === "register";
-  const [username, setUsername] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -28,7 +28,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   useEffect(() => {
     // Already signed in: nothing to do here.
     if (authToken()) { window.location.replace(nextPath()); return; }
-    try { const u = localStorage.getItem(LAST_USER); if (u && !register) setUsername(u); } catch { /* storage blocked */ }
+    try { const u = localStorage.getItem(LAST_USER); if (u && !register) setId(u); } catch { /* storage blocked */ }
   }, [register]);
 
   useEffect(() => {
@@ -41,10 +41,10 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     e.preventDefault();
     if (busy) return;
     setBusy(true); setError("");
-    const name = username.trim();
+    const name = id.trim();
     try {
       // The free-tier server can take about a minute to wake up, so allow for that.
-      const s = await api<Session>(`/api/auth/${mode}`, { method: "POST", body: JSON.stringify({ username: name, password }) }, 75000);
+      const s = await api<Session>(`/api/auth/${mode}`, { method: "POST", body: JSON.stringify(register ? { email: name, password } : { email: name, password }) }, 75000);
       try { localStorage.setItem(LAST_USER, name); } catch { /* storage blocked */ }
       setSession(s);
       window.location.replace(nextPath());
@@ -64,9 +64,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             : "Log in to load your progress on this device. You stay signed in for 30 days."}
         </p>
         <form onSubmit={submit} className="authform" method="post">
-          <label className="authfield"><span>Username</span>
-            <input name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username"
-              autoCapitalize="none" autoCorrect="off" spellCheck={false} maxLength={20} required autoFocus={!username} />
+          <label className="authfield"><span>{register ? "Email" : "Email or username"}</span>
+            <input name="email" id="email" type={register ? "email" : "text"} value={id} onChange={(e) => setId(e.target.value)} autoComplete={register ? "email" : "username"}
+              autoCapitalize="none" autoCorrect="off" spellCheck={false} maxLength={254} required autoFocus={!id} />
           </label>
           <label className="authfield"><span>Password</span>
             <span className="passwrap">
@@ -77,9 +77,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
               </button>
             </span>
           </label>
-          {register && <span className="mute authhint">3-20 letters, digits or underscores. Password 8+ characters.</span>}
+          {register && <span className="mute authhint">Password 8+ characters. Your display name is created from the email and can be changed in your profile.</span>}
           {error && <div className="banner err" role="alert">{error}</div>}
-          <button className="primary authsubmit" disabled={busy || !username.trim() || !password}>
+          <button className="primary authsubmit" disabled={busy || !id.trim() || !password}>
             {busy ? "Please wait…" : register ? "Create account" : "Log in"}
           </button>
           {slow && <span className="mute authhint" role="status">The server is waking up. This can take up to a minute the first time.</span>}
@@ -89,7 +89,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         </p>
         {!register && (
           <p className="authhint mute" style={{ margin: "10px 0 0", textAlign: "center" }}>
-            Forgot your password? There is no email on file to reset it. If another device is still signed in, use the sync code on its Profile page.
+            Forgot your password? Password reset by email is not available yet. If another device is still signed in, change it from Account settings there.
           </p>
         )}
       </section>

@@ -19,6 +19,7 @@ import java.util.UUID;
         name = "accounts",
         uniqueConstraints = {
             @UniqueConstraint(name = "uk_accounts_username", columnNames = "username"),
+            @UniqueConstraint(name = "uk_accounts_email", columnNames = "email"),
             @UniqueConstraint(name = "uk_accounts_client", columnNames = "client_id")
         })
 public class Account {
@@ -30,6 +31,10 @@ public class Account {
     /** Lower-cased for lookups. */
     @Column(name = "username", length = 20, nullable = false)
     private String username;
+
+    /** Lower-cased; null only for accounts created before email sign-up existed. */
+    @Column(name = "email", length = 254)
+    private String email;
 
     @Column(name = "password_hash", length = 200, nullable = false)
     private String passwordHash;
@@ -52,6 +57,12 @@ public class Account {
         this.clientId = clientId;
     }
 
+    public Account(String email, String username, String passwordHash, UUID clientId) {
+        this(username, passwordHash, clientId);
+        this.email = email;
+    }
+
+    public String getEmail() { return email; }
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }

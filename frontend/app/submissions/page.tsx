@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type Page } from "@/lib/api";
@@ -13,6 +14,7 @@ const VERDICTS = ["ACCEPTED", "WRONG_ANSWER", "RUNTIME_ERROR", "TIME_LIMIT_EXCEE
 const label = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function SubmissionsPage() {
+  usePageTitle("My submissions");
   const [verdict, setVerdict] = useState("");
   const [page, setPage] = useState(0);
   const [data, setData] = useState<Page<Item> | null>(null);

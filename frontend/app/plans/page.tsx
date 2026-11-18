@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Plan } from "@/lib/api";
@@ -8,6 +9,7 @@ import { swr } from "@/lib/local";
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "○" } as const;
 
 export default function PlansPage() {
+  usePageTitle("Study plans");
   const [plans, setPlans] = useState<Plan[] | null>(null);
   const [error, setError] = useState("");
 
@@ -29,6 +31,16 @@ export default function PlansPage() {
                 <div className="bar"><b>{plan.title}</b><span className="grow" /><span className="mute">{plan.solved}/{plan.total}</span></div>
                 <div className="mute" style={{ fontSize: 13 }}>{plan.blurb}</div>
                 <div className="progress"><div style={{ width: `${pct}%` }} /></div>
+                {(() => {
+                  const next = plan.problems.find((p) => p.status !== "SOLVED");
+                  return next
+                    ? <div style={{ marginTop: 8, fontSize: 13 }}>
+                        <Link href={`/problems/${next.slug}`} onClick={(e) => e.stopPropagation()}>
+                          {plan.solved === 0 ? "Start" : "Continue"}: <b style={{ display: "inline", fontSize: 13 }}>{next.title}</b> →
+                        </Link>
+                      </div>
+                    : <div className="EASY" style={{ marginTop: 8, fontSize: 13 }}>Plan complete 🎉</div>;
+                })()}
               </summary>
               <ul>
                 {plan.problems.map((p) => (

@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { api, type Status } from "@/lib/api";
@@ -54,6 +55,7 @@ function ListCard({ list, onChange }: { list: ListSummary; onChange: () => void 
 }
 
 export default function ListsPage() {
+  usePageTitle("Lists");
   const [lists, setLists] = useState<ListSummary[] | null>(null);
   const [name, setName] = useState("");
   const [error, setError] = useState("");

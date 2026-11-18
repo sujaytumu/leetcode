@@ -25,7 +25,8 @@ npm ci
 npm run dev
 ```
 
-CI (`.github/workflows/ci.yml`) runs `mvn verify` for the backend and `npm run build` (which type-checks) for the frontend.
+CI (`.github/workflows/ci.yml`) runs `mvn verify` for the backend and `npm test` plus `npm run build` (which type-checks) for the frontend.
+Frontend unit tests use Node's built-in runner (`cd frontend && npm test`, Node 22.6+), with no extra dependencies.
 
 ## Deploying (Render + Vercel + Neon)
 
@@ -81,9 +82,9 @@ append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 | `POST /api/playground/run` | Run any program once with custom stdin, nothing stored |
 | `GET /api/contests`, `GET /api/contests/{id}` | Weekly contest schedule, problems (after start) and live standings |
 | `GET /api/submissions?verdict=&page=` | Your submissions across all problems |
-| `POST /api/auth/register` | Create an account that adopts this browser's `X-Client-Id`, so existing progress is kept (`{username, password}`) |
-| `POST /api/auth/login` | Log in; returns `{token, clientId, username}` (rate limited per username and IP) |
-| `GET /api/auth/me`, `POST /api/auth/password` | Current account; change password (revokes older tokens) |
+| `POST /api/auth/register` | Create an account with `{email, password}` (optional `username`, derived from the email when omitted); adopts this browser's `X-Client-Id`, so existing progress is kept |
+| `POST /api/auth/login` | Log in with `{email, password}` (older accounts can still send `{username, password}`); returns `{token, clientId, username, email}` (rate limited per identifier and IP) |
+| `GET /api/auth/me`, `POST /api/auth/password` | Current account (`username`, `email`); change password (revokes older tokens, returns a fresh session) |
 
 Per-user state is keyed by a UUID sent in the `X-Client-Id` header. Anonymous visitors get one automatically. An account
 owns one such id: after `register`, requests must carry `Authorization: Bearer <token>` (the backend then overrides
@@ -99,6 +100,12 @@ timer); Discuss tab with Markdown comments, replies and upvotes; topics, study p
 interviews; weekly contests (Sundays 02:30 UTC, 90 minutes, 3/4/5/6 points, 5 minute penalties); leaderboard;
 playground; profile with heatmap, streaks, badges, global rank and a device sync code; command palette (Ctrl/⌘+K);
 light and dark themes; offline-first catalogue and PWA manifest.
+
+Also: email + password accounts with an account settings page (change password, log out); a daily goal ring on the profile; a
+`/stats` page (verdicts, languages, weekday and hour charts, first-try rate, problems that took the most attempts); line diff between
+any two submissions of a problem; a spaced-repetition review queue (`/review`, intervals 1/3/7/14/30/60 days) and custom practice sessions
+(`/practice`); solve times and personal bests from the workspace timer; a "continue where you left off" banner; a device backup of
+local-only data; skip link, focus ring and per-page tab titles.
 
 ## Status
 
