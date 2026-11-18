@@ -45,7 +45,8 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
               <span className="mute"><b>{l.solved}</b> problems solved</span>
             </div>
           ))}
-          <h3 className="sect-h" style={{ marginTop: 22 }}>Skills</h3>
+          <hr className="sect-hr" />
+          <h3 className="sect-h">Skills</h3>
           <SkillsCard skills={p.skills} />
         </section>
       </div>
