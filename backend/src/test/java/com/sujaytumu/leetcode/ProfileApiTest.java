@@ -31,6 +31,14 @@ class ProfileApiTest {
     ObjectMapper json;
 
     @Test
+    void newClientHasNoContestRatingYet() throws Exception {
+        mvc.perform(get("/api/profile/rating").header(CLIENT, UUID.randomUUID().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.attended").value(0))
+                .andExpect(jsonPath("$.history.length()").value(0));
+    }
+
+    @Test
     void newClientHasAnEmptyProfile() throws Exception {
         mvc.perform(get("/api/profile").header(CLIENT, UUID.randomUUID().toString()))
                 .andExpect(status().isOk())
