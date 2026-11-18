@@ -1,6 +1,7 @@
 "use client";
 import ExportCard from "@/components/ExportCard";
 import SyncCard from "@/components/SyncCard";
+import BackupCard from "@/components/BackupCard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
@@ -80,7 +81,7 @@ export default function ProfilePage() {
           <Heatmap calendar={p.calendar} />
         </section>
 
-        <div className="stack"><SyncCard /><ExportCard /></div>
+        <div className="stack"><SyncCard /><ExportCard /><BackupCard /></div>
 
         <section className="card badgescard">
           <div className="bar" style={{ marginBottom: 10 }}>
