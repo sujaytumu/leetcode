@@ -457,3 +457,5 @@ nav button { cursor: pointer; }
 .acct-rows > div { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding-bottom:6px; }
 .acct-rows b { font-size:14px; display:inline; overflow-wrap:anywhere; text-align:right; }
 .revrow { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.pbar { height:6px; background:var(--cell); border-radius:99px; overflow:hidden; margin-bottom:10px; }
+.pbar > div { height:100%; background:var(--easy); border-radius:99px; transition:width .3s; }
