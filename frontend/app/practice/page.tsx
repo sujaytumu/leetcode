@@ -27,6 +27,8 @@ export default function PracticePage() {
   const [session, setSession] = useState<string[]>([]);
 
   useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tag");
+    if (t) setTags([t]);
     try { const s = JSON.parse(localStorage.getItem(KEY) ?? "[]"); if (Array.isArray(s)) setSession(s.filter((x) => typeof x === "string")); } catch { /* corrupt */ }
     loadAll((items) => setAll(items), () => {}).catch((e: Error) => setError(e.message));
   }, []);
