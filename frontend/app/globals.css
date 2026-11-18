@@ -394,7 +394,7 @@ a.daycell:hover { border-color:var(--accent); transform:translateY(-1px); }
 .stack { display:flex; flex-direction:column; gap:12px; min-width:0; }
 
 /* Accounts */
-.authcard { max-width: 380px; margin: 40px auto; }
+.authcard { max-width: 400px; width: 100%; margin: 0 auto; }
 nav button { cursor: pointer; }
 
 /* Header: links scroll on their own; search, theme, log in/out and Profile stay put on the right. */
@@ -597,3 +597,22 @@ tr.kbrow td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
   .mtabs button { flex:1; min-height:44px; border-radius:10px; font-weight:600; background:var(--cell); border-color:transparent; }
   .mtabs button.on { background:color-mix(in srgb, var(--accent) 18%, var(--cell)); border-color:var(--accent); color:var(--accent); }
 }
+
+/* ---- login / register: one focused card, never wider than the screen ---- */
+html, body { overflow-x:hidden; max-width:100%; }
+.nav { min-width:0; max-width:100%; }
+.authpage { display:flex; justify-content:center; padding:clamp(16px, 8vh, 72px) 0 32px; min-width:0; }
+.authcard { padding:24px; }
+.authtitle { margin:0 0 6px; font-size:24px; letter-spacing:-.01em; }
+.authsub { margin:0 0 18px; font-size:14px; }
+.authform { display:grid; gap:14px; }
+.authfield { display:grid; gap:6px; font-size:13px; color:var(--mute); }
+.authfield input { width:100%; min-width:0; font-size:16px; padding:11px 12px; color:var(--text); }
+.passwrap { position:relative; display:block; }
+.passwrap input { padding-right:64px; }
+.passtoggle { position:absolute; right:6px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:var(--mute); padding:6px 10px; font-size:13px; }
+.authsubmit { width:100%; padding:12px; font-size:16px; margin-top:2px; }
+.authhint { font-size:12.5px; }
+.authswitch { margin:16px 0 0; text-align:center; font-size:14px; }
+.authswitch a { color:var(--accent); font-weight:600; }
+@media (max-width:700px) { .authpage { padding-top:20px; } .authcard { padding:18px; } }

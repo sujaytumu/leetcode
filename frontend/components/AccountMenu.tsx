@@ -24,7 +24,7 @@ export default function AccountMenu() {
     <>
       {user
         ? <button type="button" className="nav-auth" onClick={() => { clearSession(); window.location.href = "/"; }}>Log out</button>
-        : <Link href="/login" className={`nav-auth${path.startsWith("/login") ? " active" : ""}`}>Log in</Link>}
+        : <Link href="/login" className={`nav-auth${(path.startsWith("/login") || path.startsWith("/register")) ? " active" : ""}`}>Log in</Link>}
       <Link href="/profile" className={`nav-profile${path.startsWith("/profile") ? " active" : ""}`}
         title={user ? `Signed in as ${user}` : "Your profile"} aria-label="Profile">
         <span aria-hidden="true">👤</span><span className="hide-sm"> Profile</span>
