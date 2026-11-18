@@ -456,3 +456,4 @@ nav button { cursor: pointer; }
 .acct-rows { display:grid; gap:8px; }
 .acct-rows > div { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding-bottom:6px; }
 .acct-rows b { font-size:14px; display:inline; overflow-wrap:anywhere; text-align:right; }
+.revrow { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }

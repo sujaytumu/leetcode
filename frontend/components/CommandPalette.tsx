@@ -10,6 +10,7 @@ const PAGES = [
   { label: "Daily challenge calendar", hint: "Every day's problem this month", href: "/daily" },
   { label: "Study plans", hint: "Curated learning paths", href: "/plans" },
   { label: "My stats", hint: "Verdicts, languages and when you practise", href: "/stats" },
+  { label: "Review queue", hint: "Solved problems due for spaced review", href: "/review" },
   { label: "Profile", hint: "Your progress and activity", href: "/profile" },
 ];
 
