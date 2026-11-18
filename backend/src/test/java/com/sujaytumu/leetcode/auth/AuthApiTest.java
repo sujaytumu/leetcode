@@ -41,11 +41,15 @@ class AuthApiTest {
         return "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
     }
 
+    private static String signup(String email, String password) {
+        return "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+    }
+
     private JsonNode register(String username, String password, UUID client) throws Exception {
         String body = mvc.perform(post("/api/auth/register")
                         .header(CLIENT, client.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(creds(username, password)))
+                        .content("{\"email\":\"" + username + "@example.com\",\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         return json.readTree(body);
@@ -108,12 +112,12 @@ class AuthApiTest {
         register(name, "correct horse", UUID.randomUUID());
         mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(creds(name, "nope nope")))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.detail").value("Wrong username or password."));
+                .andExpect(jsonPath("$.detail").value("Wrong email or password."));
         mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(creds("ghost" + SEQ.incrementAndGet(), "nope nope")))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.detail").value("Wrong username or password."));
+                .andExpect(jsonPath("$.detail").value("Wrong email or password."));
     }
 
     @Test
@@ -125,18 +129,19 @@ class AuthApiTest {
         mvc.perform(post("/api/auth/register")
                         .header(CLIENT, UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(creds(name.toUpperCase(), "another pass")))
+                        .content("{\"email\":\"other" + SEQ.incrementAndGet() + "@example.com\",\"username\":\"" + name.toUpperCase() + "\",\"password\":\"another pass\"}"))
                 .andExpect(status().isConflict());
         mvc.perform(post("/api/auth/register")
                         .header(CLIENT, device.toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(creds(user(), "another pass")))
+                        .content(signup("again" + SEQ.incrementAndGet() + "@example.com", "another pass")))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void rejectsWeakInput() throws Exception {
-        for (String body : new String[] {creds("ab", "correct horse"), creds(user(), "short"), creds("bad name!", "correct horse")}) {
+        for (String body : new String[] {creds("ab", "correct horse"), creds(user(), "short"), creds("bad name!", "correct horse"),
+            signup("not-an-email", "correct horse"), signup(user() + "@example.com", "short")}) {
             mvc.perform(post("/api/auth/register")
                             .header(CLIENT, UUID.randomUUID().toString())
                             .contentType(MediaType.APPLICATION_JSON)
@@ -165,5 +170,31 @@ class AuthApiTest {
         mvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token)).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(creds(name, "battery staple")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void emailSignUpDerivesAUsernameAndLoginWorksWithEmailInAnyCase() throws Exception {
+        String email = "Learner" + SEQ.incrementAndGet() + "@Example.com";
+        UUID device = UUID.randomUUID();
+        String body = mvc.perform(post("/api/auth/register")
+                        .header(CLIENT, device.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(signup(email, "correct horse")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value(email.toLowerCase()))
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(json.readTree(body).get("username").asText().matches("^[a-z0-9_]{3,20}$"));
+
+        mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"" + email.toUpperCase() + "\",\"password\":\"correct horse\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clientId").value(device.toString()));
+
+        // The same email cannot be registered twice, even from another browser.
+        mvc.perform(post("/api/auth/register")
+                        .header(CLIENT, UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(signup(email, "another pass")))
+                .andExpect(status().isConflict());
     }
 }

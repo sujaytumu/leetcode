@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    public record Credentials(String username, String password) {}
+    /** Sign up with {@code email} (+ optional {@code username}); log in with {@code email} or, for older accounts, {@code username}. */
+    public record Credentials(String email, String username, String password) {}
 
     public record PasswordChange(String currentPassword, String newPassword) {}
 
-    public record Me(String username, UUID clientId, Instant createdAt) {}
+    public record Me(String username, String email, UUID clientId, Instant createdAt) {}
 
     private final AuthService service;
 
@@ -38,18 +39,18 @@ public class AuthController {
             @RequestHeader(Headers.CLIENT_ID) UUID clientId,
             @RequestBody Credentials body,
             HttpServletRequest request) {
-        return service.register(body.username(), body.password(), clientId, request.getRemoteAddr());
+        return service.register(body.email(), body.username(), body.password(), clientId, request.getRemoteAddr());
     }
 
     @PostMapping("/login")
     public Session login(@RequestBody Credentials body, HttpServletRequest request) {
-        return service.login(body.username(), body.password(), request.getRemoteAddr());
+        return service.login(body.email() != null && !body.email().isBlank() ? body.email() : body.username(), body.password(), request.getRemoteAddr());
     }
 
     @GetMapping("/me")
     public Me me(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization) {
         Account a = service.authenticate(authorization);
-        return new Me(a.getUsername(), a.getClientId(), a.getCreatedAt());
+        return new Me(a.getUsername(), a.getEmail(), a.getClientId(), a.getCreatedAt());
     }
 
     @PostMapping("/password")
