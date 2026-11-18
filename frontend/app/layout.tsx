@@ -28,7 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="nav">
           <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
-          <nav><LoadingIndicator /><NavLinks /><PaletteButton /><ThemeToggle /><AccountMenu /></nav>
+          <nav><LoadingIndicator /><NavLinks /></nav>
+          {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
+          <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>
         </header>
         <MockBar />
         <main>{children}</main>

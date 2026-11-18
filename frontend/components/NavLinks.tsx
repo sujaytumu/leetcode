@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const LINKS = [{ href: "/", label: "Problems" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/plans", label: "Plans" }, { href: "/lists", label: "Lists" }, { href: "/mock", label: "Mock" }, { href: "/contest", label: "Contest" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" }, { href: "/profile", label: "Profile" }];
+const LINKS = [{ href: "/", label: "Problems" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/plans", label: "Plans" }, { href: "/lists", label: "Lists" }, { href: "/mock", label: "Mock" }, { href: "/contest", label: "Contest" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" }];
 
 export default function NavLinks() {
   const path = usePathname();
