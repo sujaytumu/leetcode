@@ -81,8 +81,15 @@ append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 | `POST /api/playground/run` | Run any program once with custom stdin, nothing stored |
 | `GET /api/contests`, `GET /api/contests/{id}` | Weekly contest schedule, problems (after start) and live standings |
 | `GET /api/submissions?verdict=&page=` | Your submissions across all problems |
+| `POST /api/auth/register` | Create an account that adopts this browser's `X-Client-Id`, so existing progress is kept (`{username, password}`) |
+| `POST /api/auth/login` | Log in; returns `{token, clientId, username}` (rate limited per username and IP) |
+| `GET /api/auth/me`, `POST /api/auth/password` | Current account; change password (revokes older tokens) |
 
-Per-user state is keyed by an anonymous UUID sent in the `X-Client-Id` header.
+Per-user state is keyed by a UUID sent in the `X-Client-Id` header. Anonymous visitors get one automatically. An account
+owns one such id: after `register`, requests must carry `Authorization: Bearer <token>` (the backend then overrides
+`X-Client-Id` with the account's id, so it cannot be forged), and using that id without a token returns 401.
+Passwords are hashed with PBKDF2-HMAC-SHA256 (210k iterations, per-password salt); tokens are HMAC-signed and expire
+after 30 days. Set `AUTH_SECRET` (32+ random characters) in production so tokens survive restarts.
 
 ## Features
 

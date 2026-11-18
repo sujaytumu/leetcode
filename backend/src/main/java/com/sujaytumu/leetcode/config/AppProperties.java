@@ -9,9 +9,16 @@ public record AppProperties(
         @DefaultValue Cors cors,
         @DefaultValue Seed seed,
         @DefaultValue RateLimit rateLimit,
-        @DefaultValue Judge0 judge0) {
+        @DefaultValue Judge0 judge0,
+        @DefaultValue Auth auth) {
 
     public record Cors(@DefaultValue("http://localhost:3000") List<String> allowedOrigins) {}
+
+    /** secret signs login tokens; set AUTH_SECRET in production or tokens reset on every restart. */
+    public record Auth(
+            @DefaultValue("") String secret,
+            @DefaultValue("30") int tokenDays,
+            @DefaultValue("8") int maxFailedLogins) {}
 
     public record Seed(@DefaultValue("true") boolean enabled) {}
 

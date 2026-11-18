@@ -1,3 +1,4 @@
+import { authHeaders, authToken, expireSession } from "./auth";
 import { loading } from "./loading";
 
 /** Same-origin: next.config.mjs rewrites /api/* to the backend, so there is no CORS and no preflight. */
@@ -104,7 +105,7 @@ async function request<T>(path: string, init: RequestInit, timeoutMs: number): P
     res = await fetch(`${API}${path}`, {
       ...init,
       signal: ctrl.signal,
-      headers: { "Content-Type": "application/json", "X-Client-Id": clientId(), ...(init.headers ?? {}) },
+      headers: { "Content-Type": "application/json", "X-Client-Id": clientId(), ...authHeaders(), ...(init.headers ?? {}) },
     });
   } catch (e) {
     const aborted = (e as Error).name === "AbortError";
@@ -117,6 +118,7 @@ async function request<T>(path: string, init: RequestInit, timeoutMs: number): P
     clearTimeout(timer);
   }
   if (!res.ok) {
+    if (res.status === 401 && authToken()) expireSession();
     let msg = "";
     try { const j = await res.json(); msg = j.detail || j.message || j.title || ""; } catch {}
     const transient = res.status === 502 || res.status === 503 || res.status === 504;

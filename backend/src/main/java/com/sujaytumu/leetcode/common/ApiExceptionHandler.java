@@ -1,8 +1,10 @@
 package com.sujaytumu.leetcode.common;
 
+import com.sujaytumu.leetcode.common.ApiExceptions.ConflictException;
 import com.sujaytumu.leetcode.common.ApiExceptions.ExecutionUnavailableException;
 import com.sujaytumu.leetcode.common.ApiExceptions.NotFoundException;
 import com.sujaytumu.leetcode.common.ApiExceptions.TooManyRequestsException;
+import com.sujaytumu.leetcode.common.ApiExceptions.UnauthorizedException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     ProblemDetail notFound(NotFoundException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    ProblemDetail conflict(ConflictException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    ProblemDetail unauthorized(UnauthorizedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(TooManyRequestsException.class)

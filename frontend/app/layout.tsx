@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import NavLinks from "@/components/NavLinks";
+import AccountMenu from "@/components/AccountMenu";
 import MockBar from "@/components/MockBar";
 import CommandPalette, { PaletteButton } from "@/components/CommandPalette";
 
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="nav">
           <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
-          <nav><LoadingIndicator /><NavLinks /><PaletteButton /><ThemeToggle /></nav>
+          <nav><LoadingIndicator /><NavLinks /><PaletteButton /><ThemeToggle /><AccountMenu /></nav>
         </header>
         <MockBar />
         <main>{children}</main>

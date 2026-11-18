@@ -39,6 +39,10 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
   seed:
     enabled: true
+  auth:
+    # Set AUTH_SECRET (32+ random chars) in production so tokens survive restarts.
+    secret: ${AUTH_SECRET:}
+    token-days: 30
   rate-limit:
     runs-per-minute: ${RUNS_PER_MINUTE:20}
   judge0:
