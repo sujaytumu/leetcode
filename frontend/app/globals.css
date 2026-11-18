@@ -465,3 +465,9 @@ nav button { cursor: pointer; }
 .profilecard .pc-edit.pc-following { background:var(--cell); border-color:var(--line); color:var(--text); }
 .profilecard .pc-link { display:block; text-align:center; text-decoration:none; box-sizing:border-box; }
 .pc-public { display:block; margin:10px 0 0; font-size:13px; }
+/* weekly goal, diff view */
+.weekly { display:flex; align-items:center; gap:14px; margin:0; }
+.home-side .weekly { margin:0; }
+.subcode.diff { white-space:pre-wrap; }
+.dl.add { background:rgba(44,187,93,.18); }
+.dl.del { background:rgba(239,71,67,.18); }

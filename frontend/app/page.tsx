@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { api, Daily, fetchAllProblems, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
 import { swr } from "@/lib/local";
 import Activity from "@/components/Activity";
+import WeeklyGoal from "@/components/WeeklyGoal";
+import ContinueCard from "@/components/ContinueCard";
 import SolvedCard from "@/components/SolvedCard";
 import Skeleton from "@/components/Skeleton";
 import FreeSpace from "@/components/FreeSpace";
@@ -161,6 +163,8 @@ export default function Home() {
               <button onClick={pickRandom} disabled={picking} title="Open a random problem you have not solved yet">🎲 Pick one</button>
             </div>
           )}
+          <ContinueCard />
+          <WeeklyGoal />
           <Activity />
         </aside>
       </div>
