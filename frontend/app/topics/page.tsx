@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -7,6 +8,7 @@ import { swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 
 export default function TopicsPage() {
+  usePageTitle("Topics");
   const meta = useMeta();
   const [topics, setTopics] = useState<Topic[] | null>(null);
   const [error, setError] = useState("");

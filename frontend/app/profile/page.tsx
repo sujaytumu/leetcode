@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import ExportCard from "@/components/ExportCard";
 import SyncCard from "@/components/SyncCard";
 import BackupCard from "@/components/BackupCard";
@@ -29,6 +30,7 @@ function ago(iso: string): string {
 }
 
 export default function ProfilePage() {
+  usePageTitle("Profile");
   const meta = useMeta();
   const [p, setP] = useState<Profile | null>(null);
   const [error, setError] = useState("");

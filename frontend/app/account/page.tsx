@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -6,6 +7,7 @@ import { authEmail, authToken, authUser, clearSession, Session, setSession } fro
 
 /** Account settings: who you are signed in as, change password, log out. Visible only after a successful login. */
 export default function AccountPage() {
+  usePageTitle("Account");
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");

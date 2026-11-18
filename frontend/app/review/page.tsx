@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, type Page } from "@/lib/api";
@@ -20,6 +21,7 @@ async function loadAccepted(): Promise<Item[]> {
 
 /** Solved problems come back for review after 1, 3, 7, 14, 30 and 60 days; forgetting one restarts its schedule. */
 export default function ReviewPage() {
+  usePageTitle("Review queue");
   const [rows, setRows] = useState<Row[] | null>(null);
   const [states, setStates] = useState<Record<string, ReviewState>>({});
   const [error, setError] = useState("");
