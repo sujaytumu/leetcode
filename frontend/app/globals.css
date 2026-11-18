@@ -505,3 +505,21 @@ nav button { cursor: pointer; }
 .skillitem { gap:6px; }
 .skillitem .skillchip { padding:5px 11px; font-size:13.5px; }
 .skillcount { font-size:13.5px; }
+
+/* Solved gauge (LeetCode look): open ring, big count, attempting label in the opening */
+.solvedcard { padding:20px 24px; gap:28px; }
+.ring { width:176px; height:176px; }
+.ring svg { width:176px; height:176px; }
+.ring-mid { padding-bottom:6px; }
+.ring-num b { font-size:40px; font-weight:600; line-height:1; }
+.ring-num .mute { font-size:20px; }
+.ring-solved { color:var(--easy); font-size:16px; margin-top:6px; font-weight:500; }
+.ring-attempt { position:absolute; left:0; right:0; bottom:6px; text-align:center; font-size:14px; }
+.diffbox { border-radius:10px; padding:8px 12px; background:var(--cell); }
+.solvedcard { padding:18px 16px; gap:18px; flex-wrap:nowrap; }
+.ring, .ring svg { width:164px; height:164px; }
+.ring-num b { font-size:36px; }
+.diffboxes { min-width:96px; }
+@media (max-width:360px) { .solvedcard { flex-wrap:wrap; } }
+.ratingdist { overflow:hidden; }
+.ratingdist .bar { flex:0 1 28px; }
