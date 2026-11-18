@@ -51,7 +51,7 @@ export default function SyncCard() {
       {user ? (
         <p className="mute" style={{ margin: 0 }}>Signed in as <b style={{ display: "inline", fontSize: 14 }}>{user}</b>. Log in with your username on any device to get this progress; no sync code needed.</p>
       ) : (<>
-      <p className="mute" style={{ margin: "0 0 10px" }}><Link href="/login">Create an account</Link> to protect this progress with a password. A sync code lets anyone who has it use your progress.</p>
+      <p className="mute" style={{ margin: "0 0 10px" }}><Link href="/register">Create an account</Link> to protect this progress with a password. A sync code lets anyone who has it use your progress.</p>
       <div className="iolabel">Your sync code</div>
       <div className="bar" style={{ flexWrap: "wrap" }}>
         <code style={{ overflowWrap: "anywhere" }}>{code}</code>
