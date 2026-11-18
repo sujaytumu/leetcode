@@ -16,6 +16,7 @@ import { useMock } from "@/lib/mock";
 import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
+import ProblemDescription from "@/components/ProblemDescription";
 import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
@@ -64,7 +65,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
-  const [tab, setTab] = useState<"desc" | "editorial" | "answer" | "solutions" | "discuss" | "history" | "notes">("desc");
+  const [tab, setTab] = useState<"desc" | "editorial" | "solutions" | "discuss" | "history" | "notes">("desc");
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -89,6 +90,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [study, setStudy] = useState<Study | null>(null);
   const [focus, setFocus] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [topicsOpen, setTopicsOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState<number | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [showKeys, setShowKeys] = useState(false);
   const [showList, setShowList] = useState(false);
   const [answer, setAnswer] = useState<AnswerState>({ status: "idle" });
@@ -172,7 +176,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     setUndoReset(null);
   }, [slug]);
   useEffect(() => { setAnswer({ status: "idle" }); setAnswerLang(""); }, [slug]);
-  useEffect(() => { if (locked(slug) && (tab === "editorial" || tab === "answer" || tab === "solutions")) setTab("desc"); }, [locked, slug, tab]);
+  useEffect(() => { if (locked(slug) && (tab === "editorial" || tab === "solutions")) setTab("desc"); }, [locked, slug, tab]);
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); setPane("problem"); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
@@ -262,12 +266,30 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     return () => window.removeEventListener("keydown", h);
   }, []);
 
+  useEffect(() => {
+    let live = true;
+    setCommentCount(null); setTopicsOpen(false);
+    api<unknown[]>(`/api/problems/${slug}/comments`).then((c) => { if (live && Array.isArray(c)) setCommentCount(c.length); }).catch(() => {});
+    return () => { live = false; };
+  }, [slug]);
+
   async function toggleBookmark() {
     if (!problem) return;
     try {
       await api(`/api/problems/${slug}/bookmark`, { method: problem.bookmarked ? "DELETE" : "PUT" });
       setProblem({ ...problem, bookmarked: !problem.bookmarked });
     } catch (e) { setError((e as Error).message); }
+  }
+
+  /** Jump to a random other problem, like LeetCode's shuffle button. */
+  function shuffle() {
+    const others = all.filter((p) => p.slug !== slug);
+    if (others.length) router.push(`/problems/${others[Math.floor(Math.random() * others.length)].slug}`);
+  }
+
+  async function shareLink() {
+    try { await navigator.clipboard.writeText(window.location.href); setLinkCopied(true); setTimeout(() => setLinkCopied(false), 1500); }
+    catch { /* clipboard blocked: nothing useful to do */ }
   }
 
   async function copyCode() {
@@ -377,26 +399,35 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <button onClick={checkExec}>Re-check</button>
         </div>
       )}
+      <div className="lctop">
+        <div className="lctop-l">
+          <button onClick={() => setShowList(true)} title="Problem list">☰ <span className="hide-sm">Problem List</span></button>
+          {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title} aria-label="Previous problem">‹</Link> : <span className="navbtn off" aria-hidden="true">‹</span>}
+          {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title} aria-label="Next problem">›</Link> : <span className="navbtn off" aria-hidden="true">›</span>}
+          <button onClick={shuffle} title="Pick a random problem" aria-label="Random problem">⤮</button>
+        </div>
+        <div className="lctop-c runbar">
+            <button disabled={!!busy} onClick={() => run("run")} title="Ctrl/⌘ + '">
+              {busy === "run" ? `Running… ${elapsed}s` : custom ? "▶ Run custom" : "▶ Run"}
+            </button>
+            <button className="primary" disabled={!!busy} onClick={() => run("submit")} title="Ctrl/⌘ + Enter">
+              {busy === "submit" ? `Judging… ${elapsed}s` : "Submit"}
+            </button>
+        </div>
+        <div className="lctop-r">
+          <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
+            ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
+          </button>
+        </div>
+      </div>
       <div ref={workspaceRef} data-pane={pane} className={`workspace${drag ? " dragging" : ""}${focus ? " focus" : ""}`}
         style={{ gridTemplateColumns: focus ? "minmax(0, 1fr)" : `${leftPct}% 8px minmax(0, 1fr)` }}>
         <section className="pane left" hidden={focus}>
-          <div className="lctabs">
-            <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}>Description</button>
-            <button className={tab === "editorial" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("editorial")}>Editorial</button>
-            <button className={tab === "answer" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("answer")}>Answer</button>
-            <button className={tab === "solutions" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("solutions")}>Solutions</button>
-            <button className={tab === "discuss" ? "on" : ""} onClick={() => setTab("discuss")}>Discuss</button>
-            <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}>Submissions</button>
-            <button className={tab === "notes" ? "on" : ""} onClick={() => setTab("notes")}>Notes{notes ? " •" : ""}</button>
-            <span className="grow" />
-            <button onClick={() => setShowList(true)} title="Problem list">☰ List</button>
-            {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title}>← Prev</Link> : <span className="navbtn off">← Prev</span>}
-            {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title}>Next →</Link> : <span className="navbtn off">Next →</span>}
-            <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
-              ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
-            </button>
-            <button onClick={toggleBookmark}>{problem.bookmarked ? "★ Bookmarked" : "☆ Bookmark"}</button>
-            <AddToList slug={slug} />
+          <div className="lctabs lcmaintabs">
+            <button className={tab === "desc" ? "on" : ""} onClick={() => setTab("desc")}><span className="tabicon ti-desc" aria-hidden="true">▤</span>Description</button>
+            <button className={tab === "editorial" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("editorial")}><span className="tabicon ti-edit" aria-hidden="true">▥</span>Editorial</button>
+            <button className={tab === "solutions" ? "on" : ""} disabled={locked(slug)} title={locked(slug) ? "Hidden during a mock interview" : undefined} onClick={() => setTab("solutions")}><span className="tabicon ti-sol" aria-hidden="true">⚗</span>Solutions</button>
+            <button className={tab === "history" ? "on" : ""} onClick={() => { setTab("history"); loadHistory(); }}><span className="tabicon ti-sub" aria-hidden="true">◷</span>Submissions</button>
           </div>
           <div className="left-body">
             {tab === "desc" ? (
@@ -406,12 +437,18 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   {problem.status === "SOLVED" && <span className="solved">Solved ✓</span>}
                 </div>
                 <div className="pmeta">
-                  <span className={`pill ${problem.difficulty}`}>{title(problem.difficulty)}</span>
-                  {problem.acceptance != null && <span className="mute">Acceptance {problem.acceptance.toFixed(1)}%</span>}
-                  <VoteButtons slug={slug} />
+                  <span className={`pill chipdiff ${problem.difficulty}`}>{title(problem.difficulty)}</span>
+                  {problem.tags.length > 0 && (
+                    <button className={`chip${topicsOpen ? " open" : ""}`} onClick={() => setTopicsOpen((o) => !o)} aria-expanded={topicsOpen}>
+                      <span aria-hidden="true">⌗</span> Topics
+                    </button>
+                  )}
                 </div>
-                <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>
-                <div className="md"><Markdown>{problem.description}</Markdown></div>
+                {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>}
+                <ProblemDescription markdown={problem.description} />
+                {problem.acceptance != null && (
+                  <div className="statstrip mute">Acceptance Rate <b>{problem.acceptance.toFixed(1)}%</b></div>
+                )}
                 <SimilarProblems current={problem} all={all} />
               </>
             ) : tab === "editorial" ? (
@@ -438,13 +475,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                     )}
                   </div>
                 ) : <p className="mute">No editorial for this problem yet.</p>}
-              </div>
-            ) : tab === "answer" ? (
-              <div className="answer">
+                <h3>Solution</h3>
+                <div className="answer">
                 {answer.status === "idle" && (
                   <>
-                    <p className="mute">Spoiler: try it yourself first. The Editorial tab has hints that do not give it away.</p>
-                    <button className="primary" onClick={revealAnswer}>Show answer</button>
+                    <p className="mute">Spoiler: try it yourself first. The hints above do not give it away.</p>
+                    <button className="primary" onClick={revealAnswer}>Show solution</button>
                   </>
                 )}
                 {answer.status === "loading" && <FreeSpace loading compact label="Loading answer…" />}
@@ -466,12 +502,17 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   </>
                 )}
               </div>
+              </div>
             ) : tab === "solutions" ? (
               <Solutions slug={slug} />
             ) : tab === "discuss" ? (
-              <Discuss slug={slug} />
+              <>
+                <div className="subhead"><button onClick={() => setTab("desc")}>← Description</button><b>Discuss</b></div>
+                <Discuss slug={slug} />
+              </>
             ) : tab === "notes" ? (
               <>
+                <div className="subhead"><button onClick={() => setTab("desc")}>← Description</button><b>Notes</b></div>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
                 <textarea className="notes" placeholder="Your approach, mistakes, edge cases to remember…" value={notes}
                   onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); cloud.saveNotes(e.target.value); }} />
@@ -530,6 +571,16 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               )
             )}
           </div>
+          <div className="lcfoot">
+            <VoteButtons slug={slug} />
+            <button className={tab === "discuss" ? "on" : ""} onClick={() => setTab(tab === "discuss" ? "desc" : "discuss")} title="Discuss">
+              💬{commentCount != null ? ` ${commentCount}` : ""}
+            </button>
+            <button onClick={toggleBookmark} title={problem.bookmarked ? "Remove bookmark" : "Bookmark"} aria-pressed={problem.bookmarked}>{problem.bookmarked ? "★" : "☆"}</button>
+            <button onClick={shareLink} title="Copy link to this problem">{linkCopied ? "✔" : "🔗"}</button>
+            <button className={tab === "notes" ? "on" : ""} onClick={() => setTab(tab === "notes" ? "desc" : "notes")} title="Notes">📝{notes ? " •" : ""}</button>
+            <AddToList slug={slug} />
+          </div>
         </section>
 
         <div hidden={focus} className={`vdivider${drag === "v" ? " drag" : ""}`} role="separator" aria-orientation="vertical"
@@ -552,13 +603,6 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             </button>
             <button onClick={() => setShowSettings(true)} title="Editor settings" aria-label="Editor settings">⚙</button>
             <button onClick={() => setShowKeys(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button>
-            <span className="grow" />
-            <button disabled={!!busy} onClick={() => run("run")} title="Ctrl/⌘ + '">
-              {busy === "run" ? `Running… ${elapsed}s` : custom ? "▶ Run custom" : "▶ Run"}
-            </button>
-            <button className="primary" disabled={!!busy} onClick={() => run("submit")} title="Ctrl/⌘ + Enter">
-              {busy === "submit" ? `Judging… ${elapsed}s` : "Submit"}
-            </button>
           </div>
           <div className="pane editor-wrap" style={{ flex: `0 0 ${editorPct}%` }}>
             <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}

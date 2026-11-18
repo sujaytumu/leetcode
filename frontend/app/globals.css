@@ -649,3 +649,37 @@ main:focus { outline:none; }
 .wk { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
 .wk-bar { width:100%; height:64px; display:flex; align-items:flex-end; background:var(--cell); border-radius:6px; overflow:hidden; }
 .wk-bar > span { display:block; width:100%; background:var(--accent); min-height:0; }
+
+
+/* ---- Problem page, laid out like LeetCode's ---- */
+.lctop { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; padding:0 2px 8px; }
+.lctop-l, .lctop-r { display:flex; align-items:center; gap:6px; }
+.lctop-r { justify-content:flex-end; }
+.runbar { display:flex; align-items:center; gap:2px; background:var(--cell); border:1px solid var(--line); border-radius:10px; padding:3px; }
+.runbar button { border:0; background:transparent; }
+.runbar button.primary { background:var(--easy); color:#fff; }
+.lctop .navbtn { display:inline-flex; align-items:center; justify-content:center; min-width:30px; font-size:18px; }
+@media (max-width:700px) { .lctop { grid-template-columns:1fr; } .lctop-r { justify-content:flex-start; } .lctop-c { order:-1; } }
+
+.lcmaintabs button { display:inline-flex; align-items:center; gap:6px; }
+.tabicon { font-size:14px; }
+.ti-desc { color:#3b82f6; } .ti-edit { color:#f59e0b; } .ti-sol { color:#38bdf8; } .ti-sub { color:#38bdf8; }
+.chip { background:var(--cell); border:0; border-radius:99px; padding:3px 12px; font-size:13px; color:var(--mute); cursor:pointer; }
+.chip:hover, .chip.open { color:var(--text); }
+.chipdiff { font-size:13px; padding:3px 12px; }
+.subhead { display:flex; align-items:center; gap:10px; margin:0 0 10px; }
+.statstrip { margin-top:18px; padding-top:12px; border-top:1px solid var(--line); font-size:13px; }
+.statstrip b { color:var(--text); display:inline; font-size:13px; margin-left:4px; }
+
+.lcfoot { display:flex; align-items:center; gap:4px; padding:8px 12px; border-top:1px solid var(--line); flex:none; flex-wrap:wrap; }
+.lcfoot > button, .lcfoot .votes button { background:transparent; border:0; color:var(--mute); padding:4px 8px; }
+.lcfoot > button:hover, .lcfoot .votes button:hover { color:var(--text); background:var(--cell); }
+.lcfoot > button.on, .lcfoot .votes button.on { color:var(--accent); }
+.lcfoot .votes { display:inline-flex; background:var(--cell); border-radius:8px; margin-right:6px; }
+
+/* statement text */
+.lcdesc { font-size:15px; line-height:1.6; }
+.lcdesc .lchead { margin:20px 0 6px; font-size:15px; }
+.lcdesc .lcexample { display:block; margin:18px 0 6px; }
+.lcdesc pre.lcbox { border-left:2px solid var(--line); background:transparent; padding:2px 0 2px 14px; margin:6px 0 12px; font:13px/1.6 ui-monospace, monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+.md code { background:var(--cell); border:0; border-radius:5px; padding:1px 6px; }
