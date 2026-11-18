@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { api, type Page } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { allTimes, fmtSecs } from "@/lib/times";
 
 interface Item {
   id: number; slug: string; title: string; verdict: string; language: string;
@@ -42,6 +43,8 @@ export default function StatsPage() {
   usePageTitle("My stats");
   const [items, setItems] = useState<Item[] | null>(null);
   const [error, setError] = useState("");
+  const [times, setTimes] = useState<{ slug: string; best: number; runs: number }[]>([]);
+  useEffect(() => { setTimes(Object.entries(allTimes()).map(([slug, r]) => ({ slug, best: r.best, runs: r.runs })).sort((a, b) => a.best - b.best)); }, []);
   useEffect(() => { loadAll().then(setItems).catch((e: Error) => setError(e.message)); }, []);
 
   const s = useMemo(() => {
@@ -70,8 +73,9 @@ export default function StatsPage() {
     }
     struggles.sort((a, b) => b.tries - a.tries);
     const mostActiveHour = hour.indexOf(Math.max(...hour));
+    const titles = new Map<string, string>(items.map((i) => [i.slug, i.title]));
     return { total, ac, verdicts, langs, weekday, hour, solved, firstTry, attemptsSum, struggles: struggles.slice(0, 5),
-      problems: byProblem.size, mostActiveHour };
+      problems: byProblem.size, mostActiveHour, titles };
   }, [items]);
 
   if (error) return <div className="banner err">{error}</div>;
@@ -104,6 +108,20 @@ export default function StatsPage() {
           <div className="hourbars" aria-label="Submissions by hour">
             {s.hour.map((v, h) => <span key={h} title={`${String(h).padStart(2, "0")}:00 · ${v}`} style={{ height: `${(v / Math.max(1, ...s.hour)) * 100}%` }} />)}
           </div></section>
+        {times.length > 0 && (
+          <section className="card" style={{ gridColumn: "1 / -1" }}>
+            <h3 style={{ margin: "0 0 4px" }}>Timed solves</h3>
+            <p className="mute" style={{ fontSize: 12, margin: "0 0 8px" }}>
+              {times.length} problem{times.length === 1 ? "" : "s"} timed · average best {fmtSecs(Math.round(times.reduce((n, t) => n + t.best, 0) / times.length))}
+            </p>
+            {times.slice(0, 5).map((t) => (
+              <div key={t.slug} className="recentrow" style={{ cursor: "default" }}>
+                <Link href={`/problems/${t.slug}`}>{s.titles.get(t.slug) ?? t.slug}</Link><span className="grow" />
+                <span className="mute" style={{ fontSize: 13 }}>best {fmtSecs(t.best)} · {t.runs} timed solve{t.runs === 1 ? "" : "s"}</span>
+              </div>
+            ))}
+          </section>
+        )}
         <section className="card" style={{ gridColumn: "1 / -1" }}><h3 style={{ margin: "0 0 8px" }}>Problems that took the most attempts</h3>
           {s.struggles.map((p) => (
             <div key={p.slug || p.title} className="recentrow" style={{ cursor: "default" }}>
