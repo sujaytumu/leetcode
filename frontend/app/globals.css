@@ -541,3 +541,17 @@ nav button { cursor: pointer; }
 .act-stats > span { white-space:nowrap; }
 .act-stats b { font-size:17px; }
 .act-year { padding:9px 10px; font-size:15px; }
+
+/* Profile tabs: Recent AC / List / Solutions (LeetCode look) */
+.ptabs { padding:14px 16px 16px; }
+.ptab-bar { display:flex; gap:4px; border-bottom:2px solid var(--line); margin-bottom:14px; overflow-x:auto; }
+.ptab-bar button { flex:1 0 auto; background:transparent; border:0; border-bottom:2px solid transparent; margin-bottom:-2px; color:var(--mute); font-size:16px; font-weight:500; padding:10px 16px; border-radius:10px 10px 0 0; cursor:pointer; }
+.ptab-bar button.on { color:var(--text); background:var(--cell); border-bottom-color:var(--text); }
+.prows { display:flex; flex-direction:column; }
+.prow { display:flex; align-items:center; gap:12px; padding:18px 18px; border-radius:12px; color:var(--text); text-decoration:none; font-size:17px; list-style:none; cursor:pointer; }
+.prow::-webkit-details-marker { display:none; }
+.prows > .prow:nth-child(odd), .prows > .plist:nth-child(odd) > summary { background:var(--cell); }
+.prow:hover { filter:brightness(1.1); }
+.prow-when { font-size:14px; white-space:nowrap; }
+.plist-items { padding:6px 18px 10px; }
+.plist-item { display:flex; gap:10px; padding:10px 0; color:var(--text); text-decoration:none; border-top:1px solid var(--line); }
