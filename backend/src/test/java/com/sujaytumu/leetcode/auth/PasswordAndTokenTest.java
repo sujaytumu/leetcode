@@ -9,6 +9,7 @@ import com.sujaytumu.leetcode.config.AppProperties;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class PasswordAndTokenTest {
 
@@ -36,6 +37,7 @@ class PasswordAndTokenTest {
     void tokensRoundTripAndRejectTampering() {
         TokenService tokens = new TokenService(props("x".repeat(40), 30));
         Account account = new Account("sujay", "hash", UUID.randomUUID());
+        ReflectionTestUtils.setField(account, "id", 42L); // normally assigned by the database
         String token = tokens.issue(account);
         var claims = tokens.verify(token).orElseThrow();
         assertEquals(account.getClientId(), claims.clientId());
