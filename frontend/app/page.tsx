@@ -1,4 +1,5 @@
 "use client";
+import ContinueBanner from "@/components/ContinueBanner";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -91,6 +92,7 @@ export default function Home() {
     <>
       <div className="home">
         <div className="home-main">
+          <ContinueBanner />
           <div className="chips">
             <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
             {tags.map((t) => (
