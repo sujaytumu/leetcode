@@ -437,3 +437,7 @@ nav button { cursor: pointer; }
 .commlabel { color:var(--mute); font-size:16px; margin-right:6px; }
 .commrow b { display:inline; font-size:18px; }
 .commweek { font-size:14px; margin-top:4px; } .commweek span { margin-left:4px; }
+
+.acct-rows { display:grid; gap:8px; }
+.acct-rows > div { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+.acct-rows b { font-size:14px; display:inline; overflow-wrap:anywhere; text-align:right; }
