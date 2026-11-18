@@ -437,3 +437,14 @@ nav button { cursor: pointer; }
 .commlabel { color:var(--mute); font-size:16px; margin-right:6px; }
 .commrow b { display:inline; font-size:18px; }
 .commweek { font-size:14px; margin-top:4px; } .commweek span { margin-left:4px; }
+
+/* Contest rating */
+.ratingcol { grid-column:1 / -1; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; }
+.ratingcol:empty { display:none; }
+.ratinghead { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+.ratingbig { font-size:38px; font-weight:500; line-height:1.15; margin-top:4px; }
+.ratingrank { margin-top:10px; font-size:18px; } .ratingrank b { display:inline; font-size:18px; }
+.ratinggraph { width:100%; height:auto; margin-top:10px; }
+.ratingdist { display:flex; align-items:flex-end; gap:3px; height:110px; margin-top:14px; }
+.ratingdist .bar { flex:1; background:var(--cell); border-radius:3px 3px 0 0; min-width:4px; }
+.ratingdist .bar.me { background:#ffa116; }

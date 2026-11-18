@@ -7,6 +7,7 @@ import Heatmap from "@/components/Heatmap";
 import ProfileCard from "@/components/ProfileCard";
 import SkillsCard from "@/components/SkillsCard";
 import CommunityStats from "@/components/CommunityStats";
+import ContestRating from "@/components/ContestRating";
 import SolvedCard from "@/components/SolvedCard";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
@@ -64,6 +65,7 @@ export default function ProfilePage() {
         </section>
       </div>
       <div className="pgrid">
+        <div className="stack ratingcol"><ContestRating /></div>
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
         <section className="card activitycard">
