@@ -33,9 +33,13 @@ public class ProfileInfoService {
     @Transactional
     public ProfileInfoView update(UUID clientId, ProfileInfoView request) {
         ProfileInfo info = repository.findById(clientId).orElseGet(() -> new ProfileInfo(clientId));
+        String username = handle("Username", request.username(), 30);
+        if (!username.isEmpty() && repository.existsByUsernameIgnoreCaseAndClientIdNot(username, clientId)) {
+            throw new IllegalArgumentException("That username is taken");
+        }
         info.apply(
                 text("Display name", request.displayName(), 40),
-                handle("Username", request.username(), 30),
+                username,
                 text("Headline", request.headline(), 120),
                 text("Company", request.company(), 60),
                 text("Location", request.location(), 60),

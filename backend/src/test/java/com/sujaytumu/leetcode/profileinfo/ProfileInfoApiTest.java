@@ -21,12 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 class ProfileInfoApiTest {
 
     private static final String CLIENT = "X-Client-Id";
+    private static final java.util.concurrent.atomic.AtomicInteger SEQ = new java.util.concurrent.atomic.AtomicInteger();
 
     @Autowired
     MockMvc mvc;
 
     private static String body(String name, String website, String tagsJson) {
-        return "{\"displayName\":\"" + name + "\",\"username\":\"sujay_t\",\"headline\":\"SDE intern\","
+        return "{\"displayName\":\"" + name + "\",\"username\":\"sujay_" + SEQ.incrementAndGet() + "\",\"headline\":\"SDE intern\","
                 + "\"company\":\"TripFactory\",\"location\":\"India\",\"school\":\"IIIT Nagpur\","
                 + "\"website\":\"" + website + "\",\"github\":\"sujaytumu\",\"linkedin\":\"sujay-babu\","
                 + "\"tags\":" + tagsJson + "}";

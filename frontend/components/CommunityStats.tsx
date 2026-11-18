@@ -3,6 +3,7 @@ import { CommunityStats as Stats } from "@/lib/api";
 /** LeetCode's "Community Stats": discussion posts and the upvotes they earned, each with the last 7 days. */
 export default function CommunityStats({ stats }: { stats: Stats }) {
   const rows = [
+    ...(stats.views === undefined ? [] : [{ icon: "👁", color: "#3b82f6", label: "Views", total: stats.views, week: stats.viewsLastWeek ?? 0 }]),
     ...(stats.solutions === undefined ? [] : [{ icon: "✅", color: "#4aa8ff", label: "Solution", total: stats.solutions, week: stats.solutionsLastWeek ?? 0 }]),
     { icon: "💬", color: "#10b9a6", label: "Discuss", total: stats.discuss, week: stats.discussLastWeek },
     { icon: "⭐", color: "#ffa116", label: "Reputation", total: stats.reputation, week: stats.reputationLastWeek },
