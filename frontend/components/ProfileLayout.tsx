@@ -6,6 +6,7 @@ import SkillsCard from "@/components/SkillsCard";
 import CommunityStats from "@/components/CommunityStats";
 import ContestRating from "@/components/ContestRating";
 import SolvedCard from "@/components/SolvedCard";
+import ProfileTabs from "@/components/ProfileTabs";
 import { Profile } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
 
@@ -95,18 +96,7 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
           </div>
         </section>
 
-        <section className="card recentcard">
-          <h3 style={{ margin: "0 0 8px" }}>Recent AC</h3>
-          {p.recentAccepted.length === 0 && <p className="mute">{own ? "No accepted submissions yet. Solve a problem and it shows up here." : "No accepted submissions yet."}</p>}
-          {p.recentAccepted.map((r, i) => (
-            <Link key={`${r.slug}-${i}`} href={`/problems/${r.slug}`} className="recentrow">
-              <span>{r.title}</span>
-              <span className={r.difficulty} style={{ fontSize: 12 }}>{r.difficulty[0] + r.difficulty.slice(1).toLowerCase()}</span>
-              <span className="grow" />
-              <span className="mute" style={{ fontSize: 13 }}>{ago(r.at)}</span>
-            </Link>
-          ))}
-        </section>
+        <div className="recentcard"><ProfileTabs p={p} own={own} /></div>
 
       </div>
       </div>
