@@ -6,6 +6,7 @@ type Store = Record<string, TimeRecord>;
 function read(): Store {
   try { return JSON.parse(localStorage.getItem(KEY) ?? "{}") as Store; } catch { return {}; }
 }
+export function allTimes(): Store { return read(); }
 export function getTime(slug: string): TimeRecord | null { return read()[slug] ?? null; }
 
 /** Saves one timed accepted solve and returns the updated record plus whether it beat the previous best. */
