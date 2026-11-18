@@ -2,8 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const LINKS = [{ href: "/", label: "Problems" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/plans", label: "Plans" }, { href: "/review", label: "Review" }, { href: "/lists", label: "Lists" }, { href: "/mock", label: "Mock" }, { href: "/contest", label: "Contest" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" }];
-const LINKS = [{ href: "/", label: "Problems" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/plans", label: "Plans" }, { href: "/practice", label: "Practice" }, { href: "/lists", label: "Lists" }, { href: "/mock", label: "Mock" }, { href: "/contest", label: "Contest" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" }];
+const LINKS = [{ href: "/", label: "Problems" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/plans", label: "Plans" }, { href: "/practice", label: "Practice" }, { href: "/review", label: "Review" }, { href: "/lists", label: "Lists" }, { href: "/mock", label: "Mock" }, { href: "/contest", label: "Contest" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" }];
 
 export default function NavLinks() {
   const path = usePathname();
