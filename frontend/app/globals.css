@@ -492,3 +492,16 @@ nav button { cursor: pointer; }
 .ratingdist { justify-content:center; gap:6px; height:150px; margin-top:28px; }
 .ratingdist .bar { flex:0 0 28px; min-width:0; max-width:28px; border-radius:4px 4px 0 0; background:color-mix(in srgb, var(--mute) 35%, var(--panel)); }
 .ratingdist .bar.me { background:#ffa116; }
+
+/* Languages and Skills: count sits outside the pill, divider between sections (LeetCode look) */
+.skillchips { display:flex; flex-wrap:wrap; gap:8px 18px; }
+.skillitem { display:inline-flex; align-items:center; gap:10px; }
+.skillitem .skillchip { margin:0; }
+.skillcount { color:var(--mute); font-size:16px; }
+.sect-hr { border:0; border-top:1px solid var(--line); margin:22px 0; }
+.langrow b { font-weight:600; }
+.skillgroup { margin-bottom:14px; }
+.skillchips { gap:8px 12px; }
+.skillitem { gap:6px; }
+.skillitem .skillchip { padding:5px 11px; font-size:13.5px; }
+.skillcount { font-size:13.5px; }

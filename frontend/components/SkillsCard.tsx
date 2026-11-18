@@ -45,7 +45,9 @@ export default function SkillsCard({ skills }: { skills: { tag: string; solved: 
           <div key={g.level} className="skillgroup">
             <div className="skilllevel"><span className="dot" style={{ background: g.color }} />{g.level}</div>
             <div className="skillchips">
-              {shown.map(([name, n]) => <span key={name} className="skillchip">{name}<span className="mute"> x{n}</span></span>)}
+              {shown.map(([name, n]) => (
+                <span key={name} className="skillitem"><span className="skillchip">{name}</span><span className="skillcount">x{n}</span></span>
+              ))}
             </div>
             {g.items.length > 3 && (
               <button type="button" className="showmore" onClick={() => setOpen({ ...open, [g.level]: !all })}>{all ? "Show less" : "Show more"}</button>
