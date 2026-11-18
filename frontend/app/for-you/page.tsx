@@ -37,6 +37,9 @@ export default function ForYouPage() {
   return (
     <>
       <h2 style={{ marginTop: 0 }}>For you</h2>
+      <p className="mute" style={{ marginTop: 0, fontSize: 13 }}>
+        Also: <Link href="/review">spaced review of problems you solved</Link> · <Link href="/practice">custom practice session</Link> · <Link href="/stats">your stats</Link>
+      </p>
       {error && <div className="banner err">{error}</div>}
       {!data && !error && <Skeleton lines={9} />}
       {data && (
