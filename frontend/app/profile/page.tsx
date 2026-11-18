@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
 import ProfileCard from "@/components/ProfileCard";
+import SkillsCard from "@/components/SkillsCard";
 import SolvedCard from "@/components/SolvedCard";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
@@ -45,7 +46,21 @@ export default function ProfilePage() {
   return (
     <>
       <div className="playout">
-      <ProfileCard />
+      <div className="stack pleft">
+        <ProfileCard />
+        <section className="card langskills">
+          <h3 className="sect-h">Languages</h3>
+          {p.languages.length === 0 && <p className="mute">—</p>}
+          {p.languages.map((l) => (
+            <div key={l.language} className="langrow">
+              <span className="skillchip">{l.language}</span>
+              <span className="mute"><b>{l.solved}</b> problems solved</span>
+            </div>
+          ))}
+          <h3 className="sect-h" style={{ marginTop: 22 }}>Skills</h3>
+          <SkillsCard skills={p.skills} />
+        </section>
+      </div>
       <div className="pgrid">
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
@@ -97,19 +112,6 @@ export default function ProfilePage() {
           ))}
         </section>
 
-        <aside className="card sidecard">
-          <h3 style={{ margin: "0 0 8px" }}>Languages</h3>
-          {p.languages.length === 0 && <p className="mute">—</p>}
-          {p.languages.map((l) => (
-            <div key={l.language} className="bar" style={{ padding: "3px 0" }}>
-              <span className="tag">{l.language}</span><span className="grow" />
-              <span className="mute" style={{ fontSize: 13 }}><b style={{ display: "inline", fontSize: 13 }}>{l.solved}</b> problems solved</span>
-            </div>
-          ))}
-          <h3 style={{ margin: "16px 0 8px" }}>Skills</h3>
-          {p.skills.length === 0 && <p className="mute">Topics you solve appear here.</p>}
-          <div>{p.skills.map((s) => <span key={s.tag} className="tag skill">{s.tag} <span className="mute">×{s.solved}</span></span>)}</div>
-        </aside>
       </div>
       </div>
     </>
