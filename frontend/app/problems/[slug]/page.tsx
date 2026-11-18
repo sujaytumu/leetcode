@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Markdown from "react-markdown";
 import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Answer, api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Study, Submission,
@@ -48,6 +49,7 @@ const isCustomInput = (p: ProblemDetail | null, text: string) =>
 
 export default function ProblemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
+  const router = useRouter();
   const [problem, setProblem] = useState<ProblemDetail | null>(null);
   const [loadError, setLoadError] = useState("");
   const meta = useMeta();
@@ -218,6 +220,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     } finally { setBusy(""); }
   }, [busy, slug, lang, code, parts, problem, customInput, loadHistory, checkExec]);
 
+  const allRef = useRef(all); allRef.current = all;
   const runRef = useRef(run);
   runRef.current = run;
   useEffect(() => {
@@ -225,6 +228,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       if ((e.ctrlKey || e.metaKey) && e.key === "'") { e.preventDefault(); runRef.current("run"); }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runRef.current("submit"); }
       if (e.key === "Escape") { setShowKeys(false); setShowSettings(false); setFocus(false); }
+      // Alt+Shift+N / P: next / previous problem in the list order (e.code, because Alt changes e.key on macOS).
+      if (e.altKey && e.shiftKey && (e.code === "KeyN" || e.code === "KeyP")) {
+        const list = allRef.current, i = list.findIndex((p) => p.slug === slugRef.current);
+        const to = i >= 0 ? list[i + (e.code === "KeyN" ? 1 : -1)] : undefined;
+        if (to) { e.preventDefault(); router.push(`/problems/${to.slug}`); }
+      }
       const el = e.target as HTMLElement | null;
       const typing = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
       if (e.key === "?" && !typing && !e.ctrlKey && !e.metaKey) setShowKeys((v) => !v);
@@ -610,6 +619,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <tbody>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>&apos;</kbd></td><td>Run on the console input</td></tr>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd></td><td>Submit</td></tr>
+                <tr><td><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> / <kbd>N</kbd></td><td>Previous / next problem</td></tr>
                 <tr><td><kbd>?</kbd></td><td>Show or hide this help</td></tr>
                 <tr><td><kbd>Esc</kbd></td><td>Close help / leave focus mode</td></tr>
               </tbody>

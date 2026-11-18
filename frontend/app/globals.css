@@ -466,3 +466,8 @@ nav button { cursor: pointer; }
 main:focus { outline:none; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+
+.weekstrip { display:flex; gap:8px; }
+.wk { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.wk-bar { width:100%; height:64px; display:flex; align-items:flex-end; background:var(--cell); border-radius:6px; overflow:hidden; }
+.wk-bar > span { display:block; width:100%; background:var(--accent); min-height:0; }
