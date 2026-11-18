@@ -14,8 +14,8 @@ import java.util.UUID;
 /** One viewer looking at one profile on one (UTC) day, so refreshing the page does not inflate Views. */
 @Entity
 @Table(
-        name = "profile_visits",
-        uniqueConstraints = @UniqueConstraint(name = "uk_profile_visit", columnNames = {"profile_id", "viewer_id", "visit_day"}))
+        name = "profile_page_visits",
+        uniqueConstraints = @UniqueConstraint(name = "uk_profile_page_visit", columnNames = {"profile_id", "viewer_id", "visit_day"}))
 public class ProfileVisit {
 
     @Id
