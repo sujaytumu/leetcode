@@ -20,6 +20,7 @@ import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
+import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
@@ -65,6 +66,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<Submission[]>([]);
   const [openSub, setOpenSub] = useState<Submission | null>(null);
+  const [diffWith, setDiffWith] = useState<number | "">("");
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
   const { locked } = useMock();
@@ -417,14 +419,29 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             ) : (
               openSub ? (
                 <div className="subdetail">
-                  <button className="ghost" onClick={() => setOpenSub(null)}>← All submissions</button>
+                  <button className="ghost" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All submissions</button>
                   <h3 className={`verdict ${openSub.verdict}`} style={{ marginTop: 10 }}>{title(openSub.verdict)}</h3>
                   <div className="vstats">
                     {openSub.passed} / {openSub.total} testcases passed · {openSub.language} · {new Date(openSub.createdAt).toLocaleString()}
                   </div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
                   <div className="iolabel" style={{ marginTop: 14 }}>Code</div>
-                  <pre className="subcode">{openSub.code}</pre>
+                  <div className="bar" style={{ marginBottom: 6 }}>
+                    <select aria-label="Compare with another submission" value={diffWith}
+                      onChange={(e) => setDiffWith(e.target.value ? Number(e.target.value) : "")}>
+                      <option value="">Show code</option>
+                      {history.filter((h) => h.id !== openSub.id).map((h) => (
+                        <option key={h.id} value={h.id}>Diff vs #{h.id} · {title(h.verdict)} · {new Date(h.createdAt).toLocaleString()}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {(() => {
+                    const other = diffWith === "" ? null : history.find((h) => h.id === diffWith);
+                    // Diff reads old -> new, so the older submission is the "before" side.
+                    return other
+                      ? <CodeDiff before={other.id < openSub.id ? other.code : openSub.code} after={other.id < openSub.id ? openSub.code : other.code} />
+                      : <pre className="subcode">{openSub.code}</pre>;
+                  })()}
                   <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>
                 </div>
               ) : (

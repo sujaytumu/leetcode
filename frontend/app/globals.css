@@ -437,3 +437,19 @@ nav button { cursor: pointer; }
 .commlabel { color:var(--mute); font-size:16px; margin-right:6px; }
 .commrow b { display:inline; font-size:18px; }
 .commweek { font-size:14px; margin-top:4px; } .commweek span { margin-left:4px; }
+
+/* diff, daily goal, stats */
+.codediff { padding:6px 0; }
+.codediff .dl { padding:0 10px; white-space:pre; }
+.codediff .dl.add { background:rgba(44,187,93,.15); } .codediff .dl.del { background:rgba(239,71,67,.15); }
+.codediff .dm { display:inline-block; width:1.4em; color:var(--mute); user-select:none; }
+.diff-add-n { color:var(--easy); } .diff-del-n { color:var(--hard); }
+.goalcard { padding:14px 16px; }
+.statgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:12px; }
+.hbars { display:flex; flex-direction:column; gap:6px; }
+.hbar { display:grid; grid-template-columns:110px 1fr auto; gap:8px; align-items:center; font-size:13px; }
+.hb-track { background:var(--cell); border-radius:99px; height:8px; overflow:hidden; display:block; }
+.hb-track > span { display:block; height:100%; border-radius:99px; }
+.hb-val { color:var(--mute); white-space:nowrap; }
+.hourbars { display:flex; align-items:flex-end; gap:3px; height:90px; }
+.hourbars > span { flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; }

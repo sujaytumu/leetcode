@@ -8,6 +8,7 @@ import ProfileCard from "@/components/ProfileCard";
 import SkillsCard from "@/components/SkillsCard";
 import CommunityStats from "@/components/CommunityStats";
 import SolvedCard from "@/components/SolvedCard";
+import DailyGoal from "@/components/DailyGoal";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
 import Skeleton from "@/components/Skeleton";
@@ -65,6 +66,8 @@ export default function ProfilePage() {
       </div>
       <div className="pgrid">
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
+
+        <DailyGoal calendar={p.calendar} currentStreak={p.currentStreak} />
 
         <section className="card activitycard">
           <div className="bar" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
