@@ -46,7 +46,7 @@ export default function SyncCard() {
         {board?.me
           ? <>Global rank <b style={{ display: "inline", fontSize: 16 }}>#{board.me.rank}</b> of {board.participants} · {board.me.points} points · </>
           : <span className="mute">Solve a problem to get a global rank. </span>}
-        <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link>
+        <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link> · <Link href="/stats">My stats</Link>
       </p>
       {user ? (
         <p className="mute" style={{ margin: 0 }}>Signed in as <b style={{ display: "inline", fontSize: 14 }}>{user}</b>. Log in with your username on any device to get this progress; no sync code needed.</p>
