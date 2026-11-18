@@ -471,3 +471,19 @@ nav button { cursor: pointer; }
 .subcode.diff { white-space:pre-wrap; }
 .dl.add { background:rgba(44,187,93,.18); }
 .dl.del { background:rgba(239,71,67,.18); }
+
+/* Profile header, step 1: line icons, bolder name, roomier rows, pill tags (LeetCode look) */
+.pc-name { font-size:22px; font-weight:700; line-height:1.2; overflow-wrap:anywhere; }
+.pc-rank b { font-size:26px; font-weight:700; }
+.pc-social { display:flex; align-items:center; gap:16px; margin:16px 0 0; font-size:16px; }
+.pc-social b { display:inline; font-size:16px; font-weight:500; }
+.pc-sep { width:1px; height:18px; background:var(--line); }
+.profilecard .pc-rows { gap:18px; margin-top:18px; font-size:16px; }
+.profilecard .pc-rows li { align-items:center; gap:14px; }
+.profilecard .pc-rows li > .pc-ico { width:20px; height:20px; flex:none; color:var(--mute); }
+.profilecard .pc-rows a { color:var(--text); }
+.profilecard .pc-edit { border-radius:10px; font-size:16px; }
+.profilecard .pc-tags { display:flex; align-items:flex-start; gap:14px; margin-top:18px; }
+.profilecard .pc-tags > .pc-ico { margin-top:6px; flex:none; color:var(--mute); }
+.pc-tagwrap { display:flex; flex-wrap:wrap; gap:8px; }
+.pc-pill { background:var(--cell); border-radius:999px; padding:6px 14px; font-size:14px; }
