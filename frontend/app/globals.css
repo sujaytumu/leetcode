@@ -404,3 +404,14 @@ nav button { cursor: pointer; }
 .nav-end a:hover, .nav-end .nav-auth:hover { background:var(--hover); color:var(--text); }
 .nav-end a.active { background:var(--cell); color:var(--text); }
 @media (max-width:700px) { .nav-end a, .nav-end .nav-auth { padding:6px 8px; font-size:14px; } }
+
+/* Profile header card, laid out like LeetCode's: square photo beside name / username / rank. */
+.profilecard { text-align:left; }
+.pc-top { display:flex; gap:16px; align-items:center; }
+.pc-top .avatar { width:96px; height:96px; margin:0; border-radius:12px; object-fit:cover; flex:none; font-size:34px; }
+.pc-id { min-width:0; }
+.pc-user { font-size:14px; margin-top:2px; overflow-wrap:anywhere; }
+.pc-rank { margin-top:12px; font-size:15px; } .pc-rank b { display:inline; font-size:22px; margin-left:4px; }
+.pc-headline { margin:14px 0 0; font-size:15px; color:var(--text); }
+.profilecard .pc-edit { width:100%; margin:16px 0 12px; background:var(--easy); border-color:var(--easy); color:#fff; font-weight:600; padding:10px 12px; }
+.profilecard .pc-edit:hover { filter:brightness(1.08); }
