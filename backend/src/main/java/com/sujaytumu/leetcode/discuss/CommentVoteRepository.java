@@ -1,5 +1,6 @@
 package com.sujaytumu.leetcode.discuss;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -26,4 +27,12 @@ public interface CommentVoteRepository extends JpaRepository<CommentVote, Long> 
 
     @Query("select v.commentId from CommentVote v where v.clientId = :clientId and v.commentId in :ids")
     List<Long> findVotedBy(@Param("clientId") UUID clientId, @Param("ids") Collection<Long> ids);
+
+    /** Upvotes received on all comments written by this client. */
+    @Query("select count(v) from CommentVote v where v.commentId in (select c.id from Comment c where c.clientId = :clientId)")
+    long countReceived(@Param("clientId") UUID clientId);
+
+    @Query("select count(v) from CommentVote v where v.createdAt > :since"
+            + " and v.commentId in (select c.id from Comment c where c.clientId = :clientId)")
+    long countReceivedSince(@Param("clientId") UUID clientId, @Param("since") Instant since);
 }

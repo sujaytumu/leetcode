@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Heatmap from "@/components/Heatmap";
 import ProfileCard from "@/components/ProfileCard";
 import SkillsCard from "@/components/SkillsCard";
+import CommunityStats from "@/components/CommunityStats";
 import SolvedCard from "@/components/SolvedCard";
 import { Profile, profilePath } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
@@ -48,6 +49,7 @@ export default function ProfilePage() {
       <div className="playout">
       <div className="stack pleft">
         <ProfileCard />
+        {p.community && <CommunityStats stats={p.community} />}
         <section className="card langskills">
           <h3 className="sect-h">Languages</h3>
           {p.languages.length === 0 && <p className="mute">—</p>}

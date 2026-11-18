@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +25,10 @@ public class CommentVote {
 
     @Column(name = "client_id", nullable = false)
     private UUID clientId;
+
+    /** Nullable: votes cast before this column existed have no time. */
+    @Column(name = "created_at")
+    private Instant createdAt = Instant.now();
 
     protected CommentVote() {}
 
