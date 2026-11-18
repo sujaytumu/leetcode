@@ -86,6 +86,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [answer, setAnswer] = useState<AnswerState>({ status: "idle" });
   const [answerLang, setAnswerLang] = useState("");
   const [runParts, setRunParts] = useState<Parts | null>(null);
+  // Phones show one pane at a time (Problem / Code / Result); laptops ignore this and show everything.
+  const [pane, setPane] = useState<"problem" | "code" | "result">("problem");
+  const [savedCases, setSavedCases] = useState<string[]>([]);
+  const [undoReset, setUndoReset] = useState<string | null>(null);
+  const [savedFlash, setSavedFlash] = useState(false);
+  const codeRef = useRef(code); codeRef.current = code;
   const pendingRef = useRef<{ lang: string; code: string } | null>(null);
   const slugRef = useRef(slug);
   slugRef.current = slug;
@@ -149,9 +155,16 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     return () => window.removeEventListener("lc-theme", sync);
   }, []);
   useEffect(() => { setNotes(localStorage.getItem(`lc-notes:${slug}`) ?? ""); }, [slug]);
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(`lc-cases:${slug}`) ?? "[]");
+      setSavedCases(Array.isArray(v) ? v.filter((x): x is string => typeof x === "string").slice(0, 20) : []);
+    } catch { setSavedCases([]); }
+    setUndoReset(null);
+  }, [slug]);
   useEffect(() => { setAnswer({ status: "idle" }); setAnswerLang(""); }, [slug]);
   useEffect(() => { if (locked(slug) && (tab === "editorial" || tab === "answer" || tab === "solutions")) setTab("desc"); }, [locked, slug, tab]);
-  useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); }, [slug]);
+  useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); setPane("problem"); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
     if (problem) { setCustomInput(problem.samples[0]?.input ?? ""); setResult(null); setConsoleTab("case"); }
@@ -191,6 +204,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     const custom = kind === "run" && isCustomInput(problem, customInput);
     setBusy(kind); setError(""); setMode(kind); setCustomRun(custom); setResult(null); setCaseTab(0);
     setConsoleTab("result");
+    setPane("result");
     setRunParts(parts);
     try {
       const source = parts ? composeProgram(parts, code) : code;
@@ -213,6 +227,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     const h = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "'") { e.preventDefault(); runRef.current("run"); }
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runRef.current("submit"); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault(); // drafts autosave on every keystroke; this just confirms it and stops the browser's save dialog
+        setSavedFlash(true); setTimeout(() => setSavedFlash(false), 1400);
+      }
       if (e.key === "Escape") { setShowKeys(false); setShowSettings(false); setFocus(false); }
       const el = e.target as HTMLElement | null;
       const typing = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
@@ -237,7 +255,21 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   function reset() {
     if (!problem) return;
-    localStorage.removeItem(draftKey(lang)); cloud.clearDraft(lang); setCode(parts ? parts.stub : problem.starterCode[lang] ?? "");
+    const initial = parts ? parts.stub : problem.starterCode[lang] ?? "";
+    if (norm(codeRef.current) === norm(initial)) return;
+    setUndoReset(codeRef.current);
+    localStorage.removeItem(draftKey(lang)); cloud.clearDraft(lang); setCode(initial);
+  }
+
+  function undoResetCode() {
+    if (undoReset === null) return;
+    setCode(undoReset); localStorage.setItem(draftKey(lang), undoReset); cloud.saveDraft(lang, undoReset);
+    setUndoReset(null);
+  }
+
+  function persistCases(next: string[]) {
+    setSavedCases(next);
+    try { localStorage.setItem(`lc-cases:${slug}`, JSON.stringify(next)); } catch { /* storage blocked */ }
   }
 
   function loadSubmission(s: Submission) {
@@ -323,7 +355,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <button onClick={checkExec}>Re-check</button>
         </div>
       )}
-      <div ref={workspaceRef} className={`workspace${drag ? " dragging" : ""}${focus ? " focus" : ""}`}
+      <div ref={workspaceRef} data-pane={pane} className={`workspace${drag ? " dragging" : ""}${focus ? " focus" : ""}`}
         style={{ gridTemplateColumns: focus ? "minmax(0, 1fr)" : `${leftPct}% 8px minmax(0, 1fr)` }}>
         <section className="pane left" hidden={focus}>
           <div className="lctabs">
@@ -469,13 +501,15 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
         <section className="right" ref={rightRef}>
           <div className="bar actionbar" style={{ marginBottom: 8 }}>
-            <select value={lang} onChange={(e) => { setLang(e.target.value); localStorage.setItem("lc-lang", e.target.value); }}>
+            <select value={lang} onChange={(e) => { setLang(e.target.value); setUndoReset(null); localStorage.setItem("lc-lang", e.target.value); }}>
               {languages.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
             </select>
             <select value={fontSize} title="Editor font size" onChange={(e) => setEd({ fontSize: Number(e.target.value) })}>
               {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
             </select>
             <button onClick={reset} title="Reset to starter code">Reset</button>
+            {undoReset !== null && <button onClick={undoResetCode} title="Bring back the code you had before Reset">↶ Undo reset</button>}
+            {savedFlash && <span className="mute" role="status">✔ Saved</span>}
             <button onClick={copyCode} title="Copy your code">{copied ? "✔ Copied" : "Copy"}</button>
             <button onClick={() => setFocus((f) => !f)} title="Hide the description and focus on the editor (Esc to exit)">
               {focus ? "⤡ Exit focus" : "⤢ Focus"}
@@ -516,7 +550,17 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                     {problem.samples.map((s, i) => (
                       <button key={i} className={sampleIdx === i ? "on" : ""} onClick={() => setCustomInput(s.input)}>Case {i + 1}</button>
                     ))}
+                    {savedCases.map((c, i) => (
+                      <span key={i} className="savedcase">
+                        <button className={norm(c) === norm(customInput) ? "on" : ""} onClick={() => setCustomInput(c)} title={c}>My case {i + 1}</button>
+                        <button className="linklike" aria-label={`Delete my case ${i + 1}`} title="Delete this saved case"
+                          onClick={() => persistCases(savedCases.filter((_, j) => j !== i))}>×</button>
+                      </span>
+                    ))}
                     {custom && <span className="pill MEDIUM">Custom input</span>}
+                    {custom && !savedCases.some((c) => norm(c) === norm(customInput)) && savedCases.length < 20 && (
+                      <button onClick={() => persistCases([...savedCases, customInput])} title="Keep this input for next time">＋ Save case</button>
+                    )}
                   </div>
                   <div className="iolabel">Input</div>
                   <textarea className="consoletext" spellCheck={false} value={customInput}
@@ -582,6 +626,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           </div>
         </section>
       </div>
+      <nav className="mtabs" aria-label="Workspace panes">
+        {(["problem", "code", "result"] as const).map((k) => (
+          <button key={k} className={pane === k ? "on" : ""} aria-pressed={pane === k} onClick={() => setPane(k)}>
+            {k === "problem" ? "📄 Problem" : k === "code" ? "⌨ Code" : <>▶ Result{result && !busy ? <span className={result.verdict === "ACCEPTED" ? "ACCEPTED" : "WRONG_ANSWER"}> ●</span> : null}</>}
+          </button>
+        ))}
+      </nav>
       {showSettings && <EditorSettingsModal settings={ed} onChange={setEd} onReset={resetEd} onClose={() => setShowSettings(false)} />}
       <ProblemListDrawer open={showList} onClose={() => setShowList(false)} problems={all} currentSlug={slug} />
       {showKeys && (
@@ -592,6 +643,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <tbody>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>&apos;</kbd></td><td>Run on the console input</td></tr>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd></td><td>Submit</td></tr>
+                <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>S</kbd></td><td>Confirm the draft is saved (it autosaves)</td></tr>
                 <tr><td><kbd>?</kbd></td><td>Show or hide this help</td></tr>
                 <tr><td><kbd>Esc</kbd></td><td>Close help / leave focus mode</td></tr>
               </tbody>

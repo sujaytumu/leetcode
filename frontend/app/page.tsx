@@ -34,6 +34,8 @@ export default function Home() {
   const [dailyData, setDailyData] = useState<Daily | null>(null);
   const router = useRouter();
   const meta = useMeta();
+  const [cursor, setCursor] = useState(-1);
+  const tbodyRef = useRef<HTMLTableSectionElement>(null);
   // /?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("tag");
@@ -87,6 +89,31 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [fetchList, reload]);
 
+  // Keyboard-first browsing on laptops: j/k move the highlight, Enter opens, r opens a random unsolved problem.
+  const rows = data?.items ?? [];
+  useEffect(() => { setCursor(-1); }, [data]);
+  const kb = useRef({ rows, cursor, pickRandom });
+  kb.current = { rows, cursor, pickRandom };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || t.closest("input, textarea, select, button, a, [role=dialog]"))) return;
+      const { rows: r, cursor: c } = kb.current;
+      const move = (to: number) => {
+        e.preventDefault();
+        setCursor(to);
+        tbodyRef.current?.querySelectorAll("tr")[to]?.scrollIntoView({ block: "nearest" });
+      };
+      if (e.key === "j" && r.length) move(Math.min(r.length - 1, c + 1));
+      else if (e.key === "k" && r.length) move(Math.max(0, c - 1));
+      else if (e.key === "Enter" && c >= 0 && r[c]) { e.preventDefault(); router.push(`/problems/${r[c].slug}`); }
+      else if (e.key === "r") { e.preventDefault(); kb.current.pickRandom(); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [router]);
+
   const reset = <T,>(set: (v: T) => void) => (v: T) => { setPage(0); set(v); };
 
   return (
@@ -117,9 +144,9 @@ export default function Home() {
           </div>
           <table>
             <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
-            <tbody>
-              {data?.items.map((p) => (
-                <tr key={p.id}>
+            <tbody ref={tbodyRef}>
+              {data?.items.map((p, i) => (
+                <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                     <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
@@ -131,6 +158,9 @@ export default function Home() {
               {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
             </tbody>
           </table>
+          {rows.length > 0 && (
+            <p className="mute kbhint hide-sm"><kbd>J</kbd> <kbd>K</kbd> move · <kbd>Enter</kbd> open · <kbd>R</kbd> random · <kbd>/</kbd> search</p>
+          )}
           {!data && <FreeSpace loading={loading} error={error} onRetry={() => setReload((n) => n + 1)} label="Loading problems…" />}
           {data && error && (
             <div className="banner err" style={{ marginTop: 10 }}>
