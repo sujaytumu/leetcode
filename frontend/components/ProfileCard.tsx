@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { api, ProfileInfo } from "@/lib/api";
 import { swr } from "@/lib/local";
+import { AUTH_EVENT, authToken, authUser } from "@/lib/auth";
+import Link from "next/link";
 
 const EMPTY: ProfileInfo = {
   displayName: "", username: "", headline: "", company: "", location: "", school: "",
@@ -19,6 +21,13 @@ export default function ProfileCard() {
   const [rank, setRank] = useState<number | null>(null);
   const [photoOk, setPhotoOk] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [account, setAccount] = useState<string | null>(null);
+  useEffect(() => {
+    const sync = () => setAccount(authToken() ? authUser() : null);
+    sync();
+    window.addEventListener(AUTH_EVENT, sync);
+    return () => window.removeEventListener(AUTH_EVENT, sync);
+  }, []);
 
   useEffect(() => {
     swr<ProfileInfo>("/api/profile/info", (d) => setInfo(d), () => {}).catch(() => {});
@@ -37,8 +46,9 @@ export default function ProfileCard() {
               ? <img className="avatar" src={`https://github.com/${info.github}.png?size=192`} alt="" onError={() => setPhotoOk(false)} />
               : <div className="avatar" aria-hidden="true">{initials(info)}</div>}
             <div className="pc-id">
-              <div className="pc-name">{info.displayName || "Anonymous coder"}</div>
-              {info.username && <div className="mute pc-user">{info.username}</div>}
+              <div className="pc-name">{account ? (info.displayName || account) : "Anonymous coder"}</div>
+              {account ? <div className="mute pc-user">{info.username || account}</div>
+                : <div className="mute pc-user"><Link href="/login">Log in</Link> to see your name here</div>}
               <div className="pc-rank"><span className="mute">Rank</span> <b>{rank ? rank.toLocaleString("en-US") : "–"}</b></div>
             </div>
           </div>

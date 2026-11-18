@@ -1,10 +1,12 @@
 /** Browser-side session for accounts. The backend still keys all data by client id; an account just owns one. */
 const TOKEN = "lc-auth-token";
 const USER = "lc-auth-user";
+const EMAIL = "lc-auth-email";
+const LAST_EMAIL = "lc-last-email";
 const CLIENT = "lc-client-id";
 export const AUTH_EVENT = "lc-auth";
 
-export interface Session { token: string; clientId: string; username: string }
+export interface Session { token: string; clientId: string; username: string; email?: string | null }
 
 function get(key: string): string | null {
   try { return localStorage.getItem(key); } catch { return null; }
@@ -12,6 +14,9 @@ function get(key: string): string | null {
 
 export function authToken(): string | null { return get(TOKEN); }
 export function authUser(): string | null { return get(USER); }
+export function authEmail(): string | null { return get(EMAIL); }
+/** Email used on the last successful login, to pre-fill the form next time (never the password). */
+export function lastEmail(): string { return get(LAST_EMAIL) ?? ""; }
 
 export function authHeaders(): Record<string, string> {
   const t = authToken();
@@ -28,6 +33,7 @@ function announce() { window.dispatchEvent(new Event(AUTH_EVENT)); }
 export function setSession(s: Session) {
   localStorage.setItem(TOKEN, s.token);
   localStorage.setItem(USER, s.username);
+  if (s.email) { localStorage.setItem(EMAIL, s.email); localStorage.setItem(LAST_EMAIL, s.email); } else localStorage.removeItem(EMAIL);
   localStorage.setItem(CLIENT, s.clientId);
   clearCaches();
   announce();
@@ -38,6 +44,7 @@ export function clearSession() {
   try {
     localStorage.removeItem(TOKEN);
     localStorage.removeItem(USER);
+    localStorage.removeItem(EMAIL);
     localStorage.setItem(CLIENT, crypto.randomUUID());
   } catch {}
   clearCaches();

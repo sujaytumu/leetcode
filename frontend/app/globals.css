@@ -453,3 +453,6 @@ nav button { cursor: pointer; }
 .hb-val { color:var(--mute); white-space:nowrap; }
 .hourbars { display:flex; align-items:flex-end; gap:3px; height:90px; }
 .hourbars > span { flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; }
+.acct-rows { display:grid; gap:8px; }
+.acct-rows > div { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+.acct-rows b { font-size:14px; display:inline; overflow-wrap:anywhere; text-align:right; }
