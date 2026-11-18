@@ -13,17 +13,32 @@ export default function TopicsPage() {
   const [topics, setTopics] = useState<Topic[] | null>(null);
   const [error, setError] = useState("");
   const [q, setQ] = useState("");
+  const [sort, setSort] = useState<"default" | "least" | "most">("default");
 
   useEffect(() => { swr<Topic[]>("/api/topics", (d) => setTopics(d), () => {}).catch((e) => setError(e.message)); }, []);
 
-  const shown = topics?.filter((t) => tagLabel(t.tag).toLowerCase().includes(q.trim().toLowerCase()));
+  const pctOf = (t: Topic) => (t.total ? t.solved / t.total : 0);
+  const shown = topics?.filter((t) => tagLabel(t.tag).toLowerCase().includes(q.trim().toLowerCase()))
+    .sort((a, b) => (sort === "least" ? pctOf(a) - pctOf(b) : sort === "most" ? pctOf(b) - pctOf(a) : 0));
+  // Weakest = lowest solved share among topics big enough to matter; ties go to the larger topic.
+  const weakest = topics?.filter((t) => t.total >= 3 && t.solved < t.total)
+    .sort((a, b) => pctOf(a) - pctOf(b) || b.total - a.total)[0];
   return (
     <>
       <div className="bar" style={{ marginBottom: 12 }}>
         <h2 style={{ margin: 0 }}>Topics</h2><span className="grow" />
+        <select aria-label="Sort topics" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
+          <option value="default">Default order</option><option value="least">Least solved first</option><option value="most">Most solved first</option>
+        </select>
         <input placeholder="Filter topics…" value={q} onChange={(e) => setQ(e.target.value)} style={{ maxWidth: 240 }} />
       </div>
       {error && <div className="banner err">{error}</div>}
+      {weakest && (
+        <div className="banner" style={{ marginBottom: 12 }}>
+          <span>Weakest topic: <b>{tagLabel(weakest.tag)}</b> ({weakest.solved}/{weakest.total} solved)</span><span className="grow" />
+          <Link href={`/practice?tag=${encodeURIComponent(weakest.tag)}`}>Practice it →</Link>
+        </div>
+      )}
       {!topics && !error && <Skeleton lines={8} />}
       <div className="topics">
         {shown?.map((t) => {
