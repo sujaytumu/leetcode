@@ -523,3 +523,21 @@ nav button { cursor: pointer; }
 @media (max-width:360px) { .solvedcard { flex-wrap:wrap; } }
 .ratingdist { overflow:hidden; }
 .ratingdist .bar { flex:0 1 28px; }
+
+/* Heatmap (LeetCode look): month blocks with the month name underneath, four green levels */
+.hm { display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; margin-top:12px; }
+.hm-month { flex:none; }
+.hm-grid { display:grid; grid-template-rows:repeat(7, 14px); grid-auto-flow:column; grid-auto-columns:14px; gap:4px; }
+.hm .cell { width:14px; height:14px; border-radius:3px; }
+.hm-label { margin-top:8px; font-size:14px; color:var(--mute); }
+.cell.l1 { background:#0e4429; } .cell.l2 { background:#1f8a3f; } .cell.l3 { background:#2cbb5d; } .cell.l4 { background:#7ee2a0; }
+.cell.lf { background:transparent; }
+.act-title { font-size:18px; } .act-title b { display:inline; font-size:26px; font-weight:600; margin-right:4px; }
+.act-stats { display:flex; align-items:center; gap:26px; margin-top:14px; font-size:16px; line-height:1.35; }
+.act-stats b { display:inline; font-size:19px; font-weight:600; color:var(--text); }
+.act-year { background:var(--cell); border:0; border-radius:10px; padding:10px 14px; font-size:16px; color:var(--text); }
+.act-title { font-size:16px; } .act-title b { font-size:24px; }
+.act-stats { gap:18px; font-size:15px; }
+.act-stats > span { white-space:nowrap; }
+.act-stats b { font-size:17px; }
+.act-year { padding:9px 10px; font-size:15px; }
