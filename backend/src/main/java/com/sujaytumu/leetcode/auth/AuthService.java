@@ -13,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private static final Pattern USERNAME = Pattern.compile("^[A-Za-z0-9_]{3,20}$");
-    private static final String WRONG = "Wrong username or password.";
+    private static final Pattern EMAIL = Pattern.compile("^[A-Za-z0-9._%+'-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$");
+    private static final String WRONG = "Wrong email or password.";
 
-    public record Session(String token, UUID clientId, String username) {}
+    public record Session(String token, UUID clientId, String username, String email) {}
 
     private final AccountRepository accounts;
     private final PasswordHasher hasher;
@@ -38,34 +39,38 @@ public class AuthService {
 
     /** Creates an account that adopts the caller's anonymous id, so existing progress is kept. */
     @Transactional
-    public Session register(String rawUsername, String password, UUID clientId, String ip) {
-        String username = validUsername(rawUsername);
-        validPassword(password, username);
+    public Session register(String rawEmail, String rawUsername, String password, UUID clientId, String ip) {
+        String email = validEmail(rawEmail);
+        String username = rawUsername == null || rawUsername.isBlank() ? freeUsername(email) : validUsername(rawUsername);
+        validPassword(password, username, email);
         throttle.check("ip:" + ip);
         if (accounts.existsByClientId(clientId)) {
             throw new ConflictException("This browser already belongs to an account. Log in instead.");
+        }
+        if (accounts.existsByEmail(email)) {
+            throw new ConflictException("An account with that email already exists. Log in instead.");
         }
         if (accounts.existsByUsername(username)) {
             throw new ConflictException("That username is taken.");
         }
         Account account;
         try {
-            account = accounts.saveAndFlush(new Account(username, hasher.hash(password), clientId));
+            account = accounts.saveAndFlush(new Account(email, username, hasher.hash(password), clientId));
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("That username is taken, or this browser already has an account.");
+            throw new ConflictException("That email or username is taken, or this browser already has an account.");
         }
         bound.markBound(clientId);
-        return new Session(tokens.issue(account), clientId, username);
+        return new Session(tokens.issue(account), clientId, username, email);
     }
 
     @Transactional(readOnly = true)
-    public Session login(String rawUsername, String password, String ip) {
-        String username = rawUsername == null ? "" : rawUsername.trim().toLowerCase(Locale.ROOT);
-        String userKey = "user:" + username;
+    public Session login(String rawIdentifier, String password, String ip) {
+        String identifier = rawIdentifier == null ? "" : rawIdentifier.trim().toLowerCase(Locale.ROOT);
+        String userKey = "user:" + identifier;
         String ipKey = "ip:" + ip;
         throttle.check(userKey, ipKey);
         String supplied = password == null ? "" : password;
-        Account account = accounts.findByUsername(username).orElse(null);
+        Account account = (identifier.contains("@") ? accounts.findByEmail(identifier) : accounts.findByUsername(identifier)).orElse(null);
         if (account == null) {
             hasher.burn(supplied);
             throttle.fail(userKey, ipKey);
@@ -76,7 +81,7 @@ public class AuthService {
             throw new UnauthorizedException(WRONG);
         }
         throttle.succeed(userKey, ipKey);
-        return new Session(tokens.issue(account), account.getClientId(), account.getUsername());
+        return new Session(tokens.issue(account), account.getClientId(), account.getUsername(), account.getEmail());
     }
 
     /** Resolves an Authorization header to a live account, or fails with 401. */
@@ -104,10 +109,10 @@ public class AuthService {
             throttle.fail("user:" + account.getUsername(), "ip:" + ip);
             throw new UnauthorizedException("Current password is wrong.");
         }
-        validPassword(next, account.getUsername());
+        validPassword(next, account.getUsername(), account.getEmail());
         account.changePassword(hasher.hash(next));
         accounts.save(account);
-        return new Session(tokens.issue(account), account.getClientId(), account.getUsername());
+        return new Session(tokens.issue(account), account.getClientId(), account.getUsername(), account.getEmail());
     }
 
     private static String validUsername(String raw) {
@@ -118,12 +123,36 @@ public class AuthService {
         return name.toLowerCase(Locale.ROOT);
     }
 
-    private static void validPassword(String password, String username) {
+    private static String validEmail(String raw) {
+        String email = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
+        if (email.length() > 254 || !EMAIL.matcher(email).matches()) {
+            throw new IllegalArgumentException("Enter a valid email address.");
+        }
+        return email;
+    }
+
+    /** A free 3-20 character username derived from the email's local part, for sign-ups that do not pick one. */
+    private String freeUsername(String email) {
+        String base = email.substring(0, email.indexOf('@')).replaceAll("[^a-z0-9_]", "_");
+        if (base.length() > 14) {
+            base = base.substring(0, 14);
+        }
+        while (base.length() < 3) {
+            base += "_";
+        }
+        String candidate = base;
+        while (accounts.existsByUsername(candidate)) {
+            candidate = base + java.util.concurrent.ThreadLocalRandom.current().nextInt(100000, 999999);
+        }
+        return candidate;
+    }
+
+    private static void validPassword(String password, String username, String email) {
         if (password == null || password.length() < 8 || password.length() > 72) {
             throw new IllegalArgumentException("Password must be 8-72 characters.");
         }
-        if (password.equalsIgnoreCase(username)) {
-            throw new IllegalArgumentException("Password must not be the same as the username.");
+        if (password.equalsIgnoreCase(username) || (email != null && password.equalsIgnoreCase(email))) {
+            throw new IllegalArgumentException("Password must not be the same as the username or email.");
         }
     }
 }

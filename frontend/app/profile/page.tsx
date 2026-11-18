@@ -1,4 +1,6 @@
 "use client";
+import BackupCard from "@/components/BackupCard";
+import WeeklySummary from "@/components/WeeklySummary";
 import ExportCard from "@/components/ExportCard";
 import SyncCard from "@/components/SyncCard";
 import { useEffect, useState } from "react";
@@ -29,7 +31,7 @@ export default function ProfilePage() {
     <ProfileLayout
       p={p}
       header={<ProfileCard social={p.social} />}
-      extras={<div className="stack"><SyncCard /><ExportCard /></div>}
+      extras={<div className="stack"><WeeklySummary calendar={p.calendar} /><SyncCard /><ExportCard /><BackupCard /></div>}
     />
   );
 }

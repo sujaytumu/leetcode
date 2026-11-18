@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Markdown from "react-markdown";
 import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Answer, api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Study, Submission,
@@ -21,7 +22,10 @@ import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import Solutions from "@/components/Solutions";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
+import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
+import { usePageTitle } from "@/lib/usePageTitle";
+import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 import { rememberProblem } from "@/components/ContinueCard";
@@ -47,6 +51,7 @@ const isCustomInput = (p: ProblemDetail | null, text: string) =>
 
 export default function ProblemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
+  const router = useRouter();
   const [problem, setProblem] = useState<ProblemDetail | null>(null);
   const [loadError, setLoadError] = useState("");
   const meta = useMeta();
@@ -68,12 +73,15 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<Submission[]>([]);
   const [openSub, setOpenSub] = useState<Submission | null>(null);
+  const [diffWith, setDiffWith] = useState<number | "">("");
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
   const { locked } = useMock();
   const [hintsShown, setHintsShown] = useState(0);
   const [showApproach, setShowApproach] = useState(false);
   const [timer, setTimer] = useState({ on: false, secs: 0 });
+  const timerRef = useRef(timer); timerRef.current = timer;
+  const [solveTime, setSolveTime] = useState<{ rec: TimeRecord; improved: boolean; secs: number } | null>(null);
   const [theme, setTheme] = useState<ThemeName>("dark");
   const [leftPct, setLeftPct] = useState(42);
   const [editorPct, setEditorPct] = useState(60);
@@ -136,6 +144,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [slug]);
   useEffect(() => { if (problem && problem.slug === slug) rememberProblem(slug, problem.title); }, [problem, slug]);
   const [showDiff, setShowDiff] = useState(false);
+  usePageTitle(problem ? `${problem.number ?? problem.id}. ${problem.title}` : "Problem");
   const hasProblem = problem !== null;
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
@@ -167,7 +176,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   useEffect(() => { setHintsShown(0); setShowApproach(false); setTimer({ on: false, secs: 0 }); setPane("problem"); }, [slug]);
   // Start the console on the first sample whenever a different problem is opened.
   useEffect(() => {
-    if (problem) { setCustomInput(problem.samples[0]?.input ?? ""); setResult(null); setConsoleTab("case"); }
+    if (problem) { setCustomInput(problem.samples[0]?.input ?? ""); setResult(null); setSolveTime(null); setConsoleTab("case"); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problem?.slug]);
   useEffect(() => {
@@ -213,7 +222,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       setResult(r);
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
-      if (kind === "submit") loadHistory();
+      if (kind === "submit") {
+        loadHistory();
+        // Only a running or paused timer with time on it counts as a timed solve.
+        const secs = timerRef.current.secs;
+        if (r.verdict === "ACCEPTED" && !custom && secs > 0) setSolveTime({ ...recordTime(slug, secs), secs });
+        else setSolveTime(null);
+      }
       checkExec();
     } catch (e) {
       setError((e as Error).message);
@@ -221,6 +236,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     } finally { setBusy(""); }
   }, [busy, slug, lang, code, parts, problem, customInput, loadHistory, checkExec]);
 
+  const allRef = useRef(all); allRef.current = all;
   const runRef = useRef(run);
   runRef.current = run;
   useEffect(() => {
@@ -232,6 +248,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
         setSavedFlash(true); setTimeout(() => setSavedFlash(false), 1400);
       }
       if (e.key === "Escape") { setShowKeys(false); setShowSettings(false); setFocus(false); }
+      // Alt+Shift+N / P: next / previous problem in the list order (e.code, because Alt changes e.key on macOS).
+      if (e.altKey && e.shiftKey && (e.code === "KeyN" || e.code === "KeyP")) {
+        const list = allRef.current, i = list.findIndex((p) => p.slug === slugRef.current);
+        const to = i >= 0 ? list[i + (e.code === "KeyN" ? 1 : -1)] : undefined;
+        if (to) { e.preventDefault(); router.push(`/problems/${to.slug}`); }
+      }
       const el = e.target as HTMLElement | null;
       const typing = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
       if (e.key === "?" && !typing && !e.ctrlKey && !e.metaKey) setShowKeys((v) => !v);
@@ -457,14 +479,28 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             ) : (
               openSub ? (
                 <div className="subdetail">
-                  <button className="ghost" onClick={() => setOpenSub(null)}>← All submissions</button>
+                  <button className="ghost" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All submissions</button>
                   <h3 className={`verdict ${openSub.verdict}`} style={{ marginTop: 10 }}>{title(openSub.verdict)}</h3>
                   <div className="vstats">
                     {openSub.passed} / {openSub.total} testcases passed · {openSub.language} · {new Date(openSub.createdAt).toLocaleString()}
                   </div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
                   <div className="iolabel" style={{ marginTop: 14 }}>Code</div>
-                  {showDiff ? (
+                  <div className="bar" style={{ marginBottom: 6 }}>
+                    <select aria-label="Compare with another submission" value={diffWith}
+                      onChange={(e) => { setDiffWith(e.target.value ? Number(e.target.value) : ""); setShowDiff(false); }}>
+                      <option value="">Show code</option>
+                      {history.filter((h) => h.id !== openSub.id).map((h) => (
+                        <option key={h.id} value={h.id}>Diff vs #{h.id} · {title(h.verdict)} · {new Date(h.createdAt).toLocaleString()}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {(() => {
+                    const other = diffWith === "" ? null : history.find((h) => h.id === diffWith);
+                    // Diff reads old -> new, so the older submission is the "before" side.
+                    return other ? <CodeDiff before={other.id < openSub.id ? other.code : openSub.code} after={other.id < openSub.id ? openSub.code : other.code} /> : null;
+                  })()}
+                  {diffWith !== "" ? null : showDiff ? (
                     <>
                       <div className="mute" style={{ fontSize: 12, marginBottom: 4 }}>Submission → your editor ({lang})</div>
                       <pre className="subcode diff">{lineDiff(openSub.code, code).map((r, i) => (
@@ -594,6 +630,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
                       {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <SubmissionStatsPanel id={result.submissionId} />}
+                      {mode === "submit" && result.verdict === "ACCEPTED" && solveTime && (
+                        <div className="vstats" style={{ marginTop: 6 }}>⏱ Solved in <b style={{ display: "inline", fontSize: 14 }}>{fmtSecs(solveTime.secs)}</b>
+                          {solveTime.improved ? " · new personal best" : ` · best ${fmtSecs(solveTime.rec.best)}`} ({solveTime.rec.runs} timed solve{solveTime.rec.runs === 1 ? "" : "s"})</div>
+                      )}
                       {result.message && <div className={result.verdict === "ACCEPTED" ? "" : "err"}>{fix(result.message)}</div>}
                       {result.cases.length > 1 && (
                         <div className="casechips" style={{ marginTop: 8 }}>
@@ -644,6 +684,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>&apos;</kbd></td><td>Run on the console input</td></tr>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd></td><td>Submit</td></tr>
                 <tr><td><kbd>Ctrl/⌘</kbd> + <kbd>S</kbd></td><td>Confirm the draft is saved (it autosaves)</td></tr>
+                <tr><td><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> / <kbd>N</kbd></td><td>Previous / next problem</td></tr>
                 <tr><td><kbd>?</kbd></td><td>Show or hide this help</td></tr>
                 <tr><td><kbd>Esc</kbd></td><td>Close help / leave focus mode</td></tr>
               </tbody>

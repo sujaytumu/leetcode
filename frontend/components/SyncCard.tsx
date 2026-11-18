@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, clientId } from "@/lib/api";
-import { authToken, authUser } from "@/lib/auth";
+import { authEmail, authToken, authUser } from "@/lib/auth";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -15,10 +15,12 @@ export default function SyncCard() {
   const [entered, setEntered] = useState("");
   const [msg, setMsg] = useState("");
   const [user, setUser] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     setCode(clientId());
     setUser(authToken() ? authUser() : null);
+    setEmail(authToken() ? authEmail() : null);
     api<Board>("/api/leaderboard?limit=1").then(setBoard).catch(() => {});
   }, []);
 
@@ -46,10 +48,10 @@ export default function SyncCard() {
         {board?.me
           ? <>Global rank <b style={{ display: "inline", fontSize: 16 }}>#{board.me.rank}</b> of {board.participants} · {board.me.points} points · </>
           : <span className="mute">Solve a problem to get a global rank. </span>}
-        <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link>
+        <Link href="/leaderboard">View leaderboard</Link> · <Link href="/submissions">My submissions</Link> · <Link href="/stats">My stats</Link>
       </p>
       {user ? (
-        <p className="mute" style={{ margin: 0 }}>Signed in as <b style={{ display: "inline", fontSize: 14 }}>{user}</b>. Log in with your username on any device to get this progress; no sync code needed.</p>
+        <p className="mute" style={{ margin: 0 }}>Signed in as <b style={{ display: "inline", fontSize: 14 }}>{email ?? user}</b>. Log in on any device to get this progress; no sync code needed. <Link href="/account">Account settings</Link></p>
       ) : (<>
       <p className="mute" style={{ margin: "0 0 10px" }}><Link href="/register">Create an account</Link> to protect this progress with a password. A sync code lets anyone who has it use your progress.</p>
       <div className="iolabel">Your sync code</div>

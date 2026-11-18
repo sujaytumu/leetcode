@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -27,6 +28,7 @@ function Section({ title, blurb, items }: { title: string; blurb: string; items:
 }
 
 export default function ForYouPage() {
+  usePageTitle("For you");
   const [data, setData] = useState<Recommendations | null>(null);
   const [error, setError] = useState("");
   useEffect(() => { swr<Recommendations>("/api/recommendations", (d) => setData(d), () => {}).catch((e) => setError(e.message)); }, []);
@@ -35,6 +37,9 @@ export default function ForYouPage() {
   return (
     <>
       <h2 style={{ marginTop: 0 }}>For you</h2>
+      <p className="mute" style={{ marginTop: 0, fontSize: 13 }}>
+        Also: <Link href="/review">spaced review of problems you solved</Link> · <Link href="/practice">custom practice session</Link> · <Link href="/stats">your stats</Link>
+      </p>
       {error && <div className="banner err">{error}</div>}
       {!data && !error && <Skeleton lines={9} />}
       {data && (

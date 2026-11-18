@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -9,6 +10,7 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthKey = (y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`;
 
 export default function DailyPage() {
+  usePageTitle("Daily challenge");
   const now = new Date();
   const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() + 1 });
   const [cal, setCal] = useState<DailyCalendar | null>(null);
