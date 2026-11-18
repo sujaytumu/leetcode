@@ -466,7 +466,7 @@
   }
  },
  "binary-tree-inorder-traversal": {
-  "editorial": null,
+  "editorial": "## Approach\n\nIterative: cur = root, stack empty. While cur or stack non-empty: go as far left as possible pushing nodes; pop a node, record its value, set cur = node.right. For a BST this yields sorted order. Morris traversal achieves O(1) space by threading.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "vector<int> solve(TreeNode * root) {\n    vector<int> out;\n    vector<TreeNode *> stack;\n    TreeNode *node = root;\n    while (node || !stack.empty()) {\n        while (node) { stack.push_back(node); node = node->left; }\n        node = stack.back();\n        stack.pop_back();\n        out.push_back(node->val);\n        node = node->right;\n    }\n    return out;\n}\n",
    "java": "static int[] solve(TreeNode root) {\n    List<Integer> out = new ArrayList<>();\n    Deque<TreeNode> stack = new ArrayDeque<>();\n    TreeNode node = root;\n    while (node != null || !stack.isEmpty()) {\n        while (node != null) { stack.push(node); node = node.left; }\n        node = stack.pop();\n        out.add(node.val);\n        node = node.right;\n    }\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
@@ -475,7 +475,7 @@
   }
  },
  "path-sum": {
-  "editorial": null,
+  "editorial": "## Approach\n\nhasPath(node, remaining): null is false; if node is a leaf return remaining == node.val; otherwise recurse on both children with remaining - node.val and OR the results.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "bool solve(TreeNode * root, int targetSum) {\n    if (!root) return false;\n    if (!root->left && !root->right) return root->val == targetSum;\n    int rest = targetSum - root->val;\n    return solve(root->left, rest) || solve(root->right, rest);\n}\n",
    "java": "static boolean solve(TreeNode root, int targetSum) {\n    if (root == null) return false;\n    if (root.left == null && root.right == null) return root.val == targetSum;\n    int rest = targetSum - root.val;\n    return solve(root.left, rest) || solve(root.right, rest);\n}\n",
@@ -484,7 +484,7 @@
   }
  },
  "balanced-binary-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nheight(node) returns -1 if either child is unbalanced or their heights differ by more than 1, else 1 + max of the child heights. The tree is balanced if height(root) != -1. Each node is visited once.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "int height(TreeNode *node) {\n    if (!node) return 0;\n    int left = height(node->left);\n    if (left < 0) return -1;\n    int right = height(node->right);\n    if (right < 0 || abs(left - right) > 1) return -1;\n    return 1 + max(left, right);\n}\n\nbool solve(TreeNode * root) {\n    return height(root) >= 0;\n}\n",
    "java": "static int height(TreeNode node) {\n    if (node == null) return 0;\n    int left = height(node.left);\n    if (left < 0) return -1;\n    int right = height(node.right);\n    if (right < 0 || Math.abs(left - right) > 1) return -1;\n    return 1 + Math.max(left, right);\n}\n\nstatic boolean solve(TreeNode root) {\n    return height(root) >= 0;\n}\n",
@@ -493,7 +493,7 @@
   }
  },
  "binary-tree-right-side-view": {
-  "editorial": null,
+  "editorial": "## Approach\n\nBFS by levels: for every level keep the last node's value. Or DFS(root, depth) visiting right child first; if depth equals the number of recorded values, this is the first (rightmost) node at that depth, so record it.\n\n**Complexity:** O(n) time, O(w) for BFS, O(h) for DFS space.",
   "solutions": {
    "cpp": "vector<int> solve(TreeNode * root) {\n    vector<int> out;\n    if (!root) return out;\n    queue<TreeNode *> q;\n    q.push(root);\n    while (!q.empty()) {\n        int size = q.size();\n        for (int i = 0; i < size; i++) {\n            TreeNode *node = q.front();\n            q.pop();\n            if (i == size - 1) out.push_back(node->val);\n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n    }\n    return out;\n}\n",
    "java": "static int[] solve(TreeNode root) {\n    List<Integer> out = new ArrayList<>();\n    if (root == null) return new int[0];\n    Deque<TreeNode> queue = new ArrayDeque<>();\n    queue.add(root);\n    while (!queue.isEmpty()) {\n        int size = queue.size();\n        for (int i = 0; i < size; i++) {\n            TreeNode node = queue.poll();\n            if (i == size - 1) out.add(node.val);\n            if (node.left != null) queue.add(node.left);\n            if (node.right != null) queue.add(node.right);\n        }\n    }\n    return out.stream().mapToInt(Integer::intValue).toArray();\n}\n",
@@ -502,7 +502,7 @@
   }
  },
  "validate-binary-search-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nDFS(node, low, high): null is valid; require low < node.val < high; recurse left with (low, node.val) and right with (node.val, high). Use long or null bounds to avoid trouble with values at the integer limits. Equal values are invalid because the ordering is strict.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "bool check(TreeNode *node, long long low, long long high) {\n    if (!node) return true;\n    if (node->val <= low || node->val >= high) return false;\n    return check(node->left, low, node->val) && check(node->right, node->val, high);\n}\n\nbool solve(TreeNode * root) {\n    return check(root, LLONG_MIN, LLONG_MAX);\n}\n",
    "java": "static boolean check(TreeNode node, long low, long high) {\n    if (node == null) return true;\n    if (node.val <= low || node.val >= high) return false;\n    return check(node.left, low, node.val) && check(node.right, node.val, high);\n}\n\nstatic boolean solve(TreeNode root) {\n    return check(root, Long.MIN_VALUE, Long.MAX_VALUE);\n}\n",
@@ -511,7 +511,7 @@
   }
  },
  "kth-smallest-element-in-a-bst": {
-  "editorial": null,
+  "editorial": "## Approach\n\nIterative inorder: push nodes going left; pop, decrement k, and when k reaches zero return that node's value; then move to the right child. If the tree is modified often and k varies, store subtree sizes in each node to answer in O(h).\n\n**Complexity:** O(h + k) time, O(h) space.",
   "solutions": {
    "cpp": "int solve(TreeNode * root, int k) {\n    vector<TreeNode *> stack;\n    TreeNode *node = root;\n    while (node || !stack.empty()) {\n        while (node) { stack.push_back(node); node = node->left; }\n        node = stack.back();\n        stack.pop_back();\n        if (--k == 0) return node->val;\n        node = node->right;\n    }\n    return -1;\n}\n",
    "java": "static int solve(TreeNode root, int k) {\n    Deque<TreeNode> stack = new ArrayDeque<>();\n    TreeNode node = root;\n    while (node != null || !stack.isEmpty()) {\n        while (node != null) { stack.push(node); node = node.left; }\n        node = stack.pop();\n        if (--k == 0) return node.val;\n        node = node.right;\n    }\n    return -1;\n}\n",
@@ -520,7 +520,7 @@
   }
  },
  "count-good-nodes-in-binary-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nDFS(node, maxSoFar): if null return 0; good = node.val >= maxSoFar ? 1 : 0; newMax = max(maxSoFar, node.val); return good + DFS(left, newMax) + DFS(right, newMax). Start with maxSoFar = -infinity.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "int dfs(TreeNode *node, int best) {\n    if (!node) return 0;\n    int good = node->val >= best ? 1 : 0;\n    best = max(best, node->val);\n    return good + dfs(node->left, best) + dfs(node->right, best);\n}\n\nint solve(TreeNode * root) {\n    return dfs(root, INT_MIN);\n}\n",
    "java": "static int dfs(TreeNode node, int best) {\n    if (node == null) return 0;\n    int good = node.val >= best ? 1 : 0;\n    best = Math.max(best, node.val);\n    return good + dfs(node.left, best) + dfs(node.right, best);\n}\n\nstatic int solve(TreeNode root) {\n    return dfs(root, Integer.MIN_VALUE);\n}\n",
@@ -529,7 +529,7 @@
   }
  },
  "lowest-common-ancestor-of-a-binary-search-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nStart at the root. While true: if both p and q are less than node.val go left, if both are greater go right, otherwise this node splits them (or equals one of them) and is the LCA. Iterative, no recursion needed.\n\n**Complexity:** O(h) time, O(1) space.",
   "solutions": {
    "cpp": "int solve(TreeNode * root, int p, int q) {\n    TreeNode *node = root;\n    while (node) {\n        if (p < node->val && q < node->val) node = node->left;\n        else if (p > node->val && q > node->val) node = node->right;\n        else return node->val;\n    }\n    return -1;\n}\n",
    "java": "static int solve(TreeNode root, int p, int q) {\n    TreeNode node = root;\n    while (node != null) {\n        if (p < node.val && q < node.val) node = node.left;\n        else if (p > node.val && q > node.val) node = node.right;\n        else return node.val;\n    }\n    return -1;\n}\n",
@@ -538,7 +538,7 @@
   }
  },
  "lowest-common-ancestor-of-a-binary-tree": {
-  "editorial": null,
+  "editorial": "## Approach\n\nlca(node): if null or node is p or q return node; l = lca(left), r = lca(right); if both are non-null return node, otherwise return whichever is non-null. The first node where the two targets appear on different sides is the answer; if one target is the ancestor of the other, it is returned as is.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "TreeNode * lca(TreeNode *node, int p, int q) {\n    if (!node || node->val == p || node->val == q) return node;\n    TreeNode *left = lca(node->left, p, q), *right = lca(node->right, p, q);\n    if (left && right) return node;\n    return left ? left : right;\n}\n\nint solve(TreeNode * root, int p, int q) {\n    return lca(root, p, q)->val;\n}\n",
    "java": "static TreeNode lca(TreeNode node, int p, int q) {\n    if (node == null || node.val == p || node.val == q) return node;\n    TreeNode left = lca(node.left, p, q), right = lca(node.right, p, q);\n    if (left != null && right != null) return node;\n    return left != null ? left : right;\n}\n\nstatic int solve(TreeNode root, int p, int q) {\n    return lca(root, p, q).val;\n}\n",
@@ -547,7 +547,7 @@
   }
  },
  "binary-tree-maximum-path-sum": {
-  "editorial": null,
+  "editorial": "## Approach\n\nDFS returns gain(node) = node.val + max(0, gain(left), gain(right)) — the best path that goes down one side. While computing it, candidate = node.val + max(0, gain(left)) + max(0, gain(right)); keep the global maximum. Initialise the maximum to -infinity because all values may be negative.\n\n**Complexity:** O(n) time, O(h) space.",
   "solutions": {
    "cpp": "long long gain(TreeNode *node, long long &best) {\n    if (!node) return 0;\n    long long left = max(gain(node->left, best), 0LL), right = max(gain(node->right, best), 0LL);\n    best = max(best, node->val + left + right);\n    return node->val + max(left, right);\n}\n\nint solve(TreeNode * root) {\n    long long best = LLONG_MIN;\n    gain(root, best);\n    return (int)best;\n}\n",
    "java": "static long gain(TreeNode node, long[] best) {\n    if (node == null) return 0;\n    long left = Math.max(gain(node.left, best), 0), right = Math.max(gain(node.right, best), 0);\n    best[0] = Math.max(best[0], node.val + left + right);\n    return node.val + Math.max(left, right);\n}\n\nstatic int solve(TreeNode root) {\n    long[] best = {Long.MIN_VALUE};\n    gain(root, best);\n    return (int) best[0];\n}\n",
@@ -556,7 +556,7 @@
   }
  },
  "last-stone-weight": {
-  "editorial": null,
+  "editorial": "## Approach\n\nPut all stones in a max-heap. While the heap has at least two stones pop the heaviest two (x >= y); if x != y push x - y. The answer is the single remaining weight, or 0 when the heap is empty. (Languages with only min-heaps can store negated values.)\n\n**Complexity:** O(n log n) time, O(n) space.",
   "solutions": {
    "cpp": "int solve(vector<int> stones) {\n    priority_queue<int> heap(stones.begin(), stones.end());\n    while (heap.size() > 1) {\n        int a = heap.top(); heap.pop();\n        int b = heap.top(); heap.pop();\n        if (a != b) heap.push(a - b);\n    }\n    return heap.empty() ? 0 : heap.top();\n}\n",
    "java": "static int solve(int[] stones) {\n    PriorityQueue<Integer> heap = new PriorityQueue<>(Collections.reverseOrder());\n    for (int s : stones) heap.add(s);\n    while (heap.size() > 1) {\n        int a = heap.poll(), b = heap.poll();\n        if (a != b) heap.add(a - b);\n    }\n    return heap.isEmpty() ? 0 : heap.peek();\n}\n",
@@ -574,7 +574,7 @@
   }
  },
  "top-k-frequent-elements": {
-  "editorial": null,
+  "editorial": "## Approach\n\nCount with a map, then sort the distinct values by (frequency descending, value ascending) and take k — O(m log m) for m distinct values. A size-k min-heap gives O(m log k), and bucketing by frequency gives O(n) if you only need any valid order; the tie-break here needs an ordering inside each bucket.\n\n**Complexity:** O(m log m) time, O(m) space.",
   "solutions": {
    "cpp": "vector<int> solve(vector<int> nums, int k) {\n    unordered_map<int, int> counts;\n    for (int x : nums) counts[x]++;\n    vector<int> keys;\n    for (auto &entry : counts) keys.push_back(entry.first);\n    sort(keys.begin(), keys.end(), [&](int a, int b) {\n        return counts[a] != counts[b] ? counts[a] > counts[b] : a < b;\n    });\n    keys.resize(k);\n    return keys;\n}\n",
    "java": "static int[] solve(int[] nums, int k) {\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int x : nums) counts.merge(x, 1, Integer::sum);\n    List<Integer> keys = new ArrayList<>(counts.keySet());\n    keys.sort((a, b) -> counts.get(a).equals(counts.get(b)) ? Integer.compare(a, b) : Integer.compare(counts.get(b), counts.get(a)));\n    int[] out = new int[k];\n    for (int i = 0; i < k; i++) out[i] = keys.get(i);\n    return out;\n}\n",
@@ -583,7 +583,7 @@
   }
  },
  "meeting-rooms-ii": {
-  "editorial": null,
+  "editorial": "## Approach\n\nSort meetings by start. Keep a min-heap of end times. For each meeting, if the earliest end <= its start pop it (the room is reused); push this meeting's end. The final heap size is the number of rooms. Alternative: sort starts and ends separately and sweep with two pointers.\n\n**Complexity:** O(n log n) time, O(n) space.",
   "solutions": {
    "cpp": "int solve(vector<vector<int>> intervals) {\n    vector<int> starts, ends;\n    for (auto &v : intervals) { starts.push_back(v[0]); ends.push_back(v[1]); }\n    sort(starts.begin(), starts.end());\n    sort(ends.begin(), ends.end());\n    int rooms = 0, j = 0;\n    for (int s : starts) {\n        if (s < ends[j]) rooms++;\n        else j++;\n    }\n    return rooms;\n}\n",
    "java": "static int solve(int[][] intervals) {\n    int n = intervals.length;\n    int[] starts = new int[n], ends = new int[n];\n    for (int i = 0; i < n; i++) { starts[i] = intervals[i][0]; ends[i] = intervals[i][1]; }\n    Arrays.sort(starts);\n    Arrays.sort(ends);\n    int rooms = 0, j = 0;\n    for (int s : starts) {\n        if (s < ends[j]) rooms++;\n        else j++;\n    }\n    return rooms;\n}\n",
@@ -592,7 +592,7 @@
   }
  },
  "sliding-window-maximum": {
-  "editorial": null,
+  "editorial": "## Approach\n\nMonotonic deque storing indices whose values decrease from front to back. For each i: drop front indices <= i - k; pop back indices whose value <= nums[i]; push i. Once i >= k - 1 the front is the window maximum. Each index enters and leaves once.\n\n**Complexity:** O(n) time, O(k) space.",
   "solutions": {
    "cpp": "vector<int> solve(vector<int> nums, int k) {\n    deque<int> window;  // indices whose values decrease from front to back\n    vector<int> out;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        while (!window.empty() && nums[window.back()] <= nums[i]) window.pop_back();\n        window.push_back(i);\n        if (window.front() <= i - k) window.pop_front();\n        if (i >= k - 1) out.push_back(nums[window.front()]);\n    }\n    return out;\n}\n",
    "java": "static int[] solve(int[] nums, int k) {\n    Deque<Integer> window = new ArrayDeque<>();  // indices whose values decrease from front to back\n    int[] out = new int[nums.length - k + 1];\n    for (int i = 0; i < nums.length; i++) {\n        while (!window.isEmpty() && nums[window.peekLast()] <= nums[i]) window.pollLast();\n        window.addLast(i);\n        if (window.peekFirst() <= i - k) window.pollFirst();\n        if (i >= k - 1) out[i - k + 1] = nums[window.peekFirst()];\n    }\n    return out;\n}\n",
