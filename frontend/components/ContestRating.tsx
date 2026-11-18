@@ -69,6 +69,8 @@ function RatingGraph({ points, peak }: { points: Point[]; peak: number }) {
       <circle cx={px} cy={py} r="4.5" fill="#fff" />
       <g>
         <rect x={bx} y={py - 31} width={bw} height="22" rx="5" fill="var(--panel)" stroke="var(--line)" />
+        <path d={`M${px - 5},${py - 9} L${px},${py - 4} L${px + 5},${py - 9}`} fill="var(--panel)" stroke="var(--line)" />
+        <rect x={px - 4} y={py - 10} width="8" height="3" fill="var(--panel)" />
         <text x={bx + bw / 2} y={py - 16} textAnchor="middle" fontSize="12" fill="var(--text)">{fmt(peak)}</text>
       </g>
       <text x={PX} y={H - 6} fontSize="12" fill="var(--mute)">{year(points[0].at)}</text>

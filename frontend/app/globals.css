@@ -487,3 +487,8 @@ nav button { cursor: pointer; }
 .profilecard .pc-tags > .pc-ico { margin-top:6px; flex:none; color:var(--mute); }
 .pc-tagwrap { display:flex; flex-wrap:wrap; gap:8px; }
 .pc-pill { background:var(--cell); border-radius:999px; padding:6px 14px; font-size:14px; }
+
+/* Contest rating, step 2: narrow centred histogram bars like LeetCode's Top % card */
+.ratingdist { justify-content:center; gap:6px; height:150px; margin-top:28px; }
+.ratingdist .bar { flex:0 0 28px; min-width:0; max-width:28px; border-radius:4px 4px 0 0; background:color-mix(in srgb, var(--mute) 35%, var(--panel)); }
+.ratingdist .bar.me { background:#ffa116; }
