@@ -80,7 +80,7 @@ jobs:
           git diff --exit-code backend/src/main/resources/seed/solutions.json
 
   frontend:
-    name: Frontend (build)
+    name: Frontend (tests and build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -96,5 +96,6 @@ jobs:
       # The bundled offline problem data must match the seed file.
       - run: python3 ../scripts/build-snapshot.py
       - run: git diff --exit-code -- public/problems-snapshot.json
+      - run: npm test
       # `next build` also type-checks the project.
       - run: npm run build
