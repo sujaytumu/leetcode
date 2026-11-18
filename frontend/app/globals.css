@@ -396,3 +396,11 @@ a.daycell:hover { border-color:var(--accent); transform:translateY(-1px); }
 /* Accounts */
 .authcard { max-width: 380px; margin: 40px auto; }
 nav button { cursor: pointer; }
+
+/* Header: links scroll on their own; search, theme, log in/out and Profile stay put on the right. */
+.nav nav { margin-left:auto; }
+.nav-end { display:flex; align-items:center; gap:4px; flex:none; }
+.nav-end a, .nav-end .nav-auth { padding:6px 12px; border-radius:8px; color:var(--mute); font-weight:500; background:transparent; border:0; font:inherit; transition:background .15s, color .15s; }
+.nav-end a:hover, .nav-end .nav-auth:hover { background:var(--hover); color:var(--text); }
+.nav-end a.active { background:var(--cell); color:var(--text); }
+@media (max-width:700px) { .nav-end a, .nav-end .nav-auth { padding:6px 8px; font-size:14px; } }
