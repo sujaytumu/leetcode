@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Heatmap from "@/components/Heatmap";
 import SkillsCard from "@/components/SkillsCard";
 import CommunityStats from "@/components/CommunityStats";
@@ -30,6 +30,8 @@ function ago(iso: string): string {
 export default function ProfileLayout({ p, header, ratingPath = "/api/profile/rating", own = true, extras }:
   { p: Profile; header: ReactNode; ratingPath?: string; own?: boolean; extras?: ReactNode }) {
   const meta = useMeta();
+  const [year, setYear] = useState<number | "current">("current");
+  const years = [...new Set(p.calendar.map((c) => Number(c.date.slice(0, 4))))].sort((a, b) => b - a);
   return (
     <>
       <div className="playout">
@@ -55,14 +57,18 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
         <section className="card activitycard">
-          <div className="bar" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
-            <span><b style={{ display: "inline", fontSize: 18 }}>{p.submissionsPastYear}</b> <span className="mute">submissions in the past year</span></span>
+          <div className="act-title"><b>{p.submissionsPastYear}</b> <span>submissions in the past one year</span></div>
+          <div className="act-stats">
+            <span className="mute">Total active<br />days: <b>{p.activeDays}</b></span>
+            <span className="mute">Max<br />streak: <b>{p.maxStreak}</b></span>
             <span className="grow" />
-            <span className="mute" style={{ fontSize: 13 }}>Active days: <b style={{ display: "inline", fontSize: 13 }}>{p.activeDays}</b></span>
-            <span className="mute" style={{ fontSize: 13 }}>Max streak: <b style={{ display: "inline", fontSize: 13 }}>{p.maxStreak}</b></span>
-            <span className="mute" style={{ fontSize: 13 }}>Current: <b style={{ display: "inline", fontSize: 13 }}>{p.currentStreak}</b></span>
+            <select className="act-year" aria-label="Calendar range" value={String(year)}
+              onChange={(e) => setYear(e.target.value === "current" ? "current" : Number(e.target.value))}>
+              <option value="current">Current</option>
+              {years.map((y) => <option key={y} value={y}>{y}</option>)}
+            </select>
           </div>
-          <Heatmap calendar={p.calendar} />
+          <Heatmap calendar={p.calendar} year={year === "current" ? undefined : year} />
         </section>
 
         {extras}
