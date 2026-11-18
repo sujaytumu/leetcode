@@ -13,9 +13,9 @@ interface RatingView {
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 /** LeetCode's "Contest Rating" card (rating, global ranking, rating graph) and the "Top %" distribution card. */
-export default function ContestRating() {
+export default function ContestRating({ path = "/api/profile/rating" }: { path?: string }) {
   const [r, setR] = useState<RatingView | null>(null);
-  useEffect(() => { api<RatingView>("/api/profile/rating").then(setR).catch(() => {}); }, []);
+  useEffect(() => { api<RatingView>(path).then(setR).catch(() => {}); }, [path]);
   if (!r) return null;
 
   if (r.rating === null) {

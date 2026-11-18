@@ -1,0 +1,108 @@
+"use client";
+import Link from "next/link";
+import { ReactNode } from "react";
+import Heatmap from "@/components/Heatmap";
+import SkillsCard from "@/components/SkillsCard";
+import CommunityStats from "@/components/CommunityStats";
+import ContestRating from "@/components/ContestRating";
+import SolvedCard from "@/components/SolvedCard";
+import { Profile } from "@/lib/api";
+import { useMeta } from "@/lib/meta";
+
+const BADGE_ICON: Record<string, string> = { SOLVED: "🎯", HARD: "💎", STREAK: "🔥", ACTIVE: "📅" };
+
+function ago(iso: string): string {
+  const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  const unit = (n: number, name: string) => (n === 1 ? `a ${name} ago` : `${n} ${name}s ago`);
+  if (s < 60) return "just now";
+  if (s < 3600) return unit(Math.floor(s / 60), "minute");
+  if (s < 86400) return unit(Math.floor(s / 3600), "hour");
+  if (s < 86400 * 30) return unit(Math.floor(s / 86400), "day");
+  if (s < 86400 * 365) return unit(Math.floor(s / (86400 * 30)), "month");
+  return unit(Math.floor(s / (86400 * 365)), "year");
+}
+
+/**
+ * The body of a LeetCode-style profile, shared by your own page and public pages: header card in the left column
+ * (passed in), then community stats, languages and skills; rating, solved ring, activity, badges and recent
+ * accepted on the right. {@code extras} is for owner-only cards (sync, export).
+ */
+export default function ProfileLayout({ p, header, ratingPath = "/api/profile/rating", own = true, extras }:
+  { p: Profile; header: ReactNode; ratingPath?: string; own?: boolean; extras?: ReactNode }) {
+  const meta = useMeta();
+  return (
+    <>
+      <div className="playout">
+      <div className="stack pleft">
+        {header}
+        {p.community && <CommunityStats stats={p.community} />}
+        <section className="card langskills">
+          <h3 className="sect-h">Languages</h3>
+          {p.languages.length === 0 && <p className="mute">—</p>}
+          {p.languages.map((l) => (
+            <div key={l.language} className="langrow">
+              <span className="skillchip">{l.language}</span>
+              <span className="mute"><b>{l.solved}</b> problems solved</span>
+            </div>
+          ))}
+          <h3 className="sect-h" style={{ marginTop: 22 }}>Skills</h3>
+          <SkillsCard skills={p.skills} />
+        </section>
+      </div>
+      <div className="pgrid">
+        <div className="stack ratingcol"><ContestRating path={ratingPath} /></div>
+        {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
+
+        <section className="card activitycard">
+          <div className="bar" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
+            <span><b style={{ display: "inline", fontSize: 18 }}>{p.submissionsPastYear}</b> <span className="mute">submissions in the past year</span></span>
+            <span className="grow" />
+            <span className="mute" style={{ fontSize: 13 }}>Active days: <b style={{ display: "inline", fontSize: 13 }}>{p.activeDays}</b></span>
+            <span className="mute" style={{ fontSize: 13 }}>Max streak: <b style={{ display: "inline", fontSize: 13 }}>{p.maxStreak}</b></span>
+            <span className="mute" style={{ fontSize: 13 }}>Current: <b style={{ display: "inline", fontSize: 13 }}>{p.currentStreak}</b></span>
+          </div>
+          <Heatmap calendar={p.calendar} />
+        </section>
+
+        {extras}
+
+        <section className="card badgescard">
+          <div className="bar" style={{ marginBottom: 10 }}>
+            <h3 style={{ margin: 0 }}>Badges</h3>
+            <b style={{ display: "inline", fontSize: 18 }}>{p.badges.filter((b) => b.earned).length}</b>
+            <span className="mute">/ {p.badges.length}</span>
+          </div>
+          <div className="badges">
+            {[...p.badges].sort((a, b) => Number(b.earned) - Number(a.earned)).map((b) => (
+              <div key={b.id} className={`badge ${b.earned ? "earned" : "locked"} cat-${b.category}`} title={b.description}>
+                <div className="badge-icon" aria-hidden="true">{BADGE_ICON[b.category] ?? "🏅"}</div>
+                <div className="badge-title">{b.title}</div>
+                {!b.earned && (
+                  <div className="badge-progress" aria-label={`${b.progress} of ${b.target}`}>
+                    <div style={{ width: `${(b.progress / b.target) * 100}%` }} />
+                  </div>
+                )}
+                <div className="mute" style={{ fontSize: 11 }}>{b.earned ? "Earned" : `${b.progress}/${b.target}`}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="card recentcard">
+          <h3 style={{ margin: "0 0 8px" }}>Recent AC</h3>
+          {p.recentAccepted.length === 0 && <p className="mute">{own ? "No accepted submissions yet. Solve a problem and it shows up here." : "No accepted submissions yet."}</p>}
+          {p.recentAccepted.map((r, i) => (
+            <Link key={`${r.slug}-${i}`} href={`/problems/${r.slug}`} className="recentrow">
+              <span>{r.title}</span>
+              <span className={r.difficulty} style={{ fontSize: 12 }}>{r.difficulty[0] + r.difficulty.slice(1).toLowerCase()}</span>
+              <span className="grow" />
+              <span className="mute" style={{ fontSize: 13 }}>{ago(r.at)}</span>
+            </Link>
+          ))}
+        </section>
+
+      </div>
+      </div>
+    </>
+  );
+}

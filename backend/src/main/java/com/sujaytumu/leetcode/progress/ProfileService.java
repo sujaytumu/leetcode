@@ -3,6 +3,8 @@ package com.sujaytumu.leetcode.progress;
 import com.sujaytumu.leetcode.discuss.CommentRepository;
 import com.sujaytumu.leetcode.discuss.CommentVoteRepository;
 import com.sujaytumu.leetcode.judge.Language;
+import com.sujaytumu.leetcode.social.FollowRepository;
+import com.sujaytumu.leetcode.social.ProfileVisitRepository;
 import com.sujaytumu.leetcode.solutionpost.SolutionPostRepository;
 import com.sujaytumu.leetcode.solutionpost.SolutionPostVoteRepository;
 import com.sujaytumu.leetcode.problem.Difficulty;
@@ -52,12 +54,17 @@ public class ProfileService {
      * (upvotes received on comments and solutions).
      */
     public record CommunityStats(
+            long views,
+            long viewsLastWeek,
             long solutions,
             long solutionsLastWeek,
             long discuss,
             long discussLastWeek,
             long reputation,
             long reputationLastWeek) {}
+
+    /** Who follows this profile and whom it follows. */
+    public record Social(long followers, long following) {}
 
     public record ProfileView(
             ProgressSummary progress,
@@ -71,7 +78,8 @@ public class ProfileService {
             List<SkillCount> skills,
             List<LanguageCount> languages,
             List<Badge> badges,
-            CommunityStats community) {}
+            CommunityStats community,
+            Social social) {}
 
     private final ProgressService progressService;
     private final ProblemRepository problems;
@@ -81,6 +89,8 @@ public class ProfileService {
     private final CommentVoteRepository commentVotes;
     private final SolutionPostRepository solutionPosts;
     private final SolutionPostVoteRepository solutionVotes;
+    private final FollowRepository follows;
+    private final ProfileVisitRepository visits;
 
     public ProfileService(
             ProgressService progressService,
@@ -89,7 +99,9 @@ public class ProfileService {
             CommentRepository comments,
             CommentVoteRepository commentVotes,
             SolutionPostRepository solutionPosts,
-            SolutionPostVoteRepository solutionVotes) {
+            SolutionPostVoteRepository solutionVotes,
+            FollowRepository follows,
+            ProfileVisitRepository visits) {
         this.progressService = progressService;
         this.problems = problems;
         this.submissions = submissions;
@@ -97,6 +109,8 @@ public class ProfileService {
         this.commentVotes = commentVotes;
         this.solutionPosts = solutionPosts;
         this.solutionVotes = solutionVotes;
+        this.follows = follows;
+        this.visits = visits;
     }
 
     @Transactional(readOnly = true)
@@ -169,12 +183,15 @@ public class ProfileService {
                         progress.byDifficulty().get(Difficulty.HARD).solved(),
                         activeAllTime.size(),
                         longestRun(activeAllTime)),
-                community(clientId));
+                community(clientId),
+                new Social(follows.countByFolloweeId(clientId), follows.countByFollowerId(clientId)));
     }
 
     private CommunityStats community(UUID clientId) {
         Instant weekAgo = Instant.now().minus(Duration.ofDays(7));
         return new CommunityStats(
+                visits.countByProfileId(clientId),
+                visits.countByProfileIdAndCreatedAtAfter(clientId, weekAgo),
                 solutionPosts.countByClientId(clientId),
                 solutionPosts.countByClientIdAndCreatedAtAfter(clientId, weekAgo),
                 comments.countByClientId(clientId),

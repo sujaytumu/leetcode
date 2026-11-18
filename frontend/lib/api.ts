@@ -67,6 +67,8 @@ export interface Badge {
   id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;
 }
 export interface CommunityStats {
+  /** Absent on servers older than the public-profiles release. */
+  views?: number; viewsLastWeek?: number;
   /** Absent on servers older than the solutions release. */
   solutions?: number; solutionsLastWeek?: number;
   discuss: number; discussLastWeek: number; reputation: number; reputationLastWeek: number;
@@ -74,6 +76,7 @@ export interface CommunityStats {
 export interface Profile {
   /** Absent on servers older than the community-stats release. */
   community?: CommunityStats;
+  social?: { followers: number; following: number };
   progress: Progress; attempting: number; submissionsPastYear: number; activeDays: number;
   maxStreak: number; currentStreak: number; calendar: DayCount[]; recentAccepted: RecentSolve[];
   skills: { tag: string; solved: number }[]; languages: { language: string; solved: number }[];
@@ -171,4 +174,6 @@ export function localDate(d = new Date()): string {
 export function localZone(): string {
   try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; } catch { return "UTC"; }
 }
+export interface PublicProfile { info: ProfileInfo; profile: Profile; rank: number | null; youFollow: boolean; you: boolean }
+export const publicProfilePath = (username: string) => `/api/users/${encodeURIComponent(username)}?zone=${encodeURIComponent(localZone())}`;
 export const profilePath = () => `/api/profile?zone=${encodeURIComponent(localZone())}`;
