@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
@@ -9,6 +10,7 @@ interface Board { top: Entry[]; me: Entry | null; participants: number }
 const medal = (rank: number) => (rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : String(rank));
 
 export default function LeaderboardPage() {
+  usePageTitle("Leaderboard");
   const [board, setBoard] = useState<Board | null>(null);
   const [error, setError] = useState("");
 

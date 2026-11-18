@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { api, type Difficulty } from "@/lib/api";
@@ -21,6 +22,7 @@ const finish = (secs: number) => `${Math.floor(secs / 3600)}:${pad(Math.floor((s
 const when = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default function ContestPage() {
+  usePageTitle("Contests");
   const [overview, setOverview] = useState<Overview | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [standings, setStandings] = useState<Standings | null>(null);

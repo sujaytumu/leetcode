@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -27,6 +28,7 @@ function Section({ title, blurb, items }: { title: string; blurb: string; items:
 }
 
 export default function ForYouPage() {
+  usePageTitle("For you");
   const [data, setData] = useState<Recommendations | null>(null);
   const [error, setError] = useState("");
   useEffect(() => { swr<Recommendations>("/api/recommendations", (d) => setData(d), () => {}).catch((e) => setError(e.message)); }, []);

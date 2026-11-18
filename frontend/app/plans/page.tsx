@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Plan } from "@/lib/api";
@@ -8,6 +9,7 @@ import { swr } from "@/lib/local";
 const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "○" } as const;
 
 export default function PlansPage() {
+  usePageTitle("Study plans");
   const [plans, setPlans] = useState<Plan[] | null>(null);
   const [error, setError] = useState("");
 

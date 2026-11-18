@@ -22,6 +22,7 @@ import Discuss from "@/components/Discuss";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
+import { usePageTitle } from "@/lib/usePageTitle";
 import { rememberProblem } from "@/components/ContinueBanner";
 import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
@@ -132,6 +133,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     return () => { live = false; };
   }, [slug]);
   useEffect(() => { if (problem) rememberProblem(problem.slug, problem.title); }, [problem]);
+  usePageTitle(problem ? `${problem.number ?? problem.id}. ${problem.title}` : "Problem");
   const hasProblem = problem !== null;
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {

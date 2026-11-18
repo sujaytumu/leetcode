@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { lastEmail, Session, setSession } from "@/lib/auth";
@@ -8,6 +9,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 /** Sign up or log in with email + password. Signing up adopts this browser's progress so far. */
 export default function LoginPage() {
+  usePageTitle("Log in");
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

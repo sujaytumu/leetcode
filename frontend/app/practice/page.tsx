@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Skeleton from "@/components/Skeleton";
@@ -16,6 +17,7 @@ function shuffle<T>(a: T[]): T[] {
 
 /** Build a custom practice set: pick topics, difficulties and size; get a random set of problems you have not solved. */
 export default function PracticePage() {
+  usePageTitle("Practice session");
   const [all, setAll] = useState<ProblemSummary[] | null>(null);
   const [error, setError] = useState("");
   const [tags, setTags] = useState<string[]>([]);

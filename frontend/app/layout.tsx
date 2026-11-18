@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `try{fetch(${JSON.stringify((process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") + "/actuator/health")},{mode:'no-cors',keepalive:true})}catch(e){}` }} />
       </head>
       <body>
+        <a href="#main" className="skip-link">Skip to content</a>
         <header className="nav">
           <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /></nav>
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>
         </header>
         <MockBar />
-        <main>{children}</main>
+        <main id="main" tabIndex={-1}>{children}</main>
         <CommandPalette />
       </body>
     </html>

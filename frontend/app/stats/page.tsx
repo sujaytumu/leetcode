@@ -1,4 +1,5 @@
 "use client";
+import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { api, type Page } from "@/lib/api";
@@ -38,6 +39,7 @@ function Bars({ rows, color }: { rows: { name: string; value: number; note?: str
 }
 
 export default function StatsPage() {
+  usePageTitle("My stats");
   const [items, setItems] = useState<Item[] | null>(null);
   const [error, setError] = useState("");
   useEffect(() => { loadAll().then(setItems).catch((e: Error) => setError(e.message)); }, []);
