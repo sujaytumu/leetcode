@@ -1,5 +1,7 @@
 package com.sujaytumu.leetcode.progress;
 
+import com.sujaytumu.leetcode.discuss.CommentRepository;
+import com.sujaytumu.leetcode.discuss.CommentVoteRepository;
 import com.sujaytumu.leetcode.judge.Language;
 import com.sujaytumu.leetcode.problem.Difficulty;
 import com.sujaytumu.leetcode.problem.Problem;
@@ -8,6 +10,7 @@ import com.sujaytumu.leetcode.progress.ProgressService.ProgressSummary;
 import com.sujaytumu.leetcode.submission.SubmissionRepository;
 import com.sujaytumu.leetcode.submission.Verdict;
 import java.time.Instant;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
@@ -42,6 +45,9 @@ public class ProfileService {
 
     public record LanguageCount(String language, long solved) {}
 
+    /** Discussion activity: comments written and upvotes received, each with the last 7 days. */
+    public record CommunityStats(long discuss, long discussLastWeek, long reputation, long reputationLastWeek) {}
+
     public record ProfileView(
             ProgressSummary progress,
             long attempting,
@@ -53,17 +59,27 @@ public class ProfileService {
             List<RecentSolve> recentAccepted,
             List<SkillCount> skills,
             List<LanguageCount> languages,
-            List<Badge> badges) {}
+            List<Badge> badges,
+            CommunityStats community) {}
 
     private final ProgressService progressService;
     private final ProblemRepository problems;
     private final SubmissionRepository submissions;
 
+    private final CommentRepository comments;
+    private final CommentVoteRepository commentVotes;
+
     public ProfileService(
-            ProgressService progressService, ProblemRepository problems, SubmissionRepository submissions) {
+            ProgressService progressService,
+            ProblemRepository problems,
+            SubmissionRepository submissions,
+            CommentRepository comments,
+            CommentVoteRepository commentVotes) {
         this.progressService = progressService;
         this.problems = problems;
         this.submissions = submissions;
+        this.comments = comments;
+        this.commentVotes = commentVotes;
     }
 
     @Transactional(readOnly = true)
@@ -135,7 +151,17 @@ public class ProfileService {
                         progress.solved(),
                         progress.byDifficulty().get(Difficulty.HARD).solved(),
                         activeAllTime.size(),
-                        longestRun(activeAllTime)));
+                        longestRun(activeAllTime)),
+                community(clientId));
+    }
+
+    private CommunityStats community(UUID clientId) {
+        Instant weekAgo = Instant.now().minus(Duration.ofDays(7));
+        return new CommunityStats(
+                comments.countByClientId(clientId),
+                comments.countByClientIdAndCreatedAtAfter(clientId, weekAgo),
+                commentVotes.countReceived(clientId),
+                commentVotes.countReceivedSince(clientId, weekAgo));
     }
 
     /** Longest run of consecutive active days. {@code days} must be sorted ascending. */

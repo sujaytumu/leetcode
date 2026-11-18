@@ -66,7 +66,10 @@ export interface ProfileInfo {
 export interface Badge {
   id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;
 }
+export interface CommunityStats { discuss: number; discussLastWeek: number; reputation: number; reputationLastWeek: number }
 export interface Profile {
+  /** Absent on servers older than the community-stats release. */
+  community?: CommunityStats;
   progress: Progress; attempting: number; submissionsPastYear: number; activeDays: number;
   maxStreak: number; currentStreak: number; calendar: DayCount[]; recentAccepted: RecentSolve[];
   skills: { tag: string; solved: number }[]; languages: { language: string; solved: number }[];

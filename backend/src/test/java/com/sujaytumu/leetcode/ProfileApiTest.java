@@ -41,7 +41,9 @@ class ProfileApiTest {
                 .andExpect(jsonPath("$.activeDays").value(0))
                 .andExpect(jsonPath("$.currentStreak").value(0))
                 .andExpect(jsonPath("$.calendar.length()").value(0))
-                .andExpect(jsonPath("$.recentAccepted.length()").value(0));
+                .andExpect(jsonPath("$.recentAccepted.length()").value(0))
+                .andExpect(jsonPath("$.community.discuss").value(0))
+                .andExpect(jsonPath("$.community.reputation").value(0));
     }
 
     @Test

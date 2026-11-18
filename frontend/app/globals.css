@@ -429,3 +429,11 @@ nav button { cursor: pointer; }
 .skilllevel .dot { width:8px; height:8px; border-radius:50%; }
 .showmore { display:block; margin:2px auto 8px; background:transparent; border:0; color:var(--mute); padding:4px 10px; cursor:pointer; }
 .showmore:hover { color:var(--text); }
+
+/* Community stats */
+.commrow { display:flex; gap:14px; align-items:flex-start; margin:0 0 16px; }
+.commrow:last-child { margin-bottom:0; }
+.commicon { font-size:22px; width:26px; text-align:center; line-height:1.2; }
+.commlabel { color:var(--mute); font-size:16px; margin-right:6px; }
+.commrow b { display:inline; font-size:18px; }
+.commweek { font-size:14px; margin-top:4px; } .commweek span { margin-left:4px; }
