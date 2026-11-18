@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "profile_visits",
-        uniqueConstraints = @UniqueConstraint(name = "uk_profile_visit", columnNames = {"profile_id", "viewer_id", "day"}))
+        uniqueConstraints = @UniqueConstraint(name = "uk_profile_visit", columnNames = {"profile_id", "viewer_id", "visit_day"}))
 public class ProfileVisit {
 
     @Id
@@ -28,7 +28,7 @@ public class ProfileVisit {
     @Column(name = "viewer_id", nullable = false)
     private UUID viewerId;
 
-    @Column(name = "day", nullable = false)
+    @Column(name = "visit_day", nullable = false)
     private LocalDate day;
 
     @Column(name = "created_at", nullable = false)
