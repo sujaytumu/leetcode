@@ -66,7 +66,11 @@ export interface ProfileInfo {
 export interface Badge {
   id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;
 }
-export interface CommunityStats { discuss: number; discussLastWeek: number; reputation: number; reputationLastWeek: number }
+export interface CommunityStats {
+  /** Absent on servers older than the solutions release. */
+  solutions?: number; solutionsLastWeek?: number;
+  discuss: number; discussLastWeek: number; reputation: number; reputationLastWeek: number;
+}
 export interface Profile {
   /** Absent on servers older than the community-stats release. */
   community?: CommunityStats;

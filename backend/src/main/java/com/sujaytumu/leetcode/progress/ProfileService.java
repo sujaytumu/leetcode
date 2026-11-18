@@ -3,6 +3,8 @@ package com.sujaytumu.leetcode.progress;
 import com.sujaytumu.leetcode.discuss.CommentRepository;
 import com.sujaytumu.leetcode.discuss.CommentVoteRepository;
 import com.sujaytumu.leetcode.judge.Language;
+import com.sujaytumu.leetcode.solutionpost.SolutionPostRepository;
+import com.sujaytumu.leetcode.solutionpost.SolutionPostVoteRepository;
 import com.sujaytumu.leetcode.problem.Difficulty;
 import com.sujaytumu.leetcode.problem.Problem;
 import com.sujaytumu.leetcode.problem.ProblemRepository;
@@ -45,8 +47,17 @@ public class ProfileService {
 
     public record LanguageCount(String language, long solved) {}
 
-    /** Discussion activity: comments written and upvotes received, each with the last 7 days. */
-    public record CommunityStats(long discuss, long discussLastWeek, long reputation, long reputationLastWeek) {}
+    /**
+     * Community activity, each with the last 7 days: solutions posted, discussion comments written, and reputation
+     * (upvotes received on comments and solutions).
+     */
+    public record CommunityStats(
+            long solutions,
+            long solutionsLastWeek,
+            long discuss,
+            long discussLastWeek,
+            long reputation,
+            long reputationLastWeek) {}
 
     public record ProfileView(
             ProgressSummary progress,
@@ -68,18 +79,24 @@ public class ProfileService {
 
     private final CommentRepository comments;
     private final CommentVoteRepository commentVotes;
+    private final SolutionPostRepository solutionPosts;
+    private final SolutionPostVoteRepository solutionVotes;
 
     public ProfileService(
             ProgressService progressService,
             ProblemRepository problems,
             SubmissionRepository submissions,
             CommentRepository comments,
-            CommentVoteRepository commentVotes) {
+            CommentVoteRepository commentVotes,
+            SolutionPostRepository solutionPosts,
+            SolutionPostVoteRepository solutionVotes) {
         this.progressService = progressService;
         this.problems = problems;
         this.submissions = submissions;
         this.comments = comments;
         this.commentVotes = commentVotes;
+        this.solutionPosts = solutionPosts;
+        this.solutionVotes = solutionVotes;
     }
 
     @Transactional(readOnly = true)
@@ -158,10 +175,12 @@ public class ProfileService {
     private CommunityStats community(UUID clientId) {
         Instant weekAgo = Instant.now().minus(Duration.ofDays(7));
         return new CommunityStats(
+                solutionPosts.countByClientId(clientId),
+                solutionPosts.countByClientIdAndCreatedAtAfter(clientId, weekAgo),
                 comments.countByClientId(clientId),
                 comments.countByClientIdAndCreatedAtAfter(clientId, weekAgo),
-                commentVotes.countReceived(clientId),
-                commentVotes.countReceivedSince(clientId, weekAgo));
+                commentVotes.countReceived(clientId) + solutionVotes.countReceived(clientId),
+                commentVotes.countReceivedSince(clientId, weekAgo) + solutionVotes.countReceivedSince(clientId, weekAgo));
     }
 
     /** Longest run of consecutive active days. {@code days} must be sorted ascending. */
