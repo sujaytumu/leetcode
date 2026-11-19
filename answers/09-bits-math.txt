@@ -1,0 +1,406 @@
+=== counting-bits
+--- py
+def solve(n):
+    bits = [0] * (n + 1)
+    for i in range(1, n + 1):
+        bits[i] = bits[i >> 1] + (i & 1)
+    return bits
+--- js
+function solve(n) {
+  const bits = new Array(n + 1).fill(0);
+  for (let i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);
+  return bits;
+}
+--- cpp
+vector<int> solve(int n) {
+    vector<int> bits(n + 1, 0);
+    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);
+    return bits;
+}
+--- java
+static int[] solve(int n) {
+    int[] bits = new int[n + 1];
+    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);
+    return bits;
+}
+=== single-number
+--- py
+def solve(nums):
+    result = 0
+    for x in nums:
+        result ^= x
+    return result
+--- js
+function solve(nums) {
+  let result = 0;
+  for (const x of nums) result ^= x;
+  return result;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int result = 0;
+    for (int x : nums) result ^= x;
+    return result;
+}
+--- java
+static int solve(int[] nums) {
+    int result = 0;
+    for (int x : nums) result ^= x;
+    return result;
+}
+=== missing-number
+--- py
+def solve(nums):
+    n = len(nums)
+    return n * (n + 1) // 2 - sum(nums)
+--- js
+function solve(nums) {
+  const n = nums.length;
+  return (n * (n + 1)) / 2 - nums.reduce((a, b) => a + b, 0);
+}
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size(), missing = n;
+    for (int i = 0; i < n; i++) missing ^= i ^ nums[i];
+    return missing;
+}
+--- java
+static int solve(int[] nums) {
+    int n = nums.length, missing = n;
+    for (int i = 0; i < n; i++) missing ^= i ^ nums[i];
+    return missing;
+}
+=== number-of-1-bits
+--- py
+def solve(n):
+    count = 0
+    while n:
+        n &= n - 1  # clears the lowest set bit
+        count += 1
+    return count
+--- js
+function solve(n) {
+  let count = 0;
+  while (n) {
+    n &= n - 1;
+    count++;
+  }
+  return count;
+}
+--- cpp
+int solve(int n) {
+    int count = 0;
+    while (n) {
+        n &= n - 1;
+        count++;
+    }
+    return count;
+}
+--- java
+static int solve(int n) {
+    int count = 0;
+    while (n != 0) {
+        n &= n - 1;
+        count++;
+    }
+    return count;
+}
+=== power-of-two
+--- py
+def solve(n):
+    return n > 0 and n & (n - 1) == 0
+--- js
+function solve(n) {
+  return n > 0 && (n & (n - 1)) === 0;
+}
+--- cpp
+bool solve(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+--- java
+static boolean solve(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+=== happy-number
+--- py
+def solve(n):
+    def step(x):
+        total = 0
+        while x:
+            x, d = divmod(x, 10)
+            total += d * d
+        return total
+    slow, fast = n, step(n)
+    while fast != 1 and slow != fast:
+        slow = step(slow)
+        fast = step(step(fast))
+    return fast == 1
+--- js
+function solve(n) {
+  const step = (x) => {
+    let total = 0;
+    while (x > 0) {
+      const d = x % 10;
+      total += d * d;
+      x = Math.floor(x / 10);
+    }
+    return total;
+  };
+  let slow = n, fast = step(n);
+  while (fast !== 1 && slow !== fast) {
+    slow = step(slow);
+    fast = step(step(fast));
+  }
+  return fast === 1;
+}
+--- cpp
+int hnStep(long long x) {
+    int total = 0;
+    while (x > 0) {
+        int d = x % 10;
+        total += d * d;
+        x /= 10;
+    }
+    return total;
+}
+bool solve(int n) {
+    long long slow = n, fast = hnStep(n);
+    while (fast != 1 && slow != fast) {
+        slow = hnStep(slow);
+        fast = hnStep(hnStep(fast));
+    }
+    return fast == 1;
+}
+--- java
+static int hnStep(long x) {
+    int total = 0;
+    while (x > 0) {
+        int d = (int) (x % 10);
+        total += d * d;
+        x /= 10;
+    }
+    return total;
+}
+static boolean solve(int n) {
+    long slow = n, fast = hnStep(n);
+    while (fast != 1 && slow != fast) {
+        slow = hnStep(slow);
+        fast = hnStep(hnStep(fast));
+    }
+    return fast == 1;
+}
+=== roman-to-integer
+--- py
+def solve(s):
+    value = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    total = 0
+    for i, ch in enumerate(s):
+        if i + 1 < len(s) and value[ch] < value[s[i + 1]]:
+            total -= value[ch]
+        else:
+            total += value[ch]
+    return total
+--- js
+function solve(s) {
+  const value = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+  let total = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (i + 1 < s.length && value[s[i]] < value[s[i + 1]]) total -= value[s[i]];
+    else total += value[s[i]];
+  }
+  return total;
+}
+--- cpp
+int solve(string s) {
+    auto value = [](char c) {
+        switch (c) {
+            case 'I': return 1;
+            case 'V': return 5;
+            case 'X': return 10;
+            case 'L': return 50;
+            case 'C': return 100;
+            case 'D': return 500;
+            default: return 1000;
+        }
+    };
+    int total = 0;
+    for (size_t i = 0; i < s.size(); i++) {
+        if (i + 1 < s.size() && value(s[i]) < value(s[i + 1])) total -= value(s[i]);
+        else total += value(s[i]);
+    }
+    return total;
+}
+--- java
+static int romanValue(char c) {
+    switch (c) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        default: return 1000;
+    }
+}
+static int solve(String s) {
+    int total = 0;
+    for (int i = 0; i < s.length(); i++) {
+        if (i + 1 < s.length() && romanValue(s.charAt(i)) < romanValue(s.charAt(i + 1))) total -= romanValue(s.charAt(i));
+        else total += romanValue(s.charAt(i));
+    }
+    return total;
+}
+=== excel-sheet-column-number
+--- py
+def solve(columnTitle):
+    number = 0
+    for ch in columnTitle:
+        number = number * 26 + (ord(ch) - ord('A') + 1)
+    return number
+--- js
+function solve(columnTitle) {
+  let number = 0;
+  for (const ch of columnTitle) number = number * 26 + (ch.charCodeAt(0) - 64);
+  return number;
+}
+--- cpp
+int solve(string columnTitle) {
+    long long number = 0;
+    for (char ch : columnTitle) number = number * 26 + (ch - 'A' + 1);
+    return (int)number;
+}
+--- java
+static int solve(String columnTitle) {
+    long number = 0;
+    for (char ch : columnTitle.toCharArray()) number = number * 26 + (ch - 'A' + 1);
+    return (int) number;
+}
+=== count-primes
+--- py
+def solve(n):
+    if n < 3:
+        return 0
+    composite = bytearray(n)
+    for p in range(2, int(n ** 0.5) + 1):
+        if not composite[p]:
+            for multiple in range(p * p, n, p):
+                composite[multiple] = 1
+    return sum(1 for i in range(2, n) if not composite[i])
+--- js
+function solve(n) {
+  if (n < 3) return 0;
+  const composite = new Array(n).fill(false);
+  let count = 0;
+  for (let i = 2; i < n; i++) {
+    if (composite[i]) continue;
+    count++;
+    for (let multiple = i * i; multiple < n; multiple += i) composite[multiple] = true;
+  }
+  return count;
+}
+--- cpp
+int solve(int n) {
+    if (n < 3) return 0;
+    vector<bool> composite(n, false);
+    int count = 0;
+    for (int i = 2; i < n; i++) {
+        if (composite[i]) continue;
+        count++;
+        for (long long multiple = (long long)i * i; multiple < n; multiple += i) composite[multiple] = true;
+    }
+    return count;
+}
+--- java
+static int solve(int n) {
+    if (n < 3) return 0;
+    boolean[] composite = new boolean[n];
+    int count = 0;
+    for (int i = 2; i < n; i++) {
+        if (composite[i]) continue;
+        count++;
+        for (long multiple = (long) i * i; multiple < n; multiple += i) composite[(int) multiple] = true;
+    }
+    return count;
+}
+=== fast-power-mod
+--- py
+def solve(base, exp, mod):
+    result = 1 % mod
+    base %= mod
+    while exp:
+        if exp & 1:
+            result = result * base % mod
+        base = base * base % mod
+        exp >>= 1
+    return result
+--- js
+function solve(base, exp, mod) {
+  const m = BigInt(mod);
+  let b = BigInt(base) % m;
+  let e = BigInt(exp);
+  let result = 1n % m;
+  while (e > 0n) {
+    if (e & 1n) result = (result * b) % m;
+    b = (b * b) % m;
+    e >>= 1n;
+  }
+  return Number(result);
+}
+--- cpp
+int solve(int base, int exp, int mod) {
+    long long m = mod, result = 1 % m, b = base % m;
+    long long e = exp;
+    while (e > 0) {
+        if (e & 1) result = result * b % m;
+        b = b * b % m;
+        e >>= 1;
+    }
+    return (int)result;
+}
+--- java
+static int solve(int base, int exp, int mod) {
+    long m = mod, result = 1 % m, b = base % m;
+    long e = exp;
+    while (e > 0) {
+        if ((e & 1) == 1) result = result * b % m;
+        b = b * b % m;
+        e >>= 1;
+    }
+    return (int) result;
+}
+=== reverse-integer
+--- py
+def solve(x):
+    sign = -1 if x < 0 else 1
+    reversed_value = sign * int(str(abs(x))[::-1])
+    return reversed_value if -2**31 <= reversed_value <= 2**31 - 1 else 0
+--- js
+function solve(x) {
+  const sign = x < 0 ? -1 : 1;
+  const reversed = sign * Number(String(Math.abs(x)).split("").reverse().join(""));
+  return reversed >= -(2 ** 31) && reversed <= 2 ** 31 - 1 ? reversed : 0;
+}
+--- cpp
+int solve(int x) {
+    long long value = x, reversed = 0;
+    bool negative = value < 0;
+    if (negative) value = -value;
+    while (value > 0) {
+        reversed = reversed * 10 + value % 10;
+        value /= 10;
+    }
+    if (negative) reversed = -reversed;
+    return (reversed < INT_MIN || reversed > INT_MAX) ? 0 : (int)reversed;
+}
+--- java
+static int solve(int x) {
+    long value = x, reversed = 0;
+    boolean negative = value < 0;
+    if (negative) value = -value;
+    while (value > 0) {
+        reversed = reversed * 10 + value % 10;
+        value /= 10;
+    }
+    if (negative) reversed = -reversed;
+    return (reversed < Integer.MIN_VALUE || reversed > Integer.MAX_VALUE) ? 0 : (int) reversed;
+}
