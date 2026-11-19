@@ -514,7 +514,7 @@ nav button { cursor: pointer; }
 .ring-num b { font-size:40px; font-weight:600; line-height:1; }
 .ring-num .mute { font-size:20px; }
 .ring-solved { color:var(--easy); font-size:16px; margin-top:6px; font-weight:500; }
-.ring-attempt { position:absolute; left:0; right:0; bottom:6px; text-align:center; font-size:14px; }
+.ring-attempt { position:absolute; left:0; right:0; bottom:28px; text-align:center; font-size:12px; }
 .diffbox { border-radius:10px; padding:8px 12px; background:var(--cell); }
 .solvedcard { padding:18px 16px; gap:18px; flex-wrap:nowrap; }
 .ring, .ring svg { width:164px; height:164px; }
@@ -703,3 +703,9 @@ main:focus { outline:none; }
 .bd-recent b { font-size:15px; }
 .bd-all { margin-top:14px; border-top:1px solid var(--border, var(--hover)); padding-top:10px; }
 .bd-all > summary { cursor:pointer; font-size:13px; color:var(--mute); margin-bottom:10px; }
+
+/* Laptop nav: all links fit at 1280-1500px without clipping */
+@media (min-width:901px) { .nav { gap:12px; } .nav nav { gap:0; } .nav nav a { padding:6px 7px; font-size:13.5px; } }
+.act-info { display:inline-grid; place-items:center; width:15px; height:15px; margin-left:8px; border-radius:50%; border:1px solid var(--mute); color:var(--mute); font-size:10px; font-weight:700; cursor:help; vertical-align:middle; }
+.prow-all { display:block; text-align:center; padding:10px; margin-top:4px; color:var(--mute); font-size:13px; text-decoration:none; border-radius:8px; }
+.prow-all:hover { background:var(--hover); color:var(--text); }

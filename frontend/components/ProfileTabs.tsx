@@ -42,6 +42,7 @@ export default function ProfileTabs({ p, own }: { p: Profile; own: boolean }) {
               <span className="mute prow-when">{ago(r.at)}</span>
             </Link>
           ))}
+          {p.recentAccepted.length > 0 && own && <Link href="/submissions" className="prow-all">View all submissions →</Link>}
         </div>
       )}
       {tab === "list" && own && <Lists />}
