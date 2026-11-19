@@ -34,12 +34,21 @@ function List({ slug, onOpen, onWrite }: { slug: string; onOpen: (id: number) =>
   const [items, setItems] = useState<Summary[] | null>(null);
   const [sort, setSort] = useState<"top" | "new">("top");
   const [error, setError] = useState("");
+  const [q, setQ] = useState("");
+  const [langFilter, setLangFilter] = useState("");
   const load = useCallback(() => {
     api<Summary[]>(`/api/problems/${slug}/solution-posts?sort=${sort}`)
       .then((r) => { setItems(r); setError(""); })
       .catch((e: Error) => setError(e.message));
   }, [slug, sort]);
   useEffect(() => { setItems(null); load(); }, [load]);
+  useEffect(() => { setQ(""); setLangFilter(""); }, [slug]);
+
+  const langs = [...new Set((items ?? []).map((s) => s.language).filter((l): l is string => !!l))];
+  const needle = q.trim().toLowerCase();
+  const shown = (items ?? []).filter((s) =>
+    (!langFilter || s.language === langFilter) &&
+    (!needle || `${s.title} ${s.author} ${s.excerpt} ${s.language ?? ""}`.toLowerCase().includes(needle)));
 
   return (
     <div className="discuss">
@@ -49,11 +58,23 @@ function List({ slug, onOpen, onWrite }: { slug: string; onOpen: (id: number) =>
         <button className={sort === "new" ? "on" : ""} onClick={() => setSort("new")}>Newest</button>
         <button className="primary" onClick={onWrite}>Write a solution</button>
       </div>
+      {items !== null && items.length > 0 && (
+        <div className="solfilters">
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search solutions" aria-label="Search solutions" />
+          {langs.length > 1 && (
+            <div className="casechips">
+              <button className={langFilter === "" ? "on" : ""} onClick={() => setLangFilter("")}>All</button>
+              {langs.map((l) => <button key={l} className={langFilter === l ? "on" : ""} onClick={() => setLangFilter(l)}>{l}</button>)}
+            </div>
+          )}
+        </div>
+      )}
       <OfficialSolution slug={slug} />
       {error && <div className="banner err" style={{ margin: "8px 0" }}>{error}</div>}
       {items === null && !error && <p className="mute">Loading…</p>}
       {items !== null && items.length === 0 && <p className="mute">No community solutions yet. Be the first to share one.</p>}
-      {items?.map((s) => (
+      {items !== null && items.length > 0 && shown.length === 0 && <p className="mute">No solutions match your search.</p>}
+      {shown.map((s) => (
         <div key={s.id} className="solrow" role="button" tabIndex={0} onClick={() => onOpen(s.id)}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(s.id); } }}>
           <div className="soltitle">{s.title}</div>

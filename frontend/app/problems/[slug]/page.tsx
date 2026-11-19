@@ -536,7 +536,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   <div className="bar" style={{ marginBottom: 6 }}>
                     <select aria-label="Compare with another submission" value={diffWith}
                       onChange={(e) => { setDiffWith(e.target.value ? Number(e.target.value) : ""); setShowDiff(false); }}>
-                      <option value="">Show code</option>
+                      <option value="">Compare with another submission…</option>
                       {history.filter((h) => h.id !== openSub.id).map((h) => (
                         <option key={h.id} value={h.id}>Diff vs #{h.id} · {title(h.verdict)} · {new Date(h.createdAt).toLocaleString()}</option>
                       ))}

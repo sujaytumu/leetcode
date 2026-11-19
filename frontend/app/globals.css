@@ -840,3 +840,7 @@ td { font-size:14px; font-weight:400; }
 @media (min-width:901px) { .workspace { height:calc(100dvh - var(--nav-h) - 16px - var(--lctop-h)); } }
 .lcfoot { justify-content:flex-start; }
 .lcfoot .votes { margin-left:0; }
+
+/* Solutions search / language filter */
+.solfilters { display:flex; flex-direction:column; gap:8px; margin:0 0 10px; }
+.solfilters input[type=search] { width:100%; }
