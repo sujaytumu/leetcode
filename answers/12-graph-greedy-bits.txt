@@ -1,0 +1,750 @@
+=== network-delay-time
+--- py
+def solve(times, n, k):
+    import heapq
+    adj = [[] for _ in range(n + 1)]
+    for u, v, w in times:
+        adj[u].append((v, w))
+    dist = [float("inf")] * (n + 1)
+    dist[k] = 0
+    heap = [(0, k)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue
+        for v, w in adj[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    best = max(dist[1:])
+    return -1 if best == float("inf") else best
+--- js
+function solve(times, n, k) {
+  const adj = Array.from({ length: n + 1 }, () => []);
+  for (const [u, v, w] of times) adj[u].push([v, w]);
+  const dist = new Array(n + 1).fill(Infinity);
+  dist[k] = 0;
+  // binary min-heap of [dist, node]
+  const heap = [[0, k]];
+  const push = (item) => {
+    heap.push(item);
+    let i = heap.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (heap[p][0] <= heap[i][0]) break;
+      [heap[p], heap[i]] = [heap[i], heap[p]];
+      i = p;
+    }
+  };
+  const pop = () => {
+    const top = heap[0];
+    const last = heap.pop();
+    if (heap.length) {
+      heap[0] = last;
+      let i = 0;
+      for (;;) {
+        let s = i;
+        const l = 2 * i + 1, r = l + 1;
+        if (l < heap.length && heap[l][0] < heap[s][0]) s = l;
+        if (r < heap.length && heap[r][0] < heap[s][0]) s = r;
+        if (s === i) break;
+        [heap[s], heap[i]] = [heap[i], heap[s]];
+        i = s;
+      }
+    }
+    return top;
+  };
+  while (heap.length) {
+    const [d, u] = pop();
+    if (d > dist[u]) continue;
+    for (const [v, w] of adj[u]) {
+      if (d + w < dist[v]) {
+        dist[v] = d + w;
+        push([dist[v], v]);
+      }
+    }
+  }
+  let best = 0;
+  for (let i = 1; i <= n; i++) best = Math.max(best, dist[i]);
+  return best === Infinity ? -1 : best;
+}
+--- cpp
+int solve(vector<vector<int>> times, int n, int k) {
+    vector<vector<pair<int, int>>> adj(n + 1);
+    for (auto &t : times) adj[t[0]].push_back({t[1], t[2]});
+    vector<int> dist(n + 1, INT_MAX);
+    dist[k] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.push({0, k});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        if (d > dist[u]) continue;
+        for (auto &[v, w] : adj[u]) {
+            if (d + w < dist[v]) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    int best = 0;
+    for (int i = 1; i <= n; i++) best = max(best, dist[i]);
+    return best == INT_MAX ? -1 : best;
+}
+--- java
+static int solve(int[][] times, int n, int k) {
+    List<int[]>[] adj = new List[n + 1];
+    for (int i = 0; i <= n; i++) adj[i] = new ArrayList<>();
+    for (int[] t : times) adj[t[0]].add(new int[]{t[1], t[2]});
+    int[] dist = new int[n + 1];
+    Arrays.fill(dist, Integer.MAX_VALUE);
+    dist[k] = 0;
+    PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
+    pq.add(new int[]{0, k});
+    while (!pq.isEmpty()) {
+        int[] cur = pq.poll();
+        int d = cur[0], u = cur[1];
+        if (d > dist[u]) continue;
+        for (int[] e : adj[u]) {
+            if (d + e[1] < dist[e[0]]) {
+                dist[e[0]] = d + e[1];
+                pq.add(new int[]{dist[e[0]], e[0]});
+            }
+        }
+    }
+    int best = 0;
+    for (int i = 1; i <= n; i++) best = Math.max(best, dist[i]);
+    return best == Integer.MAX_VALUE ? -1 : best;
+}
+=== number-of-provinces
+--- py
+def solve(isConnected):
+    n = len(isConnected)
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    count = n
+    for i in range(n):
+        for j in range(i + 1, n):
+            if isConnected[i][j] == 1:
+                a, b = find(i), find(j)
+                if a != b:
+                    parent[a] = b
+                    count -= 1
+    return count
+--- js
+function solve(isConnected) {
+  const n = isConnected.length;
+  const parent = Array.from({ length: n }, (_, i) => i);
+  const find = (x) => {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  };
+  let count = n;
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      if (isConnected[i][j] === 1) {
+        const a = find(i), b = find(j);
+        if (a !== b) {
+          parent[a] = b;
+          count--;
+        }
+      }
+    }
+  }
+  return count;
+}
+--- cpp
+int solve(vector<vector<int>> isConnected) {
+    int n = isConnected.size();
+    vector<int> parent(n);
+    iota(parent.begin(), parent.end(), 0);
+    function<int(int)> find = [&](int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    };
+    int count = n;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n && j < (int)isConnected[i].size(); j++) {
+            if (isConnected[i][j] == 1) {
+                int a = find(i), b = find(j);
+                if (a != b) {
+                    parent[a] = b;
+                    count--;
+                }
+            }
+        }
+    }
+    return count;
+}
+--- java
+static int solve(int[][] isConnected) {
+    int n = isConnected.length;
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
+    int count = n;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n && j < isConnected[i].length; j++) {
+            if (isConnected[i][j] == 1) {
+                int a = i, b = j;
+                while (parent[a] != a) { parent[a] = parent[parent[a]]; a = parent[a]; }
+                while (parent[b] != b) { parent[b] = parent[parent[b]]; b = parent[b]; }
+                if (a != b) {
+                    parent[a] = b;
+                    count--;
+                }
+            }
+        }
+    }
+    return count;
+}
+=== redundant-connection
+--- py
+def solve(edges):
+    parent = list(range(len(edges) + 1))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return [a, b]  # first edge that closes a cycle is the last one in the input that can go
+        parent[ra] = rb
+    return []
+--- js
+function solve(edges) {
+  const parent = Array.from({ length: edges.length + 1 }, (_, i) => i);
+  const find = (x) => {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  };
+  for (const [a, b] of edges) {
+    const ra = find(a), rb = find(b);
+    if (ra === rb) return [a, b];
+    parent[ra] = rb;
+  }
+  return [];
+}
+--- cpp
+vector<int> solve(vector<vector<int>> edges) {
+    int n = edges.size();
+    vector<int> parent(n + 1);
+    iota(parent.begin(), parent.end(), 0);
+    auto find = [&](int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    };
+    for (auto &e : edges) {
+        int ra = find(e[0]), rb = find(e[1]);
+        if (ra == rb) return {e[0], e[1]};
+        parent[ra] = rb;
+    }
+    return {};
+}
+--- java
+static int[] solve(int[][] edges) {
+    int n = edges.length;
+    int[] parent = new int[n + 1];
+    for (int i = 0; i <= n; i++) parent[i] = i;
+    for (int[] e : edges) {
+        int a = e[0], b = e[1];
+        while (parent[a] != a) { parent[a] = parent[parent[a]]; a = parent[a]; }
+        while (parent[b] != b) { parent[b] = parent[parent[b]]; b = parent[b]; }
+        if (a == b) return new int[]{e[0], e[1]};
+        parent[a] = b;
+    }
+    return new int[0];
+}
+=== min-cost-to-connect-all-points
+--- py
+def solve(points):
+    # Prim's algorithm, O(n^2) on the implicit complete graph
+    n = len(points)
+    INF = float("inf")
+    best = [INF] * n
+    used = [False] * n
+    best[0] = 0
+    total = 0
+    for _ in range(n):
+        u = -1
+        for i in range(n):
+            if not used[i] and (u == -1 or best[i] < best[u]):
+                u = i
+        used[u] = True
+        total += best[u]
+        for v in range(n):
+            if not used[v]:
+                d = abs(points[u][0] - points[v][0]) + abs(points[u][1] - points[v][1])
+                if d < best[v]:
+                    best[v] = d
+    return total
+--- js
+function solve(points) {
+  // Prim's algorithm, O(n^2) on the implicit complete graph
+  const n = points.length;
+  const best = new Array(n).fill(Infinity);
+  const used = new Array(n).fill(false);
+  best[0] = 0;
+  let total = 0;
+  for (let it = 0; it < n; it++) {
+    let u = -1;
+    for (let i = 0; i < n; i++) {
+      if (!used[i] && (u === -1 || best[i] < best[u])) u = i;
+    }
+    used[u] = true;
+    total += best[u];
+    for (let v = 0; v < n; v++) {
+      if (!used[v]) {
+        const d = Math.abs(points[u][0] - points[v][0]) + Math.abs(points[u][1] - points[v][1]);
+        if (d < best[v]) best[v] = d;
+      }
+    }
+  }
+  return total;
+}
+--- cpp
+int solve(vector<vector<int>> points) {
+    // Prim's algorithm, O(n^2) on the implicit complete graph
+    int n = points.size();
+    vector<long long> best(n, LLONG_MAX);
+    vector<bool> used(n, false);
+    best[0] = 0;
+    long long total = 0;
+    for (int it = 0; it < n; it++) {
+        int u = -1;
+        for (int i = 0; i < n; i++) {
+            if (!used[i] && (u == -1 || best[i] < best[u])) u = i;
+        }
+        used[u] = true;
+        total += best[u];
+        for (int v = 0; v < n; v++) {
+            if (!used[v]) {
+                long long d = llabs((long long)points[u][0] - points[v][0]) + llabs((long long)points[u][1] - points[v][1]);
+                if (d < best[v]) best[v] = d;
+            }
+        }
+    }
+    return (int)total;
+}
+--- java
+static int solve(int[][] points) {
+    // Prim's algorithm, O(n^2) on the implicit complete graph
+    int n = points.length;
+    long[] best = new long[n];
+    Arrays.fill(best, Long.MAX_VALUE);
+    boolean[] used = new boolean[n];
+    best[0] = 0;
+    long total = 0;
+    for (int it = 0; it < n; it++) {
+        int u = -1;
+        for (int i = 0; i < n; i++) {
+            if (!used[i] && (u == -1 || best[i] < best[u])) u = i;
+        }
+        used[u] = true;
+        total += best[u];
+        for (int v = 0; v < n; v++) {
+            if (!used[v]) {
+                long d = Math.abs((long) points[u][0] - points[v][0]) + Math.abs((long) points[u][1] - points[v][1]);
+                if (d < best[v]) best[v] = d;
+            }
+        }
+    }
+    return (int) total;
+}
+=== minimum-number-of-arrows-to-burst-balloons
+--- py
+def solve(points):
+    points = sorted(points, key=lambda p: p[1])
+    arrows = 0
+    end = None
+    for s, e in points:
+        if end is None or s > end:
+            arrows += 1
+            end = e
+    return arrows
+--- js
+function solve(points) {
+  // compare only (no subtraction); values reach +-2^31
+  const sorted = [...points].sort((a, b) => (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
+  let arrows = 0;
+  let end = -Infinity;
+  for (const [s, e] of sorted) {
+    if (arrows === 0 || s > end) {
+      arrows++;
+      end = e;
+    }
+  }
+  return arrows;
+}
+--- cpp
+int solve(vector<vector<int>> points) {
+    // compare only (no subtraction); values reach +-2^31
+    sort(points.begin(), points.end(), [](const vector<int> &a, const vector<int> &b) { return a[1] < b[1]; });
+    int arrows = 0;
+    long long end = LLONG_MIN;
+    for (auto &p : points) {
+        if (arrows == 0 || p[0] > end) {
+            arrows++;
+            end = p[1];
+        }
+    }
+    return arrows;
+}
+--- java
+static int solve(int[][] points) {
+    // compare only (no subtraction); values reach +-2^31
+    Arrays.sort(points, (a, b) -> Integer.compare(a[1], b[1]));
+    int arrows = 0;
+    long end = Long.MIN_VALUE;
+    for (int[] p : points) {
+        if (arrows == 0 || p[0] > end) {
+            arrows++;
+            end = p[1];
+        }
+    }
+    return arrows;
+}
+=== can-place-flowers
+--- py
+def solve(flowerbed, n):
+    count = 0
+    m = len(flowerbed)
+    for i in range(m):
+        if flowerbed[i] == 0:
+            left = i == 0 or flowerbed[i - 1] == 0
+            right = i == m - 1 or flowerbed[i + 1] == 0
+            if left and right:
+                flowerbed[i] = 1
+                count += 1
+    return count >= n
+--- js
+function solve(flowerbed, n) {
+  let count = 0;
+  const m = flowerbed.length;
+  for (let i = 0; i < m; i++) {
+    if (flowerbed[i] === 0) {
+      const left = i === 0 || flowerbed[i - 1] === 0;
+      const right = i === m - 1 || flowerbed[i + 1] === 0;
+      if (left && right) {
+        flowerbed[i] = 1;
+        count++;
+      }
+    }
+  }
+  return count >= n;
+}
+--- cpp
+bool solve(vector<int> flowerbed, int n) {
+    int count = 0;
+    int m = flowerbed.size();
+    for (int i = 0; i < m; i++) {
+        if (flowerbed[i] == 0) {
+            bool left = i == 0 || flowerbed[i - 1] == 0;
+            bool right = i == m - 1 || flowerbed[i + 1] == 0;
+            if (left && right) {
+                flowerbed[i] = 1;
+                count++;
+            }
+        }
+    }
+    return count >= n;
+}
+--- java
+static boolean solve(int[] flowerbed, int n) {
+    int count = 0;
+    int m = flowerbed.length;
+    for (int i = 0; i < m; i++) {
+        if (flowerbed[i] == 0) {
+            boolean left = i == 0 || flowerbed[i - 1] == 0;
+            boolean right = i == m - 1 || flowerbed[i + 1] == 0;
+            if (left && right) {
+                flowerbed[i] = 1;
+                count++;
+            }
+        }
+    }
+    return count >= n;
+}
+=== lemonade-change
+--- py
+def solve(bills):
+    five = ten = 0
+    for b in bills:
+        if b == 5:
+            five += 1
+        elif b == 10:
+            if five == 0:
+                return False
+            five -= 1
+            ten += 1
+        else:
+            # prefer giving 10 + 5 so the more useful 5s are kept
+            if ten > 0 and five > 0:
+                ten -= 1
+                five -= 1
+            elif five >= 3:
+                five -= 3
+            else:
+                return False
+    return True
+--- js
+function solve(bills) {
+  let five = 0, ten = 0;
+  for (const b of bills) {
+    if (b === 5) {
+      five++;
+    } else if (b === 10) {
+      if (five === 0) return false;
+      five--;
+      ten++;
+    } else {
+      // prefer giving 10 + 5 so the more useful 5s are kept
+      if (ten > 0 && five > 0) {
+        ten--;
+        five--;
+      } else if (five >= 3) {
+        five -= 3;
+      } else {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+--- cpp
+bool solve(vector<int> bills) {
+    int five = 0, ten = 0;
+    for (int b : bills) {
+        if (b == 5) {
+            five++;
+        } else if (b == 10) {
+            if (five == 0) return false;
+            five--;
+            ten++;
+        } else {
+            // prefer giving 10 + 5 so the more useful 5s are kept
+            if (ten > 0 && five > 0) {
+                ten--;
+                five--;
+            } else if (five >= 3) {
+                five -= 3;
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+--- java
+static boolean solve(int[] bills) {
+    int five = 0, ten = 0;
+    for (int b : bills) {
+        if (b == 5) {
+            five++;
+        } else if (b == 10) {
+            if (five == 0) return false;
+            five--;
+            ten++;
+        } else {
+            // prefer giving 10 + 5 so the more useful 5s are kept
+            if (ten > 0 && five > 0) {
+                ten--;
+                five--;
+            } else if (five >= 3) {
+                five -= 3;
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+=== task-scheduler
+--- py
+def solve(tasks, n):
+    counts = {}
+    for t in tasks:
+        counts[t] = counts.get(t, 0) + 1
+    mx = max(counts.values())
+    num_max = sum(1 for c in counts.values() if c == mx)
+    # (mx - 1) full frames of n + 1 slots, plus the final row of max-count tasks
+    return max(len(tasks), (mx - 1) * (n + 1) + num_max)
+--- js
+function solve(tasks, n) {
+  const counts = new Array(27).fill(0);
+  for (const t of tasks) counts[t]++;
+  const mx = Math.max(...counts);
+  const numMax = counts.filter((c) => c === mx).length;
+  // (mx - 1) full frames of n + 1 slots, plus the final row of max-count tasks
+  return Math.max(tasks.length, (mx - 1) * (n + 1) + numMax);
+}
+--- cpp
+int solve(vector<int> tasks, int n) {
+    vector<int> counts(27, 0);
+    for (int t : tasks) counts[t]++;
+    int mx = *max_element(counts.begin(), counts.end());
+    int numMax = count(counts.begin(), counts.end(), mx);
+    // (mx - 1) full frames of n + 1 slots, plus the final row of max-count tasks
+    return max((int)tasks.size(), (mx - 1) * (n + 1) + numMax);
+}
+--- java
+static int solve(int[] tasks, int n) {
+    int[] counts = new int[27];
+    for (int t : tasks) counts[t]++;
+    int mx = 0;
+    for (int c : counts) mx = Math.max(mx, c);
+    int numMax = 0;
+    for (int c : counts) if (c == mx) numMax++;
+    // (mx - 1) full frames of n + 1 slots, plus the final row of max-count tasks
+    return Math.max(tasks.length, (mx - 1) * (n + 1) + numMax);
+}
+=== hamming-distance
+--- py
+def solve(x, y):
+    return bin(x ^ y).count("1")
+--- js
+function solve(x, y) {
+  let v = x ^ y;
+  let count = 0;
+  while (v !== 0) {
+    v &= v - 1; // drop the lowest set bit
+    count++;
+  }
+  return count;
+}
+--- cpp
+int solve(int x, int y) {
+    unsigned int v = (unsigned int)x ^ (unsigned int)y;
+    int count = 0;
+    while (v) {
+        v &= v - 1; // drop the lowest set bit
+        count++;
+    }
+    return count;
+}
+--- java
+static int solve(int x, int y) {
+    return Integer.bitCount(x ^ y);
+}
+=== bitwise-and-of-numbers-range
+--- py
+def solve(left, right):
+    shift = 0
+    while left != right:
+        left >>= 1
+        right >>= 1
+        shift += 1
+    return left << shift
+--- js
+function solve(left, right) {
+  // the answer is the common binary prefix of left and right
+  let shift = 0;
+  while (left !== right) {
+    left >>= 1;
+    right >>= 1;
+    shift++;
+  }
+  return left * Math.pow(2, shift);
+}
+--- cpp
+int solve(int left, int right) {
+    // the answer is the common binary prefix of left and right
+    int shift = 0;
+    while (left != right) {
+        left >>= 1;
+        right >>= 1;
+        shift++;
+    }
+    return left << shift;
+}
+--- java
+static int solve(int left, int right) {
+    // the answer is the common binary prefix of left and right
+    int shift = 0;
+    while (left != right) {
+        left >>= 1;
+        right >>= 1;
+        shift++;
+    }
+    return left << shift;
+}
+=== ugly-number-ii
+--- py
+def solve(n):
+    ugly = [1] * n
+    i2 = i3 = i5 = 0
+    for k in range(1, n):
+        a, b, c = ugly[i2] * 2, ugly[i3] * 3, ugly[i5] * 5
+        nxt = min(a, b, c)
+        ugly[k] = nxt
+        if nxt == a:
+            i2 += 1
+        if nxt == b:
+            i3 += 1
+        if nxt == c:
+            i5 += 1
+    return ugly[n - 1]
+--- js
+function solve(n) {
+  const ugly = new Array(n).fill(1);
+  let i2 = 0, i3 = 0, i5 = 0;
+  for (let k = 1; k < n; k++) {
+    const a = ugly[i2] * 2, b = ugly[i3] * 3, c = ugly[i5] * 5;
+    const next = Math.min(a, b, c);
+    ugly[k] = next;
+    if (next === a) i2++;
+    if (next === b) i3++;
+    if (next === c) i5++;
+  }
+  return ugly[n - 1];
+}
+--- cpp
+int solve(int n) {
+    vector<long long> ugly(n, 1);
+    int i2 = 0, i3 = 0, i5 = 0;
+    for (int k = 1; k < n; k++) {
+        long long a = ugly[i2] * 2, b = ugly[i3] * 3, c = ugly[i5] * 5;
+        long long next = min({a, b, c});
+        ugly[k] = next;
+        if (next == a) i2++;
+        if (next == b) i3++;
+        if (next == c) i5++;
+    }
+    return (int)ugly[n - 1];
+}
+--- java
+static int solve(int n) {
+    long[] ugly = new long[n];
+    ugly[0] = 1;
+    int i2 = 0, i3 = 0, i5 = 0;
+    for (int k = 1; k < n; k++) {
+        long a = ugly[i2] * 2, b = ugly[i3] * 3, c = ugly[i5] * 5;
+        long next = Math.min(a, Math.min(b, c));
+        ugly[k] = next;
+        if (next == a) i2++;
+        if (next == b) i3++;
+        if (next == c) i5++;
+    }
+    return (int) ugly[n - 1];
+}

@@ -218,12 +218,13 @@ def starter_java(params, ret):
                     f"            for (int i = 0; i < {n}Len; i++) {n}[i] = Integer.parseInt(st.nextToken());",
                     "        }", "        pos++;"]
         elif t == "int[][]":
+            # Rows may have any width (pairs, triples, matrix rows): size each row by its tokens.
             out += [f"        int {n}Len = Integer.parseInt(lines.get(pos++).trim());",
-                    f"        int[][] {n} = new int[{n}Len][2];",
+                    f"        int[][] {n} = new int[{n}Len][];",
                     f"        for (int i = 0; i < {n}Len; i++) {{",
                     "            StringTokenizer st = new StringTokenizer(lines.get(pos++));",
-                    f"            {n}[i][0] = Integer.parseInt(st.nextToken());",
-                    f"            {n}[i][1] = Integer.parseInt(st.nextToken());", "        }"]
+                    f"            {n}[i] = new int[st.countTokens()];",
+                    f"            for (int j = 0; j < {n}[i].length; j++) {n}[i][j] = Integer.parseInt(st.nextToken());", "        }"]
         elif t == "grid":
             out += [f"        int {n}Rows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());",
                     f"        String[] {n} = new String[{n}Rows];",
@@ -245,7 +246,7 @@ def starter_java(params, ret):
         "bool": ["        System.out.println(result);"],
         "int[]": ['        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(" ")));'],
         "int[][]": ["        for (int[] row : result) {",
-                    '            System.out.println(row[0] + " " + row[1]);', "        }"],
+                    '            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(" ")));', "        }"],
         "list": ["        System.out.println(listString(result));"],
         "tree": ["        System.out.println(treeString(result));"],
     }[ret]
@@ -320,9 +321,9 @@ def starter_cpp(params, ret):
                     f"        for (auto &v : {n}) iss >> v;", "    }", "    pos++;"]
         elif t == "int[][]":
             out += [f"    int {n}Len = stoi(lines[pos++]);",
-                    f"    vector<vector<int>> {n}({n}Len, vector<int>(2));",
+                    f"    vector<vector<int>> {n}({n}Len);",
                     f"    for (int i = 0; i < {n}Len; i++) {{", "        istringstream iss(lines[pos++]);",
-                    f"        iss >> {n}[i][0] >> {n}[i][1];", "    }"]
+                    f"        int v;", f"        while (iss >> v) {n}[i].push_back(v);", "    }"]
         elif t == "grid":
             out += [f"    int {n}Rows = stoi(lines[pos++]);",
                     f"    vector<string> {n}(lines.begin() + pos, lines.begin() + pos + {n}Rows);",
@@ -343,7 +344,8 @@ def starter_cpp(params, ret):
         "bool": ['    cout << (result ? "true" : "false") << "\\n";'],
         "int[]": ["    for (size_t i = 0; i < result.size(); i++) {",
                   '        if (i) cout << " ";', "        cout << result[i];", "    }", '    cout << "\\n";'],
-        "int[][]": ["    for (auto &row : result) {", '        cout << row[0] << " " << row[1] << "\\n";', "    }"],
+        "int[][]": ["    for (auto &row : result) {", "        for (size_t j = 0; j < row.size(); j++) {", '            if (j) cout << " ";',
+                    "            cout << row[j];", "        }", '        cout << "\\n";', "    }"],
         "list": ['    cout << listString(result) << "\\n";'],
         "tree": ['    cout << treeString(result) << "\\n";'],
     }[ret]
