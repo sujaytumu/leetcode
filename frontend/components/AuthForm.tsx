@@ -21,6 +21,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [daily, setDaily] = useState(false);
   const [busy, setBusy] = useState(false);
   const [slow, setSlow] = useState(false);
   const [error, setError] = useState("");
@@ -44,7 +45,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     const name = id.trim();
     try {
       // The free-tier server can take about a minute to wake up, so allow for that.
-      const s = await api<Session>(`/api/auth/${mode}`, { method: "POST", body: JSON.stringify(register ? { email: name, password } : { email: name, password }) }, 75000);
+      const s = await api<Session>(`/api/auth/${mode}`, { method: "POST", body: JSON.stringify(register ? { email: name, password, dailyEmail: daily } : { email: name, password }) }, 75000);
       try { localStorage.setItem(LAST_USER, name); } catch { /* storage blocked */ }
       setSession(s);
       window.location.replace(nextPath());
@@ -78,6 +79,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             </span>
           </label>
           {register && <span className="mute authhint">Password 8+ characters. Your display name is created from the email and can be changed in your profile.</span>}
+          {register && (
+            <label className="authcheck"><input type="checkbox" checked={daily} onChange={(e) => setDaily(e.target.checked)} /> Email me one problem every morning (you can stop it any time)</label>
+          )}
           {error && <div className="banner err" role="alert">{error}</div>}
           <button className="primary authsubmit" disabled={busy || !id.trim() || !password}>
             {busy ? "Please wait…" : register ? "Create account" : "Log in"}
@@ -88,9 +92,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           {register ? <>Already have an account? <Link href="/login">Log in</Link></> : <>New here? <Link href="/register">Create an account</Link></>}
         </p>
         {!register && (
-          <p className="authhint mute" style={{ margin: "10px 0 0", textAlign: "center" }}>
-            Forgot your password? Password reset by email is not available yet. If another device is still signed in, change it from Account settings there.
-          </p>
+          <p className="authhint" style={{ margin: "10px 0 0", textAlign: "center" }}><Link href="/forgot-password">Forgot your password?</Link></p>
         )}
       </section>
     </div>

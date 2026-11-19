@@ -92,6 +92,15 @@ owns one such id: after `register`, requests must carry `Authorization: Bearer <
 Passwords are hashed with PBKDF2-HMAC-SHA256 (210k iterations, per-password salt); tokens are HMAC-signed and expire
 after 30 days. Set `AUTH_SECRET` (32+ random characters) in production so tokens survive restarts.
 
+**Email (Resend).** Set `RESEND_API_KEY`, `MAIL_FROM` (a sender on a domain verified in Resend; Resend's default test
+sender only delivers to your own Resend account address) and `FRONTEND_URL` (used for links in emails). That enables:
+`POST /api/auth/forgot` + `POST /api/auth/reset` (a single-use link valid for 30 minutes; only a hash of the token is
+stored, every request answers the same whether or not the email exists, and a reset signs out all other sessions), and
+an opt-in daily problem email (`GET/PUT /api/auth/email-prefs`, one-click `POST /api/auth/unsubscribe` from the link in
+each email). The daily email goes out once a day after `DAILY_EMAIL_HOUR` (default 8) in `DAILY_EMAIL_ZONE` (default
+`Asia/Kolkata`); it checks every 15 minutes, so a sleeping free-tier server still catches up when it wakes. Resend's
+free plan allows about 100 emails per day. Without `RESEND_API_KEY` nothing is sent.
+
 ## Features
 
 Problem list with sorting, filters, study-path numbering and acceptance rates; a LeetCode-style workspace (resizable

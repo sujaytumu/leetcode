@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -49,6 +50,13 @@ public class Account {
     @Column(name = "token_version", nullable = false)
     private int tokenVersion = 0;
 
+    /** Opt-in daily problem email; null (older rows) means off. */
+    @Column(name = "daily_email")
+    private Boolean dailyEmail;
+
+    @Column(name = "last_daily_sent")
+    private LocalDate lastDailySent;
+
     protected Account() {}
 
     public Account(String username, String passwordHash, UUID clientId) {
@@ -69,6 +77,10 @@ public class Account {
     public UUID getClientId() { return clientId; }
     public Instant getCreatedAt() { return createdAt; }
     public int getTokenVersion() { return tokenVersion; }
+
+    public boolean isDailyEmail() { return Boolean.TRUE.equals(dailyEmail); }
+    public void setDailyEmail(boolean on) { this.dailyEmail = on; }
+    public LocalDate getLastDailySent() { return lastDailySent; }
 
     public void changePassword(String newHash) {
         this.passwordHash = newHash;
