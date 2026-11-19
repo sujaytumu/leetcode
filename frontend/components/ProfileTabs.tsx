@@ -45,15 +45,9 @@ export default function ProfileTabs({ p, own }: { p: Profile; own: boolean }) {
         </div>
       )}
       {tab === "list" && own && <Lists />}
-      {tab === "solutions" && (
-        <div className="prows">
-          <p className="mute" style={{ padding: "8px 4px" }}>
-            {(p.community?.solutions ?? 0) > 0
-              ? `${p.community?.solutions} community solution${p.community?.solutions === 1 ? "" : "s"} posted. Open a problem's Solutions tab to read or edit them.`
-              : "No community solutions yet. Share one from any problem's Solutions tab."}
-          </p>
-        </div>
-      )}
+      {tab === "solutions" && (own ? <MySolutions fallbackCount={p.community?.solutions ?? 0} /> : (
+        <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>{(p.community?.solutions ?? 0) > 0 ? `${p.community?.solutions} community solution${p.community?.solutions === 1 ? "" : "s"} posted.` : "No community solutions yet."}</p></div>
+      ))}
     </section>
   );
 }
@@ -87,6 +81,33 @@ function Lists() {
             ))}
           </div>
         </details>
+      ))}
+    </div>
+  );
+}
+
+interface MineRow { id: number; slug: string; problemTitle: string; title: string; language: string | null; createdAt: string; score: number }
+
+/** The signed-in user's own community solutions, newest first (the server keys them to this browser's client id). */
+function MySolutions({ fallbackCount }: { fallbackCount: number }) {
+  const [rows, setRows] = useState<MineRow[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    api<MineRow[]>("/api/me/solution-posts").then(setRows).catch(() => setFailed(true));
+  }, []);
+  if (failed) {
+    return <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>{fallbackCount > 0 ? `${fallbackCount} community solution${fallbackCount === 1 ? "" : "s"} posted. Open a problem's Solutions tab to read or edit them.` : "Could not load your solutions right now."}</p></div>;
+  }
+  if (!rows) return <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>Loading…</p></div>;
+  if (rows.length === 0) return <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>No community solutions yet. Share one from any problem's Solutions tab.</p></div>;
+  return (
+    <div className="prows">
+      {rows.map((r) => (
+        <Link key={r.id} href={`/problems/${r.slug}`} className="prow">
+          <span className="prow-title">{r.title}<span className="mute" style={{ marginLeft: 8, fontSize: 12 }}>{r.problemTitle}{r.language ? ` · ${r.language}` : ""}</span></span>
+          <span className="grow" />
+          <span className="mute prow-when">▲ {r.score} · {ago(r.createdAt)}</span>
+        </Link>
       ))}
     </div>
   );

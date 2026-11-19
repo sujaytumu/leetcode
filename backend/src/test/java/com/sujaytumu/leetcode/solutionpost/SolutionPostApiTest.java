@@ -117,4 +117,25 @@ class SolutionPostApiTest {
         mvc.perform(get("/api/problems/" + SLUG + "/solution-posts").header(CLIENT, author))
                 .andExpect(jsonPath("$", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(1))));
     }
+
+    @Test
+    void mineListsOnlyMyPostsNewestFirstWithProblemInfo() throws Exception {
+        String carol = UUID.randomUUID().toString();
+        String dave = UUID.randomUUID().toString();
+        long a = write(carol, "Carol first", "Carol's first write-up of the approach.");
+        long b = write(carol, "Carol second", "Carol's second write-up of the approach.");
+        write(dave, "Dave only", "Dave's own write-up of the approach.");
+
+        mvc.perform(get("/api/me/solution-posts").header(CLIENT, carol))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(b))
+                .andExpect(jsonPath("$[1].id").value(a))
+                .andExpect(jsonPath("$[0].slug").value(SLUG))
+                .andExpect(jsonPath("$[0].problemTitle").isNotEmpty());
+
+        mvc.perform(get("/api/me/solution-posts").header(CLIENT, UUID.randomUUID().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
 }

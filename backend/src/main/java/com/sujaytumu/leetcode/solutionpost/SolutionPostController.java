@@ -43,6 +43,11 @@ public class SolutionPostController {
         return service.create(slug, clientId, request.title(), request.body(), request.language());
     }
 
+    @GetMapping("/api/me/solution-posts")
+    public List<SolutionPostService.Mine> mine(@RequestHeader(Headers.CLIENT_ID) UUID clientId) {
+        return service.mine(clientId);
+    }
+
     @GetMapping("/api/solution-posts/{id}")
     public Detail get(
             @PathVariable long id, @RequestHeader(value = Headers.CLIENT_ID, required = false) UUID clientId) {
