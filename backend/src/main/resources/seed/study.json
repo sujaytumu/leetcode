@@ -1187,5 +1187,482 @@
     "approach": "For every land cell start a flood fill (DFS with recursion or an explicit stack, or BFS) that counts and sinks the cells it visits in four directions; track the largest count seen. Each cell is processed once. Prefer an explicit stack if recursion depth could be large.",
     "time": "O(R·C)",
     "space": "O(R·C) worst case"
+  },
+  "plus-one": {
+    "hints": [
+      "Think about how you add 1 by hand, starting from the last digit.",
+      "A digit 9 turns into 0 and passes a carry left; stop as soon as a digit is not 9."
+    ],
+    "approach": "Scan from the end: while the digit is 9 set it to 0 and move left; the first non-9 digit gets +1 and you are done. If every digit was 9, the answer is a 1 followed by zeros.",
+    "time": "O(n)",
+    "space": "O(1) extra"
+  },
+  "squares-of-a-sorted-array": {
+    "hints": [
+      "The largest square is at one of the two ends.",
+      "Fill the result from the back using two pointers."
+    ],
+    "approach": "Put one pointer at each end. Compare the absolute values, write the larger square into the next free slot from the back, and move that pointer inward.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "find-all-numbers-disappeared-in-an-array": {
+    "hints": [
+      "Every value is in [1, n], so a value can double as an index.",
+      "A set (or marking by sign) tells you which numbers were seen."
+    ],
+    "approach": "Collect the values in a set, or mark index `v - 1` as seen by negating it. Every index never marked corresponds to a missing number.",
+    "time": "O(n)",
+    "space": "O(n), or O(1) when marking in place"
+  },
+  "pascals-triangle": {
+    "hints": [
+      "Each row is built from the previous one.",
+      "Inner element j of a row is prev[j-1] + prev[j]."
+    ],
+    "approach": "Start with [1]. For each new row, put 1 at both ends and fill the middle with sums of adjacent elements of the previous row.",
+    "time": "O(numRows^2)",
+    "space": "O(numRows^2)"
+  },
+  "rotate-array": {
+    "hints": [
+      "Rotating by k is the same as rotating by k mod n.",
+      "Reversing parts of the array can do the rotation without extra space."
+    ],
+    "approach": "Take k = k mod n. Reverse the whole array, then reverse the first k elements and the remaining n - k elements.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "sort-colors": {
+    "hints": [
+      "There are only three values, so counting works, but one pass is possible.",
+      "Keep three zones: zeros on the left, twos on the right, unknown in the middle."
+    ],
+    "approach": "Dutch national flag: with pointers low, mid, high, swap 0s to low, 2s to high and advance mid over 1s. Do not advance mid after swapping with high.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "next-permutation": {
+    "hints": [
+      "Find the rightmost place where the sequence stops being descending.",
+      "Swap with the smallest larger element to its right, then fix the tail."
+    ],
+    "approach": "Find the largest i with nums[i] < nums[i+1]. If none, reverse the whole array. Otherwise swap nums[i] with the rightmost element larger than it and reverse the suffix after i.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "find-the-duplicate-number": {
+    "hints": [
+      "Treat each value as a pointer to an index: i -> nums[i].",
+      "The repeated value is where two pointers enter a cycle."
+    ],
+    "approach": "Floyd's cycle detection: advance a slow pointer by one step and a fast one by two until they meet, restart one from the start and move both one step at a time. They meet at the duplicate.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "spiral-matrix": {
+    "hints": [
+      "Track the four boundaries top, bottom, left and right.",
+      "Shrink a boundary after walking along it."
+    ],
+    "approach": "Walk the top row, right column, bottom row and left column in turn, moving each boundary inward after its side is done, and stop when the boundaries cross. Check the boundaries before the last two sides to avoid repeats.",
+    "time": "O(m*n)",
+    "space": "O(1) extra"
+  },
+  "rotate-image": {
+    "hints": [
+      "The element at (i, j) moves to (j, n-1-i).",
+      "A transpose followed by a mirror does the same thing."
+    ],
+    "approach": "Transpose the matrix (swap [i][j] with [j][i]) and then reverse every row. This is a 90 degree clockwise rotation.",
+    "time": "O(n^2)",
+    "space": "O(1) in place"
+  },
+  "set-matrix-zeroes": {
+    "hints": [
+      "If you zero cells while scanning you create false zeros.",
+      "Remember which rows and columns contain a zero first."
+    ],
+    "approach": "First pass: record the rows and columns that contain a zero. Second pass: zero every cell whose row or column was recorded. In place, the first row and column can store the markers.",
+    "time": "O(m*n)",
+    "space": "O(m+n), or O(1) with in-place markers"
+  },
+  "3sum-closest": {
+    "hints": [
+      "Sorting lets you use two pointers.",
+      "Fix one number, then move the pointers based on whether the sum is too small or too large."
+    ],
+    "approach": "Sort the array. For each i, set l = i+1 and r = n-1; compute the sum, update the best if it is closer (smaller on ties), and move l or r. Return immediately on an exact match.",
+    "time": "O(n^2)",
+    "space": "O(1) extra"
+  },
+  "find-first-and-last-position-of-element-in-sorted-array": {
+    "hints": [
+      "Two binary searches: one for the left edge and one for the right edge.",
+      "The left edge is the first index with value >= target."
+    ],
+    "approach": "Use lower bound to find the first index of target and upper bound minus one for the last. If the first index is out of range or does not hold the target, return -1 -1.",
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "search-a-2d-matrix": {
+    "hints": [
+      "Because rows chain together, the matrix is one sorted list in disguise.",
+      "Map a flat index mid to row mid / n, column mid % n."
+    ],
+    "approach": "Binary search over indices 0..m*n-1, reading the value at (mid / n, mid % n) and narrowing the range as usual.",
+    "time": "O(log(m*n))",
+    "space": "O(1)"
+  },
+  "evaluate-reverse-polish-notation": {
+    "hints": [
+      "Operands wait on a stack until an operator needs them.",
+      "The second popped value is the left operand."
+    ],
+    "approach": "Scan the tokens. Push numbers; on an operator pop b then a, push a op b. Division truncates toward zero. The final stack holds the result.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "next-greater-element-ii": {
+    "hints": [
+      "Walk the array twice to simulate the circle.",
+      "Keep a stack of indices still waiting for a greater value."
+    ],
+    "approach": "Iterate i from 0 to 2n-1 using i mod n. While the stack top's value is less than the current value, pop it and record the current value as its answer. Only push during the first pass.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "car-fleet": {
+    "hints": [
+      "Sort cars by position, closest to the target first.",
+      "A car's arrival time is (target - position) / speed."
+    ],
+    "approach": "Process cars from the one closest to the target backwards. A car whose arrival time is greater than the current fleet's time cannot catch it and starts a new fleet; otherwise it merges. Compare times exactly (cross-multiplying) to avoid rounding.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "sum-of-subarray-minimums": {
+    "hints": [
+      "Count, for each element, in how many subarrays it is the minimum.",
+      "Find how far it extends to the left and right before a smaller value."
+    ],
+    "approach": "With a monotonic stack compute, for each i, the distance to the previous smaller element (strict) and the next smaller-or-equal element. The element contributes arr[i] * left * right. Sum modulo 10^9+7.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "word-break": {
+    "hints": [
+      "Let ok[i] mean the first i characters can be segmented.",
+      "ok[i] is true if some j < i has ok[j] and s[j:i] in the dictionary."
+    ],
+    "approach": "Build ok[] left to right with a hash set of words. The answer is ok[len(s)].",
+    "time": "O(n^2) substring checks",
+    "space": "O(n)"
+  },
+  "palindromic-substrings": {
+    "hints": [
+      "Every palindrome has a centre.",
+      "There are 2n - 1 centres: letters and gaps between letters."
+    ],
+    "approach": "For every centre expand outwards while the two ends match, counting each successful expansion.",
+    "time": "O(n^2)",
+    "space": "O(1)"
+  },
+  "target-sum": {
+    "hints": [
+      "Track how many ways reach each running total.",
+      "Alternatively turn it into a subset-sum count."
+    ],
+    "approach": "DP over a map from running sum to number of ways: for each number, every sum s becomes s + x and s - x. Read off the ways for target. (Equivalent: count subsets with sum (total + target) / 2.)",
+    "time": "O(n * sum)",
+    "space": "O(sum)"
+  },
+  "delete-and-earn": {
+    "hints": [
+      "Taking a value forbids its two neighbours, like House Robber.",
+      "Group equal values: taking v earns v * count(v)."
+    ],
+    "approach": "Sum points per value, then run the House Robber recurrence over the values in order, treating consecutive integers as adjacent houses and gaps as free.",
+    "time": "O(n + k log k)",
+    "space": "O(k) for k distinct values"
+  },
+  "best-time-to-buy-and-sell-stock-with-cooldown": {
+    "hints": [
+      "Model three states: holding, just sold, resting.",
+      "A sale today means no buying tomorrow."
+    ],
+    "approach": "Keep hold, sold and rest each day: hold = max(hold, rest - price); sold = hold_prev + price; rest = max(rest, sold_prev). The answer is max(sold, rest) at the end.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "minimum-falling-path-sum": {
+    "hints": [
+      "Each cell can only be reached from three cells above it.",
+      "Reuse the matrix or a single row of costs."
+    ],
+    "approach": "Row by row, set cost[j] = matrix[i][j] + the minimum of cost[j-1], cost[j] and cost[j+1] from the previous row. Answer is the minimum of the last row.",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "combination-sum-count": {
+    "hints": [
+      "Unordered combinations: loop over coins in the outer loop.",
+      "ways[t] counts combinations summing to t."
+    ],
+    "approach": "Unbounded knapsack count: ways[0] = 1; for each coin c and for t from c to target, ways[t] += ways[t - c]. Putting the coin loop outside prevents counting reorderings.",
+    "time": "O(n * target)",
+    "space": "O(target)"
+  },
+  "distinct-subsequences": {
+    "hints": [
+      "dp[j] is the number of ways to build the first j characters of t.",
+      "When s[i] equals t[j-1] you can either use it or skip it."
+    ],
+    "approach": "Iterate over s; for j from len(t) down to 1, if s[i] == t[j-1] add dp[j-1] to dp[j]. Going backwards avoids using one character twice. Answer is dp[len(t)].",
+    "time": "O(|s| * |t|)",
+    "space": "O(|t|)"
+  },
+  "regular-expression-matching": {
+    "hints": [
+      "State (i, j) means s[i:] matches p[j:].",
+      "A `*` either removes its letter (skip two pattern chars) or consumes one matching character."
+    ],
+    "approach": "Memoised recursion: if p[j+1] is `*`, answer is match(i, j+2) or (first characters match and match(i+1, j)); otherwise the first characters must match and then match(i+1, j+1). The base case is j == len(p).",
+    "time": "O(|s| * |p|)",
+    "space": "O(|s| * |p|)"
+  },
+  "burst-balloons": {
+    "hints": [
+      "Think about which balloon bursts LAST in a range.",
+      "Pad the array with 1 on both sides."
+    ],
+    "approach": "Interval DP: dp[l][r] is the best score from bursting everything strictly between l and r. Choosing k as the last balloon gives dp[l][k] + dp[k][r] + nums[l]*nums[k]*nums[r]. Take the maximum over k.",
+    "time": "O(n^3)",
+    "space": "O(n^2)"
+  },
+  "best-time-to-buy-and-sell-stock-iii": {
+    "hints": [
+      "Track four running values: first buy, first sell, second buy, second sell.",
+      "Each stage builds on the profit of the previous one."
+    ],
+    "approach": "One pass: b1 = max(b1, -p); s1 = max(s1, b1 + p); b2 = max(b2, s1 - p); s2 = max(s2, b2 + p). The answer is s2.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "network-delay-time": {
+    "hints": [
+      "Shortest paths from k to every node.",
+      "Edge weights are positive, so Dijkstra works."
+    ],
+    "approach": "Run Dijkstra from k with a min-heap. The signal reaches everyone at the largest shortest distance; if any node is unreachable, return -1.",
+    "time": "O(E log V)",
+    "space": "O(V + E)"
+  },
+  "number-of-provinces": {
+    "hints": [
+      "Connected components of an undirected graph.",
+      "DFS or union-find both work."
+    ],
+    "approach": "Visit each unvisited city, run a DFS marking everything reachable, and count how many times you start a new search.",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "redundant-connection": {
+    "hints": [
+      "Add the edges one by one and watch for a cycle.",
+      "Union-find tells you whether two nodes are already connected."
+    ],
+    "approach": "Process edges in order with union-find. The first edge whose endpoints already share a root closes the cycle and is the last edge of it in the input, so it is the answer.",
+    "time": "O(n * alpha(n))",
+    "space": "O(n)"
+  },
+  "min-cost-to-connect-all-points": {
+    "hints": [
+      "This is a minimum spanning tree on a complete graph.",
+      "Prim's algorithm avoids building all O(n^2) edges up front."
+    ],
+    "approach": "Run Prim's: keep the cheapest distance from the tree to every other point, repeatedly add the closest point and relax distances with Manhattan distance. (Kruskal with union-find also works.)",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "minimum-number-of-arrows-to-burst-balloons": {
+    "hints": [
+      "Sort the balloons by where they end.",
+      "Shooting at the earliest end pops as many as possible."
+    ],
+    "approach": "Sort by end coordinate. Shoot at the first balloon's end; skip every balloon that starts at or before that point; the next balloon that starts after it needs a new arrow.",
+    "time": "O(n log n)",
+    "space": "O(1) extra"
+  },
+  "can-place-flowers": {
+    "hints": [
+      "Greedily plant whenever it is safe.",
+      "A plot is safe if both neighbours are empty (treat the borders as empty)."
+    ],
+    "approach": "Scan left to right; plant at i if it and both neighbours are 0, count it and mark the plot. Return whether the count reaches n.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "lemonade-change": {
+    "hints": [
+      "Only $5 and $10 bills are useful as change.",
+      "For a $20, prefer giving a $10 and a $5."
+    ],
+    "approach": "Track how many $5 and $10 bills you hold. $10 needs a $5; $20 needs ($10 + $5) if possible, otherwise three $5. If you cannot, return false.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "task-scheduler": {
+    "hints": [
+      "The most frequent task determines the shape of the schedule.",
+      "Count how many tasks tie for the maximum frequency."
+    ],
+    "approach": "With max frequency m and t tasks sharing it, the frames give (m - 1) * (n + 1) + t slots. The answer is the larger of that and the number of tasks (no idle time needed then).",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "hamming-distance": {
+    "hints": [
+      "XOR marks the positions where bits differ.",
+      "Count the set bits of the XOR."
+    ],
+    "approach": "Compute x ^ y and count its one bits (loop with v &= v - 1, or use a popcount).",
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "bitwise-and-of-numbers-range": {
+    "hints": [
+      "Only the common binary prefix of left and right survives.",
+      "Shift both right until they are equal."
+    ],
+    "approach": "Shift left and right right together until they are equal, counting shifts. The answer is that common prefix shifted back left by the count.",
+    "time": "O(log right)",
+    "space": "O(1)"
+  },
+  "ugly-number-ii": {
+    "hints": [
+      "Every ugly number is a smaller ugly number times 2, 3 or 5.",
+      "Keep one pointer per factor."
+    ],
+    "approach": "Build the sequence with three pointers i2, i3, i5. Each step appends the minimum of u[i2]*2, u[i3]*3, u[i5]*5 and advances every pointer that produced it (to skip duplicates).",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "subtree-of-another-tree": {
+    "hints": [
+      "Compare trees with a helper that checks they are identical.",
+      "Try that helper at every node of the big tree."
+    ],
+    "approach": "For every node of `root`, check whether the tree rooted there is identical to `subRoot` (same shape and values) using a recursive comparison.",
+    "time": "O(m * n)",
+    "space": "O(h)"
+  },
+  "binary-tree-level-order-traversal": {
+    "hints": [
+      "Process the tree one level at a time.",
+      "A queue holds the nodes of the current level."
+    ],
+    "approach": "BFS: at each step take the current level's nodes, record their values, and collect their children as the next level.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "minimum-depth-of-binary-tree": {
+    "hints": [
+      "A leaf has no children; a node with one child is not a leaf.",
+      "BFS stops at the first leaf."
+    ],
+    "approach": "BFS level by level and return the depth of the first leaf. (Recursive: if one child is missing use the other's depth, else 1 + min of both.)",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "sum-root-to-leaf-numbers": {
+    "hints": [
+      "Carry the number built so far down the path.",
+      "At a node, the new value is cur * 10 + node.val."
+    ],
+    "approach": "DFS passing the number formed so far. At a leaf return it; otherwise return the sum of the two recursive results.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "house-robber-iii": {
+    "hints": [
+      "For each node you either take it or skip it.",
+      "Return a pair (take, skip) from each subtree."
+    ],
+    "approach": "Post-order DFS returning (best if this node is robbed, best if it is not). take = val + skipLeft + skipRight; skip = max of each child's two options added together. Answer is the max of the root's pair.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "path-sum-iii": {
+    "hints": [
+      "Use prefix sums along the current root-to-node path.",
+      "A path ending here with sum target means some earlier prefix equals current - target."
+    ],
+    "approach": "DFS keeping a map from prefix sum to count on the current path. At each node add count[prefix - target] to the answer, then recurse and undo the map entry when backtracking. (The O(n^2) approach that starts a DFS at every node also passes.)",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "construct-binary-tree-from-preorder-and-inorder-traversal": {
+    "hints": [
+      "The first preorder value is the root.",
+      "Its position in the inorder list splits left and right subtrees."
+    ],
+    "approach": "Map each value to its inorder index. Consume preorder values with a pointer: take the next value as the root, build the left subtree for the inorder range left of it, then the right subtree.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "remove-linked-list-elements": {
+    "hints": [
+      "A dummy head node removes the special case of deleting the head.",
+      "Only advance when you did not delete."
+    ],
+    "approach": "Attach a dummy node before the head. Walk with a pointer: if the next node's value equals val, bypass it; otherwise move forward.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "rotate-list": {
+    "hints": [
+      "Rotating by k is the same as rotating by k mod length.",
+      "Find the new tail, which is length - k - 1 steps in."
+    ],
+    "approach": "Compute the length and k mod length. Connect the tail to the head to form a ring, advance length - k steps to the new tail and cut the ring after it.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "partition-list": {
+    "hints": [
+      "Build two lists and join them.",
+      "Stable order means appending nodes as you meet them."
+    ],
+    "approach": "Walk the list appending each node to a 'small' list if its value is below x, otherwise to a 'large' list. Join small to large and terminate the large list.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "remove-duplicates-from-sorted-list-ii": {
+    "hints": [
+      "A dummy head helps when the first values are duplicated.",
+      "Skip an entire run of equal values at once."
+    ],
+    "approach": "Keep a pointer prev to the last kept node. At each run of equal values, if the run is longer than one, link prev to the node after the run; otherwise advance prev.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "reverse-linked-list-ii": {
+    "hints": [
+      "Walk to the node just before position left.",
+      "Reverse the segment by repeatedly moving the next node to the front of it."
+    ],
+    "approach": "Use a dummy head. After reaching the node before `left`, repeat right - left times: detach the node after the segment's head and insert it right after the pre-node. This reverses in place in one pass.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "maximum-twin-sum-of-a-linked-list": {
+    "hints": [
+      "Twins are symmetric around the middle.",
+      "Find the middle and reverse the second half."
+    ],
+    "approach": "Use slow and fast pointers to find the middle, reverse the second half, then walk both halves together taking the maximum of the pair sums.",
+    "time": "O(n)",
+    "space": "O(1)"
   }
 }

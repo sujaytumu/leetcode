@@ -27,7 +27,7 @@ class ProblemApiTest {
     void listsSeededProblemsWithPaging() throws Exception {
         mvc.perform(get("/api/problems").param("size", "5"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(122))
+                .andExpect(jsonPath("$.totalElements").value(175))
                 .andExpect(jsonPath("$.totalPages").value(25))
                 .andExpect(jsonPath("$.items.length()").value(5))
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"))
@@ -124,7 +124,7 @@ class ProblemApiTest {
     void sortsByDifficultyAndKeepsStudyOrderWithinEachLevel() throws Exception {
         mvc.perform(get("/api/problems").param("sort", "difficulty").param("dir", "desc").param("size", "100"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(122))
+                .andExpect(jsonPath("$.totalElements").value(175))
                 .andExpect(jsonPath("$.items[0].difficulty").value("HARD"));
         mvc.perform(get("/api/problems").param("sort", "difficulty").param("dir", "asc").param("size", "3"))
                 .andExpect(jsonPath("$.items[0].difficulty").value("EASY"))
@@ -140,14 +140,14 @@ class ProblemApiTest {
         mvc.perform(get("/api/problems").param("sort", "title").param("size", "2"))
                 .andExpect(jsonPath("$.items[0].title").value("3Sum (Count Triplets)"));
         mvc.perform(get("/api/problems").param("sort", "number").param("dir", "desc").param("size", "1"))
-                .andExpect(jsonPath("$.items[0].number").value(122));
+                .andExpect(jsonPath("$.items[0].number").value(175));
     }
 
     @Test
     void sortingByAcceptanceStillReturnsEveryProblemWhenNobodyHasSubmitted() throws Exception {
         mvc.perform(get("/api/problems").param("sort", "acceptance").param("size", "100"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(122));
+                .andExpect(jsonPath("$.totalElements").value(175));
     }
 
     @Test

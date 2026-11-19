@@ -3468,6 +3468,1154 @@ PROBLEMS += [
 
 
 
+# ================================================================ batch 5: more problems (arrays, matrix, stack, search, DP)
+MAT_IN = "Line 1: `m`, the number of rows.\nNext `m` lines: the integers of each row, space separated."
+MAT_OUT = "The resulting matrix, one row per line, integers space separated."
+
+
+def b5_plus_one(d):
+    return [int(c) for c in str(int("".join(map(str, d))) + 1)]
+
+
+def b5_sorted_squares(a): return sorted(x * x for x in a)
+
+
+def b5_disappeared(a):
+    s = set(a)
+    return [i for i in range(1, len(a) + 1) if i not in s]
+
+
+def b5_rotate_array(a, k):
+    k %= len(a)
+    return a[len(a) - k:] + a[:len(a) - k] if k else list(a)
+
+
+def b5_sort_colors(a): return sorted(a)
+
+
+def b5_next_perm(a):
+    a = list(a)
+    i = len(a) - 2
+    while i >= 0 and a[i] >= a[i + 1]:
+        i -= 1
+    if i >= 0:
+        j = len(a) - 1
+        while a[j] <= a[i]:
+            j -= 1
+        a[i], a[j] = a[j], a[i]
+    a[i + 1:] = a[i + 1:][::-1]
+    return a
+
+
+def b5_find_dup(a):
+    slow = fast = a[0]
+    while True:
+        slow, fast = a[slow], a[a[fast]]
+        if slow == fast:
+            break
+    slow = a[0]
+    while slow != fast:
+        slow, fast = a[slow], a[fast]
+    return slow
+
+
+def b5_spiral(m):
+    out, top, bot, left, right = [], 0, len(m) - 1, 0, len(m[0]) - 1
+    while top <= bot and left <= right:
+        out += m[top][left:right + 1]
+        top += 1
+        out += [m[i][right] for i in range(top, bot + 1)]
+        right -= 1
+        if top <= bot:
+            out += m[bot][left:right + 1][::-1]
+            bot -= 1
+        if left <= right:
+            out += [m[i][left] for i in range(bot, top - 1, -1)]
+            left += 1
+    return out
+
+
+def b5_rotate_image(m): return [list(r) for r in zip(*m[::-1])]
+
+
+def b5_set_zeroes(m):
+    rows = {i for i, r in enumerate(m) for v in r if v == 0}
+    cols = {j for r in m for j, v in enumerate(r) if v == 0}
+    return [[0 if i in rows or j in cols else v for j, v in enumerate(r)] for i, r in enumerate(m)]
+
+
+def b5_pascal(n):
+    rows = [[1]]
+    for _ in range(n - 1):
+        p = rows[-1]
+        rows.append([1] + [p[i] + p[i + 1] for i in range(len(p) - 1)] + [1])
+    return rows
+
+
+def b5_three_sum_closest(a, target):
+    a = sorted(a)
+    best = None
+    for i in range(len(a) - 2):
+        l, r = i + 1, len(a) - 1
+        while l < r:
+            s = a[i] + a[l] + a[r]
+            if best is None or abs(s - target) < abs(best - target) or (abs(s - target) == abs(best - target) and s < best):
+                best = s
+            if s < target:
+                l += 1
+            elif s > target:
+                r -= 1
+            else:
+                return s
+    return best
+
+
+def b5_first_last(a, target):
+    lo = bisect.bisect_left(a, target)
+    hi = bisect.bisect_right(a, target)
+    return [lo, hi - 1] if lo < hi else [-1, -1]
+
+
+def b5_rpn(s):
+    st = []
+    for t in s.split():
+        if t in "+-*/" and len(t) == 1:
+            b, a = st.pop(), st.pop()
+            st.append(a + b if t == "+" else a - b if t == "-" else a * b if t == "*" else int(a / b))
+        else:
+            st.append(int(t))
+    return st[0]
+
+
+def b5_next_greater_ii(a):
+    n, out, st = len(a), [-1] * len(a), []
+    for i in range(2 * n):
+        while st and a[st[-1]] < a[i % n]:
+            out[st.pop()] = a[i % n]
+        if i < n:
+            st.append(i)
+    return out
+
+
+def b5_car_fleet(target, pos, speed):
+    from fractions import Fraction
+    fleets, cur = 0, Fraction(0)
+    for p, s in sorted(zip(pos, speed), reverse=True):
+        t = Fraction(target - p, s)
+        if t > cur:
+            fleets += 1
+            cur = t
+    return fleets
+
+
+def b5_sum_sub_mins(a):
+    n, mod = len(a), 10**9 + 7
+    left, right, st = [0] * n, [0] * n, []
+    for i in range(n):
+        while st and a[st[-1]] > a[i]:
+            st.pop()
+        left[i] = i - (st[-1] if st else -1)
+        st.append(i)
+    st = []
+    for i in range(n - 1, -1, -1):
+        while st and a[st[-1]] >= a[i]:
+            st.pop()
+        right[i] = (st[-1] if st else n) - i
+        st.append(i)
+    return sum(a[i] * left[i] * right[i] for i in range(n)) % mod
+
+
+def b5_search_matrix(m, target):
+    flat = [v for r in m for v in r]
+    i = bisect.bisect_left(flat, target)
+    return i < len(flat) and flat[i] == target
+
+
+def b5_word_break(s, words):
+    ws = set(words.split())
+    ok = [True] + [False] * len(s)
+    for i in range(1, len(s) + 1):
+        ok[i] = any(ok[j] and s[j:i] in ws for j in range(i))
+    return ok[len(s)]
+
+
+def b5_pal_substrings(s):
+    cnt = 0
+    for c in range(2 * len(s) - 1):
+        l, r = c // 2, c // 2 + c % 2
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            cnt += 1
+            l -= 1
+            r += 1
+    return cnt
+
+
+def b5_target_sum(a, target):
+    ways = {0: 1}
+    for x in a:
+        nxt = collections.defaultdict(int)
+        for s, c in ways.items():
+            nxt[s + x] += c
+            nxt[s - x] += c
+        ways = nxt
+    return ways.get(target, 0)
+
+
+def b5_delete_earn(a):
+    pts = collections.Counter(a)
+    take = skip = 0
+    prev = None
+    for v in sorted(pts):
+        if prev is not None and v == prev + 1:
+            take, skip = skip + v * pts[v], max(take, skip)
+        else:
+            take, skip = max(take, skip) + v * pts[v], max(take, skip)
+        prev = v
+    return max(take, skip)
+
+
+def b5_cooldown(p):
+    hold, sold, rest = -10**9, 0, 0
+    for x in p:
+        hold, sold, rest = max(hold, rest - x), hold + x, max(rest, sold)
+    return max(sold, rest)
+
+
+def b5_distinct_subseq(s, t):
+    dp = [1] + [0] * len(t)
+    for c in s:
+        for j in range(len(t), 0, -1):
+            if t[j - 1] == c:
+                dp[j] += dp[j - 1]
+    return dp[len(t)]
+
+
+def b5_regex(s, p):
+    memo = {}
+
+    def go(i, j):
+        if (i, j) in memo:
+            return memo[(i, j)]
+        if j == len(p):
+            res = i == len(s)
+        else:
+            first = i < len(s) and p[j] in (s[i], ".")
+            if j + 1 < len(p) and p[j + 1] == "*":
+                res = go(i, j + 2) or (first and go(i + 1, j))
+            else:
+                res = first and go(i + 1, j + 1)
+        memo[(i, j)] = res
+        return res
+    return go(0, 0)
+
+
+def b5_burst(a):
+    a = [1] + list(a) + [1]
+    n = len(a)
+    dp = [[0] * n for _ in range(n)]
+    for length in range(2, n):
+        for l in range(n - length):
+            r = l + length
+            dp[l][r] = max(dp[l][k] + dp[k][r] + a[l] * a[k] * a[r] for k in range(l + 1, r))
+    return dp[0][n - 1]
+
+
+def b5_stock3(p):
+    b1 = b2 = -10**9
+    s1 = s2 = 0
+    for x in p:
+        b1 = max(b1, -x)
+        s1 = max(s1, b1 + x)
+        b2 = max(b2, s1 - x)
+        s2 = max(s2, b2 + x)
+    return s2
+
+
+def b5_falling_path(m):
+    row = list(m[0])
+    for r in m[1:]:
+        row = [r[j] + min(row[max(0, j - 1):j + 2]) for j in range(len(r))]
+    return min(row)
+
+
+def b5_combo_count(cands, target):
+    ways = [1] + [0] * target
+    for c in cands:
+        for t in range(c, target + 1):
+            ways[t] += ways[t - c]
+    return ways[target]
+
+
+def b5_network_delay(times, n, k):
+    dist = {i: math.inf for i in range(1, n + 1)}
+    dist[k] = 0
+    heap = [(0, k)]
+    adj = collections.defaultdict(list)
+    for u, v, w in times:
+        adj[u].append((v, w))
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue
+        for v, w in adj[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    m = max(dist.values())
+    return -1 if m == math.inf else m
+
+
+def b5_provinces(g):
+    n, seen, cnt = len(g), set(), 0
+    for s in range(n):
+        if s in seen:
+            continue
+        cnt += 1
+        stack = [s]
+        seen.add(s)
+        while stack:
+            u = stack.pop()
+            for v in range(n):
+                if g[u][v] and v not in seen:
+                    seen.add(v)
+                    stack.append(v)
+    return cnt
+
+
+def b5_redundant(edges):
+    parent = list(range(len(edges) + 2))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for u, v in edges:
+        ru, rv = find(u), find(v)
+        if ru == rv:
+            return [u, v]
+        parent[ru] = rv
+
+
+def b5_min_connect(points):
+    n = len(points)
+    dist = [math.inf] * n
+    dist[0] = 0
+    used = [False] * n
+    total = 0
+    for _ in range(n):
+        u = min((i for i in range(n) if not used[i]), key=lambda i: dist[i])
+        used[u] = True
+        total += dist[u]
+        for v in range(n):
+            if not used[v]:
+                dist[v] = min(dist[v], abs(points[u][0] - points[v][0]) + abs(points[u][1] - points[v][1]))
+    return total
+
+
+def b5_arrows(points):
+    pts = sorted(points, key=lambda p: p[1])
+    arrows, end = 0, -math.inf
+    for a, b in pts:
+        if a > end:
+            arrows += 1
+            end = b
+    return arrows
+
+
+def b5_flowers(bed, n):
+    bed = [0] + list(bed) + [0]
+    for i in range(1, len(bed) - 1):
+        if bed[i - 1] == bed[i] == bed[i + 1] == 0:
+            bed[i] = 1
+            n -= 1
+    return n <= 0
+
+
+def b5_lemonade(bills):
+    five = ten = 0
+    for b in bills:
+        if b == 5:
+            five += 1
+        elif b == 10:
+            if not five:
+                return False
+            five -= 1
+            ten += 1
+        else:
+            if ten and five:
+                ten -= 1
+                five -= 1
+            elif five >= 3:
+                five -= 3
+            else:
+                return False
+    return True
+
+
+def b5_task_scheduler(tasks, n):
+    cnt = collections.Counter(tasks)
+    mx = max(cnt.values())
+    ties = sum(1 for v in cnt.values() if v == mx)
+    return max(len(tasks), (mx - 1) * (n + 1) + ties)
+
+
+def b5_hamming(x, y): return bin(x ^ y).count("1")
+
+
+def b5_range_and(l, r):
+    shift = 0
+    while l != r:
+        l >>= 1
+        r >>= 1
+        shift += 1
+    return l << shift
+
+
+def b5_ugly(n):
+    u, i2, i3, i5 = [1], 0, 0, 0
+    while len(u) < n:
+        nxt = min(u[i2] * 2, u[i3] * 3, u[i5] * 5)
+        u.append(nxt)
+        if nxt == u[i2] * 2: i2 += 1
+        if nxt == u[i3] * 3: i3 += 1
+        if nxt == u[i5] * 5: i5 += 1
+    return u[-1]
+
+
+# ---- trees / lists
+def b5_subtree(t, s):
+    def same(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)
+
+    def go(a, b):
+        return a is not None and (same(a, b) or go(a.left, b) or go(a.right, b))
+    sub = tok2tree(s)
+    return go(tok2tree(t), sub) if sub is not None else True
+
+
+def b5_level_order(t):
+    root = tok2tree(t)
+    out, level = [], [root] if root else []
+    while level:
+        out.append([n.val for n in level])
+        level = [c for n in level for c in (n.left, n.right) if c]
+    return out
+
+
+def b5_min_depth(t):
+    def d(n):
+        if n is None:
+            return 0
+        if n.left is None:
+            return 1 + d(n.right)
+        if n.right is None:
+            return 1 + d(n.left)
+        return 1 + min(d(n.left), d(n.right))
+    return d(tok2tree(t))
+
+
+def b5_root_leaf_numbers(t):
+    def go(n, cur):
+        if n is None:
+            return 0
+        cur = cur * 10 + n.val
+        if n.left is None and n.right is None:
+            return cur
+        return go(n.left, cur) + go(n.right, cur)
+    return go(tok2tree(t), 0)
+
+
+def b5_rob_tree(t):
+    def go(n):
+        if n is None:
+            return 0, 0
+        lt, ls = go(n.left)
+        rt, rs = go(n.right)
+        take = n.val + ls + rs
+        skip = max(lt, ls) + max(rt, rs)
+        return take, skip
+    return max(go(tok2tree(t)))
+
+
+def b5_path_sum3(t, target):
+    def from_node(n, rem):
+        if n is None:
+            return 0
+        return (n.val == rem) + from_node(n.left, rem - n.val) + from_node(n.right, rem - n.val)
+
+    def go(n):
+        return 0 if n is None else from_node(n, target) + go(n.left) + go(n.right)
+    return go(tok2tree(t))
+
+
+def b5_build_tree(pre, ino):
+    pos = {v: i for i, v in enumerate(ino)}
+    it = iter(pre)
+
+    def build(lo, hi):
+        if lo > hi:
+            return None
+        v = next(it)
+        node = TN(v)
+        node.left = build(lo, pos[v] - 1)
+        node.right = build(pos[v] + 1, hi)
+        return node
+    return tree2tok(build(0, len(ino) - 1))
+
+
+def b5_remove_elements(a, v): return [x for x in a if x != v]
+
+
+def b5_rotate_list(a, k):
+    if not a:
+        return []
+    k %= len(a)
+    return a[len(a) - k:] + a[:len(a) - k]
+
+
+def b5_partition_list(a, x): return [v for v in a if v < x] + [v for v in a if v >= x]
+
+
+def b5_dedup_all(a):
+    c = collections.Counter(a)
+    return [v for v in a if c[v] == 1]
+
+
+def b5_reverse_between(a, l, r): return a[:l - 1] + a[l - 1:r][::-1] + a[r:]
+
+
+def b5_twin_sum(a): return max(a[i] + a[len(a) - 1 - i] for i in range(len(a) // 2))
+
+
+# ---- case generators for batch 5
+def b5_distinct_tree(m):
+    """Random binary tree with m distinct values (level-order tokens)."""
+    tok = rand_tree(m)
+    root = tok2tree(tok)
+    vals = iter(rng.sample(range(-50, 100), m))
+    stack = [root] if root else []
+    while stack:
+        n = stack.pop()
+        n.val = next(vals)
+        stack += [c for c in (n.left, n.right) if c]
+    return tree2tok(root)
+
+
+def b5_pre_in(tok):
+    root = tok2tree(tok)
+    pre, ino = [], []
+
+    def go(n):
+        if n:
+            pre.append(n.val)
+            go(n.left)
+            ino.append(n.val)
+            go(n.right)
+    go(root)
+    return pre, ino
+
+
+def b5_matrix(m, n, lo, hi): return [[rng.randint(lo, hi) for _ in range(n)] for _ in range(m)]
+
+
+def b5_c_plus_one():
+    cases = [[1, 2, 3], [4, 3, 2, 1], [9], [9, 9, 9], [0], [1, 9, 9], [8, 9, 9, 9]]
+    for n in (5, 20, 60, 100):
+        cases.append([rng.randint(1, 9)] + [rng.randint(0, 9) for _ in range(n - 1)])
+    return cases + [[9] * 50]
+
+
+def b5_c_squares():
+    return [[-4, -1, 0, 3, 10], [-7, -3, 2, 3, 11], [0], [-5], [-3, -3, 3, 3]] + \
+        [sorted(rng.randint(-100, 100) for _ in range(n)) for n in (5, 20, 100, 500, 1000)]
+
+
+def b5_c_disappeared():
+    cases = [[4, 3, 2, 7, 8, 2, 3, 1], [1, 1], [2, 2], [1, 1, 1, 1]]
+    for n in (6, 15, 60, 300, 1000):
+        a = [rng.randint(1, n) for _ in range(n)]
+        a[0] = a[1]
+        if len(set(a)) == n:
+            a[0] = a[1]
+        cases.append(a)
+    return cases
+
+
+def b5_c_rotate_array():
+    cases = [([1, 2, 3, 4, 5, 6, 7], 3), ([-1, -100, 3, 99], 2), ([1], 0), ([1, 2], 5), ([1, 2, 3], 3), ([1, 2, 3], 0)]
+    for n in (5, 12, 60, 300, 1000):
+        cases.append((rand_arr(n, -1000, 1000), rng.randint(0, 100000)))
+    return cases
+
+
+def b5_c_sort_colors():
+    return [[2, 0, 2, 1, 1, 0], [2, 0, 1], [0], [1], [2, 2, 2], [1, 0]] + [rand_arr(n, 0, 2) for n in (5, 20, 100, 300)]
+
+
+def b5_c_next_perm():
+    cases = [[1, 2, 3], [3, 2, 1], [1, 1, 5], [1], [1, 3, 2], [2, 3, 1], [1, 5, 1], [5, 4, 7, 5, 3, 2]]
+    for n in (4, 8, 20, 100):
+        cases.append(rand_arr(n, 0, 20))
+    return cases + [sorted(rand_arr(30, 0, 100))]
+
+
+def b5_dup_case(n, c=1):
+    d = rng.randint(1, n)
+    others = [v for v in range(1, n + 1) if v != d]
+    removed = set(rng.sample(others, min(c - 1, len(others))))
+    arr = [v for v in range(1, n + 1) if v not in removed] + [d] * c
+    rng.shuffle(arr)
+    return arr
+
+
+def b5_c_find_dup():
+    return [[1, 3, 4, 2, 2], [3, 1, 3, 4, 2], [3, 3, 3, 3, 3], [1, 1], [2, 2, 2], [1, 4, 4, 2, 4]] + \
+        [b5_dup_case(n, c) for n, c in ((5, 2), (10, 1), (30, 3), (100, 1), (300, 5), (1000, 1))]
+
+
+def b5_c_spiral():
+    return [[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]], [[7]], [[1, 2, 3]], [[1], [2], [3]],
+            [[1, 2], [3, 4]]] + [b5_matrix(m, n, -50, 50) for m, n in ((4, 4), (5, 3), (3, 7), (10, 10), (1, 9), (8, 1))]
+
+
+def b5_c_rotate_image():
+    return [[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[5, 1, 9, 11], [2, 4, 8, 10], [13, 3, 6, 7], [15, 14, 12, 16]], [[1]], [[1, 2], [3, 4]]] + \
+        [b5_matrix(n, n, -100, 100) for n in (5, 6, 10, 20)]
+
+
+def b5_c_set_zeroes():
+    cases = [[[1, 1, 1], [1, 0, 1], [1, 1, 1]], [[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]], [[1]], [[0]], [[1, 2], [3, 4]]]
+    for m, n in ((4, 4), (5, 6), (8, 3), (10, 10)):
+        cases.append([[rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) if rng.random() < 0.9 else 0 for _ in range(n)] for _ in range(m)])
+    return cases
+
+
+def b5_c_three_closest():
+    cases = [([-1, 2, 1, -4], 1), ([0, 0, 0], 1), ([1, 1, 1, 0], -100), ([1, 2, 5, 10, 11], 12), ([-3, -2, -5, 3, -4], -1)]
+    for n in (5, 10, 30, 100, 300):
+        cases.append((rand_arr(n, -1000, 1000), rng.randint(-3000, 3000)))
+    return cases
+
+
+def b5_c_first_last():
+    cases = [([5, 7, 7, 8, 8, 10], 8), ([5, 7, 7, 8, 8, 10], 6), ([1], 1), ([2, 2], 2), ([1, 2, 3], 4), ([1, 1, 1, 1], 1)]
+    for n in (8, 20, 100, 500, 1000):
+        a = sorted(rand_arr(n, 0, n // 3 + 2))
+        cases.append((a, rng.choice(a)))
+        cases.append((a, n))
+    return cases
+
+
+def b5_rand_rpn():
+    """Random valid RPN expression whose divisions never divide by zero."""
+    def build(depth):
+        if depth == 0 or rng.random() < 0.25:
+            return str(rng.randint(-20, 20))
+        a, b = build(depth - 1), build(depth - 1)
+        return f"{a} {b} {rng.choice('+-*/')}"
+    while True:
+        e = build(rng.randint(1, 4))
+        try:
+            b5_rpn(e)
+            return e
+        except ZeroDivisionError:
+            continue
+
+
+def b5_c_rpn():
+    return ["2 1 + 3 *", "4 13 5 / +", "10 6 9 3 + -11 * / * 17 + 5 +", "7", "-7 2 /", "7 -2 /", "-3 4 *", "3 -4 +"] + \
+        [b5_rand_rpn() for _ in range(5)]
+
+
+def b5_c_next_greater_ii():
+    return [[1, 2, 1], [1, 2, 3, 4, 3], [5], [2, 2, 2], [5, 4, 3, 2, 1]] + [rand_arr(n, -50, 50) for n in (6, 15, 60, 300, 1000)]
+
+
+def b5_c_car_fleet():
+    cases = [(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]), (10, [3], [3]), (100, [0, 2, 4], [4, 2, 1]), (10, [6, 8], [3, 2])]
+    for n in (5, 12, 40, 200):
+        target = rng.randint(n + 5, 1000)
+        pos = rng.sample(range(0, target), n)
+        cases.append((target, pos, [rng.randint(1, 20) for _ in range(n)]))
+    return cases
+
+
+def b5_c_sum_sub_mins():
+    return [[3, 1, 2, 4], [11, 81, 94, 43, 3], [1], [2, 2, 2], [5, 4, 3, 2, 1]] + \
+        [rand_arr(n, 1, 30000) for n in (6, 15, 60, 300, 1000)] + [[30000] * 100]
+
+
+def b5_c_search_matrix():
+    cases = [([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3), ([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 13), ([[1]], 1), ([[1]], 2),
+             ([[1, 3]], 3), ([[1], [3]], 3)]
+    for m, n in ((3, 4), (6, 6), (10, 8), (30, 30)):
+        vals = sorted(rng.sample(range(-10**4, 10**4), m * n))
+        mat = [vals[i * n:(i + 1) * n] for i in range(m)]
+        cases.append((mat, rng.choice(vals)))
+        cases.append((mat, rng.randint(-10**4, 10**4) | 1))
+    return cases
+
+
+def b5_c_word_break():
+    cases = [("leetcode", "leet code"), ("applepenapple", "apple pen"), ("catsandog", "cats dog sand and cat"), ("a", "a"), ("ab", "a"),
+             ("aaaaaaa", "aaaa aaa"), ("cars", "car ca rs")]
+    for _ in range(4):
+        words = sorted({"".join(rng.choices("ab", k=rng.randint(1, 4))) for _ in range(rng.randint(2, 6))})
+        s = "".join(rng.choice(words) for _ in range(rng.randint(2, 10)))
+        cases.append((s, " ".join(words)))
+        t = list(s)
+        t[rng.randrange(len(t))] = "c"
+        cases.append(("".join(t), " ".join(words)))
+    return cases
+
+
+def b5_c_pal_sub():
+    return ["abc", "aaa", "a", "abba", "aaaaa", "abacdfgdcaba"] + ["".join(rng.choices("ab", k=n)) for n in (6, 12, 30, 80)] + \
+        ["".join(rng.choices("abcdefghij", k=n)) for n in (50, 200)] + ["a" * 150]
+
+
+def b5_c_target_sum():
+    cases = [([1, 1, 1, 1, 1], 3), ([1], 1), ([1], 2), ([0, 0, 0, 0, 0], 0), ([1, 0], 1)]
+    for n in (5, 8, 12, 16, 20):
+        a = rand_arr(n, 0, 12)
+        cases.append((a, rng.choice([sum(a), sum(a) - 2 * rng.choice(a), 0, rng.randint(-sum(a) - 3, sum(a) + 3)])))
+    return cases
+
+
+def b5_c_delete_earn():
+    return [[3, 4, 2], [2, 2, 3, 3, 3, 4], [1], [5, 5, 5], [1, 2, 3, 4, 5, 6]] + \
+        [rand_arr(n, 1, k) for n, k in ((6, 5), (15, 10), (60, 30), (300, 100), (1000, 1000), (1000, 20))]
+
+
+def b5_c_cooldown():
+    return [[1, 2, 3, 0, 2], [1], [1, 2], [2, 1], [6, 1, 3, 2, 4, 7], [5, 4, 3, 2, 1]] + [rand_arr(n, 0, 100) for n in (6, 15, 60, 300, 1000)]
+
+
+def b5_c_distinct_subseq():
+    cases = [("rabbbit", "rabbit"), ("babgbag", "bag"), ("a", "a"), ("a", "b"), ("aaa", "aa"), ("abc", "abcd"), ("ddd", "dd")]
+    for n, m in ((8, 3), (14, 4), (20, 5), (26, 6), (30, 8)):
+        while True:
+            s = "".join(rng.choices("abc", k=n))
+            t = "".join(rng.choices("abc", k=m))
+            if b5_distinct_subseq(s, t) < 2**31:
+                cases.append((s, t))
+                break
+    return cases
+
+
+def b5_rand_pattern(n):
+    out = []
+    for _ in range(n):
+        c = rng.choice("abc.")
+        out.append(c + ("*" if rng.random() < 0.4 else ""))
+    return "".join(out)
+
+
+def b5_c_regex():
+    cases = [("aa", "a"), ("aa", "a*"), ("ab", ".*"), ("aab", "c*a*b"), ("mississippi", "mis*is*p*."), ("a", "ab*"), ("ab", ".*c"),
+             ("aaa", "a*a"), ("abcd", "d*")]
+    for _ in range(9):
+        p = b5_rand_pattern(rng.randint(2, 6))
+        s = "".join(rng.choices("abc", k=rng.randint(1, 8)))
+        cases.append((s, p))
+    return cases
+
+
+def b5_c_burst():
+    return [[3, 1, 5, 8], [1, 5], [7], [0, 0], [9, 76, 64, 21], [3, 1, 5, 8, 2, 4]] + [rand_arr(n, 0, 100) for n in (6, 10, 20, 35, 50)]
+
+
+def b5_c_stock3():
+    return [[3, 3, 5, 0, 0, 3, 1, 4], [1, 2, 3, 4, 5], [7, 6, 4, 3, 1], [1], [1, 2, 4, 2, 5, 7, 2, 4, 9, 0]] + \
+        [rand_arr(n, 0, 100) for n in (6, 15, 60, 300, 1000)]
+
+
+def b5_c_falling():
+    return [[[2, 1, 3], [6, 5, 4], [7, 8, 9]], [[-19, 57], [-40, -5]], [[5]], [[1, 2], [3, 4]]] + [b5_matrix(n, n, -100, 100) for n in (4, 6, 10, 30, 60)]
+
+
+def b5_c_combo_count():
+    cases = [([2, 3, 6, 7], 7), ([2, 3, 5], 8), ([2], 1), ([1], 2), ([3, 5, 7], 4)]
+    for n, t in ((3, 15), (4, 40), (5, 100), (6, 200), (4, 300)):
+        cases.append((rng.sample(range(1, 40), n), t))
+    return cases
+
+
+def b5_c_network():
+    cases = [([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2), ([[1, 2, 1]], 2, 1), ([[1, 2, 1]], 2, 2), ([[1, 2, 5], [1, 3, 2], [3, 2, 1]], 3, 1)]
+    for n, m in ((5, 8), (8, 12), (15, 40), (40, 120), (80, 300)):
+        edges = [[rng.randint(1, n), rng.randint(1, n), rng.randint(1, 30)] for _ in range(m)]
+        edges = [e for e in edges if e[0] != e[1]] or [[1, 2, 3]]
+        cases.append((edges, n, rng.randint(1, n)))
+    return cases
+
+
+def b5_c_provinces():
+    def sym(n, p):
+        g = [[1 if i == j else 0 for j in range(n)] for i in range(n)]
+        for i in range(n):
+            for j in range(i + 1, n):
+                if rng.random() < p:
+                    g[i][j] = g[j][i] = 1
+        return g
+    return [[[1, 1, 0], [1, 1, 0], [0, 0, 1]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[1]], [[1, 1], [1, 1]]] + \
+        [sym(n, p) for n, p in ((5, 0.2), (8, 0.15), (12, 0.1), (20, 0.08), (40, 0.04))]
+
+
+def b5_c_redundant():
+    cases = [[[1, 2], [1, 3], [2, 3]], [[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]], [[1, 2], [1, 2]]]
+    for n in (4, 7, 12, 30, 100):
+        edges = [[rng.randint(1, i - 1), i] for i in range(2, n + 1)]
+        extra = rng.sample(range(1, n + 1), 2)
+        edges.append(extra)
+        rng.shuffle(edges)
+        edges = [rng.sample(e, 2) for e in edges]
+        cases.append(edges)
+    return cases
+
+
+def b5_c_min_connect():
+    cases = [[[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]], [[3, 12], [-2, 5], [-4, 1]], [[0, 0]], [[0, 0], [1, 1]]]
+    for n in (5, 9, 20, 60, 150):
+        cases.append(rng.sample([[x, y] for x in range(-30, 30) for y in range(-30, 30)], n))
+    return cases
+
+
+def b5_c_arrows():
+    cases = [[[10, 16], [2, 8], [1, 6], [7, 12]], [[1, 2], [3, 4], [5, 6], [7, 8]], [[1, 2], [2, 3], [3, 4], [4, 5]], [[1, 5]],
+             [[-2147483648, 2147483647]]]
+    for n in (5, 12, 40, 150, 500):
+        row = []
+        for _ in range(n):
+            a = rng.randint(-100, 100)
+            row.append([a, a + rng.randint(0, 40)])
+        cases.append(row)
+    return cases
+
+
+def b5_c_flowers():
+    cases = [([1, 0, 0, 0, 1], 1), ([1, 0, 0, 0, 1], 2), ([0], 1), ([1], 0), ([0, 0, 0, 0, 0], 3), ([0, 0, 0, 0, 0], 4), ([1, 0, 1, 0, 1], 0)]
+    for n in (8, 20, 100):
+        bed, i = [], 0
+        while len(bed) < n:
+            bed.append(1 if (not bed or bed[-1] == 0) and rng.random() < 0.35 else 0)
+        cases.append((bed, rng.randint(0, n // 3)))
+        cases.append((bed, n // 2))
+    return cases
+
+
+def b5_c_lemonade():
+    cases = [[5, 5, 5, 10, 20], [5, 5, 10, 10, 20], [5], [10], [5, 10, 5, 20], [5, 5, 5, 5, 20, 20, 5, 5, 20, 5], [20, 5]]
+    for n in (6, 15, 60, 300):
+        cases.append([rng.choices([5, 10, 20], weights=[6, 2, 2])[0] for _ in range(n)])
+        cases.append([5] * (n // 2) + [rng.choice([5, 10, 20]) for _ in range(n // 2)])
+    return cases
+
+
+def b5_c_tasks():
+    cases = [([1, 1, 1, 2, 2, 2], 2), ([1, 1, 1, 2, 2, 2], 0), ([1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7], 2), ([1], 5), ([1, 2, 3, 4], 3)]
+    for n, k, lab in ((8, 2, 3), (20, 3, 4), (60, 5, 6), (200, 10, 10), (300, 50, 26)):
+        cases.append(([rng.randint(1, lab) for _ in range(n)], k))
+    return cases
+
+
+def b5_c_hamming():
+    return [(1, 4), (3, 1), (0, 0), (0, 2**31 - 1), (2**31 - 1, 2**31 - 1), (93, 73), (10**9, 1)] + \
+        [(rng.randint(0, 2**31 - 1), rng.randint(0, 2**31 - 1)) for _ in range(4)]
+
+
+def b5_c_range_and():
+    return [(5, 7), (0, 0), (1, 2147483647), (6, 6), (12, 15), (0, 1), (2147483646, 2147483647)] + \
+        [tuple(sorted((rng.randint(0, 10**9), rng.randint(0, 10**9)))) for _ in range(3)] + [(rng.randint(0, 100), rng.randint(100, 200))]
+
+
+def b5_c_ugly():
+    return [10, 1, 2, 11, 15, 50, 100, 500, 1000, 1500, 1690, 7]
+
+
+def b5_c_subtree():
+    cases = [([3, 4, 5, 1, 2], [4, 1, 2]), ([3, 4, 5, 1, 2, None, None, None, None, 0], [4, 1, 2]), ([1], [1]), ([1, 1], [1]), ([1, 2, 3], [2])]
+    for m in (6, 12, 30, 80):
+        t = rand_tree(m, 0, 6)
+        root = tok2tree(t)
+        nodes, stack = [], [root]
+        while stack:
+            n = stack.pop()
+            nodes.append(n)
+            stack += [c for c in (n.left, n.right) if c]
+        cases.append((t, tree2tok(rng.choice(nodes))))
+        cases.append((t, rand_tree(rng.randint(1, max(1, m // 3)), 0, 6)))
+    return cases
+
+
+def b5_c_level():
+    return [[3, 9, 20, None, None, 15, 7], [1], [], [1, 2, 3, 4, None, None, 5], [1, None, 2, None, 3]] + [rand_tree(m) for m in (6, 14, 30, 70, 100)]
+
+
+def b5_c_min_depth():
+    return [[3, 9, 20, None, None, 15, 7], [2, None, 3, None, 4, None, 5, None, 6], [], [1], [1, 2]] + [rand_tree(m) for m in (6, 14, 30, 70, 100)]
+
+
+def b5_c_root_leaf():
+    cases = [[1, 2, 3], [4, 9, 0, 5, 1], [0], [1, 0], [9, 9, 9]]
+    for m in (6, 12, 25, 60, 100):
+        while True:
+            t = rand_tree(m, 0, 9)
+            if b5_root_leaf_numbers(t) < 2**31:
+                cases.append(t)
+                break
+    return cases
+
+
+def b5_c_rob_tree():
+    return [[3, 2, 3, None, 3, None, 1], [3, 4, 5, 1, 3, None, 1], [], [7], [1, 2]] + [rand_tree(m, 0, 100) for m in (6, 14, 30, 70, 100)]
+
+
+def b5_c_path_sum3():
+    cases = [([10, 5, -3, 3, 2, None, 11, 3, -2, None, 1], 8), ([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1], 22), ([], 0), ([1], 1),
+             ([1, 2], 3), ([1, -1, 1, -1], 0)]
+    for m in (6, 14, 30, 70, 100):
+        t = rand_tree(m, -4, 8)
+        cases.append((t, rng.randint(-4, 14)))
+    return cases
+
+
+def b5_c_build():
+    cases = [([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]), ([-1], [-1])]
+    for m in (2, 3, 5, 9, 20, 50, 100):
+        cases.append(b5_pre_in(b5_distinct_tree(m)))
+    return cases
+
+
+def b5_c_remove_elems():
+    cases = [([1, 2, 6, 3, 4, 5, 6], 6), ([], 1), ([7, 7, 7, 7], 7), ([1, 2], 3), ([5], 5)]
+    for n in (6, 15, 50, 100):
+        cases.append((rand_list(n, 0, 6), rng.randint(0, 6)))
+    return cases
+
+
+def b5_c_rotate_list():
+    cases = [([1, 2, 3, 4, 5], 2), ([0, 1, 2], 4), ([], 3), ([1], 99), ([1, 2], 0), ([1, 2, 3], 3)]
+    for n in (5, 12, 40, 100):
+        cases.append((rand_list(n, -50, 50), rng.randint(0, 10**9)))
+    return cases
+
+
+def b5_c_partition():
+    cases = [([1, 4, 3, 2, 5, 2], 3), ([2, 1], 2), ([], 1), ([1], 0), ([5, 4, 3], 6), ([5, 4, 3], 0)]
+    for n in (6, 15, 50, 100):
+        cases.append((rand_list(n, -20, 20), rng.randint(-20, 20)))
+    return cases
+
+
+def b5_c_dedup_all():
+    cases = [[1, 2, 3, 3, 4, 4, 5], [1, 1, 1, 2, 3], [], [1], [1, 1], [1, 2, 3]]
+    for n in (6, 15, 50, 100):
+        cases.append(rand_sorted_list(n, 0, n // 2 + 1))
+    return cases
+
+
+def b5_c_rev_between():
+    cases = [([1, 2, 3, 4, 5], 2, 4), ([5], 1, 1), ([3, 5], 1, 2), ([1, 2, 3], 2, 2), ([1, 2, 3, 4], 1, 4)]
+    for n in (6, 12, 40, 100):
+        l = rng.randint(1, n)
+        cases.append((rand_list(n, -50, 50), l, rng.randint(l, n)))
+    return cases
+
+
+def b5_c_twin():
+    return [[5, 4, 2, 1], [4, 2, 2, 3], [1, 100000], [1, 1]] + [rand_list(n, 1, 10**5) for n in (4, 10, 30, 100, 100)]
+
+
+def _tri(n, lo=1): return list(range(lo, n + lo))
+
+
+PROBLEMS += [
+    mk("plus-one", "Plus One", "EASY", ["array", "math"], [("digits", "int[]")], "int[]", b5_plus_one, b5_c_plus_one(),
+       "A large non-negative integer is stored as an array of its decimal digits, most significant digit first. Add one to the number and return the digits of the result.",
+       "Line 1: `n`.\nLine 2: the `n` digits, space separated.", "The digits of the incremented number, space separated.",
+       ["`1 <= n <= 100`", "`0 <= digits[i] <= 9`", "No leading zeros, except the number 0 itself"]),
+    mk("squares-of-a-sorted-array", "Squares of a Sorted Array", "EASY", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "int[]",
+       b5_sorted_squares, b5_c_squares(),
+       "Given an integer array sorted in non-decreasing order, return an array of the squares of each number, also sorted in non-decreasing order. Try to beat `O(n log n)`.",
+       ARR_IN, "The sorted squares, space separated.", ["`1 <= n <= 1000`", "`-100 <= nums[i] <= 100`", "`nums` is sorted in non-decreasing order"]),
+    mk("find-all-numbers-disappeared-in-an-array", "Find All Numbers Disappeared in an Array", "EASY", ["array", "hash-table"], [("nums", "int[]")], "int[]",
+       b5_disappeared, b5_c_disappeared(),
+       "`nums` has `n` integers, each in the range `[1, n]`. Return, in ascending order, every number in `[1, n]` that does not appear in `nums`.",
+       ARR_IN, "The missing numbers in ascending order, space separated.", ["`2 <= n <= 1000`", "`1 <= nums[i] <= n`", "At least one number is missing"]),
+    mk("pascals-triangle", "Pascal's Triangle", "EASY", ["array", "dynamic-programming"], [("numRows", "int")], "int[][]", b5_pascal,
+       [5, 1, 2, 3, 6, 10, 15, 20, 30],
+       "Return the first `numRows` rows of Pascal's triangle. Each number is the sum of the two numbers directly above it, and each row starts and ends with `1`.",
+       "A single integer `numRows`.", "The rows of the triangle, one row per line.", ["`1 <= numRows <= 30`"]),
+    mk("rotate-array", "Rotate Array", "MEDIUM", ["array", "math", "two-pointers"], [("nums", "int[]"), ("k", "int")], "int[]", b5_rotate_array, b5_c_rotate_array(),
+       "Rotate the array to the right by `k` steps and return the rotated array. Try to do it in place with `O(1)` extra space.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The rotated array, space separated.",
+       ["`1 <= n <= 1000`", "`-1000 <= nums[i] <= 1000`", "`0 <= k <= 10^5`"]),
+    mk("sort-colors", "Sort Colors", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "int[]", b5_sort_colors, b5_c_sort_colors(),
+       "The array holds only `0`, `1` and `2` (red, white, blue). Sort it so equal numbers are adjacent in the order `0, 1, 2`, without a library sort. A one-pass solution with constant space exists.",
+       ARR_IN, "The sorted array, space separated.", ["`1 <= n <= 300`", "`nums[i]` is `0`, `1` or `2`"]),
+    mk("next-permutation", "Next Permutation", "MEDIUM", ["array", "two-pointers"], [("nums", "int[]")], "int[]", b5_next_perm, b5_c_next_perm(),
+       "Return the next lexicographically greater permutation of `nums`. If there is none (the array is in descending order), return the lowest possible order (ascending). Use `O(1)` extra space.",
+       ARR_IN, "The next permutation, space separated.", ["`1 <= n <= 100`", "`0 <= nums[i] <= 100`"]),
+    mk("find-the-duplicate-number", "Find the Duplicate Number", "MEDIUM", ["array", "two-pointers", "binary-search"], [("nums", "int[]")], "int",
+       b5_find_dup, b5_c_find_dup(),
+       "`nums` holds `n + 1` integers in the range `[1, n]`, and exactly one value is repeated (possibly several times). Return it without modifying the array and using only constant extra space.",
+       "Line 1: `n + 1`, the length of the array.\nLine 2: the integers, space separated.", "The repeated number.",
+       ["`1 <= n <= 1000`", "`nums.length == n + 1`", "Exactly one value appears more than once"]),
+    mk("spiral-matrix", "Spiral Matrix", "MEDIUM", ["matrix", "array"], [("matrix", "int[][]")], "int[]", b5_spiral, b5_c_spiral(),
+       "Return all elements of the `m x n` matrix in spiral order, starting at the top-left corner and going clockwise.", MAT_IN,
+       "The elements in spiral order, space separated.", ["`1 <= m, n <= 10`", "`-100 <= matrix[i][j] <= 100`"]),
+    mk("rotate-image", "Rotate Image", "MEDIUM", ["matrix", "array", "math"], [("matrix", "int[][]")], "int[][]", b5_rotate_image, b5_c_rotate_image(),
+       "Rotate the `n x n` matrix by 90 degrees clockwise and return it. Try to do it in place.", MAT_IN, MAT_OUT, ["`1 <= n <= 20`", "`-1000 <= matrix[i][j] <= 1000`"]),
+    mk("set-matrix-zeroes", "Set Matrix Zeroes", "MEDIUM", ["matrix", "array", "hash-table"], [("matrix", "int[][]")], "int[][]", b5_set_zeroes, b5_c_set_zeroes(),
+       "If an element of the `m x n` matrix is `0`, set its entire row and column to `0`. Return the matrix. An `O(1)` extra space solution exists.", MAT_IN, MAT_OUT,
+       ["`1 <= m, n <= 10`", "`-1000 <= matrix[i][j] <= 1000`"]),
+    mk("3sum-closest", "3Sum Closest", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]"), ("target", "int")], "int", b5_three_sum_closest, b5_c_three_closest(),
+       "Return the sum of three integers in `nums` that is closest to `target`. If two sums are equally close, return the smaller one.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "The closest sum.",
+       ["`3 <= n <= 300`", "`-1000 <= nums[i] <= 1000`", "`-10^4 <= target <= 10^4`"]),
+    mk("find-first-and-last-position-of-element-in-sorted-array", "Find First and Last Position of Element in Sorted Array", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]"), ("target", "int")], "int[]", b5_first_last, b5_c_first_last(),
+       "Given an array sorted in non-decreasing order, return the first and last index of `target` as `first last`, or `-1 -1` if it is absent. Use `O(log n)` time.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `target`.", "Two integers, space separated.",
+       ["`1 <= n <= 1000`", "`nums` is sorted in non-decreasing order"]),
+    mk("search-a-2d-matrix", "Search a 2D Matrix", "MEDIUM", ["matrix", "binary-search"], [("matrix", "int[][]"), ("target", "int")], "bool", b5_search_matrix, b5_c_search_matrix(),
+       "Each row of the matrix is sorted ascending and the first number of every row is greater than the last number of the previous row. Return `true` if `target` is in the matrix, in `O(log(m * n))` time.",
+       MAT_IN + "\nLast line: `target`.", "`true` or `false`.", ["`1 <= m, n <= 30`", "`-10^4 <= matrix[i][j], target <= 10^4`"]),
+    mk("evaluate-reverse-polish-notation", "Evaluate Reverse Polish Notation", "MEDIUM", ["stack", "math"], [("tokens", "str")], "int", b5_rpn, b5_c_rpn(),
+       "Evaluate an arithmetic expression written in reverse Polish notation. The operators are `+`, `-`, `*` and `/`, and division truncates toward zero. The expression is always valid and never divides by zero.",
+       "A single line: the tokens separated by single spaces.", "The value of the expression.",
+       ["`1 <= tokens.length <= 10^4`", "Each token is an operator or an integer in `[-200, 200]`", "The result fits in a 32-bit integer"]),
+    mk("next-greater-element-ii", "Next Greater Element II", "MEDIUM", ["array", "stack", "monotonic-stack"], [("nums", "int[]")], "int[]", b5_next_greater_ii, b5_c_next_greater_ii(),
+       "The array is circular. For every element, return the first strictly greater number found when scanning forward (wrapping around), or `-1` if there is none.",
+       ARR_IN, "One value per element, space separated.", ["`1 <= n <= 1000`", "`-10^9 <= nums[i] <= 10^9`"]),
+    mk("car-fleet", "Car Fleet", "MEDIUM", ["array", "stack", "sorting"], [("target", "int"), ("position", "int[]"), ("speed", "int[]")], "int", b5_car_fleet, b5_c_car_fleet(),
+       "Cars drive toward a destination `target` miles away on a one-lane road. A car can never pass another; it catches up and then drives at the slower car's speed, forming a fleet. Return the number of fleets that reach the destination.",
+       "Line 1: `target`.\nLines 2-3: `n` then the `n` starting positions.\nLines 4-5: `n` then the `n` speeds.", "The number of fleets.",
+       ["`1 <= n <= 200`", "`0 <= position[i] < target <= 1000`, all positions distinct", "`1 <= speed[i] <= 20`"]),
+    mk("sum-of-subarray-minimums", "Sum of Subarray Minimums", "MEDIUM", ["array", "stack", "monotonic-stack"], [("arr", "int[]")], "int", b5_sum_sub_mins, b5_c_sum_sub_mins(),
+       "Return the sum of `min(subarray)` over every contiguous subarray of `arr`, modulo `10^9 + 7`.", ARR_IN, "The sum modulo `10^9 + 7`.",
+       ["`1 <= n <= 1000`", "`1 <= arr[i] <= 30000`"]),
+    mk("word-break", "Word Break", "MEDIUM", ["string", "dynamic-programming", "hash-table"], [("s", "str"), ("wordDict", "str")], "bool", b5_word_break, b5_c_word_break(),
+       "Return `true` if `s` can be split into a sequence of one or more words from the dictionary. A word may be reused any number of times.",
+       "Line 1: `s`.\nLine 2: the dictionary words, separated by single spaces.", "`true` or `false`.",
+       ["`1 <= s.length <= 300`", "Lowercase English letters", "Dictionary words are non-empty and distinct"]),
+    mk("palindromic-substrings", "Palindromic Substrings", "MEDIUM", ["string", "dynamic-programming"], [("s", "str")], "int", b5_pal_substrings, b5_c_pal_sub(),
+       "Return how many substrings of `s` are palindromes. Substrings at different positions count separately even if their text is equal.",
+       "A single line containing `s`.", "The number of palindromic substrings.", ["`1 <= s.length <= 1000`", "Lowercase English letters"]),
+    mk("target-sum", "Target Sum", "MEDIUM", ["array", "dynamic-programming"], [("nums", "int[]"), ("target", "int")], "int", b5_target_sum, b5_c_target_sum(),
+       "Put a `+` or `-` in front of every number and add them up. Return the number of different sign assignments that evaluate to `target`.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "The number of ways.",
+       ["`1 <= n <= 20`", "`0 <= nums[i] <= 12`", "The answer fits in a 32-bit integer"]),
+    mk("delete-and-earn", "Delete and Earn", "MEDIUM", ["array", "dynamic-programming"], [("nums", "int[]")], "int", b5_delete_earn, b5_c_delete_earn(),
+       "In one move pick any `nums[i]`, earn `nums[i]` points and delete every element equal to `nums[i] - 1` or `nums[i] + 1`. Return the maximum points you can earn.",
+       ARR_IN, "The maximum points.", ["`1 <= n <= 1000`", "`1 <= nums[i] <= 1000`"]),
+    mk("best-time-to-buy-and-sell-stock-with-cooldown", "Best Time to Buy and Sell Stock with Cooldown", "MEDIUM", ["array", "dynamic-programming"],
+       [("prices", "int[]")], "int", b5_cooldown, b5_c_cooldown(),
+       "You may trade as often as you like, but after selling you cannot buy on the next day (a one-day cooldown), and you may hold at most one share. Return the maximum profit.",
+       ARR_IN, "The maximum profit.", ["`1 <= n <= 1000`", "`0 <= prices[i] <= 1000`"]),
+    mk("minimum-falling-path-sum", "Minimum Falling Path Sum", "MEDIUM", ["matrix", "dynamic-programming"], [("matrix", "int[][]")], "int", b5_falling_path, b5_c_falling(),
+       "A falling path starts at any cell in the top row and moves down one row at a time to the cell directly below or diagonally left or right. Return the minimum sum over all falling paths of the `n x n` matrix.",
+       MAT_IN, "The minimum falling path sum.", ["`1 <= n <= 60`", "`-100 <= matrix[i][j] <= 100`"]),
+    mk("combination-sum-count", "Combination Sum (Count)", "MEDIUM", ["array", "backtracking", "dynamic-programming"], [("candidates", "int[]"), ("target", "int")], "int",
+       b5_combo_count, b5_c_combo_count(),
+       "Given distinct positive integers `candidates`, count the combinations (order does not matter) that add up to `target`. Each candidate may be used any number of times.",
+       "Line 1: `n`.\nLine 2: `n` distinct integers.\nLine 3: `target`.", "The number of combinations.",
+       ["`1 <= n <= 6`", "`1 <= candidates[i] <= 40`", "`1 <= target <= 300`", "The answer fits in a 32-bit integer"]),
+    mk("distinct-subsequences", "Distinct Subsequences", "HARD", ["string", "dynamic-programming"], [("s", "str"), ("t", "str")], "int", b5_distinct_subseq, b5_c_distinct_subseq(),
+       "Return the number of distinct subsequences of `s` that equal `t`.", "Line 1: `s`.\nLine 2: `t`.", "The count.",
+       ["`1 <= s.length, t.length <= 30`", "Lowercase English letters", "The answer fits in a 32-bit integer"]),
+    mk("regular-expression-matching", "Regular Expression Matching", "HARD", ["string", "dynamic-programming"], [("s", "str"), ("p", "str")], "bool", b5_regex, b5_c_regex(),
+       "Implement matching with `.` (any single character) and `*` (zero or more of the preceding element). The match must cover the **entire** string `s`.",
+       "Line 1: `s`.\nLine 2: the pattern `p`.", "`true` or `false`.",
+       ["`1 <= s.length, p.length <= 20`", "`s` has only lowercase letters; `p` has lowercase letters, `.` and `*`", "Every `*` follows a letter or `.`"]),
+    mk("burst-balloons", "Burst Balloons", "HARD", ["array", "dynamic-programming"], [("nums", "int[]")], "int", b5_burst, b5_c_burst(),
+       "Bursting balloon `i` earns `nums[i-1] * nums[i] * nums[i+1]` coins, where out-of-range neighbours count as `1`. Burst all balloons in the best order and return the maximum coins.",
+       ARR_IN, "The maximum coins.", ["`1 <= n <= 50`", "`0 <= nums[i] <= 100`"]),
+    mk("best-time-to-buy-and-sell-stock-iii", "Best Time to Buy and Sell Stock III", "HARD", ["array", "dynamic-programming"], [("prices", "int[]")], "int", b5_stock3, b5_c_stock3(),
+       "You may complete at most two transactions, and must sell before buying again. Return the maximum profit.", ARR_IN, "The maximum profit.",
+       ["`1 <= n <= 1000`", "`0 <= prices[i] <= 100`"]),
+    mk("network-delay-time", "Network Delay Time", "MEDIUM", ["graph", "heap"], [("times", "int[][]"), ("n", "int"), ("k", "int")], "int", b5_network_delay, b5_c_network(),
+       "A signal is sent from node `k` of a directed, weighted network with nodes `1..n`. Each row `u v w` of `times` is an edge from `u` to `v` taking `w` time. Return the time for all nodes to receive the signal, or `-1` if some node never does.",
+       "Lines 1+: the number of edges, then one `u v w` row per edge.\nNext line: `n`.\nLast line: `k`.", "The minimum time, or `-1`.",
+       ["`1 <= n <= 100`", "`1 <= edges <= 6000`", "`1 <= w <= 100`"]),
+    mk("number-of-provinces", "Number of Provinces", "MEDIUM", ["graph", "union-find", "dfs"], [("isConnected", "int[][]")], "int", b5_provinces, b5_c_provinces(),
+       "`isConnected[i][j] = 1` means cities `i` and `j` are directly connected. A province is a group of cities connected directly or indirectly. Return the number of provinces.",
+       MAT_IN, "The number of provinces.", ["`1 <= n <= 200`", "`isConnected[i][i] = 1` and the matrix is symmetric"]),
+    mk("redundant-connection", "Redundant Connection", "MEDIUM", ["graph", "union-find"], [("edges", "int[][]")], "int[]", b5_redundant, b5_c_redundant(),
+       "A tree with `n` nodes (labelled `1..n`) had one extra edge added, giving `n` edges in total. Return an edge that can be removed so the graph is a tree again. If several qualify, return the one that appears **last** in the input.",
+       "Line 1: `n`, the number of edges.\nNext `n` lines: `a b`, one edge per line.", "The edge to remove, as `a b` exactly as it appears in the input.",
+       ["`3 <= n <= 100`", "The graph is connected and has exactly one cycle"]),
+    mk("min-cost-to-connect-all-points", "Min Cost to Connect All Points", "MEDIUM", ["graph", "union-find", "heap"], [("points", "int[][]")], "int", b5_min_connect, b5_c_min_connect(),
+       "Connect all points on a plane using the cheapest set of segments, where a segment between two points costs their Manhattan distance. Return the minimum total cost so that every pair of points is connected by exactly one simple path.",
+       "Line 1: `n`.\nNext `n` lines: `x y`.", "The minimum cost.", ["`1 <= n <= 150`", "`-30 <= x, y < 30`", "All points are distinct"]),
+    mk("minimum-number-of-arrows-to-burst-balloons", "Minimum Number of Arrows to Burst Balloons", "MEDIUM", ["greedy", "intervals", "sorting"],
+       [("points", "int[][]")], "int", b5_arrows, b5_c_arrows(),
+       "Balloons are the horizontal intervals `[xstart, xend]`. An arrow shot straight up at `x` bursts every balloon with `xstart <= x <= xend`. Return the fewest arrows that burst all balloons.",
+       "Line 1: `n`.\nNext `n` lines: `xstart xend`.", "The minimum number of arrows.",
+       ["`1 <= n <= 500`", "`-2^31 <= xstart <= xend <= 2^31 - 1`"]),
+    mk("can-place-flowers", "Can Place Flowers", "EASY", ["array", "greedy"], [("flowerbed", "int[]"), ("n", "int")], "bool", b5_flowers, b5_c_flowers(),
+       "A flowerbed has plots that are empty (`0`) or planted (`1`), and flowers cannot be planted in adjacent plots. Return `true` if `n` more flowers can be planted without breaking that rule.",
+       "Line 1: the length of `flowerbed`.\nLine 2: the plots.\nLine 3: `n`.", "`true` or `false`.",
+       ["`1 <= length <= 100`", "No two planted plots are adjacent", "`0 <= n <= length`"]),
+    mk("lemonade-change", "Lemonade Change", "EASY", ["array", "greedy"], [("bills", "int[]")], "bool", b5_lemonade, b5_c_lemonade(),
+       "Each lemonade costs `$5`. Customers pay with a `$5`, `$10` or `$20` bill, in order, and you start with no change. Return `true` if you can give every customer the correct change.",
+       ARR_IN, "`true` or `false`.", ["`1 <= n <= 300`", "`bills[i]` is `5`, `10` or `20`"]),
+    mk("task-scheduler", "Task Scheduler", "MEDIUM", ["array", "greedy", "heap"], [("tasks", "int[]"), ("n", "int")], "int", b5_task_scheduler, b5_c_tasks(),
+       "Each task (a label) takes one unit of time, and the CPU may idle. Two tasks with the same label must be at least `n` units apart. Return the least number of units needed to finish every task.",
+       "Line 1: the number of tasks.\nLine 2: the task labels.\nLine 3: `n`.", "The minimum time.",
+       ["`1 <= tasks <= 300`", "`1 <= label <= 26`", "`0 <= n <= 100`"]),
+    mk("hamming-distance", "Hamming Distance", "EASY", ["bit-manipulation"], [("x", "int"), ("y", "int")], "int", b5_hamming, b5_c_hamming(),
+       "Return the number of bit positions at which the binary representations of `x` and `y` differ.", "Line 1: `x`.\nLine 2: `y`.", "The Hamming distance.",
+       ["`0 <= x, y <= 2^31 - 1`"]),
+    mk("bitwise-and-of-numbers-range", "Bitwise AND of Numbers Range", "MEDIUM", ["bit-manipulation"], [("left", "int"), ("right", "int")], "int", b5_range_and, b5_c_range_and(),
+       "Return the bitwise AND of every integer in the inclusive range `[left, right]`.", "Line 1: `left`.\nLine 2: `right`.", "The AND of the range.",
+       ["`0 <= left <= right <= 2^31 - 1`"]),
+    mk("ugly-number-ii", "Ugly Number II", "MEDIUM", ["math", "dynamic-programming", "heap"], [("n", "int")], "int", b5_ugly, b5_c_ugly(),
+       "An ugly number is a positive integer whose only prime factors are `2`, `3` and `5`. Return the `n`-th ugly number, where `1` is the first.",
+       "A single integer `n`.", "The `n`-th ugly number.", ["`1 <= n <= 1690`"]),
+    mk("subtree-of-another-tree", "Subtree of Another Tree", "EASY", ["tree", "dfs"], [("root", "tree"), ("subRoot", "tree")], "bool", b5_subtree, b5_c_subtree(),
+       "Return `true` if some node of `root` has exactly the same structure and values as the whole tree `subRoot`.",
+       "Tree `root` in the format below, then tree `subRoot` in the same format.\n\n" + TREE_IN, "`true` or `false`.", ["`root` has `1 <= n <= 100` nodes", "`subRoot` has `1 <= n <= 100` nodes", VAL]),
+    mk("binary-tree-level-order-traversal", "Binary Tree Level Order Traversal", "MEDIUM", ["tree", "bfs"], [("root", "tree")], "int[][]", b5_level_order, b5_c_level(),
+       "Return the values of the tree level by level, from left to right.", TREE_IN, "One line per level, values space separated (a blank line for the empty tree).", [LC, "`-20 <= val <= 50`"]),
+    mk("minimum-depth-of-binary-tree", "Minimum Depth of Binary Tree", "EASY", ["tree", "dfs", "bfs"], [("root", "tree")], "int", b5_min_depth, b5_c_min_depth(),
+       "Return the minimum depth: the number of nodes on the shortest path from the root down to a **leaf** (`0` for the empty tree).", TREE_IN, "The minimum depth.", [LC, VAL]),
+    mk("sum-root-to-leaf-numbers", "Sum Root to Leaf Numbers", "MEDIUM", ["tree", "dfs"], [("root", "tree")], "int", b5_root_leaf_numbers, b5_c_root_leaf(),
+       "Every node holds a digit `0-9`, so each root-to-leaf path spells a number (for example `1 -> 2 -> 3` is `123`). Return the total of all those numbers.", TREE_IN,
+       "The total.", ["`1 <= n <= 100` nodes", "`0 <= val <= 9`", "The answer fits in a 32-bit integer"]),
+    mk("house-robber-iii", "House Robber III", "MEDIUM", ["tree", "dfs", "dynamic-programming"], [("root", "tree")], "int", b5_rob_tree, b5_c_rob_tree(),
+       "The houses form a binary tree and each node holds the money in that house. Robbing two directly linked houses (parent and child) triggers the alarm. Return the maximum amount you can rob.",
+       TREE_IN, "The maximum amount.", [LC, "`0 <= val <= 100`"]),
+    mk("path-sum-iii", "Path Sum III", "MEDIUM", ["tree", "dfs"], [("root", "tree"), ("targetSum", "int")], "int", b5_path_sum3, b5_c_path_sum3(),
+       "Count the downward paths (from any node to any of its descendants) whose values add up to `targetSum`. A path does not have to start at the root or end at a leaf.",
+       TREE_IN + "\nLine 3: `targetSum`.", "The number of paths.", ["`0 <= n <= 100` nodes", "`-100 <= val <= 100`", "`-1000 <= targetSum <= 1000`"]),
+    mk("construct-binary-tree-from-preorder-and-inorder-traversal", "Construct Binary Tree from Preorder and Inorder Traversal", "MEDIUM", ["tree", "divide-and-conquer"],
+       [("preorder", "int[]"), ("inorder", "int[]")], "tree", b5_build_tree, b5_c_build(),
+       "Rebuild the binary tree from its preorder and inorder traversals and return its root.",
+       "Lines 1-2: `n` then the preorder values.\nLines 3-4: `n` then the inorder values.", TREE_OUT, ["`1 <= n <= 100`", "All values are unique"]),
+    mk("remove-linked-list-elements", "Remove Linked List Elements", "EASY", ["linked-list"], [("head", "list"), ("val", "int")], "list", b5_remove_elements, b5_c_remove_elems(),
+       "Remove every node whose value equals `val` and return the new list.", LIST_IN + "\nLine 3: `val`.", LIST_OUT, [LC, "`0 <= val <= 50`"]),
+    mk("rotate-list", "Rotate List", "MEDIUM", ["linked-list", "two-pointers"], [("head", "list"), ("k", "int")], "list", b5_rotate_list, b5_c_rotate_list(),
+       "Rotate the list to the right by `k` places and return the new list.", LIST_IN + "\nLine 3: `k`.", LIST_OUT, [LC, "`0 <= k <= 10^9`"]),
+    mk("partition-list", "Partition List", "MEDIUM", ["linked-list", "two-pointers"], [("head", "list"), ("x", "int")], "list", b5_partition_list, b5_c_partition(),
+       "Rearrange the list so every node with a value less than `x` comes before every node with a value greater than or equal to `x`, keeping the original relative order inside each group.",
+       LIST_IN + "\nLine 3: `x`.", LIST_OUT, [LC, "`-100 <= val, x <= 100`"]),
+    mk("remove-duplicates-from-sorted-list-ii", "Remove Duplicates from Sorted List II", "MEDIUM", ["linked-list", "two-pointers"], [("head", "list")], "list", b5_dedup_all, b5_c_dedup_all(),
+       "In a sorted list, delete **every** node whose value appears more than once, so only values that were distinct remain. Return the list.", LIST_IN, LIST_OUT,
+       [LC, "The list is sorted in non-decreasing order"]),
+    mk("reverse-linked-list-ii", "Reverse Linked List II", "MEDIUM", ["linked-list"], [("head", "list"), ("left", "int"), ("right", "int")], "list", b5_reverse_between, b5_c_rev_between(),
+       "Reverse the nodes from position `left` to position `right` (1-indexed) and return the list.", LIST_IN + "\nLine 3: `left`.\nLine 4: `right`.", LIST_OUT,
+       ["`1 <= n <= 100`", "`1 <= left <= right <= n`"]),
+    mk("maximum-twin-sum-of-a-linked-list", "Maximum Twin Sum of a Linked List", "MEDIUM", ["linked-list", "two-pointers"], [("head", "list")], "int", b5_twin_sum, b5_c_twin(),
+       "A list with an even number `n` of nodes has twin pairs: node `i` and node `n - 1 - i`. Return the maximum sum of a twin pair.", LIST_IN, "The maximum twin sum.",
+       ["`2 <= n <= 100`, `n` is even", "`1 <= val <= 10^5`"]),
+]
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
