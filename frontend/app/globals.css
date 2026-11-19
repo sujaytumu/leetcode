@@ -834,3 +834,9 @@ td { font-size:14px; font-weight:400; }
 
 /* On a laptop the graphs live in the Submissions tab (like LeetCode); the phone layout hides that panel, so it stays here. */
 @media (min-width:901px) { .consolestats { display:none; } }
+
+/* The top bar sits above the workspace, so the panels get its height back: the page fits the window exactly. */
+:root { --lctop-h: 52px; }
+@media (min-width:901px) { .workspace { height:calc(100dvh - var(--nav-h) - 16px - var(--lctop-h)); } }
+.lcfoot { justify-content:flex-start; }
+.lcfoot .votes { margin-left:0; }
