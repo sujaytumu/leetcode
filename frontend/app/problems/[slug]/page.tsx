@@ -587,25 +587,28 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           title="Drag to resize" onPointerDown={startDrag("v")} />
 
         <section className="right" ref={rightRef}>
-          <div className="bar actionbar" style={{ marginBottom: 8 }}>
-            <select value={lang} onChange={(e) => { setLang(e.target.value); setUndoReset(null); localStorage.setItem("lc-lang", e.target.value); }}>
-              {languages.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
-            </select>
-            <select value={fontSize} title="Editor font size" onChange={(e) => setEd({ fontSize: Number(e.target.value) })}>
-              {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
-            </select>
-            <button onClick={reset} title="Reset to starter code">Reset</button>
-            {undoReset !== null && <button onClick={undoResetCode} title="Bring back the code you had before Reset">↶ Undo reset</button>}
-            {savedFlash && <span className="mute" role="status">✔ Saved</span>}
-            <button onClick={copyCode} title="Copy your code">{copied ? "✔ Copied" : "Copy"}</button>
-            <button onClick={() => setFocus((f) => !f)} title="Hide the description and focus on the editor (Esc to exit)">
-              {focus ? "⤡ Exit focus" : "⤢ Focus"}
-            </button>
-            <button onClick={() => setShowSettings(true)} title="Editor settings" aria-label="Editor settings">⚙</button>
-            <button onClick={() => setShowKeys(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button>
-          </div>
           <div className="pane editor-wrap" style={{ flex: `0 0 ${editorPct}%` }}>
-            <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}
+            <div className="codehead"><span className="codeicon" aria-hidden="true">&lt;/&gt;</span><b>Code</b></div>
+            <div className="codebar">
+              <select className="langpick" aria-label="Language" value={lang} onChange={(e) => { setLang(e.target.value); setUndoReset(null); localStorage.setItem("lc-lang", e.target.value); }}>
+                {languages.map((l) => <option key={l.key} value={l.key}>{l.label}</option>)}
+              </select>
+              <select className="sizepick" value={fontSize} title="Editor font size" aria-label="Editor font size" onChange={(e) => setEd({ fontSize: Number(e.target.value) })}>
+                {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
+              </select>
+              {savedFlash && <span className="mute savedtag" role="status">✔ Saved</span>}
+              <span className="grow" />
+              {undoReset !== null && <button className="iconbtn" onClick={undoResetCode} title="Bring back the code you had before Reset">↶ Undo reset</button>}
+              <button className="iconbtn" onClick={reset} title="Reset to starter code" aria-label="Reset to starter code">↺</button>
+              <button className="iconbtn" onClick={copyCode} title="Copy your code" aria-label="Copy your code">{copied ? "✔" : "⧉"}</button>
+              <button className="iconbtn" onClick={() => setShowSettings(true)} title="Editor settings" aria-label="Editor settings">⚙</button>
+              <button className="iconbtn" onClick={() => setShowKeys(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button>
+              <button className="iconbtn" onClick={() => setFocus((f) => !f)} title="Hide the description and focus on the editor (Esc to exit)" aria-label={focus ? "Exit focus" : "Focus"}>
+                {focus ? "⤡" : "⤢"}
+              </button>
+            </div>
+            <div className="codebody">
+              <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}
               language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"}
               value={code} onChange={onChange}
               options={{
@@ -613,6 +616,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 wordWrap: ed.wordWrap ? "on" : "off", lineNumbers: ed.lineNumbers ? "on" : "off",
                 automaticLayout: true, scrollBeyondLastLine: false,
               }} />
+            </div>
           </div>
           <div className={`hdivider${drag === "h" ? " drag" : ""}`} role="separator" aria-orientation="horizontal"
             title="Drag to resize" onPointerDown={startDrag("h")} />

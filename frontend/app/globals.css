@@ -681,7 +681,7 @@ main:focus { outline:none; }
 .lcdesc { font-size:15px; line-height:1.6; }
 .lcdesc .lchead { margin:20px 0 6px; font-size:15px; }
 .lcdesc .lcexample { display:block; margin:18px 0 6px; }
-.lcdesc pre.lcbox { border-left:2px solid var(--line); background:transparent; padding:2px 0 2px 14px; margin:6px 0 12px; font:13px/1.6 ui-monospace, monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+.lcdesc pre.lcbox { border:0; border-left:2px solid var(--line); border-radius:0; background:transparent; padding:2px 0 2px 14px; margin:6px 0 12px; font:13px/1.6 ui-monospace, monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
 .md code { background:var(--cell); border:0; border-radius:5px; padding:1px 6px; }
 .authcheck { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--mute); line-height:1.4; }
 .authcheck input { margin-top:2px; }
@@ -808,3 +808,16 @@ td { font-size:14px; font-weight:400; }
 .st-done { font-weight:500; }
 .nav nav a, .nav a { font-weight:500; }
 .tabs button, .navbtn { font-weight:500; }
+
+/* ---- Editor panel like LeetCode's: "Code" header, slim toolbar, editor ---- */
+.editor-wrap { display:flex; flex-direction:column; }
+.codehead { display:flex; align-items:center; gap:8px; padding:8px 14px; border-bottom:1px solid var(--line); font-size:14px; flex:none; }
+.codehead b { font-weight:600; }
+.codeicon { color:var(--easy); font:600 12px ui-monospace, monospace; }
+.codebar { display:flex; align-items:center; gap:4px; padding:4px 10px; flex:none; border-bottom:1px solid var(--line); min-height:34px; }
+.codebar select { background:transparent; border:0; color:var(--text); font-size:13px; padding:4px 6px; border-radius:6px; cursor:pointer; }
+.codebar select:hover { background:var(--cell); }
+.codebar .savedtag { font-size:12px; margin-left:4px; }
+.codebar .iconbtn { background:transparent; border:0; color:var(--mute); padding:4px 8px; font-size:15px; line-height:1; border-radius:6px; cursor:pointer; }
+.codebar .iconbtn:hover { background:var(--cell); color:var(--text); }
+.codebody { flex:1; min-height:0; }
