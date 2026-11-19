@@ -71,6 +71,32 @@ public class TokenService {
         }
     }
 
+    /** Signed, non-expiring token for the one-click unsubscribe link in daily emails. */
+    public String unsubscribeToken(long accountId) {
+        Base64.Encoder b64 = Base64.getUrlEncoder().withoutPadding();
+        String body = b64.encodeToString(("unsub:" + accountId).getBytes(StandardCharsets.UTF_8));
+        return body + "." + b64.encodeToString(sign(body));
+    }
+
+    /** The account id inside a valid unsubscribe token, if the signature checks out. */
+    public java.util.OptionalLong verifyUnsubscribe(String token) {
+        try {
+            int dot = token == null ? -1 : token.indexOf('.');
+            if (dot <= 0 || dot == token.length() - 1) {
+                return java.util.OptionalLong.empty();
+            }
+            String body = token.substring(0, dot);
+            byte[] given = Base64.getUrlDecoder().decode(token.substring(dot + 1));
+            if (!MessageDigest.isEqual(given, sign(body))) {
+                return java.util.OptionalLong.empty();
+            }
+            String plain = new String(Base64.getUrlDecoder().decode(body), StandardCharsets.UTF_8);
+            return plain.startsWith("unsub:") ? java.util.OptionalLong.of(Long.parseLong(plain.substring(6))) : java.util.OptionalLong.empty();
+        } catch (IllegalArgumentException e) {
+            return java.util.OptionalLong.empty();
+        }
+    }
+
     private byte[] sign(String body) {
         try {
             Mac mac = Mac.getInstance(HMAC);

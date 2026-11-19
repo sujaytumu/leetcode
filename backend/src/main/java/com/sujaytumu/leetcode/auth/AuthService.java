@@ -39,7 +39,7 @@ public class AuthService {
 
     /** Creates an account that adopts the caller's anonymous id, so existing progress is kept. */
     @Transactional
-    public Session register(String rawEmail, String rawUsername, String password, UUID clientId, String ip) {
+    public Session register(String rawEmail, String rawUsername, String password, boolean dailyEmail, UUID clientId, String ip) {
         String email = validEmail(rawEmail);
         String username = rawUsername == null || rawUsername.isBlank() ? freeUsername(email) : validUsername(rawUsername);
         validPassword(password, username, email);
@@ -55,7 +55,9 @@ public class AuthService {
         }
         Account account;
         try {
-            account = accounts.saveAndFlush(new Account(email, username, hasher.hash(password), clientId));
+            Account fresh = new Account(email, username, hasher.hash(password), clientId);
+            fresh.setDailyEmail(dailyEmail);
+            account = accounts.saveAndFlush(fresh);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("That email or username is taken, or this browser already has an account.");
         }
@@ -115,6 +117,36 @@ public class AuthService {
         return new Session(tokens.issue(account), account.getClientId(), account.getUsername(), account.getEmail());
     }
 
+    public record EmailPrefs(String email, boolean dailyEmail) {}
+
+    @Transactional(readOnly = true)
+    public EmailPrefs emailPrefs(String authorization) {
+        Account a = authenticate(authorization);
+        return new EmailPrefs(a.getEmail(), a.isDailyEmail());
+    }
+
+    @Transactional
+    public EmailPrefs setDailyEmail(String authorization, boolean on) {
+        Account a = authenticate(authorization);
+        if (on && a.getEmail() == null) {
+            throw new IllegalArgumentException("Add an email address to your account first.");
+        }
+        a.setDailyEmail(on);
+        accounts.save(a);
+        return new EmailPrefs(a.getEmail(), a.isDailyEmail());
+    }
+
+    /** One-click unsubscribe from the link in a daily email; works without logging in. */
+    @Transactional
+    public void unsubscribe(String token) {
+        long id = tokens.verifyUnsubscribe(token)
+                .orElseThrow(() -> new IllegalArgumentException("This unsubscribe link is not valid."));
+        accounts.findById(id).ifPresent(a -> {
+            a.setDailyEmail(false);
+            accounts.save(a);
+        });
+    }
+
     private static String validUsername(String raw) {
         String name = raw == null ? "" : raw.trim();
         if (!USERNAME.matcher(name).matches()) {
@@ -147,7 +179,7 @@ public class AuthService {
         return candidate;
     }
 
-    private static void validPassword(String password, String username, String email) {
+    static void validPassword(String password, String username, String email) {
         if (password == null || password.length() < 8 || password.length() > 72) {
             throw new IllegalArgumentException("Password must be 8-72 characters.");
         }
