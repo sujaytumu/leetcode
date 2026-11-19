@@ -821,3 +821,16 @@ td { font-size:14px; font-weight:400; }
 .codebar .iconbtn { background:transparent; border:0; color:var(--mute); padding:4px 8px; font-size:15px; line-height:1; border-radius:6px; cursor:pointer; }
 .codebar .iconbtn:hover { background:var(--cell); color:var(--text); }
 .codebody { flex:1; min-height:0; }
+
+/* Submissions list and detail, like LeetCode's */
+.subtable { width:100%; }
+.subtable th { font-weight:500; color:var(--mute); text-transform:none; letter-spacing:0; font-size:13px; }
+.subtable td { padding-top:10px; padding-bottom:10px; }
+.subtable tr.subrow:hover { background:var(--cell); }
+.subdate { font-size:12px; margin-top:2px; }
+.langchip { background:var(--cell); border-radius:6px; padding:2px 8px; font-size:12px; }
+.subcodehead { display:flex; align-items:center; gap:10px; margin:16px 0 8px; }
+.vstats b { display:inline; font-size:inherit; }
+
+/* On a laptop the graphs live in the Submissions tab (like LeetCode); the phone layout hides that panel, so it stays here. */
+@media (min-width:901px) { .consolestats { display:none; } }

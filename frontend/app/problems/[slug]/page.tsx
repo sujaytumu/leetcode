@@ -227,7 +227,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
       if (kind === "submit") {
-        loadHistory();
+        // Like LeetCode: jump to the Submissions tab and open the submission that was just judged.
+        api<Submission[]>(`/api/problems/${slug}/submissions`).then((h) => {
+          setHistory(h);
+          const mine = (r.submissionId != null ? h.find((x) => x.id === r.submissionId) : undefined) ?? h[0];
+          if (mine && slugRef.current === slug) { setDiffWith(""); setOpenSub(mine); setTab("history"); }
+        }).catch(() => {});
         // Only a running or paused timer with time on it counts as a timed solve.
         const secs = timerRef.current.secs;
         if (r.verdict === "ACCEPTED" && !custom && secs > 0) setSolveTime({ ...recordTime(slug, secs), secs });
@@ -523,10 +528,11 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   <button className="ghost" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All submissions</button>
                   <h3 className={`verdict ${openSub.verdict}`} style={{ marginTop: 10 }}>{title(openSub.verdict)}</h3>
                   <div className="vstats">
-                    {openSub.passed} / {openSub.total} testcases passed · {openSub.language} · {new Date(openSub.createdAt).toLocaleString()}
+                    <b>{openSub.passed} / {openSub.total}</b> testcases passed
                   </div>
+                  <div className="mute subdate" style={{ marginTop: 2 }}>Submitted {new Date(openSub.createdAt).toLocaleString()}</div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
-                  <div className="iolabel" style={{ marginTop: 14 }}>Code</div>
+                  <div className="subcodehead"><b>Code</b><span className="langchip">{languages.find((l) => l.key === openSub.language)?.label ?? LANG_LABEL[openSub.language] ?? openSub.language}</span></div>
                   <div className="bar" style={{ marginBottom: 6 }}>
                     <select aria-label="Compare with another submission" value={diffWith}
                       onChange={(e) => { setDiffWith(e.target.value ? Number(e.target.value) : ""); setShowDiff(false); }}>
@@ -554,18 +560,23 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                     onClick={() => setShowDiff((v) => !v)}>{showDiff ? "Hide diff" : "Diff vs editor"}</button>
                 </div>
               ) : (
-              <table>
-                <thead><tr><th>Status</th><th>Language</th><th>Runtime</th><th>Memory</th><th>Submitted</th><th></th></tr></thead>
+              <table className="subtable">
+                <thead><tr><th>Status</th><th>Language</th><th>Runtime</th><th>Memory</th></tr></thead>
                 <tbody>
                   {history.map((s) => (
                     <tr key={s.id} className="subrow" onClick={() => setOpenSub(s)} title="Open details">
-                      <td className={s.verdict}><b>{title(s.verdict)}</b><div className="mute" style={{ fontSize: 12 }}>{s.passed}/{s.total} passed</div></td><td>{s.language}</td>
-                      <td>{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td><td>{s.memoryKb != null ? fmtMem(s.memoryKb) : "N/A"}</td>
-                      <td className="mute">{new Date(s.createdAt).toLocaleString()}</td>
-                      <td><button onClick={(e) => { e.stopPropagation(); loadSubmission(s); }}>Load</button></td>
+                      <td className={s.verdict}>
+                        <b>{title(s.verdict)}</b>
+                        <div className="mute subdate" title={new Date(s.createdAt).toLocaleString()}>
+                          {new Date(s.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                        </div>
+                      </td>
+                      <td><span className="langchip">{languages.find((l) => l.key === s.language)?.label ?? LANG_LABEL[s.language] ?? s.language}</span></td>
+                      <td><span className="mute" aria-hidden="true">⏱ </span>{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td>
+                      <td><span className="mute" aria-hidden="true">▦ </span>{s.memoryKb != null ? fmtMem(s.memoryKb) : "N/A"}</td>
                     </tr>
                   ))}
-                  {history.length === 0 && <tr><td colSpan={6} className="mute">No submissions yet.</td></tr>}
+                  {history.length === 0 && <tr><td colSpan={4} className="mute">No submissions yet. Submit your code to see how it compares.</td></tr>}
                 </tbody>
               </table>
               )
@@ -677,7 +688,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                           : `${result.passed} / ${result.total} testcases passed${mode === "run" ? " · sample cases only" : ""}`}
                         {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
-                      {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <SubmissionStatsPanel id={result.submissionId} />}
+                      {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <div className="consolestats"><SubmissionStatsPanel id={result.submissionId} /></div>}
                       {mode === "submit" && result.verdict === "ACCEPTED" && solveTime && (
                         <div className="vstats" style={{ marginTop: 6 }}>⏱ Solved in <b style={{ display: "inline", fontSize: 14 }}>{fmtSecs(solveTime.secs)}</b>
                           {solveTime.improved ? " · new personal best" : ` · best ${fmtSecs(solveTime.rec.best)}`} ({solveTime.rec.runs} timed solve{solveTime.rec.runs === 1 ? "" : "s"})</div>
