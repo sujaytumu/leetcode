@@ -1,0 +1,819 @@
+=== word-search
+--- py
+def solve(board, word):
+    rows, cols = len(board), len(board[0])
+    seen = [[False] * cols for _ in range(rows)]
+    def go(r, c, k):
+        if board[r][c] != word[k]:
+            return False
+        if k == len(word) - 1:
+            return True
+        seen[r][c] = True
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and not seen[nr][nc] and go(nr, nc, k + 1):
+                seen[r][c] = False
+                return True
+        seen[r][c] = False
+        return False
+    return any(go(r, c, 0) for r in range(rows) for c in range(cols))
+--- js
+function solve(board, word) {
+  const rows = board.length, cols = board[0].length;
+  const seen = Array.from({ length: rows }, () => new Array(cols).fill(false));
+  const go = (r, c, k) => {
+    if (board[r][c] !== word[k]) return false;
+    if (k === word.length - 1) return true;
+    seen[r][c] = true;
+    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !seen[nr][nc] && go(nr, nc, k + 1)) {
+        seen[r][c] = false;
+        return true;
+      }
+    }
+    seen[r][c] = false;
+    return false;
+  };
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) if (go(r, c, 0)) return true;
+  return false;
+}
+--- cpp
+bool wsGo(const vector<string>& board, vector<vector<bool>>& seen, const string& word, int r, int c, int k) {
+    if (board[r][c] != word[k]) return false;
+    if (k == (int)word.size() - 1) return true;
+    seen[r][c] = true;
+    int dr[] = {1, -1, 0, 0}, dc[] = {0, 0, 1, -1};
+    for (int d = 0; d < 4; d++) {
+        int nr = r + dr[d], nc = c + dc[d];
+        if (nr >= 0 && nr < (int)board.size() && nc >= 0 && nc < (int)board[0].size() && !seen[nr][nc] &&
+            wsGo(board, seen, word, nr, nc, k + 1)) {
+            seen[r][c] = false;
+            return true;
+        }
+    }
+    seen[r][c] = false;
+    return false;
+}
+bool solve(vector<string> board, string word) {
+    vector<vector<bool>> seen(board.size(), vector<bool>(board[0].size(), false));
+    for (int r = 0; r < (int)board.size(); r++)
+        for (int c = 0; c < (int)board[0].size(); c++)
+            if (wsGo(board, seen, word, r, c, 0)) return true;
+    return false;
+}
+--- java
+static boolean wsGo(String[] board, boolean[][] seen, String word, int r, int c, int k) {
+    if (board[r].charAt(c) != word.charAt(k)) return false;
+    if (k == word.length() - 1) return true;
+    seen[r][c] = true;
+    int[] dr = {1, -1, 0, 0}, dc = {0, 0, 1, -1};
+    for (int d = 0; d < 4; d++) {
+        int nr = r + dr[d], nc = c + dc[d];
+        if (nr >= 0 && nr < board.length && nc >= 0 && nc < board[0].length() && !seen[nr][nc]
+                && wsGo(board, seen, word, nr, nc, k + 1)) {
+            seen[r][c] = false;
+            return true;
+        }
+    }
+    seen[r][c] = false;
+    return false;
+}
+static boolean solve(String[] board, String word) {
+    boolean[][] seen = new boolean[board.length][board[0].length()];
+    for (int r = 0; r < board.length; r++)
+        for (int c = 0; c < board[0].length(); c++)
+            if (wsGo(board, seen, word, r, c, 0)) return true;
+    return false;
+}
+=== distinct-permutations-count
+--- py
+def solve(nums):
+    from collections import Counter
+    from math import factorial
+    total = factorial(len(nums))
+    for count in Counter(nums).values():
+        total //= factorial(count)
+    return total
+--- js
+function solve(nums) {
+  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
+  const counts = new Map();
+  for (const x of nums) counts.set(x, (counts.get(x) || 0) + 1);
+  let total = fact(nums.length);
+  for (const c of counts.values()) total /= fact(c);
+  return total;
+}
+--- cpp
+int solve(vector<int> nums) {
+    auto fact = [](int k) { long long f = 1; for (int i = 2; i <= k; i++) f *= i; return f; };
+    map<int, int> counts;
+    for (int x : nums) counts[x]++;
+    long long total = fact(nums.size());
+    for (auto& [value, c] : counts) total /= fact(c);
+    return (int)total;
+}
+--- java
+static int solve(int[] nums) {
+    long[] fact = new long[10];
+    fact[0] = 1;
+    for (int i = 1; i < 10; i++) fact[i] = fact[i - 1] * i;
+    Map<Integer, Integer> counts = new HashMap<>();
+    for (int x : nums) counts.merge(x, 1, Integer::sum);
+    long total = fact[nums.length];
+    for (int c : counts.values()) total /= fact[c];
+    return (int) total;
+}
+=== generate-parentheses-count
+--- py
+def solve(n):
+    catalan = 1
+    for k in range(n):
+        catalan = catalan * 2 * (2 * k + 1) // (k + 2)
+    return catalan
+--- js
+function solve(n) {
+  let catalan = 1;
+  for (let k = 0; k < n; k++) catalan = (catalan * 2 * (2 * k + 1)) / (k + 2);
+  return catalan;
+}
+--- cpp
+int solve(int n) {
+    long long catalan = 1;
+    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);
+    return (int)catalan;
+}
+--- java
+static int solve(int n) {
+    long catalan = 1;
+    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);
+    return (int) catalan;
+}
+=== palindrome-partitioning-count
+--- py
+def solve(s):
+    n = len(s)
+    pal = [[False] * n for _ in range(n)]
+    for i in range(n - 1, -1, -1):
+        for j in range(i, n):
+            pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])
+    ways = [1] + [0] * n  # ways[i] = partitions of the first i characters
+    for i in range(1, n + 1):
+        for j in range(i):
+            if pal[j][i - 1]:
+                ways[i] += ways[j]
+    return ways[n]
+--- js
+function solve(s) {
+  const n = s.length;
+  const pal = Array.from({ length: n }, () => new Array(n).fill(false));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = i; j < n; j++) pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);
+  const ways = new Array(n + 1).fill(0);
+  ways[0] = 1;
+  for (let i = 1; i <= n; i++)
+    for (let j = 0; j < i; j++) if (pal[j][i - 1]) ways[i] += ways[j];
+  return ways[n];
+}
+--- cpp
+int solve(string s) {
+    int n = s.size();
+    vector<vector<bool>> pal(n, vector<bool>(n, false));
+    for (int i = n - 1; i >= 0; i--)
+        for (int j = i; j < n; j++) pal[i][j] = s[i] == s[j] && (j - i < 2 || pal[i + 1][j - 1]);
+    vector<long long> ways(n + 1, 0);
+    ways[0] = 1;
+    for (int i = 1; i <= n; i++)
+        for (int j = 0; j < i; j++)
+            if (pal[j][i - 1]) ways[i] += ways[j];
+    return (int)ways[n];
+}
+--- java
+static int solve(String s) {
+    int n = s.length();
+    boolean[][] pal = new boolean[n][n];
+    for (int i = n - 1; i >= 0; i--)
+        for (int j = i; j < n; j++) pal[i][j] = s.charAt(i) == s.charAt(j) && (j - i < 2 || pal[i + 1][j - 1]);
+    long[] ways = new long[n + 1];
+    ways[0] = 1;
+    for (int i = 1; i <= n; i++)
+        for (int j = 0; j < i; j++)
+            if (pal[j][i - 1]) ways[i] += ways[j];
+    return (int) ways[n];
+}
+=== n-queens-count
+--- py
+def solve(n):
+    full = (1 << n) - 1
+    def place(cols, d1, d2):
+        if cols == full:
+            return 1
+        total = 0
+        free = full & ~(cols | d1 | d2)
+        while free:
+            bit = free & -free
+            free -= bit
+            total += place(cols | bit, ((d1 | bit) << 1) & full, (d2 | bit) >> 1)
+        return total
+    return place(0, 0, 0)
+--- js
+function solve(n) {
+  const full = (1 << n) - 1;
+  const place = (cols, d1, d2) => {
+    if (cols === full) return 1;
+    let total = 0;
+    let free = full & ~(cols | d1 | d2);
+    while (free) {
+      const bit = free & -free;
+      free -= bit;
+      total += place(cols | bit, ((d1 | bit) << 1) & full, (d2 | bit) >> 1);
+    }
+    return total;
+  };
+  return place(0, 0, 0);
+}
+--- cpp
+int nqPlace(int full, int cols, int d1, int d2) {
+    if (cols == full) return 1;
+    int total = 0, free = full & ~(cols | d1 | d2);
+    while (free) {
+        int bit = free & -free;
+        free -= bit;
+        total += nqPlace(full, cols | bit, ((d1 | bit) << 1) & full, (d2 | bit) >> 1);
+    }
+    return total;
+}
+int solve(int n) {
+    return nqPlace((1 << n) - 1, 0, 0, 0);
+}
+--- java
+static int nqPlace(int full, int cols, int d1, int d2) {
+    if (cols == full) return 1;
+    int total = 0, free = full & ~(cols | d1 | d2);
+    while (free != 0) {
+        int bit = free & -free;
+        free -= bit;
+        total += nqPlace(full, cols | bit, ((d1 | bit) << 1) & full, (d2 | bit) >> 1);
+    }
+    return total;
+}
+static int solve(int n) {
+    return nqPlace((1 << n) - 1, 0, 0, 0);
+}
+=== find-if-path-exists-in-graph
+--- py
+def solve(n, edges, source, destination):
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b in edges:
+        parent[find(a)] = find(b)
+    return find(source) == find(destination)
+--- js
+function solve(n, edges, source, destination) {
+  const parent = Array.from({ length: n }, (_, i) => i);
+  const find = (x) => {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  };
+  for (const [a, b] of edges) parent[find(a)] = find(b);
+  return find(source) === find(destination);
+}
+--- cpp
+bool solve(int n, vector<vector<int>> edges, int source, int destination) {
+    vector<int> parent(n);
+    iota(parent.begin(), parent.end(), 0);
+    function<int(int)> find = [&](int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    };
+    for (auto& e : edges) parent[find(e[0])] = find(e[1]);
+    return find(source) == find(destination);
+}
+--- java
+static int findRoot(int[] parent, int x) {
+    while (parent[x] != x) {
+        parent[x] = parent[parent[x]];
+        x = parent[x];
+    }
+    return x;
+}
+static boolean solve(int n, int[][] edges, int source, int destination) {
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
+    for (int[] e : edges) parent[findRoot(parent, e[0])] = findRoot(parent, e[1]);
+    return findRoot(parent, source) == findRoot(parent, destination);
+}
+=== course-schedule
+--- py
+def solve(numCourses, prerequisites):
+    from collections import deque
+    after = [[] for _ in range(numCourses)]
+    indegree = [0] * numCourses
+    for a, b in prerequisites:
+        after[b].append(a)
+        indegree[a] += 1
+    queue = deque(i for i in range(numCourses) if indegree[i] == 0)
+    taken = 0
+    while queue:
+        course = queue.popleft()
+        taken += 1
+        for nxt in after[course]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+    return taken == numCourses
+--- js
+function solve(numCourses, prerequisites) {
+  const after = Array.from({ length: numCourses }, () => []);
+  const indegree = new Array(numCourses).fill(0);
+  for (const [a, b] of prerequisites) {
+    after[b].push(a);
+    indegree[a]++;
+  }
+  const queue = [];
+  for (let i = 0; i < numCourses; i++) if (indegree[i] === 0) queue.push(i);
+  let taken = 0;
+  for (let head = 0; head < queue.length; head++) {
+    taken++;
+    for (const nxt of after[queue[head]]) if (--indegree[nxt] === 0) queue.push(nxt);
+  }
+  return taken === numCourses;
+}
+--- cpp
+bool solve(int numCourses, vector<vector<int>> prerequisites) {
+    vector<vector<int>> after(numCourses);
+    vector<int> indegree(numCourses, 0);
+    for (auto& p : prerequisites) {
+        after[p[1]].push_back(p[0]);
+        indegree[p[0]]++;
+    }
+    queue<int> q;
+    for (int i = 0; i < numCourses; i++) if (indegree[i] == 0) q.push(i);
+    int taken = 0;
+    while (!q.empty()) {
+        int course = q.front();
+        q.pop();
+        taken++;
+        for (int nxt : after[course]) if (--indegree[nxt] == 0) q.push(nxt);
+    }
+    return taken == numCourses;
+}
+--- java
+static boolean solve(int numCourses, int[][] prerequisites) {
+    List<List<Integer>> after = new ArrayList<>();
+    for (int i = 0; i < numCourses; i++) after.add(new ArrayList<>());
+    int[] indegree = new int[numCourses];
+    for (int[] p : prerequisites) {
+        after.get(p[1]).add(p[0]);
+        indegree[p[0]]++;
+    }
+    Deque<Integer> queue = new ArrayDeque<>();
+    for (int i = 0; i < numCourses; i++) if (indegree[i] == 0) queue.add(i);
+    int taken = 0;
+    while (!queue.isEmpty()) {
+        int course = queue.poll();
+        taken++;
+        for (int nxt : after.get(course)) if (--indegree[nxt] == 0) queue.add(nxt);
+    }
+    return taken == numCourses;
+}
+=== number-of-connected-components
+--- py
+def solve(n, edges):
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    components = n
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+            components -= 1
+    return components
+--- js
+function solve(n, edges) {
+  const parent = Array.from({ length: n }, (_, i) => i);
+  const find = (x) => {
+    while (parent[x] !== x) {
+      parent[x] = parent[parent[x]];
+      x = parent[x];
+    }
+    return x;
+  };
+  let components = n;
+  for (const [a, b] of edges) {
+    const ra = find(a), rb = find(b);
+    if (ra !== rb) {
+      parent[ra] = rb;
+      components--;
+    }
+  }
+  return components;
+}
+--- cpp
+int solve(int n, vector<vector<int>> edges) {
+    vector<int> parent(n);
+    iota(parent.begin(), parent.end(), 0);
+    function<int(int)> find = [&](int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    };
+    int components = n;
+    for (auto& e : edges) {
+        int ra = find(e[0]), rb = find(e[1]);
+        if (ra != rb) {
+            parent[ra] = rb;
+            components--;
+        }
+    }
+    return components;
+}
+--- java
+static int findRoot(int[] parent, int x) {
+    while (parent[x] != x) {
+        parent[x] = parent[parent[x]];
+        x = parent[x];
+    }
+    return x;
+}
+static int solve(int n, int[][] edges) {
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
+    int components = n;
+    for (int[] e : edges) {
+        int ra = findRoot(parent, e[0]), rb = findRoot(parent, e[1]);
+        if (ra != rb) {
+            parent[ra] = rb;
+            components--;
+        }
+    }
+    return components;
+}
+=== rotting-oranges
+--- py
+def solve(grid):
+    from collections import deque
+    rows, cols = len(grid), len(grid[0])
+    queue = deque()
+    fresh = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == '2':
+                queue.append((r, c))
+            elif grid[r][c] == '1':
+                fresh += 1
+    seen = {p for p in queue}
+    minutes = 0
+    while queue and fresh:
+        for _ in range(len(queue)):
+            r, c = queue.popleft()
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '1' and (nr, nc) not in seen:
+                    seen.add((nr, nc))
+                    fresh -= 1
+                    queue.append((nr, nc))
+        minutes += 1
+    return minutes if fresh == 0 else -1
+--- js
+function solve(grid) {
+  const rows = grid.length, cols = grid[0].length;
+  let queue = [];
+  let fresh = 0;
+  const seen = Array.from({ length: rows }, () => new Array(cols).fill(false));
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === "2") { queue.push([r, c]); seen[r][c] = true; }
+      else if (grid[r][c] === "1") fresh++;
+    }
+  let minutes = 0;
+  while (queue.length && fresh) {
+    const next = [];
+    for (const [r, c] of queue) {
+      for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === "1" && !seen[nr][nc]) {
+          seen[nr][nc] = true;
+          fresh--;
+          next.push([nr, nc]);
+        }
+      }
+    }
+    queue = next;
+    minutes++;
+  }
+  return fresh === 0 ? minutes : -1;
+}
+--- cpp
+int solve(vector<string> grid) {
+    int rows = grid.size(), cols = grid[0].size(), fresh = 0, minutes = 0;
+    queue<pair<int, int>> q;
+    for (int r = 0; r < rows; r++)
+        for (int c = 0; c < cols; c++) {
+            if (grid[r][c] == '2') q.push({r, c});
+            else if (grid[r][c] == '1') fresh++;
+        }
+    int dr[] = {1, -1, 0, 0}, dc[] = {0, 0, 1, -1};
+    while (!q.empty() && fresh) {
+        for (int k = q.size(); k > 0; k--) {
+            auto [r, c] = q.front();
+            q.pop();
+            for (int d = 0; d < 4; d++) {
+                int nr = r + dr[d], nc = c + dc[d];
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] == '1') {
+                    grid[nr][nc] = '2';
+                    fresh--;
+                    q.push({nr, nc});
+                }
+            }
+        }
+        minutes++;
+    }
+    return fresh == 0 ? minutes : -1;
+}
+--- java
+static int solve(String[] grid) {
+    int rows = grid.length, cols = grid[0].length(), fresh = 0, minutes = 0;
+    char[][] g = new char[rows][];
+    Deque<int[]> queue = new ArrayDeque<>();
+    for (int r = 0; r < rows; r++) {
+        g[r] = grid[r].toCharArray();
+        for (int c = 0; c < cols; c++) {
+            if (g[r][c] == '2') queue.add(new int[]{r, c});
+            else if (g[r][c] == '1') fresh++;
+        }
+    }
+    int[] dr = {1, -1, 0, 0}, dc = {0, 0, 1, -1};
+    while (!queue.isEmpty() && fresh > 0) {
+        for (int k = queue.size(); k > 0; k--) {
+            int[] cell = queue.poll();
+            for (int d = 0; d < 4; d++) {
+                int nr = cell[0] + dr[d], nc = cell[1] + dc[d];
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && g[nr][nc] == '1') {
+                    g[nr][nc] = '2';
+                    fresh--;
+                    queue.add(new int[]{nr, nc});
+                }
+            }
+        }
+        minutes++;
+    }
+    return fresh == 0 ? minutes : -1;
+}
+=== shortest-path-in-binary-matrix
+--- py
+def solve(grid):
+    from collections import deque
+    n = len(grid)
+    if grid[0][0] == '1' or grid[n - 1][n - 1] == '1':
+        return -1
+    dist = [[0] * n for _ in range(n)]
+    dist[0][0] = 1
+    queue = deque([(0, 0)])
+    while queue:
+        r, c = queue.popleft()
+        if r == n - 1 and c == n - 1:
+            return dist[r][c]
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == '0' and dist[nr][nc] == 0:
+                    dist[nr][nc] = dist[r][c] + 1
+                    queue.append((nr, nc))
+    return -1
+--- js
+function solve(grid) {
+  const n = grid.length;
+  if (grid[0][0] === "1" || grid[n - 1][n - 1] === "1") return -1;
+  const dist = Array.from({ length: n }, () => new Array(n).fill(0));
+  dist[0][0] = 1;
+  const queue = [[0, 0]];
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    if (r === n - 1 && c === n - 1) return dist[r][c];
+    for (let dr = -1; dr <= 1; dr++)
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < n && nc >= 0 && nc < n && grid[nr][nc] === "0" && dist[nr][nc] === 0) {
+          dist[nr][nc] = dist[r][c] + 1;
+          queue.push([nr, nc]);
+        }
+      }
+  }
+  return -1;
+}
+--- cpp
+int solve(vector<string> grid) {
+    int n = grid.size();
+    if (grid[0][0] == '1' || grid[n - 1][n - 1] == '1') return -1;
+    vector<vector<int>> dist(n, vector<int>(n, 0));
+    dist[0][0] = 1;
+    queue<pair<int, int>> q;
+    q.push({0, 0});
+    while (!q.empty()) {
+        auto [r, c] = q.front();
+        q.pop();
+        if (r == n - 1 && c == n - 1) return dist[r][c];
+        for (int dr = -1; dr <= 1; dr++)
+            for (int dc = -1; dc <= 1; dc++) {
+                int nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < n && nc >= 0 && nc < n && grid[nr][nc] == '0' && dist[nr][nc] == 0) {
+                    dist[nr][nc] = dist[r][c] + 1;
+                    q.push({nr, nc});
+                }
+            }
+    }
+    return -1;
+}
+--- java
+static int solve(String[] grid) {
+    int n = grid.length;
+    if (grid[0].charAt(0) == '1' || grid[n - 1].charAt(n - 1) == '1') return -1;
+    int[][] dist = new int[n][n];
+    dist[0][0] = 1;
+    Deque<int[]> queue = new ArrayDeque<>();
+    queue.add(new int[]{0, 0});
+    while (!queue.isEmpty()) {
+        int[] cell = queue.poll();
+        int r = cell[0], c = cell[1];
+        if (r == n - 1 && c == n - 1) return dist[r][c];
+        for (int dr = -1; dr <= 1; dr++)
+            for (int dc = -1; dc <= 1; dc++) {
+                int nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < n && nc >= 0 && nc < n && grid[nr].charAt(nc) == '0' && dist[nr][nc] == 0) {
+                    dist[nr][nc] = dist[r][c] + 1;
+                    queue.add(new int[]{nr, nc});
+                }
+            }
+    }
+    return -1;
+}
+=== island-perimeter
+--- py
+def solve(grid):
+    rows, cols = len(grid), len(grid[0])
+    perimeter = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == '1':
+                perimeter += 4
+                if r > 0 and grid[r - 1][c] == '1':
+                    perimeter -= 2
+                if c > 0 and grid[r][c - 1] == '1':
+                    perimeter -= 2
+    return perimeter
+--- js
+function solve(grid) {
+  let perimeter = 0;
+  for (let r = 0; r < grid.length; r++)
+    for (let c = 0; c < grid[0].length; c++) {
+      if (grid[r][c] !== "1") continue;
+      perimeter += 4;
+      if (r > 0 && grid[r - 1][c] === "1") perimeter -= 2;
+      if (c > 0 && grid[r][c - 1] === "1") perimeter -= 2;
+    }
+  return perimeter;
+}
+--- cpp
+int solve(vector<string> grid) {
+    int perimeter = 0;
+    for (int r = 0; r < (int)grid.size(); r++)
+        for (int c = 0; c < (int)grid[0].size(); c++) {
+            if (grid[r][c] != '1') continue;
+            perimeter += 4;
+            if (r > 0 && grid[r - 1][c] == '1') perimeter -= 2;
+            if (c > 0 && grid[r][c - 1] == '1') perimeter -= 2;
+        }
+    return perimeter;
+}
+--- java
+static int solve(String[] grid) {
+    int perimeter = 0;
+    for (int r = 0; r < grid.length; r++)
+        for (int c = 0; c < grid[0].length(); c++) {
+            if (grid[r].charAt(c) != '1') continue;
+            perimeter += 4;
+            if (r > 0 && grid[r - 1].charAt(c) == '1') perimeter -= 2;
+            if (c > 0 && grid[r].charAt(c - 1) == '1') perimeter -= 2;
+        }
+    return perimeter;
+}
+=== max-area-of-island
+--- py
+def solve(grid):
+    rows, cols = len(grid), len(grid[0])
+    seen = [[False] * cols for _ in range(rows)]
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != '1' or seen[r][c]:
+                continue
+            seen[r][c] = True
+            stack, area = [(r, c)], 0
+            while stack:
+                cr, cc = stack.pop()
+                area += 1
+                for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nr, nc = cr + dr, cc + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '1' and not seen[nr][nc]:
+                        seen[nr][nc] = True
+                        stack.append((nr, nc))
+            best = max(best, area)
+    return best
+--- js
+function solve(grid) {
+  const rows = grid.length, cols = grid[0].length;
+  const seen = Array.from({ length: rows }, () => new Array(cols).fill(false));
+  let best = 0;
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] !== "1" || seen[r][c]) continue;
+      seen[r][c] = true;
+      const stack = [[r, c]];
+      let area = 0;
+      while (stack.length) {
+        const [cr, cc] = stack.pop();
+        area++;
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nr = cr + dr, nc = cc + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === "1" && !seen[nr][nc]) {
+            seen[nr][nc] = true;
+            stack.push([nr, nc]);
+          }
+        }
+      }
+      best = Math.max(best, area);
+    }
+  return best;
+}
+--- cpp
+int solve(vector<string> grid) {
+    int rows = grid.size(), cols = grid[0].size(), best = 0;
+    vector<vector<bool>> seen(rows, vector<bool>(cols, false));
+    int dr[] = {1, -1, 0, 0}, dc[] = {0, 0, 1, -1};
+    for (int r = 0; r < rows; r++)
+        for (int c = 0; c < cols; c++) {
+            if (grid[r][c] != '1' || seen[r][c]) continue;
+            seen[r][c] = true;
+            vector<pair<int, int>> stack = {{r, c}};
+            int area = 0;
+            while (!stack.empty()) {
+                auto [cr, cc] = stack.back();
+                stack.pop_back();
+                area++;
+                for (int d = 0; d < 4; d++) {
+                    int nr = cr + dr[d], nc = cc + dc[d];
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] == '1' && !seen[nr][nc]) {
+                        seen[nr][nc] = true;
+                        stack.push_back({nr, nc});
+                    }
+                }
+            }
+            best = max(best, area);
+        }
+    return best;
+}
+--- java
+static int solve(String[] grid) {
+    int rows = grid.length, cols = grid[0].length(), best = 0;
+    boolean[][] seen = new boolean[rows][cols];
+    int[] dr = {1, -1, 0, 0}, dc = {0, 0, 1, -1};
+    for (int r = 0; r < rows; r++)
+        for (int c = 0; c < cols; c++) {
+            if (grid[r].charAt(c) != '1' || seen[r][c]) continue;
+            seen[r][c] = true;
+            Deque<int[]> stack = new ArrayDeque<>();
+            stack.push(new int[]{r, c});
+            int area = 0;
+            while (!stack.isEmpty()) {
+                int[] cell = stack.pop();
+                area++;
+                for (int d = 0; d < 4; d++) {
+                    int nr = cell[0] + dr[d], nc = cell[1] + dc[d];
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr].charAt(nc) == '1' && !seen[nr][nc]) {
+                        seen[nr][nc] = true;
+                        stack.push(new int[]{nr, nc});
+                    }
+                }
+            }
+            best = Math.max(best, area);
+        }
+    return best;
+}
