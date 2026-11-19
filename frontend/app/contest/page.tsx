@@ -118,7 +118,7 @@ export default function ContestPage() {
               {standings.me && !standings.rows.some((r) => r.you) && (
                 <p className="mute">You are ranked #{standings.me.rank} with {standings.me.score} points.</p>
               )}
-              <table>
+              <div className="tscroll"><table>
                 <thead><tr><th className="th-num" style={{ width: 56 }}>Rank</th><th>User</th><th className="th-num">Score</th>
                   <th className="th-num">Finish time</th>{c.problems.map((_, i) => <th key={i} className="th-num">Q{i + 1}</th>)}</tr></thead>
                 <tbody>
@@ -137,7 +137,7 @@ export default function ContestPage() {
                     </td></tr>
                   )}
                 </tbody>
-              </table>
+              </table></div>
             </>
           )}
         </>

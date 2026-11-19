@@ -22,7 +22,7 @@ export default function LeaderboardPage() {
     <tr key={e.rank} className={e.you ? "me-row" : ""}>
       <td className="th-num">{medal(e.rank)}</td>
       <td><b>{e.name}</b>{e.you && <span className="pill MEDIUM" style={{ marginLeft: 6 }}>you</span>}</td>
-      <td className="th-num"><span className="EASY">{e.easy}</span> / <span className="MEDIUM">{e.medium}</span> / <span className="HARD">{e.hard}</span></td>
+      <td className="th-num col-emh"><span className="EASY">{e.easy}</span> / <span className="MEDIUM">{e.medium}</span> / <span className="HARD">{e.hard}</span></td>
       <td className="th-num">{e.solved}</td>
       <td className="th-num"><b>{e.points}</b></td>
     </tr>
@@ -40,9 +40,9 @@ export default function LeaderboardPage() {
         <>
           <p className="mute">{board.participants} {board.participants === 1 ? "solver" : "solvers"} ranked
             {board.me ? <> · you are <b>#{board.me.rank}</b> with {board.me.points} points</> : " · solve a problem to join the ranking"}</p>
-          <table>
+          <div className="tscroll"><table>
             <thead><tr><th className="th-num" style={{ width: 56 }}>Rank</th><th>User</th>
-              <th className="th-num">Easy / Med / Hard</th><th className="th-num">Solved</th><th className="th-num">Points</th></tr></thead>
+              <th className="th-num col-emh">Easy / Med / Hard</th><th className="th-num">Solved</th><th className="th-num">Points</th></tr></thead>
             <tbody>
               {board.top.map(row)}
               {board.me && !board.top.some((e) => e.you) && (
@@ -53,7 +53,7 @@ export default function LeaderboardPage() {
               )}
               {board.top.length === 0 && <tr><td colSpan={5} className="mute">Nobody has solved a problem yet. Be the first.</td></tr>}
             </tbody>
-          </table>
+          </table></div>
         </>
       )}
     </>

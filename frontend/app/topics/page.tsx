@@ -25,12 +25,12 @@ export default function TopicsPage() {
     .sort((a, b) => pctOf(a) - pctOf(b) || b.total - a.total)[0];
   return (
     <>
-      <div className="bar" style={{ marginBottom: 12 }}>
+      <div className="bar" style={{ marginBottom: 12, flexWrap: "wrap" }}>
         <h2 style={{ margin: 0 }}>Topics</h2><span className="grow" />
         <select aria-label="Sort topics" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
           <option value="default">Default order</option><option value="least">Least solved first</option><option value="most">Most solved first</option>
         </select>
-        <input placeholder="Filter topics…" value={q} onChange={(e) => setQ(e.target.value)} style={{ maxWidth: 240 }} />
+        <input placeholder="Filter topics…" value={q} onChange={(e) => setQ(e.target.value)} style={{ maxWidth: 240, minWidth: 0, flex: "1 1 140px" }} />
       </div>
       {error && <div className="banner err">{error}</div>}
       {weakest && (

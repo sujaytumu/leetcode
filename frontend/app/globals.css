@@ -759,3 +759,12 @@ main:focus { outline:none; }
   .filters select:nth-of-type(2) { order:3; grid-column:1 / -1; }
   .filters label { order:4; grid-column:1 / -1; }
 }
+
+/* Wide tables scroll inside their own box instead of widening the page */
+.tscroll { overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; border-radius:12px; }
+.tscroll table { min-width:440px; }
+body { overflow-x:hidden; }
+@media (max-width:480px) { .col-emh { display:none; } .tscroll table { min-width:0; } .tscroll .th-num { padding-left:6px; padding-right:6px; } }
+@media (max-width:480px) { .tscroll th:first-child { width:44px !important; } .tscroll td, .tscroll th { padding-left:6px; padding-right:6px; } }
+.rec .bar b { font-size:15px; font-weight:600; line-height:1.35; } .rec .bar { align-items:flex-start; }
+@media (max-width:480px) { .tscroll td:nth-child(2) { max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } }
