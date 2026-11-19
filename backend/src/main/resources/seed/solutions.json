@@ -599,5 +599,95 @@
    "python": "from collections import deque\n\n\ndef solve(nums, k):\n    window, out = deque(), []  # indices whose values decrease from front to back\n    for i, x in enumerate(nums):\n        while window and nums[window[-1]] <= x:\n            window.pop()\n        window.append(i)\n        if window[0] <= i - k:\n            window.popleft()\n        if i >= k - 1:\n            out.append(nums[window[0]])\n    return out\n",
    "javascript": "function solve(nums, k) {\n  const window = [], out = [];  // indices whose values decrease from front to back\n  let head = 0;\n  for (let i = 0; i < nums.length; i++) {\n    while (window.length > head && nums[window[window.length - 1]] <= nums[i]) window.pop();\n    window.push(i);\n    if (window[head] <= i - k) head++;\n    if (i >= k - 1) out.push(nums[window[head]]);\n  }\n  return out;\n}\n"
   }
+ },
+ "min-cost-climbing-stairs": {
+  "editorial": "## Approach\n\nbest[i] = min(best[i−1] + cost[i−1], best[i−2] + cost[i−2]) with best[0] = best[1] = 0. The answer is best[n], the position just beyond the last step. Two rolling variables suffice.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> cost) {\n    int a = 0, b = 0;\n    for (int i = 2; i <= (int)cost.size(); i++) {\n        int c = min(b + cost[i - 1], a + cost[i - 2]);\n        a = b;\n        b = c;\n    }\n    return b;\n}\n",
+   "java": "static int solve(int[] cost) {\n    int a = 0, b = 0;\n    for (int i = 2; i <= cost.length; i++) {\n        int c = Math.min(b + cost[i - 1], a + cost[i - 2]);\n        a = b;\n        b = c;\n    }\n    return b;\n}\n",
+   "python": "def solve(cost):\n    a, b = 0, 0  # cost to stand on stair i-2 and i-1 without paying yet\n    for i in range(2, len(cost) + 1):\n        a, b = b, min(b + cost[i - 1], a + cost[i - 2])\n    return b\n",
+   "javascript": "function solve(cost) {\n  let a = 0, b = 0;\n  for (let i = 2; i <= cost.length; i++) {\n    const c = Math.min(b + cost[i - 1], a + cost[i - 2]);\n    a = b;\n    b = c;\n  }\n  return b;\n}\n"
+  }
+ },
+ "house-robber": {
+  "editorial": "## Approach\n\ndp[i] = max(dp[i−1], dp[i−2] + nums[i]). Only the previous two values are needed, so use two variables.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int t = skip + x;\n        skip = max(take, skip);\n        take = t;\n    }\n    return max(take, skip);\n}\n",
+   "java": "static int solve(int[] nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int t = skip + x;\n        skip = Math.max(take, skip);\n        take = t;\n    }\n    return Math.max(take, skip);\n}\n",
+   "python": "def solve(nums):\n    take, skip = 0, 0\n    for x in nums:\n        take, skip = skip + x, max(take, skip)\n    return max(take, skip)\n",
+   "javascript": "function solve(nums) {\n  let take = 0, skip = 0;\n  for (const x of nums) {\n    const t = skip + x;\n    skip = Math.max(take, skip);\n    take = t;\n  }\n  return Math.max(take, skip);\n}\n"
+  }
+ },
+ "house-robber-ii": {
+  "editorial": "## Approach\n\nLinear helper rob(a, b) with prev/cur rolling variables: cur = max(cur, prev + x). The answer is max(rob(0, n-2), rob(1, n-1)); if n == 1 return nums[0]. One of the two ranges always excludes whichever of the first or last house the optimal solution skips.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int line(const vector<int>& a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int t = skip + a[i];\n        skip = max(take, skip);\n        take = t;\n    }\n    return max(take, skip);\n}\nint solve(vector<int> nums) {\n    int n = nums.size();\n    if (n == 1) return nums[0];\n    return max(line(nums, 1, n), line(nums, 0, n - 1));\n}\n",
+   "java": "static int line(int[] a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int t = skip + a[i];\n        skip = Math.max(take, skip);\n        take = t;\n    }\n    return Math.max(take, skip);\n}\nstatic int solve(int[] nums) {\n    int n = nums.length;\n    if (n == 1) return nums[0];\n    return Math.max(line(nums, 1, n), line(nums, 0, n - 1));\n}\n",
+   "python": "def solve(nums):\n    def line(a):\n        take, skip = 0, 0\n        for x in a:\n            take, skip = skip + x, max(take, skip)\n        return max(take, skip)\n    if len(nums) == 1:\n        return nums[0]\n    return max(line(nums[1:]), line(nums[:-1]))\n",
+   "javascript": "function solve(nums) {\n  const line = (a) => {\n    let take = 0, skip = 0;\n    for (const x of a) {\n      const t = skip + x;\n      skip = Math.max(take, skip);\n      take = t;\n    }\n    return Math.max(take, skip);\n  };\n  if (nums.length === 1) return nums[0];\n  return Math.max(line(nums.slice(1)), line(nums.slice(0, -1)));\n}\n"
+  }
+ },
+ "unique-paths": {
+  "editorial": "## Approach\n\nEither fill a DP grid with paths[i][j] = paths[i−1][j] + paths[i][j−1], or count orderings directly with the binomial coefficient C(m+n−2, m−1).\n\n**Complexity:** O(m × n) for DP, O(min(m, n)) with the formula time, O(n) or O(1) space.",
+  "solutions": {
+   "cpp": "int solve(int m, int n) {\n    vector<int> row(n, 1);\n    for (int i = 1; i < m; i++)\n        for (int j = 1; j < n; j++) row[j] += row[j - 1];\n    return row[n - 1];\n}\n",
+   "java": "static int solve(int m, int n) {\n    int[] row = new int[n];\n    Arrays.fill(row, 1);\n    for (int i = 1; i < m; i++)\n        for (int j = 1; j < n; j++) row[j] += row[j - 1];\n    return row[n - 1];\n}\n",
+   "python": "def solve(m, n):\n    row = [1] * n\n    for _ in range(1, m):\n        for j in range(1, n):\n            row[j] += row[j - 1]\n    return row[-1]\n",
+   "javascript": "function solve(m, n) {\n  const row = new Array(n).fill(1);\n  for (let i = 1; i < m; i++) {\n    for (let j = 1; j < n; j++) row[j] += row[j - 1];\n  }\n  return row[n - 1];\n}\n"
+  }
+ },
+ "coin-change": {
+  "editorial": "## Approach\n\nBottom-up dynamic programming over amounts 0..amount. For each amount try every coin and take the best of dp[a − coin] + 1. If dp[amount] is still the sentinel, the answer is −1.\n\n**Complexity:** O(amount × coins) time, O(amount) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> coins, int amount) {\n    int INF = amount + 1;\n    vector<int> dp(amount + 1, INF);\n    dp[0] = 0;\n    for (int a = 1; a <= amount; a++)\n        for (int c : coins)\n            if (c <= a) dp[a] = min(dp[a], dp[a - c] + 1);\n    return dp[amount] == INF ? -1 : dp[amount];\n}\n",
+   "java": "static int solve(int[] coins, int amount) {\n    int INF = amount + 1;\n    int[] dp = new int[amount + 1];\n    Arrays.fill(dp, INF);\n    dp[0] = 0;\n    for (int a = 1; a <= amount; a++)\n        for (int c : coins)\n            if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);\n    return dp[amount] == INF ? -1 : dp[amount];\n}\n",
+   "python": "def solve(coins, amount):\n    INF = amount + 1\n    dp = [0] + [INF] * amount\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a and dp[a - c] + 1 < dp[a]:\n                dp[a] = dp[a - c] + 1\n    return dp[amount] if dp[amount] != INF else -1\n",
+   "javascript": "function solve(coins, amount) {\n  const INF = amount + 1;\n  const dp = new Array(amount + 1).fill(INF);\n  dp[0] = 0;\n  for (let a = 1; a <= amount; a++) {\n    for (const c of coins) {\n      if (c <= a && dp[a - c] + 1 < dp[a]) dp[a] = dp[a - c] + 1;\n    }\n  }\n  return dp[amount] === INF ? -1 : dp[amount];\n}\n"
+  }
+ },
+ "longest-increasing-subsequence": {
+  "editorial": "## Approach\n\nMaintain a sorted array tails where tails[k] is the smallest tail of any increasing subsequence of length k+1. For each x, binary-search the first tail >= x and replace it (or append if none). The final length of tails is the answer.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    vector<int> tails;\n    for (int x : nums) {\n        auto it = lower_bound(tails.begin(), tails.end(), x);\n        if (it == tails.end()) tails.push_back(x);\n        else *it = x;\n    }\n    return tails.size();\n}\n",
+   "java": "static int solve(int[] nums) {\n    int[] tails = new int[nums.length];\n    int size = 0;\n    for (int x : nums) {\n        int lo = 0, hi = size;\n        while (lo < hi) {\n            int mid = (lo + hi) >>> 1;\n            if (tails[mid] < x) lo = mid + 1; else hi = mid;\n        }\n        tails[lo] = x;\n        if (lo == size) size++;\n    }\n    return size;\n}\n",
+   "python": "def solve(nums):\n    import bisect\n    tails = []\n    for x in nums:\n        i = bisect.bisect_left(tails, x)\n        if i == len(tails):\n            tails.append(x)\n        else:\n            tails[i] = x\n    return len(tails)\n",
+   "javascript": "function solve(nums) {\n  const tails = [];\n  for (const x of nums) {\n    let lo = 0, hi = tails.length;\n    while (lo < hi) {\n      const mid = (lo + hi) >> 1;\n      if (tails[mid] < x) lo = mid + 1; else hi = mid;\n    }\n    tails[lo] = x;\n  }\n  return tails.length;\n}\n"
+  }
+ },
+ "jump-game": {
+  "editorial": "## Approach\n\nGreedy: keep far, the furthest index reachable so far. Walk the array; if i > far the end is unreachable, otherwise update far = max(far, i + nums[i]).\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "bool solve(vector<int> nums) {\n    int reach = 0;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        if (i > reach) return false;\n        reach = max(reach, i + nums[i]);\n    }\n    return true;\n}\n",
+   "java": "static boolean solve(int[] nums) {\n    int reach = 0;\n    for (int i = 0; i < nums.length; i++) {\n        if (i > reach) return false;\n        reach = Math.max(reach, i + nums[i]);\n    }\n    return true;\n}\n",
+   "python": "def solve(nums):\n    reach = 0\n    for i, x in enumerate(nums):\n        if i > reach:\n            return False\n        reach = max(reach, i + x)\n    return True\n",
+   "javascript": "function solve(nums) {\n  let reach = 0;\n  for (let i = 0; i < nums.length; i++) {\n    if (i > reach) return false;\n    reach = Math.max(reach, i + nums[i]);\n  }\n  return true;\n}\n"
+  }
+ },
+ "jump-game-ii": {
+  "editorial": "## Approach\n\nGreedy BFS without a queue: keep `curEnd` (end of the current jump's range) and `farthest`. For i in 0..n-2: farthest = max(farthest, i + nums[i]); when i == curEnd, increment jumps and set curEnd = farthest. The jump count at the end is minimal.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int jumps = 0, end = 0, far = 0;\n    for (int i = 0; i + 1 < (int)nums.size(); i++) {\n        far = max(far, i + nums[i]);\n        if (i == end) {\n            jumps++;\n            end = far;\n        }\n    }\n    return jumps;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int jumps = 0, end = 0, far = 0;\n    for (int i = 0; i + 1 < nums.length; i++) {\n        far = Math.max(far, i + nums[i]);\n        if (i == end) {\n            jumps++;\n            end = far;\n        }\n    }\n    return jumps;\n}\n",
+   "python": "def solve(nums):\n    jumps = end = far = 0\n    for i in range(len(nums) - 1):\n        far = max(far, i + nums[i])\n        if i == end:\n            jumps += 1\n            end = far\n    return jumps\n",
+   "javascript": "function solve(nums) {\n  let jumps = 0, end = 0, far = 0;\n  for (let i = 0; i < nums.length - 1; i++) {\n    far = Math.max(far, i + nums[i]);\n    if (i === end) {\n      jumps++;\n      end = far;\n    }\n  }\n  return jumps;\n}\n"
+  }
+ },
+ "perfect-squares": {
+  "editorial": "## Approach\n\ndp[0] = 0; for i in 1..n: dp[i] = min over j with j*j <= i of dp[i - j*j] + 1. The answer is dp[n]. A number-theory solution checks for 1 square, 2 squares (sum of two squares), the 4^a(8b+7) form (4), else 3 in O(sqrt n).\n\n**Complexity:** O(n√n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(int n) {\n    vector<int> dp(n + 1, n);\n    dp[0] = 0;\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j * j <= i; j++) dp[i] = min(dp[i], dp[i - j * j] + 1);\n    return dp[n];\n}\n",
+   "java": "static int solve(int n) {\n    int[] dp = new int[n + 1];\n    Arrays.fill(dp, n);\n    dp[0] = 0;\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n    return dp[n];\n}\n",
+   "python": "def solve(n):\n    dp = [0] + [n] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return dp[n]\n",
+   "javascript": "function solve(n) {\n  const dp = new Array(n + 1).fill(n);\n  dp[0] = 0;\n  for (let i = 1; i <= n; i++) {\n    for (let j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n  }\n  return dp[n];\n}\n"
+  }
+ },
+ "decode-ways": {
+  "editorial": "## Approach\n\ndp[0] = 1, dp[1] = (s[0] != '0'). For i >= 2: add dp[i-1] if s[i-1] != '0'; add dp[i-2] if the two digits form a number between 10 and 26. Only the last two values are needed. A string starting with '0' or containing an isolated '0' gives 0.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(string s) {\n    if (s[0] == '0') return 0;\n    long long prev2 = 1, prev1 = 1;\n    for (int i = 2; i <= (int)s.size(); i++) {\n        long long cur = 0;\n        if (s[i - 1] != '0') cur += prev1;\n        int two = (s[i - 2] - '0') * 10 + (s[i - 1] - '0');\n        if (two >= 10 && two <= 26) cur += prev2;\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int)prev1;\n}\n",
+   "java": "static int solve(String s) {\n    if (s.charAt(0) == '0') return 0;\n    long prev2 = 1, prev1 = 1;\n    for (int i = 2; i <= s.length(); i++) {\n        long cur = 0;\n        if (s.charAt(i - 1) != '0') cur += prev1;\n        int two = (s.charAt(i - 2) - '0') * 10 + (s.charAt(i - 1) - '0');\n        if (two >= 10 && two <= 26) cur += prev2;\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int) prev1;\n}\n",
+   "python": "def solve(s):\n    prev2, prev1 = 1, 1  # ways for the prefixes of length i-2 and i-1\n    if s[0] == '0':\n        return 0\n    for i in range(2, len(s) + 1):\n        cur = 0\n        if s[i - 1] != '0':\n            cur += prev1\n        if 10 <= int(s[i - 2:i]) <= 26:\n            cur += prev2\n        prev2, prev1 = prev1, cur\n    return prev1\n",
+   "javascript": "function solve(s) {\n  if (s[0] === \"0\") return 0;\n  let prev2 = 1, prev1 = 1;\n  for (let i = 2; i <= s.length; i++) {\n    let cur = 0;\n    if (s[i - 1] !== \"0\") cur += prev1;\n    const two = parseInt(s.slice(i - 2, i), 10);\n    if (two >= 10 && two <= 26) cur += prev2;\n    prev2 = prev1;\n    prev1 = cur;\n  }\n  return prev1;\n}\n"
+  }
  }
 }

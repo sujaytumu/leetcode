@@ -1,0 +1,427 @@
+=== min-cost-climbing-stairs
+--- py
+def solve(cost):
+    a, b = 0, 0  # cost to stand on stair i-2 and i-1 without paying yet
+    for i in range(2, len(cost) + 1):
+        a, b = b, min(b + cost[i - 1], a + cost[i - 2])
+    return b
+--- js
+function solve(cost) {
+  let a = 0, b = 0;
+  for (let i = 2; i <= cost.length; i++) {
+    const c = Math.min(b + cost[i - 1], a + cost[i - 2]);
+    a = b;
+    b = c;
+  }
+  return b;
+}
+--- cpp
+int solve(vector<int> cost) {
+    int a = 0, b = 0;
+    for (int i = 2; i <= (int)cost.size(); i++) {
+        int c = min(b + cost[i - 1], a + cost[i - 2]);
+        a = b;
+        b = c;
+    }
+    return b;
+}
+--- java
+static int solve(int[] cost) {
+    int a = 0, b = 0;
+    for (int i = 2; i <= cost.length; i++) {
+        int c = Math.min(b + cost[i - 1], a + cost[i - 2]);
+        a = b;
+        b = c;
+    }
+    return b;
+}
+=== house-robber
+--- py
+def solve(nums):
+    take, skip = 0, 0
+    for x in nums:
+        take, skip = skip + x, max(take, skip)
+    return max(take, skip)
+--- js
+function solve(nums) {
+  let take = 0, skip = 0;
+  for (const x of nums) {
+    const t = skip + x;
+    skip = Math.max(take, skip);
+    take = t;
+  }
+  return Math.max(take, skip);
+}
+--- cpp
+int solve(vector<int> nums) {
+    int take = 0, skip = 0;
+    for (int x : nums) {
+        int t = skip + x;
+        skip = max(take, skip);
+        take = t;
+    }
+    return max(take, skip);
+}
+--- java
+static int solve(int[] nums) {
+    int take = 0, skip = 0;
+    for (int x : nums) {
+        int t = skip + x;
+        skip = Math.max(take, skip);
+        take = t;
+    }
+    return Math.max(take, skip);
+}
+=== house-robber-ii
+--- py
+def solve(nums):
+    def line(a):
+        take, skip = 0, 0
+        for x in a:
+            take, skip = skip + x, max(take, skip)
+        return max(take, skip)
+    if len(nums) == 1:
+        return nums[0]
+    return max(line(nums[1:]), line(nums[:-1]))
+--- js
+function solve(nums) {
+  const line = (a) => {
+    let take = 0, skip = 0;
+    for (const x of a) {
+      const t = skip + x;
+      skip = Math.max(take, skip);
+      take = t;
+    }
+    return Math.max(take, skip);
+  };
+  if (nums.length === 1) return nums[0];
+  return Math.max(line(nums.slice(1)), line(nums.slice(0, -1)));
+}
+--- cpp
+int line(const vector<int>& a, int lo, int hi) {
+    int take = 0, skip = 0;
+    for (int i = lo; i < hi; i++) {
+        int t = skip + a[i];
+        skip = max(take, skip);
+        take = t;
+    }
+    return max(take, skip);
+}
+int solve(vector<int> nums) {
+    int n = nums.size();
+    if (n == 1) return nums[0];
+    return max(line(nums, 1, n), line(nums, 0, n - 1));
+}
+--- java
+static int line(int[] a, int lo, int hi) {
+    int take = 0, skip = 0;
+    for (int i = lo; i < hi; i++) {
+        int t = skip + a[i];
+        skip = Math.max(take, skip);
+        take = t;
+    }
+    return Math.max(take, skip);
+}
+static int solve(int[] nums) {
+    int n = nums.length;
+    if (n == 1) return nums[0];
+    return Math.max(line(nums, 1, n), line(nums, 0, n - 1));
+}
+=== unique-paths
+--- py
+def solve(m, n):
+    row = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            row[j] += row[j - 1]
+    return row[-1]
+--- js
+function solve(m, n) {
+  const row = new Array(n).fill(1);
+  for (let i = 1; i < m; i++) {
+    for (let j = 1; j < n; j++) row[j] += row[j - 1];
+  }
+  return row[n - 1];
+}
+--- cpp
+int solve(int m, int n) {
+    vector<int> row(n, 1);
+    for (int i = 1; i < m; i++)
+        for (int j = 1; j < n; j++) row[j] += row[j - 1];
+    return row[n - 1];
+}
+--- java
+static int solve(int m, int n) {
+    int[] row = new int[n];
+    Arrays.fill(row, 1);
+    for (int i = 1; i < m; i++)
+        for (int j = 1; j < n; j++) row[j] += row[j - 1];
+    return row[n - 1];
+}
+=== coin-change
+--- py
+def solve(coins, amount):
+    INF = amount + 1
+    dp = [0] + [INF] * amount
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c <= a and dp[a - c] + 1 < dp[a]:
+                dp[a] = dp[a - c] + 1
+    return dp[amount] if dp[amount] != INF else -1
+--- js
+function solve(coins, amount) {
+  const INF = amount + 1;
+  const dp = new Array(amount + 1).fill(INF);
+  dp[0] = 0;
+  for (let a = 1; a <= amount; a++) {
+    for (const c of coins) {
+      if (c <= a && dp[a - c] + 1 < dp[a]) dp[a] = dp[a - c] + 1;
+    }
+  }
+  return dp[amount] === INF ? -1 : dp[amount];
+}
+--- cpp
+int solve(vector<int> coins, int amount) {
+    int INF = amount + 1;
+    vector<int> dp(amount + 1, INF);
+    dp[0] = 0;
+    for (int a = 1; a <= amount; a++)
+        for (int c : coins)
+            if (c <= a) dp[a] = min(dp[a], dp[a - c] + 1);
+    return dp[amount] == INF ? -1 : dp[amount];
+}
+--- java
+static int solve(int[] coins, int amount) {
+    int INF = amount + 1;
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, INF);
+    dp[0] = 0;
+    for (int a = 1; a <= amount; a++)
+        for (int c : coins)
+            if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);
+    return dp[amount] == INF ? -1 : dp[amount];
+}
+=== longest-increasing-subsequence
+--- py
+def solve(nums):
+    import bisect
+    tails = []
+    for x in nums:
+        i = bisect.bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)
+--- js
+function solve(nums) {
+  const tails = [];
+  for (const x of nums) {
+    let lo = 0, hi = tails.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (tails[mid] < x) lo = mid + 1; else hi = mid;
+    }
+    tails[lo] = x;
+  }
+  return tails.length;
+}
+--- cpp
+int solve(vector<int> nums) {
+    vector<int> tails;
+    for (int x : nums) {
+        auto it = lower_bound(tails.begin(), tails.end(), x);
+        if (it == tails.end()) tails.push_back(x);
+        else *it = x;
+    }
+    return tails.size();
+}
+--- java
+static int solve(int[] nums) {
+    int[] tails = new int[nums.length];
+    int size = 0;
+    for (int x : nums) {
+        int lo = 0, hi = size;
+        while (lo < hi) {
+            int mid = (lo + hi) >>> 1;
+            if (tails[mid] < x) lo = mid + 1; else hi = mid;
+        }
+        tails[lo] = x;
+        if (lo == size) size++;
+    }
+    return size;
+}
+=== jump-game
+--- py
+def solve(nums):
+    reach = 0
+    for i, x in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + x)
+    return True
+--- js
+function solve(nums) {
+  let reach = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (i > reach) return false;
+    reach = Math.max(reach, i + nums[i]);
+  }
+  return true;
+}
+--- cpp
+bool solve(vector<int> nums) {
+    int reach = 0;
+    for (int i = 0; i < (int)nums.size(); i++) {
+        if (i > reach) return false;
+        reach = max(reach, i + nums[i]);
+    }
+    return true;
+}
+--- java
+static boolean solve(int[] nums) {
+    int reach = 0;
+    for (int i = 0; i < nums.length; i++) {
+        if (i > reach) return false;
+        reach = Math.max(reach, i + nums[i]);
+    }
+    return true;
+}
+=== jump-game-ii
+--- py
+def solve(nums):
+    jumps = end = far = 0
+    for i in range(len(nums) - 1):
+        far = max(far, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = far
+    return jumps
+--- js
+function solve(nums) {
+  let jumps = 0, end = 0, far = 0;
+  for (let i = 0; i < nums.length - 1; i++) {
+    far = Math.max(far, i + nums[i]);
+    if (i === end) {
+      jumps++;
+      end = far;
+    }
+  }
+  return jumps;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int jumps = 0, end = 0, far = 0;
+    for (int i = 0; i + 1 < (int)nums.size(); i++) {
+        far = max(far, i + nums[i]);
+        if (i == end) {
+            jumps++;
+            end = far;
+        }
+    }
+    return jumps;
+}
+--- java
+static int solve(int[] nums) {
+    int jumps = 0, end = 0, far = 0;
+    for (int i = 0; i + 1 < nums.length; i++) {
+        far = Math.max(far, i + nums[i]);
+        if (i == end) {
+            jumps++;
+            end = far;
+        }
+    }
+    return jumps;
+}
+=== perfect-squares
+--- py
+def solve(n):
+    dp = [0] + [n] * n
+    for i in range(1, n + 1):
+        j = 1
+        while j * j <= i:
+            dp[i] = min(dp[i], dp[i - j * j] + 1)
+            j += 1
+    return dp[n]
+--- js
+function solve(n) {
+  const dp = new Array(n + 1).fill(n);
+  dp[0] = 0;
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+  }
+  return dp[n];
+}
+--- cpp
+int solve(int n) {
+    vector<int> dp(n + 1, n);
+    dp[0] = 0;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j * j <= i; j++) dp[i] = min(dp[i], dp[i - j * j] + 1);
+    return dp[n];
+}
+--- java
+static int solve(int n) {
+    int[] dp = new int[n + 1];
+    Arrays.fill(dp, n);
+    dp[0] = 0;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+    return dp[n];
+}
+=== decode-ways
+--- py
+def solve(s):
+    prev2, prev1 = 1, 1  # ways for the prefixes of length i-2 and i-1
+    if s[0] == '0':
+        return 0
+    for i in range(2, len(s) + 1):
+        cur = 0
+        if s[i - 1] != '0':
+            cur += prev1
+        if 10 <= int(s[i - 2:i]) <= 26:
+            cur += prev2
+        prev2, prev1 = prev1, cur
+    return prev1
+--- js
+function solve(s) {
+  if (s[0] === "0") return 0;
+  let prev2 = 1, prev1 = 1;
+  for (let i = 2; i <= s.length; i++) {
+    let cur = 0;
+    if (s[i - 1] !== "0") cur += prev1;
+    const two = parseInt(s.slice(i - 2, i), 10);
+    if (two >= 10 && two <= 26) cur += prev2;
+    prev2 = prev1;
+    prev1 = cur;
+  }
+  return prev1;
+}
+--- cpp
+int solve(string s) {
+    if (s[0] == '0') return 0;
+    long long prev2 = 1, prev1 = 1;
+    for (int i = 2; i <= (int)s.size(); i++) {
+        long long cur = 0;
+        if (s[i - 1] != '0') cur += prev1;
+        int two = (s[i - 2] - '0') * 10 + (s[i - 1] - '0');
+        if (two >= 10 && two <= 26) cur += prev2;
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    return (int)prev1;
+}
+--- java
+static int solve(String s) {
+    if (s.charAt(0) == '0') return 0;
+    long prev2 = 1, prev1 = 1;
+    for (int i = 2; i <= s.length(); i++) {
+        long cur = 0;
+        if (s.charAt(i - 1) != '0') cur += prev1;
+        int two = (s.charAt(i - 2) - '0') * 10 + (s.charAt(i - 1) - '0');
+        if (two >= 10 && two <= 26) cur += prev2;
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    return (int) prev1;
+}
