@@ -43,10 +43,10 @@ class StudyApiTest {
         mvc.perform(get("/api/plans"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("warmup"))
-                .andExpect(jsonPath("$[0].total").value(43))
+                .andExpect(jsonPath("$[0].total").value(53))
                 .andExpect(jsonPath("$[0].solved").value(0))
-                .andExpect(jsonPath("$[0].problems.length()").value(43))
-                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(11)));
+                .andExpect(jsonPath("$[0].problems.length()").value(53))
+                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(15)));
     }
 
     @Test

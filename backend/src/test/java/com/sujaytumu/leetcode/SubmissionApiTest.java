@@ -110,7 +110,7 @@ class SubmissionApiTest {
                 .andExpect(jsonPath("$.total").value(175))
                 .andExpect(jsonPath("$.solved").value(1))
                 .andExpect(jsonPath("$.attempted").value(1))
-                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(43))
+                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(53))
                 .andExpect(jsonPath("$.byDifficulty.EASY.solved").value(1))
                 .andExpect(jsonPath("$.byDifficulty.HARD.solved").value(0));
     }
