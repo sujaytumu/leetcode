@@ -896,5 +896,95 @@
    "python": "def solve(grid):\n    rows, cols = len(grid), len(grid[0])\n    seen = [[False] * cols for _ in range(rows)]\n    best = 0\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] != '1' or seen[r][c]:\n                continue\n            seen[r][c] = True\n            stack, area = [(r, c)], 0\n            while stack:\n                cr, cc = stack.pop()\n                area += 1\n                for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                    nr, nc = cr + dr, cc + dc\n                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '1' and not seen[nr][nc]:\n                        seen[nr][nc] = True\n                        stack.append((nr, nc))\n            best = max(best, area)\n    return best\n",
    "javascript": "function solve(grid) {\n  const rows = grid.length, cols = grid[0].length;\n  const seen = Array.from({ length: rows }, () => new Array(cols).fill(false));\n  let best = 0;\n  for (let r = 0; r < rows; r++)\n    for (let c = 0; c < cols; c++) {\n      if (grid[r][c] !== \"1\" || seen[r][c]) continue;\n      seen[r][c] = true;\n      const stack = [[r, c]];\n      let area = 0;\n      while (stack.length) {\n        const [cr, cc] = stack.pop();\n        area++;\n        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {\n          const nr = cr + dr, nc = cc + dc;\n          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === \"1\" && !seen[nr][nc]) {\n            seen[nr][nc] = true;\n            stack.push([nr, nc]);\n          }\n        }\n      }\n      best = Math.max(best, area);\n    }\n  return best;\n}\n"
   }
+ },
+ "assign-cookies": {
+  "editorial": "## Approach\n\nSort greed factors g and cookie sizes s. Pointer i over children; for each cookie j in ascending order, if s[j] >= g[i] satisfy child i and advance i. The final i is the answer. Using the smallest sufficient cookie per child is optimal by an exchange argument.\n\n**Complexity:** O(n log n + m log m) time, O(1) beyond sorting space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> g, vector<int> s) {\n    sort(g.begin(), g.end());\n    sort(s.begin(), s.end());\n    size_t child = 0;\n    for (int cookie : s)\n        if (child < g.size() && cookie >= g[child]) child++;\n    return (int)child;\n}\n",
+   "java": "static int solve(int[] g, int[] s) {\n    int[] greed = g.clone(), cookies = s.clone();\n    Arrays.sort(greed);\n    Arrays.sort(cookies);\n    int child = 0;\n    for (int cookie : cookies)\n        if (child < greed.length && cookie >= greed[child]) child++;\n    return child;\n}\n",
+   "python": "def solve(g, s):\n    g, s = sorted(g), sorted(s)\n    child = 0\n    for cookie in s:\n        if child < len(g) and cookie >= g[child]:\n            child += 1\n    return child\n",
+   "javascript": "function solve(g, s) {\n  g = [...g].sort((a, b) => a - b);\n  s = [...s].sort((a, b) => a - b);\n  let child = 0;\n  for (const cookie of s) {\n    if (child < g.length && cookie >= g[child]) child++;\n  }\n  return child;\n}\n"
+  }
+ },
+ "container-with-most-water": {
+  "editorial": "## Approach\n\nTwo pointers at both ends. Record min(h[l], h[r]) × (r − l), then move the pointer at the shorter line inward. Every discarded pair is provably no better than one already considered.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> height) {\n    int lo = 0, hi = (int)height.size() - 1, best = 0;\n    while (lo < hi) {\n        best = max(best, (hi - lo) * min(height[lo], height[hi]));\n        if (height[lo] < height[hi]) lo++; else hi--;\n    }\n    return best;\n}\n",
+   "java": "static int solve(int[] height) {\n    int lo = 0, hi = height.length - 1, best = 0;\n    while (lo < hi) {\n        best = Math.max(best, (hi - lo) * Math.min(height[lo], height[hi]));\n        if (height[lo] < height[hi]) lo++; else hi--;\n    }\n    return best;\n}\n",
+   "python": "def solve(height):\n    lo, hi = 0, len(height) - 1\n    best = 0\n    while lo < hi:\n        best = max(best, (hi - lo) * min(height[lo], height[hi]))\n        if height[lo] < height[hi]:\n            lo += 1\n        else:\n            hi -= 1\n    return best\n",
+   "javascript": "function solve(height) {\n  let lo = 0, hi = height.length - 1, best = 0;\n  while (lo < hi) {\n    best = Math.max(best, (hi - lo) * Math.min(height[lo], height[hi]));\n    if (height[lo] < height[hi]) lo++; else hi--;\n  }\n  return best;\n}\n"
+  }
+ },
+ "gas-station": {
+  "editorial": "## Approach\n\nOne pass: keep `tank` and `start`. Add gas[i] - cost[i]; if tank < 0, set start = i + 1 and tank = 0. Also track the total difference; if it is negative return -1, otherwise start is the unique answer.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> gas, vector<int> cost) {\n    int total = 0, tank = 0, start = 0;\n    for (int i = 0; i < (int)gas.size(); i++) {\n        int delta = gas[i] - cost[i];\n        total += delta;\n        tank += delta;\n        if (tank < 0) { start = i + 1; tank = 0; }\n    }\n    return total < 0 ? -1 : start;\n}\n",
+   "java": "static int solve(int[] gas, int[] cost) {\n    int total = 0, tank = 0, start = 0;\n    for (int i = 0; i < gas.length; i++) {\n        int delta = gas[i] - cost[i];\n        total += delta;\n        tank += delta;\n        if (tank < 0) { start = i + 1; tank = 0; }\n    }\n    return total < 0 ? -1 : start;\n}\n",
+   "python": "def solve(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    start = tank = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            start = i + 1\n            tank = 0\n    return start\n",
+   "javascript": "function solve(gas, cost) {\n  let total = 0, tank = 0, start = 0;\n  for (let i = 0; i < gas.length; i++) {\n    const delta = gas[i] - cost[i];\n    total += delta;\n    tank += delta;\n    if (tank < 0) { start = i + 1; tank = 0; }\n  }\n  return total < 0 ? -1 : start;\n}\n"
+  }
+ },
+ "best-time-to-buy-and-sell-stock-ii": {
+  "editorial": "## Approach\n\nGreedy: for each i add max(0, prices[i] - prices[i-1]). Buying at every valley and selling at every peak yields exactly that sum, and splitting a rising run into daily trades gives the same profit.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> prices) {\n    int profit = 0;\n    for (size_t i = 1; i < prices.size(); i++) profit += max(0, prices[i] - prices[i - 1]);\n    return profit;\n}\n",
+   "java": "static int solve(int[] prices) {\n    int profit = 0;\n    for (int i = 1; i < prices.length; i++) profit += Math.max(0, prices[i] - prices[i - 1]);\n    return profit;\n}\n",
+   "python": "def solve(prices):\n    return sum(max(0, b - a) for a, b in zip(prices, prices[1:]))\n",
+   "javascript": "function solve(prices) {\n  let profit = 0;\n  for (let i = 1; i < prices.length; i++) profit += Math.max(0, prices[i] - prices[i - 1]);\n  return profit;\n}\n"
+  }
+ },
+ "partition-labels": {
+  "editorial": "## Approach\n\nlast[c] = last index of each letter. Sweep i with `end` = max last occurrence of letters seen in the current part. When i == end, the part [start, end] is closed: record end - start + 1 and set start = i + 1. Greedy cuts at the earliest valid points give the maximum number of parts.\n\n**Complexity:** O(n) time, O(1) (26 letters) space.",
+  "solutions": {
+   "cpp": "vector<int> solve(string s) {\n    int last[26];\n    for (int i = 0; i < (int)s.size(); i++) last[s[i] - 'a'] = i;\n    vector<int> sizes;\n    int start = 0, end = 0;\n    for (int i = 0; i < (int)s.size(); i++) {\n        end = max(end, last[s[i] - 'a']);\n        if (i == end) {\n            sizes.push_back(i - start + 1);\n            start = i + 1;\n        }\n    }\n    return sizes;\n}\n",
+   "java": "static int[] solve(String s) {\n    int[] last = new int[26];\n    for (int i = 0; i < s.length(); i++) last[s.charAt(i) - 'a'] = i;\n    List<Integer> sizes = new ArrayList<>();\n    int start = 0, end = 0;\n    for (int i = 0; i < s.length(); i++) {\n        end = Math.max(end, last[s.charAt(i) - 'a']);\n        if (i == end) {\n            sizes.add(i - start + 1);\n            start = i + 1;\n        }\n    }\n    int[] out = new int[sizes.size()];\n    for (int i = 0; i < out.length; i++) out[i] = sizes.get(i);\n    return out;\n}\n",
+   "python": "def solve(s):\n    last = {ch: i for i, ch in enumerate(s)}\n    sizes, start, end = [], 0, 0\n    for i, ch in enumerate(s):\n        end = max(end, last[ch])\n        if i == end:\n            sizes.append(i - start + 1)\n            start = i + 1\n    return sizes\n",
+   "javascript": "function solve(s) {\n  const last = {};\n  for (let i = 0; i < s.length; i++) last[s[i]] = i;\n  const sizes = [];\n  let start = 0, end = 0;\n  for (let i = 0; i < s.length; i++) {\n    end = Math.max(end, last[s[i]]);\n    if (i === end) {\n      sizes.push(i - start + 1);\n      start = i + 1;\n    }\n  }\n  return sizes;\n}\n"
+  }
+ },
+ "candy": {
+  "editorial": "## Approach\n\nInitialise every child with 1 candy. A left-to-right pass enforces the constraint against the left neighbour, a right-to-left pass enforces it against the right neighbour while keeping the larger value so both constraints hold. The sum is minimal. A one-pass O(1)-space version tracks rising and falling run lengths.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> ratings) {\n    int n = ratings.size();\n    vector<int> candy(n, 1);\n    for (int i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;\n    for (int i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = max(candy[i], candy[i + 1] + 1);\n    return accumulate(candy.begin(), candy.end(), 0);\n}\n",
+   "java": "static int solve(int[] ratings) {\n    int n = ratings.length;\n    int[] candy = new int[n];\n    Arrays.fill(candy, 1);\n    for (int i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;\n    for (int i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = Math.max(candy[i], candy[i + 1] + 1);\n    int total = 0;\n    for (int c : candy) total += c;\n    return total;\n}\n",
+   "python": "def solve(ratings):\n    n = len(ratings)\n    candy = [1] * n\n    for i in range(1, n):\n        if ratings[i] > ratings[i - 1]:\n            candy[i] = candy[i - 1] + 1\n    for i in range(n - 2, -1, -1):\n        if ratings[i] > ratings[i + 1]:\n            candy[i] = max(candy[i], candy[i + 1] + 1)\n    return sum(candy)\n",
+   "javascript": "function solve(ratings) {\n  const n = ratings.length;\n  const candy = new Array(n).fill(1);\n  for (let i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;\n  for (let i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = Math.max(candy[i], candy[i + 1] + 1);\n  return candy.reduce((a, b) => a + b, 0);\n}\n"
+  }
+ },
+ "non-overlapping-intervals": {
+  "editorial": "## Approach\n\nSort by end. Track `lastEnd`; for each interval, if start >= lastEnd keep it and update lastEnd, else count a removal. Picking the earliest-finishing interval leaves the most room for the rest (classic activity selection). Touching intervals do not overlap.\n\n**Complexity:** O(n log n) time, O(1) beyond sorting space.",
+  "solutions": {
+   "cpp": "int solve(vector<vector<int>> intervals) {\n    sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; });\n    int removed = 0, lastEnd = INT_MIN;\n    for (auto& iv : intervals) {\n        if (iv[0] >= lastEnd) lastEnd = iv[1];\n        else removed++;\n    }\n    return removed;\n}\n",
+   "java": "static int solve(int[][] intervals) {\n    int[][] sorted = intervals.clone();\n    Arrays.sort(sorted, (a, b) -> Integer.compare(a[1], b[1]));\n    int removed = 0, lastEnd = Integer.MIN_VALUE;\n    for (int[] iv : sorted) {\n        if (iv[0] >= lastEnd) lastEnd = iv[1];\n        else removed++;\n    }\n    return removed;\n}\n",
+   "python": "def solve(intervals):\n    removed = 0\n    last_end = None\n    for start, end in sorted(intervals, key=lambda iv: iv[1]):\n        if last_end is None or start >= last_end:\n            last_end = end\n        else:\n            removed += 1\n    return removed\n",
+   "javascript": "function solve(intervals) {\n  const sorted = [...intervals].sort((a, b) => a[1] - b[1]);\n  let removed = 0, lastEnd = -Infinity;\n  for (const [start, end] of sorted) {\n    if (start >= lastEnd) lastEnd = end; else removed++;\n  }\n  return removed;\n}\n"
+  }
+ },
+ "insert-interval": {
+  "editorial": "## Approach\n\nThree phases: (1) append intervals with end < new.start; (2) while the next interval's start <= new.end, merge by new.start = min, new.end = max; append the merged interval; (3) append the remaining intervals. Touching endpoints count as overlapping, hence <=.\n\n**Complexity:** O(n) time, O(n) for the output space.",
+  "solutions": {
+   "cpp": "vector<vector<int>> solve(vector<vector<int>> intervals, vector<int> newInterval) {\n    int start = newInterval[0], end = newInterval[1];\n    vector<vector<int>> result;\n    size_t i = 0, n = intervals.size();\n    while (i < n && intervals[i][1] < start) result.push_back(intervals[i++]);\n    while (i < n && intervals[i][0] <= end) {\n        start = min(start, intervals[i][0]);\n        end = max(end, intervals[i][1]);\n        i++;\n    }\n    result.push_back({start, end});\n    while (i < n) result.push_back(intervals[i++]);\n    return result;\n}\n",
+   "java": "static int[][] solve(int[][] intervals, int[] newInterval) {\n    int start = newInterval[0], end = newInterval[1];\n    List<int[]> result = new ArrayList<>();\n    int i = 0, n = intervals.length;\n    while (i < n && intervals[i][1] < start) result.add(intervals[i++]);\n    while (i < n && intervals[i][0] <= end) {\n        start = Math.min(start, intervals[i][0]);\n        end = Math.max(end, intervals[i][1]);\n        i++;\n    }\n    result.add(new int[]{start, end});\n    while (i < n) result.add(intervals[i++]);\n    return result.toArray(new int[0][]);\n}\n",
+   "python": "def solve(intervals, newInterval):\n    start, end = newInterval\n    result = []\n    i, n = 0, len(intervals)\n    while i < n and intervals[i][1] < start:\n        result.append(intervals[i])\n        i += 1\n    while i < n and intervals[i][0] <= end:\n        start = min(start, intervals[i][0])\n        end = max(end, intervals[i][1])\n        i += 1\n    result.append([start, end])\n    result.extend(intervals[i:])\n    return result\n",
+   "javascript": "function solve(intervals, newInterval) {\n  let [start, end] = newInterval;\n  const result = [];\n  let i = 0;\n  const n = intervals.length;\n  while (i < n && intervals[i][1] < start) result.push(intervals[i++]);\n  while (i < n && intervals[i][0] <= end) {\n    start = Math.min(start, intervals[i][0]);\n    end = Math.max(end, intervals[i][1]);\n    i++;\n  }\n  result.push([start, end]);\n  while (i < n) result.push(intervals[i++]);\n  return result;\n}\n"
+  }
+ },
+ "longest-consecutive-sequence": {
+  "editorial": "## Approach\n\nInsert all values into a set. For each x with x - 1 not in the set, extend upward while the next value exists and track the longest run. Each number is visited at most twice (once as a candidate start check, once while being counted), which gives linear time.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    unordered_set<int> values(nums.begin(), nums.end());\n    int best = 0;\n    for (int x : values) {\n        if (values.count(x - 1)) continue;\n        int length = 1;\n        while (values.count(x + length)) length++;\n        best = max(best, length);\n    }\n    return best;\n}\n",
+   "java": "static int solve(int[] nums) {\n    Set<Integer> values = new HashSet<>();\n    for (int x : nums) values.add(x);\n    int best = 0;\n    for (int x : values) {\n        if (values.contains(x - 1)) continue;\n        int length = 1;\n        while (values.contains(x + length)) length++;\n        best = Math.max(best, length);\n    }\n    return best;\n}\n",
+   "python": "def solve(nums):\n    values = set(nums)\n    best = 0\n    for x in values:\n        if x - 1 not in values:\n            length = 1\n            while x + length in values:\n                length += 1\n            best = max(best, length)\n    return best\n",
+   "javascript": "function solve(nums) {\n  const values = new Set(nums);\n  let best = 0;\n  for (const x of values) {\n    if (values.has(x - 1)) continue;\n    let length = 1;\n    while (values.has(x + length)) length++;\n    best = Math.max(best, length);\n  }\n  return best;\n}\n"
+  }
+ },
+ "is-subsequence": {
+  "editorial": "## Approach\n\ni over s, j over t. For each character t[j], if i < |s| and s[i] == t[j] increment i. At the end s is a subsequence iff i == |s|. For many queries against one t, precompute next-occurrence indices and binary search.\n\n**Complexity:** O(|t|) time, O(1) space.",
+  "solutions": {
+   "cpp": "bool solve(string s, string t) {\n    size_t i = 0;\n    for (char ch : t)\n        if (i < s.size() && s[i] == ch) i++;\n    return i == s.size();\n}\n",
+   "java": "static boolean solve(String s, String t) {\n    int i = 0;\n    for (int j = 0; j < t.length() && i < s.length(); j++)\n        if (s.charAt(i) == t.charAt(j)) i++;\n    return i == s.length();\n}\n",
+   "python": "def solve(s, t):\n    i = 0\n    for ch in t:\n        if i < len(s) and s[i] == ch:\n            i += 1\n    return i == len(s)\n",
+   "javascript": "function solve(s, t) {\n  let i = 0;\n  for (const ch of t) {\n    if (i < s.length && s[i] === ch) i++;\n  }\n  return i === s.length;\n}\n"
+  }
  }
 }
