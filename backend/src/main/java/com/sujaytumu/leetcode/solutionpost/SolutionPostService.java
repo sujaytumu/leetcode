@@ -31,6 +31,10 @@ public class SolutionPostService {
             Long id, String title, String author, String language, String excerpt, Instant createdAt, int score,
             boolean voted, boolean mine) {}
 
+    /** One of the caller's own posts, with the problem it belongs to (for the profile Solutions tab). */
+    public record Mine(
+            Long id, String slug, String problemTitle, String title, String language, Instant createdAt, int score) {}
+
     public record Detail(
             Long id, String slug, String title, String author, String language, String body, Instant createdAt,
             Instant updatedAt, int score, boolean voted, boolean mine) {}
@@ -72,6 +76,24 @@ public class SolutionPostService {
         if ("top".equalsIgnoreCase(sort)) {
             out.sort(Comparator.comparingInt(Summary::score).reversed().thenComparing(Summary::id, Comparator.reverseOrder()));
         } // already newest first otherwise
+        return out;
+    }
+
+    /** The caller's own posts, newest first. */
+    @Transactional(readOnly = true)
+    public List<Mine> mine(UUID clientId) {
+        List<SolutionPost> own = posts.findTop100ByClientIdOrderByIdDesc(clientId);
+        if (own.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Integer> score = scores(own.stream().map(SolutionPost::getId).toList());
+        List<Mine> out = new java.util.ArrayList<>();
+        for (SolutionPost p : own) {
+            var problem = problems.findById(p.getProblemId());
+            out.add(new Mine(
+                    p.getId(), problem.map(pr -> pr.getSlug()).orElse(""), problem.map(pr -> pr.getTitle()).orElse(""),
+                    p.getTitle(), p.getLanguage(), p.getCreatedAt(), score.getOrDefault(p.getId(), 0)));
+        }
         return out;
     }
 

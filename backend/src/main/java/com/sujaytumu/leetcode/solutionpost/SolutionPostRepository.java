@@ -9,6 +9,8 @@ public interface SolutionPostRepository extends JpaRepository<SolutionPost, Long
 
     List<SolutionPost> findTop200ByProblemIdOrderByIdDesc(Long problemId);
 
+    List<SolutionPost> findTop100ByClientIdOrderByIdDesc(UUID clientId);
+
     long countByClientId(UUID clientId);
 
     long countByClientIdAndCreatedAtAfter(UUID clientId, Instant since);
