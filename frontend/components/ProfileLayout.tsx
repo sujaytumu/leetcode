@@ -58,25 +58,46 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
         {meta && <SolvedCard progress={p.progress} attempting={p.attempting} difficulties={meta.difficulties} />}
 
         <section className="card badgescard">
-          <div className="bar" style={{ marginBottom: 10 }}>
-            <h3 style={{ margin: 0 }}>Badges</h3>
-            <b style={{ display: "inline", fontSize: 18 }}>{p.badges.filter((b) => b.earned).length}</b>
-            <span className="mute">/ {p.badges.length}</span>
-          </div>
-          <div className="badges">
-            {[...p.badges].sort((a, b) => Number(b.earned) - Number(a.earned)).map((b) => (
-              <div key={b.id} className={`badge ${b.earned ? "earned" : "locked"} cat-${b.category}`} title={b.description}>
-                <div className="badge-icon" aria-hidden="true">{BADGE_ICON[b.category] ?? "🏅"}</div>
-                <div className="badge-title">{b.title}</div>
-                {!b.earned && (
-                  <div className="badge-progress" aria-label={`${b.progress} of ${b.target}`}>
-                    <div style={{ width: `${(b.progress / b.target) * 100}%` }} />
+          {(() => {
+            const earned = p.badges.filter((b) => b.earned);
+            const recent = earned[earned.length - 1];
+            return (
+              <>
+                <div className="bd-top">
+                  <div>
+                    <div className="bd-label">Badges</div>
+                    <div className="bd-count">{earned.length}</div>
                   </div>
-                )}
-                <div className="mute" style={{ fontSize: 11 }}>{b.earned ? "Earned" : `${b.progress}/${b.target}`}</div>
-              </div>
-            ))}
-          </div>
+                  <div className="bd-medals" aria-hidden="true">
+                    {earned.slice(-3).reverse().map((b) => (
+                      <span key={b.id} className={`bd-hex cat-${b.category}`} title={b.title}>{BADGE_ICON[b.category] ?? "🏅"}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="bd-recent">
+                  <span className="mute">Most Recent Badge</span>
+                  <b>{recent ? recent.title : "None yet"}</b>
+                </div>
+              </>
+            );
+          })()}
+          <details className="bd-all">
+            <summary>All badges ({p.badges.filter((b) => b.earned).length} / {p.badges.length})</summary>
+            <div className="badges">
+              {[...p.badges].sort((a, b) => Number(b.earned) - Number(a.earned)).map((b) => (
+                <div key={b.id} className={`badge ${b.earned ? "earned" : "locked"} cat-${b.category}`} title={b.description}>
+                  <div className="badge-icon" aria-hidden="true">{BADGE_ICON[b.category] ?? "🏅"}</div>
+                  <div className="badge-title">{b.title}</div>
+                  {!b.earned && (
+                    <div className="badge-progress" aria-label={`${b.progress} of ${b.target}`}>
+                      <div style={{ width: `${(b.progress / b.target) * 100}%` }} />
+                    </div>
+                  )}
+                  <div className="mute" style={{ fontSize: 11 }}>{b.earned ? "Earned" : `${b.progress}/${b.target}`}</div>
+                </div>
+              ))}
+            </div>
+          </details>
         </section>
 
         <section className="card activitycard">
