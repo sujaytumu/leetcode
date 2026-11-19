@@ -603,28 +603,28 @@
  "min-cost-climbing-stairs": {
   "editorial": "## Approach\n\nbest[i] = min(best[i−1] + cost[i−1], best[i−2] + cost[i−2]) with best[0] = best[1] = 0. The answer is best[n], the position just beyond the last step. Two rolling variables suffice.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
-   "cpp": "int solve(vector<int> cost) {\n    int a = 0, b = 0;\n    for (int i = 2; i <= (int)cost.size(); i++) {\n        int c = min(b + cost[i - 1], a + cost[i - 2]);\n        a = b;\n        b = c;\n    }\n    return b;\n}\n",
-   "java": "static int solve(int[] cost) {\n    int a = 0, b = 0;\n    for (int i = 2; i <= cost.length; i++) {\n        int c = Math.min(b + cost[i - 1], a + cost[i - 2]);\n        a = b;\n        b = c;\n    }\n    return b;\n}\n",
-   "python": "def solve(cost):\n    a, b = 0, 0  # cost to stand on stair i-2 and i-1 without paying yet\n    for i in range(2, len(cost) + 1):\n        a, b = b, min(b + cost[i - 1], a + cost[i - 2])\n    return b\n",
-   "javascript": "function solve(cost) {\n  let a = 0, b = 0;\n  for (let i = 2; i <= cost.length; i++) {\n    const c = Math.min(b + cost[i - 1], a + cost[i - 2]);\n    a = b;\n    b = c;\n  }\n  return b;\n}\n"
+   "cpp": "int solve(vector<int> cost) {\n    int one = 0, two = 0;\n    for (int i = 2; i <= (int)cost.size(); i++) {\n        int cur = min(one + cost[i - 1], two + cost[i - 2]);\n        two = one;\n        one = cur;\n    }\n    return one;\n}\n",
+   "java": "static int solve(int[] cost) {\n    int one = 0, two = 0;\n    for (int i = 2; i <= cost.length; i++) {\n        int cur = Math.min(one + cost[i - 1], two + cost[i - 2]);\n        two = one;\n        one = cur;\n    }\n    return one;\n}\n",
+   "python": "def solve(cost):\n    one = two = 0\n    for i in range(2, len(cost) + 1):\n        one, two = min(one + cost[i - 1], two + cost[i - 2]), one\n    return one\n",
+   "javascript": "function solve(cost) {\n  let one = 0, two = 0;\n  for (let i = 2; i <= cost.length; i++) {\n    const cur = Math.min(one + cost[i - 1], two + cost[i - 2]);\n    two = one;\n    one = cur;\n  }\n  return one;\n}\n"
   }
  },
  "house-robber": {
   "editorial": "## Approach\n\ndp[i] = max(dp[i−1], dp[i−2] + nums[i]). Only the previous two values are needed, so use two variables.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
-   "cpp": "int solve(vector<int> nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int t = skip + x;\n        skip = max(take, skip);\n        take = t;\n    }\n    return max(take, skip);\n}\n",
-   "java": "static int solve(int[] nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int t = skip + x;\n        skip = Math.max(take, skip);\n        take = t;\n    }\n    return Math.max(take, skip);\n}\n",
+   "cpp": "int solve(vector<int> nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int nt = skip + x;\n        skip = max(take, skip);\n        take = nt;\n    }\n    return max(take, skip);\n}\n",
+   "java": "static int solve(int[] nums) {\n    int take = 0, skip = 0;\n    for (int x : nums) {\n        int nt = skip + x;\n        skip = Math.max(take, skip);\n        take = nt;\n    }\n    return Math.max(take, skip);\n}\n",
    "python": "def solve(nums):\n    take, skip = 0, 0\n    for x in nums:\n        take, skip = skip + x, max(take, skip)\n    return max(take, skip)\n",
-   "javascript": "function solve(nums) {\n  let take = 0, skip = 0;\n  for (const x of nums) {\n    const t = skip + x;\n    skip = Math.max(take, skip);\n    take = t;\n  }\n  return Math.max(take, skip);\n}\n"
+   "javascript": "function solve(nums) {\n  let take = 0, skip = 0;\n  for (const x of nums) {\n    const nt = skip + x;\n    skip = Math.max(take, skip);\n    take = nt;\n  }\n  return Math.max(take, skip);\n}\n"
   }
  },
  "house-robber-ii": {
   "editorial": "## Approach\n\nLinear helper rob(a, b) with prev/cur rolling variables: cur = max(cur, prev + x). The answer is max(rob(0, n-2), rob(1, n-1)); if n == 1 return nums[0]. One of the two ranges always excludes whichever of the first or last house the optimal solution skips.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
-   "cpp": "int line(const vector<int>& a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int t = skip + a[i];\n        skip = max(take, skip);\n        take = t;\n    }\n    return max(take, skip);\n}\nint solve(vector<int> nums) {\n    int n = nums.size();\n    if (n == 1) return nums[0];\n    return max(line(nums, 1, n), line(nums, 0, n - 1));\n}\n",
-   "java": "static int line(int[] a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int t = skip + a[i];\n        skip = Math.max(take, skip);\n        take = t;\n    }\n    return Math.max(take, skip);\n}\nstatic int solve(int[] nums) {\n    int n = nums.length;\n    if (n == 1) return nums[0];\n    return Math.max(line(nums, 1, n), line(nums, 0, n - 1));\n}\n",
-   "python": "def solve(nums):\n    def line(a):\n        take, skip = 0, 0\n        for x in a:\n            take, skip = skip + x, max(take, skip)\n        return max(take, skip)\n    if len(nums) == 1:\n        return nums[0]\n    return max(line(nums[1:]), line(nums[:-1]))\n",
-   "javascript": "function solve(nums) {\n  const line = (a) => {\n    let take = 0, skip = 0;\n    for (const x of a) {\n      const t = skip + x;\n      skip = Math.max(take, skip);\n      take = t;\n    }\n    return Math.max(take, skip);\n  };\n  if (nums.length === 1) return nums[0];\n  return Math.max(line(nums.slice(1)), line(nums.slice(0, -1)));\n}\n"
+   "cpp": "int robRange(const vector<int>& a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int nt = skip + a[i];\n        skip = max(take, skip);\n        take = nt;\n    }\n    return max(take, skip);\n}\nint solve(vector<int> nums) {\n    int n = nums.size();\n    if (n == 1) return nums[0];\n    return max(robRange(nums, 0, n - 1), robRange(nums, 1, n));\n}\n",
+   "java": "static int robRange(int[] a, int lo, int hi) {\n    int take = 0, skip = 0;\n    for (int i = lo; i < hi; i++) {\n        int nt = skip + a[i];\n        skip = Math.max(take, skip);\n        take = nt;\n    }\n    return Math.max(take, skip);\n}\nstatic int solve(int[] nums) {\n    int n = nums.length;\n    if (n == 1) return nums[0];\n    return Math.max(robRange(nums, 0, n - 1), robRange(nums, 1, n));\n}\n",
+   "python": "def solve(nums):\n    def rob(a):\n        take = skip = 0\n        for x in a:\n            take, skip = skip + x, max(take, skip)\n        return max(take, skip)\n    if len(nums) == 1:\n        return nums[0]\n    return max(rob(nums[:-1]), rob(nums[1:]))\n",
+   "javascript": "function solve(nums) {\n  const rob = (a) => {\n    let take = 0, skip = 0;\n    for (const x of a) {\n      const nt = skip + x;\n      skip = Math.max(take, skip);\n      take = nt;\n    }\n    return Math.max(take, skip);\n  };\n  if (nums.length === 1) return nums[0];\n  return Math.max(rob(nums.slice(0, -1)), rob(nums.slice(1)));\n}\n"
   }
  },
  "unique-paths": {
@@ -633,7 +633,7 @@
    "cpp": "int solve(int m, int n) {\n    vector<int> row(n, 1);\n    for (int i = 1; i < m; i++)\n        for (int j = 1; j < n; j++) row[j] += row[j - 1];\n    return row[n - 1];\n}\n",
    "java": "static int solve(int m, int n) {\n    int[] row = new int[n];\n    Arrays.fill(row, 1);\n    for (int i = 1; i < m; i++)\n        for (int j = 1; j < n; j++) row[j] += row[j - 1];\n    return row[n - 1];\n}\n",
    "python": "def solve(m, n):\n    row = [1] * n\n    for _ in range(1, m):\n        for j in range(1, n):\n            row[j] += row[j - 1]\n    return row[-1]\n",
-   "javascript": "function solve(m, n) {\n  const row = new Array(n).fill(1);\n  for (let i = 1; i < m; i++) {\n    for (let j = 1; j < n; j++) row[j] += row[j - 1];\n  }\n  return row[n - 1];\n}\n"
+   "javascript": "function solve(m, n) {\n  const row = new Array(n).fill(1);\n  for (let i = 1; i < m; i++)\n    for (let j = 1; j < n; j++) row[j] += row[j - 1];\n  return row[n - 1];\n}\n"
   }
  },
  "coin-change": {
@@ -642,15 +642,15 @@
    "cpp": "int solve(vector<int> coins, int amount) {\n    int INF = amount + 1;\n    vector<int> dp(amount + 1, INF);\n    dp[0] = 0;\n    for (int a = 1; a <= amount; a++)\n        for (int c : coins)\n            if (c <= a) dp[a] = min(dp[a], dp[a - c] + 1);\n    return dp[amount] == INF ? -1 : dp[amount];\n}\n",
    "java": "static int solve(int[] coins, int amount) {\n    int INF = amount + 1;\n    int[] dp = new int[amount + 1];\n    Arrays.fill(dp, INF);\n    dp[0] = 0;\n    for (int a = 1; a <= amount; a++)\n        for (int c : coins)\n            if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);\n    return dp[amount] == INF ? -1 : dp[amount];\n}\n",
    "python": "def solve(coins, amount):\n    INF = amount + 1\n    dp = [0] + [INF] * amount\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a and dp[a - c] + 1 < dp[a]:\n                dp[a] = dp[a - c] + 1\n    return dp[amount] if dp[amount] != INF else -1\n",
-   "javascript": "function solve(coins, amount) {\n  const INF = amount + 1;\n  const dp = new Array(amount + 1).fill(INF);\n  dp[0] = 0;\n  for (let a = 1; a <= amount; a++) {\n    for (const c of coins) {\n      if (c <= a && dp[a - c] + 1 < dp[a]) dp[a] = dp[a - c] + 1;\n    }\n  }\n  return dp[amount] === INF ? -1 : dp[amount];\n}\n"
+   "javascript": "function solve(coins, amount) {\n  const INF = amount + 1;\n  const dp = new Array(amount + 1).fill(INF);\n  dp[0] = 0;\n  for (let a = 1; a <= amount; a++)\n    for (const c of coins) if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);\n  return dp[amount] === INF ? -1 : dp[amount];\n}\n"
   }
  },
  "longest-increasing-subsequence": {
   "editorial": "## Approach\n\nMaintain a sorted array tails where tails[k] is the smallest tail of any increasing subsequence of length k+1. For each x, binary-search the first tail >= x and replace it (or append if none). The final length of tails is the answer.\n\n**Complexity:** O(n log n) time, O(n) space.",
   "solutions": {
-   "cpp": "int solve(vector<int> nums) {\n    vector<int> tails;\n    for (int x : nums) {\n        auto it = lower_bound(tails.begin(), tails.end(), x);\n        if (it == tails.end()) tails.push_back(x);\n        else *it = x;\n    }\n    return tails.size();\n}\n",
+   "cpp": "int solve(vector<int> nums) {\n    vector<int> tails;\n    for (int x : nums) {\n        auto it = lower_bound(tails.begin(), tails.end(), x);\n        if (it == tails.end()) tails.push_back(x); else *it = x;\n    }\n    return tails.size();\n}\n",
    "java": "static int solve(int[] nums) {\n    int[] tails = new int[nums.length];\n    int size = 0;\n    for (int x : nums) {\n        int lo = 0, hi = size;\n        while (lo < hi) {\n            int mid = (lo + hi) >>> 1;\n            if (tails[mid] < x) lo = mid + 1; else hi = mid;\n        }\n        tails[lo] = x;\n        if (lo == size) size++;\n    }\n    return size;\n}\n",
-   "python": "def solve(nums):\n    import bisect\n    tails = []\n    for x in nums:\n        i = bisect.bisect_left(tails, x)\n        if i == len(tails):\n            tails.append(x)\n        else:\n            tails[i] = x\n    return len(tails)\n",
+   "python": "def solve(nums):\n    from bisect import bisect_left\n    tails = []\n    for x in nums:\n        i = bisect_left(tails, x)\n        if i == len(tails):\n            tails.append(x)\n        else:\n            tails[i] = x\n    return len(tails)\n",
    "javascript": "function solve(nums) {\n  const tails = [];\n  for (const x of nums) {\n    let lo = 0, hi = tails.length;\n    while (lo < hi) {\n      const mid = (lo + hi) >> 1;\n      if (tails[mid] < x) lo = mid + 1; else hi = mid;\n    }\n    tails[lo] = x;\n  }\n  return tails.length;\n}\n"
   }
  },
@@ -678,16 +678,61 @@
    "cpp": "int solve(int n) {\n    vector<int> dp(n + 1, n);\n    dp[0] = 0;\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j * j <= i; j++) dp[i] = min(dp[i], dp[i - j * j] + 1);\n    return dp[n];\n}\n",
    "java": "static int solve(int n) {\n    int[] dp = new int[n + 1];\n    Arrays.fill(dp, n);\n    dp[0] = 0;\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n    return dp[n];\n}\n",
    "python": "def solve(n):\n    dp = [0] + [n] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return dp[n]\n",
-   "javascript": "function solve(n) {\n  const dp = new Array(n + 1).fill(n);\n  dp[0] = 0;\n  for (let i = 1; i <= n; i++) {\n    for (let j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n  }\n  return dp[n];\n}\n"
+   "javascript": "function solve(n) {\n  const dp = new Array(n + 1).fill(n);\n  dp[0] = 0;\n  for (let i = 1; i <= n; i++)\n    for (let j = 1; j * j <= i; j++) dp[i] = Math.min(dp[i], dp[i - j * j] + 1);\n  return dp[n];\n}\n"
   }
  },
  "decode-ways": {
   "editorial": "## Approach\n\ndp[0] = 1, dp[1] = (s[0] != '0'). For i >= 2: add dp[i-1] if s[i-1] != '0'; add dp[i-2] if the two digits form a number between 10 and 26. Only the last two values are needed. A string starting with '0' or containing an isolated '0' gives 0.\n\n**Complexity:** O(n) time, O(1) space.",
   "solutions": {
-   "cpp": "int solve(string s) {\n    if (s[0] == '0') return 0;\n    long long prev2 = 1, prev1 = 1;\n    for (int i = 2; i <= (int)s.size(); i++) {\n        long long cur = 0;\n        if (s[i - 1] != '0') cur += prev1;\n        int two = (s[i - 2] - '0') * 10 + (s[i - 1] - '0');\n        if (two >= 10 && two <= 26) cur += prev2;\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int)prev1;\n}\n",
-   "java": "static int solve(String s) {\n    if (s.charAt(0) == '0') return 0;\n    long prev2 = 1, prev1 = 1;\n    for (int i = 2; i <= s.length(); i++) {\n        long cur = 0;\n        if (s.charAt(i - 1) != '0') cur += prev1;\n        int two = (s.charAt(i - 2) - '0') * 10 + (s.charAt(i - 1) - '0');\n        if (two >= 10 && two <= 26) cur += prev2;\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int) prev1;\n}\n",
-   "python": "def solve(s):\n    prev2, prev1 = 1, 1  # ways for the prefixes of length i-2 and i-1\n    if s[0] == '0':\n        return 0\n    for i in range(2, len(s) + 1):\n        cur = 0\n        if s[i - 1] != '0':\n            cur += prev1\n        if 10 <= int(s[i - 2:i]) <= 26:\n            cur += prev2\n        prev2, prev1 = prev1, cur\n    return prev1\n",
-   "javascript": "function solve(s) {\n  if (s[0] === \"0\") return 0;\n  let prev2 = 1, prev1 = 1;\n  for (let i = 2; i <= s.length; i++) {\n    let cur = 0;\n    if (s[i - 1] !== \"0\") cur += prev1;\n    const two = parseInt(s.slice(i - 2, i), 10);\n    if (two >= 10 && two <= 26) cur += prev2;\n    prev2 = prev1;\n    prev1 = cur;\n  }\n  return prev1;\n}\n"
+   "cpp": "int solve(string s) {\n    long long prev2 = 0, prev1 = 1;\n    for (size_t i = 0; i < s.size(); i++) {\n        long long cur = s[i] != '0' ? prev1 : 0;\n        if (i > 0) {\n            int two = (s[i - 1] - '0') * 10 + (s[i] - '0');\n            if (two >= 10 && two <= 26) cur += prev2;\n        }\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int)prev1;\n}\n",
+   "java": "static int solve(String s) {\n    long prev2 = 0, prev1 = 1;\n    for (int i = 0; i < s.length(); i++) {\n        long cur = s.charAt(i) != '0' ? prev1 : 0;\n        if (i > 0) {\n            int two = (s.charAt(i - 1) - '0') * 10 + (s.charAt(i) - '0');\n            if (two >= 10 && two <= 26) cur += prev2;\n        }\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return (int) prev1;\n}\n",
+   "python": "def solve(s):\n    prev2, prev1 = 0, 1\n    for i, ch in enumerate(s):\n        cur = prev1 if ch != '0' else 0\n        if i > 0 and 10 <= int(s[i - 1:i + 1]) <= 26:\n            cur += prev2\n        prev2, prev1 = prev1, cur\n    return prev1\n",
+   "javascript": "function solve(s) {\n  let prev2 = 0, prev1 = 1;\n  for (let i = 0; i < s.length; i++) {\n    let cur = s[i] !== '0' ? prev1 : 0;\n    if (i > 0) {\n      const two = Number(s.slice(i - 1, i + 1));\n      if (two >= 10 && two <= 26) cur += prev2;\n    }\n    prev2 = prev1;\n    prev1 = cur;\n  }\n  return prev1;\n}\n"
+  }
+ },
+ "counting-bits": {
+  "editorial": "## Approach\n\nDP over the answer array: bits[0] = 0 and bits[i] = bits[i >> 1] + (i & 1). Another form is bits[i] = bits[i & (i - 1)] + 1 (remove the lowest set bit). Linear time with the output as the only storage.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "vector<int> solve(int n) {\n    vector<int> bits(n + 1, 0);\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
+   "java": "static int[] solve(int n) {\n    int[] bits = new int[n + 1];\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
+   "python": "def solve(n):\n    bits = [0] * (n + 1)\n    for i in range(1, n + 1):\n        bits[i] = bits[i >> 1] + (i & 1)\n    return bits\n",
+   "javascript": "function solve(n) {\n  const bits = new Array(n + 1).fill(0);\n  for (let i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n  return bits;\n}\n"
+  }
+ },
+ "unique-paths-ii": {
+  "editorial": "## Approach\n\ndp[r][c] = 0 on obstacles, otherwise dp[r-1][c] + dp[r][c-1], with dp[0][0] = 1 if the start is open. A single row array updated left to right suffices. Counts can be large; check whether the output needs a modulus.\n\n**Complexity:** O(R·C) time, O(C) space.",
+  "solutions": {
+   "cpp": "int solve(vector<string> grid) {\n    int cols = grid[0].size();\n    vector<long long> ways(cols, 0);\n    ways[0] = 1;\n    for (const string& row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (row[j] == '1') ways[j] = 0;\n            else if (j > 0) ways[j] += ways[j - 1];\n        }\n    return (int)ways[cols - 1];\n}\n",
+   "java": "static int solve(String[] grid) {\n    int cols = grid[0].length();\n    long[] ways = new long[cols];\n    ways[0] = 1;\n    for (String row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (row.charAt(j) == '1') ways[j] = 0;\n            else if (j > 0) ways[j] += ways[j - 1];\n        }\n    return (int) ways[cols - 1];\n}\n",
+   "python": "def solve(grid):\n    cols = len(grid[0])\n    ways = [0] * cols\n    ways[0] = 1\n    for row in grid:\n        for j in range(cols):\n            if row[j] == '1':\n                ways[j] = 0\n            elif j > 0:\n                ways[j] += ways[j - 1]\n    return ways[-1]\n",
+   "javascript": "function solve(grid) {\n  const cols = grid[0].length;\n  const ways = new Array(cols).fill(0);\n  ways[0] = 1;\n  for (const row of grid) {\n    for (let j = 0; j < cols; j++) {\n      if (row[j] === \"1\") ways[j] = 0;\n      else if (j > 0) ways[j] += ways[j - 1];\n    }\n  }\n  return ways[cols - 1];\n}\n"
+  }
+ },
+ "minimum-path-sum": {
+  "editorial": "## Approach\n\ndp[r][c] = grid[r][c] + min(dp[r-1][c], dp[r][c-1]) with the edge cases for the first row and column. The answer is dp[R-1][C-1]. A single row array can overwrite the grid in place or be kept separately.\n\n**Complexity:** O(R·C) time, O(C) space.",
+  "solutions": {
+   "cpp": "int solve(vector<string> grid) {\n    int cols = grid[0].size();\n    vector<int> best(cols, INT_MAX / 2);\n    best[0] = 0;\n    for (const string& row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (j > 0) best[j] = min(best[j], best[j - 1]);\n            best[j] += row[j] - '0';\n        }\n    return best[cols - 1];\n}\n",
+   "java": "static int solve(String[] grid) {\n    int cols = grid[0].length();\n    int[] best = new int[cols];\n    Arrays.fill(best, Integer.MAX_VALUE / 2);\n    best[0] = 0;\n    for (String row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (j > 0) best[j] = Math.min(best[j], best[j - 1]);\n            best[j] += row.charAt(j) - '0';\n        }\n    return best[cols - 1];\n}\n",
+   "python": "def solve(grid):\n    cols = len(grid[0])\n    best = [float('inf')] * cols\n    best[0] = 0\n    for row in grid:\n        for j in range(cols):\n            if j > 0:\n                best[j] = min(best[j], best[j - 1])\n            best[j] += int(row[j])\n    return best[-1]\n",
+   "javascript": "function solve(grid) {\n  const cols = grid[0].length;\n  const best = new Array(cols).fill(Infinity);\n  best[0] = 0;\n  for (const row of grid) {\n    for (let j = 0; j < cols; j++) {\n      if (j > 0) best[j] = Math.min(best[j], best[j - 1]);\n      best[j] += Number(row[j]);\n    }\n  }\n  return best[cols - 1];\n}\n"
+  }
+ },
+ "maximum-product-subarray": {
+  "editorial": "## Approach\n\nMaintain hi and lo, the largest and smallest products ending at the current element. For each x take the max and min of (x, hi × x, lo × x), and update the global best with hi.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    long long best = nums[0], hi = nums[0], lo = nums[0];\n    for (size_t i = 1; i < nums.size(); i++) {\n        long long x = nums[i];\n        long long a = hi * x, b = lo * x;\n        hi = max({x, a, b});\n        lo = min({x, a, b});\n        best = max(best, hi);\n    }\n    return (int)best;\n}\n",
+   "java": "static int solve(int[] nums) {\n    long best = nums[0], hi = nums[0], lo = nums[0];\n    for (int i = 1; i < nums.length; i++) {\n        long x = nums[i];\n        long a = hi * x, b = lo * x;\n        hi = Math.max(x, Math.max(a, b));\n        lo = Math.min(x, Math.min(a, b));\n        best = Math.max(best, hi);\n    }\n    return (int) best;\n}\n",
+   "python": "def solve(nums):\n    best = hi = lo = nums[0]\n    for x in nums[1:]:\n        candidates = (x, hi * x, lo * x)\n        hi, lo = max(candidates), min(candidates)\n        best = max(best, hi)\n    return best\n",
+   "javascript": "function solve(nums) {\n  let best = nums[0], hi = nums[0], lo = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    const x = nums[i];\n    const c = [x, hi * x, lo * x];\n    hi = Math.max(...c);\n    lo = Math.min(...c);\n    best = Math.max(best, hi);\n  }\n  return best;\n}\n"
+  }
+ },
+ "longest-palindromic-substring-length": {
+  "editorial": "## Approach\n\nFor every centre expand outward while the characters match, recording the longest span. A DP over substrings or Manacher's algorithm are alternatives.\n\n**Complexity:** O(n²) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(string s) {\n    int n = s.size(), best = 0;\n    for (int center = 0; center < 2 * n - 1; center++) {\n        int lo = center / 2, hi = lo + center % 2;\n        while (lo >= 0 && hi < n && s[lo] == s[hi]) { lo--; hi++; }\n        best = max(best, hi - lo - 1);\n    }\n    return best;\n}\n",
+   "java": "static int solve(String s) {\n    int n = s.length(), best = 0;\n    for (int center = 0; center < 2 * n - 1; center++) {\n        int lo = center / 2, hi = lo + center % 2;\n        while (lo >= 0 && hi < n && s.charAt(lo) == s.charAt(hi)) { lo--; hi++; }\n        best = Math.max(best, hi - lo - 1);\n    }\n    return best;\n}\n",
+   "python": "def solve(s):\n    best = 0\n    for center in range(2 * len(s) - 1):\n        lo, hi = center // 2, center // 2 + center % 2\n        while lo >= 0 and hi < len(s) and s[lo] == s[hi]:\n            lo -= 1\n            hi += 1\n        best = max(best, hi - lo - 1)\n    return best\n",
+   "javascript": "function solve(s) {\n  let best = 0;\n  for (let center = 0; center < 2 * s.length - 1; center++) {\n    let lo = center >> 1, hi = lo + (center & 1);\n    while (lo >= 0 && hi < s.length && s[lo] === s[hi]) { lo--; hi++; }\n    best = Math.max(best, hi - lo - 1);\n  }\n  return best;\n}\n"
   }
  },
  "longest-common-subsequence": {
@@ -726,24 +771,6 @@
    "javascript": "function solve(matrix) {\n  const cols = matrix[0].length;\n  let prev = new Array(cols + 1).fill(0);\n  let best = 0;\n  for (const row of matrix) {\n    const cur = new Array(cols + 1).fill(0);\n    for (let j = 1; j <= cols; j++) {\n      if (row[j - 1] === \"1\") {\n        cur[j] = 1 + Math.min(prev[j], cur[j - 1], prev[j - 1]);\n        best = Math.max(best, cur[j]);\n      }\n    }\n    prev = cur;\n  }\n  return best * best;\n}\n"
   }
  },
- "unique-paths-ii": {
-  "editorial": "## Approach\n\ndp[r][c] = 0 on obstacles, otherwise dp[r-1][c] + dp[r][c-1], with dp[0][0] = 1 if the start is open. A single row array updated left to right suffices. Counts can be large; check whether the output needs a modulus.\n\n**Complexity:** O(R·C) time, O(C) space.",
-  "solutions": {
-   "cpp": "int solve(vector<string> grid) {\n    int cols = grid[0].size();\n    vector<long long> ways(cols, 0);\n    ways[0] = 1;\n    for (const string& row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (row[j] == '1') ways[j] = 0;\n            else if (j > 0) ways[j] += ways[j - 1];\n        }\n    return (int)ways[cols - 1];\n}\n",
-   "java": "static int solve(String[] grid) {\n    int cols = grid[0].length();\n    long[] ways = new long[cols];\n    ways[0] = 1;\n    for (String row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (row.charAt(j) == '1') ways[j] = 0;\n            else if (j > 0) ways[j] += ways[j - 1];\n        }\n    return (int) ways[cols - 1];\n}\n",
-   "python": "def solve(grid):\n    cols = len(grid[0])\n    ways = [0] * cols\n    ways[0] = 1\n    for row in grid:\n        for j in range(cols):\n            if row[j] == '1':\n                ways[j] = 0\n            elif j > 0:\n                ways[j] += ways[j - 1]\n    return ways[-1]\n",
-   "javascript": "function solve(grid) {\n  const cols = grid[0].length;\n  const ways = new Array(cols).fill(0);\n  ways[0] = 1;\n  for (const row of grid) {\n    for (let j = 0; j < cols; j++) {\n      if (row[j] === \"1\") ways[j] = 0;\n      else if (j > 0) ways[j] += ways[j - 1];\n    }\n  }\n  return ways[cols - 1];\n}\n"
-  }
- },
- "minimum-path-sum": {
-  "editorial": "## Approach\n\ndp[r][c] = grid[r][c] + min(dp[r-1][c], dp[r][c-1]) with the edge cases for the first row and column. The answer is dp[R-1][C-1]. A single row array can overwrite the grid in place or be kept separately.\n\n**Complexity:** O(R·C) time, O(C) space.",
-  "solutions": {
-   "cpp": "int solve(vector<string> grid) {\n    int cols = grid[0].size();\n    vector<int> best(cols, INT_MAX / 2);\n    best[0] = 0;\n    for (const string& row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (j > 0) best[j] = min(best[j], best[j - 1]);\n            best[j] += row[j] - '0';\n        }\n    return best[cols - 1];\n}\n",
-   "java": "static int solve(String[] grid) {\n    int cols = grid[0].length();\n    int[] best = new int[cols];\n    Arrays.fill(best, Integer.MAX_VALUE / 2);\n    best[0] = 0;\n    for (String row : grid)\n        for (int j = 0; j < cols; j++) {\n            if (j > 0) best[j] = Math.min(best[j], best[j - 1]);\n            best[j] += row.charAt(j) - '0';\n        }\n    return best[cols - 1];\n}\n",
-   "python": "def solve(grid):\n    cols = len(grid[0])\n    best = [float('inf')] * cols\n    best[0] = 0\n    for row in grid:\n        for j in range(cols):\n            if j > 0:\n                best[j] = min(best[j], best[j - 1])\n            best[j] += int(row[j])\n    return best[-1]\n",
-   "javascript": "function solve(grid) {\n  const cols = grid[0].length;\n  const best = new Array(cols).fill(Infinity);\n  best[0] = 0;\n  for (const row of grid) {\n    for (let j = 0; j < cols; j++) {\n      if (j > 0) best[j] = Math.min(best[j], best[j - 1]);\n      best[j] += Number(row[j]);\n    }\n  }\n  return best[cols - 1];\n}\n"
-  }
- },
  "longest-valid-parentheses": {
   "editorial": "## Approach\n\nStack of indices initialised with -1. For '(' push i. For ')' pop; if the stack is now empty push i as the new base, otherwise best = max(best, i - stack.top). A two-pass counter scan (left to right, then right to left) solves it in O(1) space.\n\n**Complexity:** O(n) time, O(n) space.",
   "solutions": {
@@ -751,15 +778,6 @@
    "java": "static int solve(String s) {\n    int best = 0;\n    Deque<Integer> stack = new ArrayDeque<>();\n    stack.push(-1);\n    for (int i = 0; i < s.length(); i++) {\n        if (s.charAt(i) == '(') {\n            stack.push(i);\n        } else {\n            stack.pop();\n            if (stack.isEmpty()) stack.push(i);\n            else best = Math.max(best, i - stack.peek());\n        }\n    }\n    return best;\n}\n",
    "python": "def solve(s):\n    best = 0\n    stack = [-1]  # index just before the current valid run\n    for i, ch in enumerate(s):\n        if ch == '(':\n            stack.append(i)\n        else:\n            stack.pop()\n            if not stack:\n                stack.append(i)\n            else:\n                best = max(best, i - stack[-1])\n    return best\n",
    "javascript": "function solve(s) {\n  let best = 0;\n  const stack = [-1];\n  for (let i = 0; i < s.length; i++) {\n    if (s[i] === \"(\") {\n      stack.push(i);\n    } else {\n      stack.pop();\n      if (stack.length === 0) stack.push(i);\n      else best = Math.max(best, i - stack[stack.length - 1]);\n    }\n  }\n  return best;\n}\n"
-  }
- },
- "split-array-largest-sum": {
-  "editorial": "## Approach\n\nBinary search on S in [max(nums), sum(nums)]. feasible(S): greedily pack numbers, starting a new subarray when the running sum would exceed S, and check pieces <= k. The smallest feasible S is the answer. A DP over (index, pieces) also works in O(k·n²) but is slower.\n\n**Complexity:** O(n log(sum)) time, O(1) space.",
-  "solutions": {
-   "cpp": "int solve(vector<int> nums, int k) {\n    int lo = *max_element(nums.begin(), nums.end()), hi = accumulate(nums.begin(), nums.end(), 0);\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        int count = 1, run = 0;\n        for (int x : nums) {\n            if (run + x > mid) { count++; run = x; }\n            else run += x;\n        }\n        if (count <= k) hi = mid; else lo = mid + 1;\n    }\n    return lo;\n}\n",
-   "java": "static int solve(int[] nums, int k) {\n    int lo = 0, hi = 0;\n    for (int x : nums) { lo = Math.max(lo, x); hi += x; }\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        int count = 1, run = 0;\n        for (int x : nums) {\n            if (run + x > mid) { count++; run = x; }\n            else run += x;\n        }\n        if (count <= k) hi = mid; else lo = mid + 1;\n    }\n    return lo;\n}\n",
-   "python": "def solve(nums, k):\n    def pieces(limit):\n        count, run = 1, 0\n        for x in nums:\n            if run + x > limit:\n                count += 1\n                run = x\n            else:\n                run += x\n        return count\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if pieces(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
-   "javascript": "function solve(nums, k) {\n  const pieces = (limit) => {\n    let count = 1, run = 0;\n    for (const x of nums) {\n      if (run + x > limit) { count++; run = x; } else run += x;\n    }\n    return count;\n  };\n  let lo = Math.max(...nums), hi = nums.reduce((a, b) => a + b, 0);\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (pieces(mid) <= k) hi = mid; else lo = mid + 1;\n  }\n  return lo;\n}\n"
   }
  },
  "count-subsets-with-sum": {
@@ -771,22 +789,31 @@
    "javascript": "function solve(nums, target) {\n  const ways = new Array(target + 1).fill(0);\n  ways[0] = 1;\n  for (const x of nums) {\n    for (let s = target; s >= x; s--) ways[s] += ways[s - x];\n  }\n  return ways[target];\n}\n"
   }
  },
- "maximum-product-subarray": {
-  "editorial": "## Approach\n\nMaintain hi and lo, the largest and smallest products ending at the current element. For each x take the max and min of (x, hi × x, lo × x), and update the global best with hi.\n\n**Complexity:** O(n) time, O(1) space.",
+ "palindrome-partitioning-count": {
+  "editorial": "## Approach\n\nisPal[i][j] = s[i] == s[j] && (j - i < 2 || isPal[i+1][j-1]). Then dp[i] = Σ dp[j+1] for all j >= i with isPal[i][j], dp[n] = 1. The answer is dp[0]. The count can grow quickly; check the output limits.\n\n**Complexity:** O(n²) time, O(n²) space.",
   "solutions": {
-   "cpp": "int solve(vector<int> nums) {\n    long long best = nums[0], hi = nums[0], lo = nums[0];\n    for (size_t i = 1; i < nums.size(); i++) {\n        long long x = nums[i];\n        long long a = hi * x, b = lo * x;\n        hi = max({x, a, b});\n        lo = min({x, a, b});\n        best = max(best, hi);\n    }\n    return (int)best;\n}\n",
-   "java": "static int solve(int[] nums) {\n    long best = nums[0], hi = nums[0], lo = nums[0];\n    for (int i = 1; i < nums.length; i++) {\n        long x = nums[i];\n        long a = hi * x, b = lo * x;\n        hi = Math.max(x, Math.max(a, b));\n        lo = Math.min(x, Math.min(a, b));\n        best = Math.max(best, hi);\n    }\n    return (int) best;\n}\n",
-   "python": "def solve(nums):\n    best = hi = lo = nums[0]\n    for x in nums[1:]:\n        candidates = (x, hi * x, lo * x)\n        hi, lo = max(candidates), min(candidates)\n        best = max(best, hi)\n    return best\n",
-   "javascript": "function solve(nums) {\n  let best = nums[0], hi = nums[0], lo = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    const x = nums[i];\n    const c = [x, hi * x, lo * x];\n    hi = Math.max(...c);\n    lo = Math.min(...c);\n    best = Math.max(best, hi);\n  }\n  return best;\n}\n"
+   "cpp": "int solve(string s) {\n    int n = s.size();\n    vector<vector<bool>> pal(n, vector<bool>(n, false));\n    for (int i = n - 1; i >= 0; i--)\n        for (int j = i; j < n; j++) pal[i][j] = s[i] == s[j] && (j - i < 2 || pal[i + 1][j - 1]);\n    vector<long long> ways(n + 1, 0);\n    ways[0] = 1;\n    for (int i = 1; i <= n; i++)\n        for (int j = 0; j < i; j++)\n            if (pal[j][i - 1]) ways[i] += ways[j];\n    return (int)ways[n];\n}\n",
+   "java": "static int solve(String s) {\n    int n = s.length();\n    boolean[][] pal = new boolean[n][n];\n    for (int i = n - 1; i >= 0; i--)\n        for (int j = i; j < n; j++) pal[i][j] = s.charAt(i) == s.charAt(j) && (j - i < 2 || pal[i + 1][j - 1]);\n    long[] ways = new long[n + 1];\n    ways[0] = 1;\n    for (int i = 1; i <= n; i++)\n        for (int j = 0; j < i; j++)\n            if (pal[j][i - 1]) ways[i] += ways[j];\n    return (int) ways[n];\n}\n",
+   "python": "def solve(s):\n    n = len(s)\n    pal = [[False] * n for _ in range(n)]\n    for i in range(n - 1, -1, -1):\n        for j in range(i, n):\n            pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])\n    ways = [1] + [0] * n  # ways[i] = partitions of the first i characters\n    for i in range(1, n + 1):\n        for j in range(i):\n            if pal[j][i - 1]:\n                ways[i] += ways[j]\n    return ways[n]\n",
+   "javascript": "function solve(s) {\n  const n = s.length;\n  const pal = Array.from({ length: n }, () => new Array(n).fill(false));\n  for (let i = n - 1; i >= 0; i--)\n    for (let j = i; j < n; j++) pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);\n  const ways = new Array(n + 1).fill(0);\n  ways[0] = 1;\n  for (let i = 1; i <= n; i++)\n    for (let j = 0; j < i; j++) if (pal[j][i - 1]) ways[i] += ways[j];\n  return ways[n];\n}\n"
   }
  },
- "longest-palindromic-substring-length": {
-  "editorial": "## Approach\n\nFor every centre expand outward while the characters match, recording the longest span. A DP over substrings or Manacher's algorithm are alternatives.\n\n**Complexity:** O(n²) time, O(1) space.",
+ "generate-parentheses-count": {
+  "editorial": "## Approach\n\ndp[0] = 1; dp[n] = Σ_{i=0}^{n-1} dp[i] · dp[n-1-i], i.e. the n-th Catalan number = C(2n, n)/(n+1). Backtracking that tracks open and close counts generates all strings but is exponential if you only need the count.\n\n**Complexity:** O(n²) time, O(n) space.",
   "solutions": {
-   "cpp": "int solve(string s) {\n    int n = s.size(), best = 0;\n    for (int center = 0; center < 2 * n - 1; center++) {\n        int lo = center / 2, hi = lo + center % 2;\n        while (lo >= 0 && hi < n && s[lo] == s[hi]) { lo--; hi++; }\n        best = max(best, hi - lo - 1);\n    }\n    return best;\n}\n",
-   "java": "static int solve(String s) {\n    int n = s.length(), best = 0;\n    for (int center = 0; center < 2 * n - 1; center++) {\n        int lo = center / 2, hi = lo + center % 2;\n        while (lo >= 0 && hi < n && s.charAt(lo) == s.charAt(hi)) { lo--; hi++; }\n        best = Math.max(best, hi - lo - 1);\n    }\n    return best;\n}\n",
-   "python": "def solve(s):\n    best = 0\n    for center in range(2 * len(s) - 1):\n        lo, hi = center // 2, center // 2 + center % 2\n        while lo >= 0 and hi < len(s) and s[lo] == s[hi]:\n            lo -= 1\n            hi += 1\n        best = max(best, hi - lo - 1)\n    return best\n",
-   "javascript": "function solve(s) {\n  let best = 0;\n  for (let center = 0; center < 2 * s.length - 1; center++) {\n    let lo = center >> 1, hi = lo + (center & 1);\n    while (lo >= 0 && hi < s.length && s[lo] === s[hi]) { lo--; hi++; }\n    best = Math.max(best, hi - lo - 1);\n  }\n  return best;\n}\n"
+   "cpp": "int solve(int n) {\n    long long catalan = 1;\n    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);\n    return (int)catalan;\n}\n",
+   "java": "static int solve(int n) {\n    long catalan = 1;\n    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);\n    return (int) catalan;\n}\n",
+   "python": "def solve(n):\n    catalan = 1\n    for k in range(n):\n        catalan = catalan * 2 * (2 * k + 1) // (k + 2)\n    return catalan\n",
+   "javascript": "function solve(n) {\n  let catalan = 1;\n  for (let k = 0; k < n; k++) catalan = (catalan * 2 * (2 * k + 1)) / (k + 2);\n  return catalan;\n}\n"
+  }
+ },
+ "split-array-largest-sum": {
+  "editorial": "## Approach\n\nBinary search on S in [max(nums), sum(nums)]. feasible(S): greedily pack numbers, starting a new subarray when the running sum would exceed S, and check pieces <= k. The smallest feasible S is the answer. A DP over (index, pieces) also works in O(k·n²) but is slower.\n\n**Complexity:** O(n log(sum)) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums, int k) {\n    int lo = *max_element(nums.begin(), nums.end()), hi = accumulate(nums.begin(), nums.end(), 0);\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        int count = 1, run = 0;\n        for (int x : nums) {\n            if (run + x > mid) { count++; run = x; }\n            else run += x;\n        }\n        if (count <= k) hi = mid; else lo = mid + 1;\n    }\n    return lo;\n}\n",
+   "java": "static int solve(int[] nums, int k) {\n    int lo = 0, hi = 0;\n    for (int x : nums) { lo = Math.max(lo, x); hi += x; }\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        int count = 1, run = 0;\n        for (int x : nums) {\n            if (run + x > mid) { count++; run = x; }\n            else run += x;\n        }\n        if (count <= k) hi = mid; else lo = mid + 1;\n    }\n    return lo;\n}\n",
+   "python": "def solve(nums, k):\n    def pieces(limit):\n        count, run = 1, 0\n        for x in nums:\n            if run + x > limit:\n                count += 1\n                run = x\n            else:\n                run += x\n        return count\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if pieces(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "javascript": "function solve(nums, k) {\n  const pieces = (limit) => {\n    let count = 1, run = 0;\n    for (const x of nums) {\n      if (run + x > limit) { count++; run = x; } else run += x;\n    }\n    return count;\n  };\n  let lo = Math.max(...nums), hi = nums.reduce((a, b) => a + b, 0);\n  while (lo < hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (pieces(mid) <= k) hi = mid; else lo = mid + 1;\n  }\n  return lo;\n}\n"
   }
  },
  "word-search": {
@@ -805,24 +832,6 @@
    "java": "static int solve(int[] nums) {\n    long[] fact = new long[10];\n    fact[0] = 1;\n    for (int i = 1; i < 10; i++) fact[i] = fact[i - 1] * i;\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int x : nums) counts.merge(x, 1, Integer::sum);\n    long total = fact[nums.length];\n    for (int c : counts.values()) total /= fact[c];\n    return (int) total;\n}\n",
    "python": "def solve(nums):\n    from collections import Counter\n    from math import factorial\n    total = factorial(len(nums))\n    for count in Counter(nums).values():\n        total //= factorial(count)\n    return total\n",
    "javascript": "function solve(nums) {\n  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));\n  const counts = new Map();\n  for (const x of nums) counts.set(x, (counts.get(x) || 0) + 1);\n  let total = fact(nums.length);\n  for (const c of counts.values()) total /= fact(c);\n  return total;\n}\n"
-  }
- },
- "generate-parentheses-count": {
-  "editorial": "## Approach\n\ndp[0] = 1; dp[n] = Σ_{i=0}^{n-1} dp[i] · dp[n-1-i], i.e. the n-th Catalan number = C(2n, n)/(n+1). Backtracking that tracks open and close counts generates all strings but is exponential if you only need the count.\n\n**Complexity:** O(n²) time, O(n) space.",
-  "solutions": {
-   "cpp": "int solve(int n) {\n    long long catalan = 1;\n    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);\n    return (int)catalan;\n}\n",
-   "java": "static int solve(int n) {\n    long catalan = 1;\n    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);\n    return (int) catalan;\n}\n",
-   "python": "def solve(n):\n    catalan = 1\n    for k in range(n):\n        catalan = catalan * 2 * (2 * k + 1) // (k + 2)\n    return catalan\n",
-   "javascript": "function solve(n) {\n  let catalan = 1;\n  for (let k = 0; k < n; k++) catalan = (catalan * 2 * (2 * k + 1)) / (k + 2);\n  return catalan;\n}\n"
-  }
- },
- "palindrome-partitioning-count": {
-  "editorial": "## Approach\n\nisPal[i][j] = s[i] == s[j] && (j - i < 2 || isPal[i+1][j-1]). Then dp[i] = Σ dp[j+1] for all j >= i with isPal[i][j], dp[n] = 1. The answer is dp[0]. The count can grow quickly; check the output limits.\n\n**Complexity:** O(n²) time, O(n²) space.",
-  "solutions": {
-   "cpp": "int solve(string s) {\n    int n = s.size();\n    vector<vector<bool>> pal(n, vector<bool>(n, false));\n    for (int i = n - 1; i >= 0; i--)\n        for (int j = i; j < n; j++) pal[i][j] = s[i] == s[j] && (j - i < 2 || pal[i + 1][j - 1]);\n    vector<long long> ways(n + 1, 0);\n    ways[0] = 1;\n    for (int i = 1; i <= n; i++)\n        for (int j = 0; j < i; j++)\n            if (pal[j][i - 1]) ways[i] += ways[j];\n    return (int)ways[n];\n}\n",
-   "java": "static int solve(String s) {\n    int n = s.length();\n    boolean[][] pal = new boolean[n][n];\n    for (int i = n - 1; i >= 0; i--)\n        for (int j = i; j < n; j++) pal[i][j] = s.charAt(i) == s.charAt(j) && (j - i < 2 || pal[i + 1][j - 1]);\n    long[] ways = new long[n + 1];\n    ways[0] = 1;\n    for (int i = 1; i <= n; i++)\n        for (int j = 0; j < i; j++)\n            if (pal[j][i - 1]) ways[i] += ways[j];\n    return (int) ways[n];\n}\n",
-   "python": "def solve(s):\n    n = len(s)\n    pal = [[False] * n for _ in range(n)]\n    for i in range(n - 1, -1, -1):\n        for j in range(i, n):\n            pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])\n    ways = [1] + [0] * n  # ways[i] = partitions of the first i characters\n    for i in range(1, n + 1):\n        for j in range(i):\n            if pal[j][i - 1]:\n                ways[i] += ways[j]\n    return ways[n]\n",
-   "javascript": "function solve(s) {\n  const n = s.length;\n  const pal = Array.from({ length: n }, () => new Array(n).fill(false));\n  for (let i = n - 1; i >= 0; i--)\n    for (let j = i; j < n; j++) pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);\n  const ways = new Array(n + 1).fill(0);\n  ways[0] = 1;\n  for (let i = 1; i <= n; i++)\n    for (let j = 0; j < i; j++) if (pal[j][i - 1]) ways[i] += ways[j];\n  return ways[n];\n}\n"
   }
  },
  "n-queens-count": {
@@ -985,15 +994,6 @@
    "java": "static boolean solve(String s, String t) {\n    int i = 0;\n    for (int j = 0; j < t.length() && i < s.length(); j++)\n        if (s.charAt(i) == t.charAt(j)) i++;\n    return i == s.length();\n}\n",
    "python": "def solve(s, t):\n    i = 0\n    for ch in t:\n        if i < len(s) and s[i] == ch:\n            i += 1\n    return i == len(s)\n",
    "javascript": "function solve(s, t) {\n  let i = 0;\n  for (const ch of t) {\n    if (i < s.length && s[i] === ch) i++;\n  }\n  return i === s.length;\n}\n"
-  }
- },
- "counting-bits": {
-  "editorial": "## Approach\n\nDP over the answer array: bits[0] = 0 and bits[i] = bits[i >> 1] + (i & 1). Another form is bits[i] = bits[i & (i - 1)] + 1 (remove the lowest set bit). Linear time with the output as the only storage.\n\n**Complexity:** O(n) time, O(n) space.",
-  "solutions": {
-   "cpp": "vector<int> solve(int n) {\n    vector<int> bits(n + 1, 0);\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
-   "java": "static int[] solve(int n) {\n    int[] bits = new int[n + 1];\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
-   "python": "def solve(n):\n    bits = [0] * (n + 1)\n    for i in range(1, n + 1):\n        bits[i] = bits[i >> 1] + (i & 1)\n    return bits\n",
-   "javascript": "function solve(n) {\n  const bits = new Array(n + 1).fill(0);\n  for (let i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n  return bits;\n}\n"
   }
  },
  "single-number": {
