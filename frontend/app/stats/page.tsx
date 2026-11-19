@@ -2,7 +2,8 @@
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { api, type Page } from "@/lib/api";
+import { api, tagLabel, type Page, type Profile } from "@/lib/api";
+import { AreaChart, Columns, Donut, Legend, Radar, type Slice } from "@/components/charts";
 import Skeleton from "@/components/Skeleton";
 import { allTimes, fmtSecs } from "@/lib/times";
 
@@ -45,6 +46,8 @@ export default function StatsPage() {
   const [error, setError] = useState("");
   const [times, setTimes] = useState<{ slug: string; best: number; runs: number }[]>([]);
   useEffect(() => { setTimes(Object.entries(allTimes()).map(([slug, r]) => ({ slug, best: r.best, runs: r.runs })).sort((a, b) => a.best - b.best)); }, []);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  useEffect(() => { api<Profile>("/api/profile").then(setProfile).catch(() => setProfile(null)); }, []);
   useEffect(() => { loadAll().then(setItems).catch((e: Error) => setError(e.message)); }, []);
 
   const s = useMemo(() => {
@@ -74,7 +77,33 @@ export default function StatsPage() {
     struggles.sort((a, b) => b.tries - a.tries);
     const mostActiveHour = hour.indexOf(Math.max(...hour));
     const titles = new Map<string, string>(items.map((i) => [i.slug, i.title]));
-    return { total, ac, verdicts, langs, weekday, hour, solved, firstTry, attemptsSum, struggles: struggles.slice(0, 5),
+    // Day-by-day series (local dates): cumulative submissions/accepted since the first one, and the last 30 days.
+    const key = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const perDay = new Map<string, { n: number; ac: number }>();
+    for (const i of items) {
+      const k = key(new Date(i.createdAt));
+      const v = perDay.get(k) ?? { n: 0, ac: 0 };
+      v.n++; if (i.verdict === "ACCEPTED") v.ac++;
+      perDay.set(k, v);
+    }
+    const first = new Date(Math.min(...items.map((i) => new Date(i.createdAt).getTime())));
+    first.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const trendLabels: string[] = [], cumAll: number[] = [], cumAc: number[] = [];
+    let a = 0, b = 0;
+    for (const d = new Date(first); d <= today && trendLabels.length < 400; d.setDate(d.getDate() + 1)) {
+      const v = perDay.get(key(d));
+      a += v?.n ?? 0; b += v?.ac ?? 0;
+      trendLabels.push(d.toLocaleDateString(undefined, { day: "numeric", month: "short" }));
+      cumAll.push(a); cumAc.push(b);
+    }
+    const dayLabels: string[] = [], dayCounts: number[] = [];
+    for (let k = 29; k >= 0; k--) {
+      const d = new Date(today); d.setDate(d.getDate() - k);
+      dayLabels.push(d.toLocaleDateString(undefined, { day: "numeric", month: "short" }));
+      dayCounts.push(perDay.get(key(d))?.n ?? 0);
+    }
+    return { trendLabels, cumAll, cumAc, dayLabels, dayCounts, total, ac, verdicts, langs, weekday, hour, solved, firstTry, attemptsSum, struggles: struggles.slice(0, 5),
       problems: byProblem.size, mostActiveHour, titles };
   }, [items]);
 
@@ -82,6 +111,15 @@ export default function StatsPage() {
   if (!s) return <Skeleton lines={8} />;
   if (s.total === 0) return <p className="mute">No submissions yet. Submit a solution and your stats show up here.</p>;
 
+  const VERDICT_COLOR: Record<string, string> = {
+    ACCEPTED: "var(--easy)", WRONG_ANSWER: "var(--hard)", TIME_LIMIT_EXCEEDED: "var(--med)",
+    RUNTIME_ERROR: "#8b7be0", COMPILE_ERROR: "#2fb5a3", MEMORY_LIMIT_EXCEEDED: "#d46bb0",
+  };
+  const verdictSlices: Slice[] = [...s.verdicts].sort((a, b) => (a[0] === "ACCEPTED" ? -1 : b[0] === "ACCEPTED" ? 1 : b[1] - a[1]))
+    .map(([k, v]) => ({ label: label(k), value: v, color: VERDICT_COLOR[k] ?? "var(--mute)" }));
+  const bd = profile?.progress.byDifficulty ?? {};
+  const diffSlices: Slice[] = [["EASY", "var(--easy)"], ["MEDIUM", "var(--med)"], ["HARD", "var(--hard)"]]
+    .map(([k, color]) => ({ label: label(k), value: bd[k]?.solved ?? 0, color }));
   const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : "–");
   return (
     <>
@@ -95,6 +133,42 @@ export default function StatsPage() {
         <div className="card"><span className="mute">Problems solved</span><b>{s.solved}<span className="mute" style={{ fontSize: 14 }}> / {s.problems} tried</span></b></div>
         <div className="card"><span className="mute">First-try solves</span><b>{pct(s.firstTry, s.solved)}</b></div>
         <div className="card"><span className="mute">Avg attempts to solve</span><b>{s.solved ? (s.attemptsSum / s.solved).toFixed(1) : "–"}</b></div>
+      </div>
+      <div className="vizgrid">
+        <section className="card">
+          <h3 style={{ margin: "0 0 8px" }}>Verdicts</h3>
+          <div className="vizrow">
+            <Donut slices={verdictSlices} centre={pct(s.ac, s.total)} sub="accepted" />
+            <Legend slices={verdictSlices} />
+          </div>
+        </section>
+        {profile && (
+          <section className="card">
+            <h3 style={{ margin: "0 0 8px" }}>Solved by difficulty</h3>
+            <div className="vizrow">
+              <Donut slices={diffSlices} centre={String(profile.progress.solved)} sub={`of ${profile.progress.total}`} />
+              <Legend slices={diffSlices} />
+            </div>
+          </section>
+        )}
+        <section className="card wide">
+          <h3 style={{ margin: "0 0 4px" }}>Progress over time</h3>
+          <p className="mute" style={{ fontSize: 12, margin: "0 0 6px" }}>Running total of submissions and accepted solutions, day by day.</p>
+          <AreaChart labels={s.trendLabels} series={[{ name: "Submissions", color: "var(--mute)", values: s.cumAll }, { name: "Accepted", color: "var(--easy)", values: s.cumAc }]} />
+          <Legend row slices={[{ label: "Submissions", value: s.total, color: "var(--mute)" }, { label: "Accepted", value: s.ac, color: "var(--easy)" }]} />
+        </section>
+        <section className="card wide">
+          <h3 style={{ margin: "0 0 4px" }}>Last 30 days</h3>
+          <p className="mute" style={{ fontSize: 12, margin: "0 0 6px" }}>{s.dayCounts.reduce((n, v) => n + v, 0)} submissions, {s.dayCounts.filter((v) => v > 0).length} active days.</p>
+          <Columns labels={s.dayLabels} values={s.dayCounts} />
+        </section>
+        {profile && profile.skills.length >= 3 && (
+          <section className="card wide">
+            <h3 style={{ margin: "0 0 4px" }}>Topic strengths</h3>
+            <p className="mute" style={{ fontSize: 12, margin: "0 0 6px" }}>Problems solved in your {Math.min(8, profile.skills.length)} strongest topics.</p>
+            <div className="vizrow center"><Radar axes={[...profile.skills].sort((a, b) => b.solved - a.solved).slice(0, 8).map((k) => ({ label: tagLabel(k.tag), value: k.solved }))} /></div>
+          </section>
+        )}
       </div>
       <div className="statgrid">
         <section className="card"><h3 style={{ margin: "0 0 8px" }}>Verdicts</h3>
