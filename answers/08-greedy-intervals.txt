@@ -1,0 +1,423 @@
+=== assign-cookies
+--- py
+def solve(g, s):
+    g, s = sorted(g), sorted(s)
+    child = 0
+    for cookie in s:
+        if child < len(g) and cookie >= g[child]:
+            child += 1
+    return child
+--- js
+function solve(g, s) {
+  g = [...g].sort((a, b) => a - b);
+  s = [...s].sort((a, b) => a - b);
+  let child = 0;
+  for (const cookie of s) {
+    if (child < g.length && cookie >= g[child]) child++;
+  }
+  return child;
+}
+--- cpp
+int solve(vector<int> g, vector<int> s) {
+    sort(g.begin(), g.end());
+    sort(s.begin(), s.end());
+    size_t child = 0;
+    for (int cookie : s)
+        if (child < g.size() && cookie >= g[child]) child++;
+    return (int)child;
+}
+--- java
+static int solve(int[] g, int[] s) {
+    int[] greed = g.clone(), cookies = s.clone();
+    Arrays.sort(greed);
+    Arrays.sort(cookies);
+    int child = 0;
+    for (int cookie : cookies)
+        if (child < greed.length && cookie >= greed[child]) child++;
+    return child;
+}
+=== container-with-most-water
+--- py
+def solve(height):
+    lo, hi = 0, len(height) - 1
+    best = 0
+    while lo < hi:
+        best = max(best, (hi - lo) * min(height[lo], height[hi]))
+        if height[lo] < height[hi]:
+            lo += 1
+        else:
+            hi -= 1
+    return best
+--- js
+function solve(height) {
+  let lo = 0, hi = height.length - 1, best = 0;
+  while (lo < hi) {
+    best = Math.max(best, (hi - lo) * Math.min(height[lo], height[hi]));
+    if (height[lo] < height[hi]) lo++; else hi--;
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> height) {
+    int lo = 0, hi = (int)height.size() - 1, best = 0;
+    while (lo < hi) {
+        best = max(best, (hi - lo) * min(height[lo], height[hi]));
+        if (height[lo] < height[hi]) lo++; else hi--;
+    }
+    return best;
+}
+--- java
+static int solve(int[] height) {
+    int lo = 0, hi = height.length - 1, best = 0;
+    while (lo < hi) {
+        best = Math.max(best, (hi - lo) * Math.min(height[lo], height[hi]));
+        if (height[lo] < height[hi]) lo++; else hi--;
+    }
+    return best;
+}
+=== gas-station
+--- py
+def solve(gas, cost):
+    if sum(gas) < sum(cost):
+        return -1
+    start = tank = 0
+    for i in range(len(gas)):
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            start = i + 1
+            tank = 0
+    return start
+--- js
+function solve(gas, cost) {
+  let total = 0, tank = 0, start = 0;
+  for (let i = 0; i < gas.length; i++) {
+    const delta = gas[i] - cost[i];
+    total += delta;
+    tank += delta;
+    if (tank < 0) { start = i + 1; tank = 0; }
+  }
+  return total < 0 ? -1 : start;
+}
+--- cpp
+int solve(vector<int> gas, vector<int> cost) {
+    int total = 0, tank = 0, start = 0;
+    for (int i = 0; i < (int)gas.size(); i++) {
+        int delta = gas[i] - cost[i];
+        total += delta;
+        tank += delta;
+        if (tank < 0) { start = i + 1; tank = 0; }
+    }
+    return total < 0 ? -1 : start;
+}
+--- java
+static int solve(int[] gas, int[] cost) {
+    int total = 0, tank = 0, start = 0;
+    for (int i = 0; i < gas.length; i++) {
+        int delta = gas[i] - cost[i];
+        total += delta;
+        tank += delta;
+        if (tank < 0) { start = i + 1; tank = 0; }
+    }
+    return total < 0 ? -1 : start;
+}
+=== best-time-to-buy-and-sell-stock-ii
+--- py
+def solve(prices):
+    return sum(max(0, b - a) for a, b in zip(prices, prices[1:]))
+--- js
+function solve(prices) {
+  let profit = 0;
+  for (let i = 1; i < prices.length; i++) profit += Math.max(0, prices[i] - prices[i - 1]);
+  return profit;
+}
+--- cpp
+int solve(vector<int> prices) {
+    int profit = 0;
+    for (size_t i = 1; i < prices.size(); i++) profit += max(0, prices[i] - prices[i - 1]);
+    return profit;
+}
+--- java
+static int solve(int[] prices) {
+    int profit = 0;
+    for (int i = 1; i < prices.length; i++) profit += Math.max(0, prices[i] - prices[i - 1]);
+    return profit;
+}
+=== partition-labels
+--- py
+def solve(s):
+    last = {ch: i for i, ch in enumerate(s)}
+    sizes, start, end = [], 0, 0
+    for i, ch in enumerate(s):
+        end = max(end, last[ch])
+        if i == end:
+            sizes.append(i - start + 1)
+            start = i + 1
+    return sizes
+--- js
+function solve(s) {
+  const last = {};
+  for (let i = 0; i < s.length; i++) last[s[i]] = i;
+  const sizes = [];
+  let start = 0, end = 0;
+  for (let i = 0; i < s.length; i++) {
+    end = Math.max(end, last[s[i]]);
+    if (i === end) {
+      sizes.push(i - start + 1);
+      start = i + 1;
+    }
+  }
+  return sizes;
+}
+--- cpp
+vector<int> solve(string s) {
+    int last[26];
+    for (int i = 0; i < (int)s.size(); i++) last[s[i] - 'a'] = i;
+    vector<int> sizes;
+    int start = 0, end = 0;
+    for (int i = 0; i < (int)s.size(); i++) {
+        end = max(end, last[s[i] - 'a']);
+        if (i == end) {
+            sizes.push_back(i - start + 1);
+            start = i + 1;
+        }
+    }
+    return sizes;
+}
+--- java
+static int[] solve(String s) {
+    int[] last = new int[26];
+    for (int i = 0; i < s.length(); i++) last[s.charAt(i) - 'a'] = i;
+    List<Integer> sizes = new ArrayList<>();
+    int start = 0, end = 0;
+    for (int i = 0; i < s.length(); i++) {
+        end = Math.max(end, last[s.charAt(i) - 'a']);
+        if (i == end) {
+            sizes.add(i - start + 1);
+            start = i + 1;
+        }
+    }
+    int[] out = new int[sizes.size()];
+    for (int i = 0; i < out.length; i++) out[i] = sizes.get(i);
+    return out;
+}
+=== candy
+--- py
+def solve(ratings):
+    n = len(ratings)
+    candy = [1] * n
+    for i in range(1, n):
+        if ratings[i] > ratings[i - 1]:
+            candy[i] = candy[i - 1] + 1
+    for i in range(n - 2, -1, -1):
+        if ratings[i] > ratings[i + 1]:
+            candy[i] = max(candy[i], candy[i + 1] + 1)
+    return sum(candy)
+--- js
+function solve(ratings) {
+  const n = ratings.length;
+  const candy = new Array(n).fill(1);
+  for (let i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;
+  for (let i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = Math.max(candy[i], candy[i + 1] + 1);
+  return candy.reduce((a, b) => a + b, 0);
+}
+--- cpp
+int solve(vector<int> ratings) {
+    int n = ratings.size();
+    vector<int> candy(n, 1);
+    for (int i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;
+    for (int i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = max(candy[i], candy[i + 1] + 1);
+    return accumulate(candy.begin(), candy.end(), 0);
+}
+--- java
+static int solve(int[] ratings) {
+    int n = ratings.length;
+    int[] candy = new int[n];
+    Arrays.fill(candy, 1);
+    for (int i = 1; i < n; i++) if (ratings[i] > ratings[i - 1]) candy[i] = candy[i - 1] + 1;
+    for (int i = n - 2; i >= 0; i--) if (ratings[i] > ratings[i + 1]) candy[i] = Math.max(candy[i], candy[i + 1] + 1);
+    int total = 0;
+    for (int c : candy) total += c;
+    return total;
+}
+=== non-overlapping-intervals
+--- py
+def solve(intervals):
+    removed = 0
+    last_end = None
+    for start, end in sorted(intervals, key=lambda iv: iv[1]):
+        if last_end is None or start >= last_end:
+            last_end = end
+        else:
+            removed += 1
+    return removed
+--- js
+function solve(intervals) {
+  const sorted = [...intervals].sort((a, b) => a[1] - b[1]);
+  let removed = 0, lastEnd = -Infinity;
+  for (const [start, end] of sorted) {
+    if (start >= lastEnd) lastEnd = end; else removed++;
+  }
+  return removed;
+}
+--- cpp
+int solve(vector<vector<int>> intervals) {
+    sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; });
+    int removed = 0, lastEnd = INT_MIN;
+    for (auto& iv : intervals) {
+        if (iv[0] >= lastEnd) lastEnd = iv[1];
+        else removed++;
+    }
+    return removed;
+}
+--- java
+static int solve(int[][] intervals) {
+    int[][] sorted = intervals.clone();
+    Arrays.sort(sorted, (a, b) -> Integer.compare(a[1], b[1]));
+    int removed = 0, lastEnd = Integer.MIN_VALUE;
+    for (int[] iv : sorted) {
+        if (iv[0] >= lastEnd) lastEnd = iv[1];
+        else removed++;
+    }
+    return removed;
+}
+=== insert-interval
+--- py
+def solve(intervals, newInterval):
+    start, end = newInterval
+    result = []
+    i, n = 0, len(intervals)
+    while i < n and intervals[i][1] < start:
+        result.append(intervals[i])
+        i += 1
+    while i < n and intervals[i][0] <= end:
+        start = min(start, intervals[i][0])
+        end = max(end, intervals[i][1])
+        i += 1
+    result.append([start, end])
+    result.extend(intervals[i:])
+    return result
+--- js
+function solve(intervals, newInterval) {
+  let [start, end] = newInterval;
+  const result = [];
+  let i = 0;
+  const n = intervals.length;
+  while (i < n && intervals[i][1] < start) result.push(intervals[i++]);
+  while (i < n && intervals[i][0] <= end) {
+    start = Math.min(start, intervals[i][0]);
+    end = Math.max(end, intervals[i][1]);
+    i++;
+  }
+  result.push([start, end]);
+  while (i < n) result.push(intervals[i++]);
+  return result;
+}
+--- cpp
+vector<vector<int>> solve(vector<vector<int>> intervals, vector<int> newInterval) {
+    int start = newInterval[0], end = newInterval[1];
+    vector<vector<int>> result;
+    size_t i = 0, n = intervals.size();
+    while (i < n && intervals[i][1] < start) result.push_back(intervals[i++]);
+    while (i < n && intervals[i][0] <= end) {
+        start = min(start, intervals[i][0]);
+        end = max(end, intervals[i][1]);
+        i++;
+    }
+    result.push_back({start, end});
+    while (i < n) result.push_back(intervals[i++]);
+    return result;
+}
+--- java
+static int[][] solve(int[][] intervals, int[] newInterval) {
+    int start = newInterval[0], end = newInterval[1];
+    List<int[]> result = new ArrayList<>();
+    int i = 0, n = intervals.length;
+    while (i < n && intervals[i][1] < start) result.add(intervals[i++]);
+    while (i < n && intervals[i][0] <= end) {
+        start = Math.min(start, intervals[i][0]);
+        end = Math.max(end, intervals[i][1]);
+        i++;
+    }
+    result.add(new int[]{start, end});
+    while (i < n) result.add(intervals[i++]);
+    return result.toArray(new int[0][]);
+}
+=== longest-consecutive-sequence
+--- py
+def solve(nums):
+    values = set(nums)
+    best = 0
+    for x in values:
+        if x - 1 not in values:
+            length = 1
+            while x + length in values:
+                length += 1
+            best = max(best, length)
+    return best
+--- js
+function solve(nums) {
+  const values = new Set(nums);
+  let best = 0;
+  for (const x of values) {
+    if (values.has(x - 1)) continue;
+    let length = 1;
+    while (values.has(x + length)) length++;
+    best = Math.max(best, length);
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> nums) {
+    unordered_set<int> values(nums.begin(), nums.end());
+    int best = 0;
+    for (int x : values) {
+        if (values.count(x - 1)) continue;
+        int length = 1;
+        while (values.count(x + length)) length++;
+        best = max(best, length);
+    }
+    return best;
+}
+--- java
+static int solve(int[] nums) {
+    Set<Integer> values = new HashSet<>();
+    for (int x : nums) values.add(x);
+    int best = 0;
+    for (int x : values) {
+        if (values.contains(x - 1)) continue;
+        int length = 1;
+        while (values.contains(x + length)) length++;
+        best = Math.max(best, length);
+    }
+    return best;
+}
+=== is-subsequence
+--- py
+def solve(s, t):
+    i = 0
+    for ch in t:
+        if i < len(s) and s[i] == ch:
+            i += 1
+    return i == len(s)
+--- js
+function solve(s, t) {
+  let i = 0;
+  for (const ch of t) {
+    if (i < s.length && s[i] === ch) i++;
+  }
+  return i === s.length;
+}
+--- cpp
+bool solve(string s, string t) {
+    size_t i = 0;
+    for (char ch : t)
+        if (i < s.size() && s[i] == ch) i++;
+    return i == s.size();
+}
+--- java
+static boolean solve(String s, String t) {
+    int i = 0;
+    for (int j = 0; j < t.length() && i < s.length(); j++)
+        if (s.charAt(i) == t.charAt(j)) i++;
+    return i == s.length();
+}
