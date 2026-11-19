@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Answer, api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
-  Study, Submission,
+  Study, Submission, tagLabel,
 } from "@/lib/api";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
@@ -444,7 +444,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                     </button>
                   )}
                 </div>
-                {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>}
+                {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>}
                 <ProblemDescription markdown={problem.description} />
                 {problem.acceptance != null && (
                   <div className="statstrip mute">Acceptance Rate <b>{problem.acceptance.toFixed(1)}%</b></div>

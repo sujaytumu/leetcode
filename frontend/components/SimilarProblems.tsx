@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ProblemSummary } from "@/lib/api";
+import { tagLabel, type ProblemSummary } from "@/lib/api";
 
 const cap = (d: string) => d[0] + d.slice(1).toLowerCase();
 
@@ -23,7 +23,7 @@ export default function SimilarProblems({ current, all }: { current: ProblemSumm
     <div className="related">
       <details>
         <summary>Related Topics</summary>
-        <div className="relbody">{current.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</div>
+        <div className="relbody">{current.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>
       </details>
       {similar.length > 0 && (
         <details>

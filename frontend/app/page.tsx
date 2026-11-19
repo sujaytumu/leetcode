@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, Daily, fetchAllProblems, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
+import { api, Daily, tagLabel, fetchAllProblems, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
 import { swr } from "@/lib/local";
 import Activity from "@/components/Activity";
 import WeeklyGoal from "@/components/WeeklyGoal";
@@ -12,7 +12,11 @@ import Skeleton from "@/components/Skeleton";
 import FreeSpace from "@/components/FreeSpace";
 import { useMeta } from "@/lib/meta";
 
-const ICON = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "" } as const;
+const ICON = {
+  SOLVED: <span className="st-done" title="Solved" aria-label="Solved">✔</span>,
+  ATTEMPTED: <span className="st-att" title="Attempted" aria-label="Attempted" />,
+  TODO: null,
+} as const;
 
 export default function Home() {
   const [sort, setSort] = useState("");
@@ -123,7 +127,7 @@ export default function Home() {
           <div className="chips">
             <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
             {tags.map((t) => (
-              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{t}</button>
+              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{tagLabel(t)}</button>
             ))}
           </div>
           <div className="filters">
@@ -133,7 +137,7 @@ export default function Home() {
               {meta?.difficulties.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
             </select>
             <select value={tag} onChange={(e) => reset(setTag)(e.target.value)}>
-              <option value="">All topics</option>{tags.map((t) => <option key={t}>{t}</option>)}
+              <option value="">All topics</option>{tags.map((t) => <option key={t} value={t}>{tagLabel(t)}</option>)}
             </select>
             <select value={status} onChange={(e) => reset(setStatus)(e.target.value)}>
               <option value="">Any status</option>
@@ -149,8 +153,8 @@ export default function Home() {
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
-                    <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{t}</span>)}</div></td>
-                  <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{t}</span>)}</td>
+                    <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
+                  <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</td>
                   <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
                   <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                 </tr>
