@@ -986,5 +986,104 @@
    "python": "def solve(s, t):\n    i = 0\n    for ch in t:\n        if i < len(s) and s[i] == ch:\n            i += 1\n    return i == len(s)\n",
    "javascript": "function solve(s, t) {\n  let i = 0;\n  for (const ch of t) {\n    if (i < s.length && s[i] === ch) i++;\n  }\n  return i === s.length;\n}\n"
   }
+ },
+ "counting-bits": {
+  "editorial": "## Approach\n\nDP over the answer array: bits[0] = 0 and bits[i] = bits[i >> 1] + (i & 1). Another form is bits[i] = bits[i & (i - 1)] + 1 (remove the lowest set bit). Linear time with the output as the only storage.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "vector<int> solve(int n) {\n    vector<int> bits(n + 1, 0);\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
+   "java": "static int[] solve(int n) {\n    int[] bits = new int[n + 1];\n    for (int i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n    return bits;\n}\n",
+   "python": "def solve(n):\n    bits = [0] * (n + 1)\n    for i in range(1, n + 1):\n        bits[i] = bits[i >> 1] + (i & 1)\n    return bits\n",
+   "javascript": "function solve(n) {\n  const bits = new Array(n + 1).fill(0);\n  for (let i = 1; i <= n; i++) bits[i] = bits[i >> 1] + (i & 1);\n  return bits;\n}\n"
+  }
+ },
+ "single-number": {
+  "editorial": "## Approach\n\nXOR all elements together. Pairs cancel to 0 and XOR is commutative, so only the unpaired element remains.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int result = 0;\n    for (int x : nums) result ^= x;\n    return result;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int result = 0;\n    for (int x : nums) result ^= x;\n    return result;\n}\n",
+   "python": "def solve(nums):\n    result = 0\n    for x in nums:\n        result ^= x\n    return result\n",
+   "javascript": "function solve(nums) {\n  let result = 0;\n  for (const x of nums) result ^= x;\n  return result;\n}\n"
+  }
+ },
+ "missing-number": {
+  "editorial": "## Approach\n\nThe expected sum is n(n+1)/2. Subtracting the actual sum leaves the missing number. XOR-ing all indices and values also works.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(vector<int> nums) {\n    int n = nums.size(), missing = n;\n    for (int i = 0; i < n; i++) missing ^= i ^ nums[i];\n    return missing;\n}\n",
+   "java": "static int solve(int[] nums) {\n    int n = nums.length, missing = n;\n    for (int i = 0; i < n; i++) missing ^= i ^ nums[i];\n    return missing;\n}\n",
+   "python": "def solve(nums):\n    n = len(nums)\n    return n * (n + 1) // 2 - sum(nums)\n",
+   "javascript": "function solve(nums) {\n  const n = nums.length;\n  return (n * (n + 1)) / 2 - nums.reduce((a, b) => a + b, 0);\n}\n"
+  }
+ },
+ "number-of-1-bits": {
+  "editorial": "## Approach\n\nBrian Kernighan: while n != 0 { n &= n - 1; count++ }. It runs once per set bit. Bit-twiddling population count or a built-in (Integer.bitCount, bin(n).count('1'), __builtin_popcount) are equivalent.\n\n**Complexity:** O(number of set bits) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(int n) {\n    int count = 0;\n    while (n) {\n        n &= n - 1;\n        count++;\n    }\n    return count;\n}\n",
+   "java": "static int solve(int n) {\n    int count = 0;\n    while (n != 0) {\n        n &= n - 1;\n        count++;\n    }\n    return count;\n}\n",
+   "python": "def solve(n):\n    count = 0\n    while n:\n        n &= n - 1  # clears the lowest set bit\n        count += 1\n    return count\n",
+   "javascript": "function solve(n) {\n  let count = 0;\n  while (n) {\n    n &= n - 1;\n    count++;\n  }\n  return count;\n}\n"
+  }
+ },
+ "power-of-two": {
+  "editorial": "## Approach\n\nReturn n > 0 && (n & (n - 1)) == 0. Be careful that n must be positive: 0 & -1 is 0, which would wrongly pass without the n > 0 guard.\n\n**Complexity:** O(1) time, O(1) space.",
+  "solutions": {
+   "cpp": "bool solve(int n) {\n    return n > 0 && (n & (n - 1)) == 0;\n}\n",
+   "java": "static boolean solve(int n) {\n    return n > 0 && (n & (n - 1)) == 0;\n}\n",
+   "python": "def solve(n):\n    return n > 0 and n & (n - 1) == 0\n",
+   "javascript": "function solve(n) {\n  return n > 0 && (n & (n - 1)) === 0;\n}\n"
+  }
+ },
+ "happy-number": {
+  "editorial": "## Approach\n\nIterate next(n) = Σ digit². Keep a set of seen numbers; if you reach 1 return true, if a number repeats return false. Alternatively use slow/fast pointers on the sequence. Values stay small (below about 243 after the first step), so it terminates quickly.\n\n**Complexity:** O(log n) per step, few steps time, O(1) with Floyd space.",
+  "solutions": {
+   "cpp": "int hnStep(long long x) {\n    int total = 0;\n    while (x > 0) {\n        int d = x % 10;\n        total += d * d;\n        x /= 10;\n    }\n    return total;\n}\nbool solve(int n) {\n    long long slow = n, fast = hnStep(n);\n    while (fast != 1 && slow != fast) {\n        slow = hnStep(slow);\n        fast = hnStep(hnStep(fast));\n    }\n    return fast == 1;\n}\n",
+   "java": "static int hnStep(long x) {\n    int total = 0;\n    while (x > 0) {\n        int d = (int) (x % 10);\n        total += d * d;\n        x /= 10;\n    }\n    return total;\n}\nstatic boolean solve(int n) {\n    long slow = n, fast = hnStep(n);\n    while (fast != 1 && slow != fast) {\n        slow = hnStep(slow);\n        fast = hnStep(hnStep(fast));\n    }\n    return fast == 1;\n}\n",
+   "python": "def solve(n):\n    def step(x):\n        total = 0\n        while x:\n            x, d = divmod(x, 10)\n            total += d * d\n        return total\n    slow, fast = n, step(n)\n    while fast != 1 and slow != fast:\n        slow = step(slow)\n        fast = step(step(fast))\n    return fast == 1\n",
+   "javascript": "function solve(n) {\n  const step = (x) => {\n    let total = 0;\n    while (x > 0) {\n      const d = x % 10;\n      total += d * d;\n      x = Math.floor(x / 10);\n    }\n    return total;\n  };\n  let slow = n, fast = step(n);\n  while (fast !== 1 && slow !== fast) {\n    slow = step(slow);\n    fast = step(step(fast));\n  }\n  return fast === 1;\n}\n"
+  }
+ },
+ "roman-to-integer": {
+  "editorial": "## Approach\n\nLookup table I=1, V=5, X=10, L=50, C=100, D=500, M=1000. For each index i: if i + 1 < n and val[s[i]] < val[s[i+1]] subtract val[s[i]], else add it. This handles IV, IX, XL, XC, CD and CM without special cases.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(string s) {\n    auto value = [](char c) {\n        switch (c) {\n            case 'I': return 1;\n            case 'V': return 5;\n            case 'X': return 10;\n            case 'L': return 50;\n            case 'C': return 100;\n            case 'D': return 500;\n            default: return 1000;\n        }\n    };\n    int total = 0;\n    for (size_t i = 0; i < s.size(); i++) {\n        if (i + 1 < s.size() && value(s[i]) < value(s[i + 1])) total -= value(s[i]);\n        else total += value(s[i]);\n    }\n    return total;\n}\n",
+   "java": "static int romanValue(char c) {\n    switch (c) {\n        case 'I': return 1;\n        case 'V': return 5;\n        case 'X': return 10;\n        case 'L': return 50;\n        case 'C': return 100;\n        case 'D': return 500;\n        default: return 1000;\n    }\n}\nstatic int solve(String s) {\n    int total = 0;\n    for (int i = 0; i < s.length(); i++) {\n        if (i + 1 < s.length() && romanValue(s.charAt(i)) < romanValue(s.charAt(i + 1))) total -= romanValue(s.charAt(i));\n        else total += romanValue(s.charAt(i));\n    }\n    return total;\n}\n",
+   "python": "def solve(s):\n    value = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    for i, ch in enumerate(s):\n        if i + 1 < len(s) and value[ch] < value[s[i + 1]]:\n            total -= value[ch]\n        else:\n            total += value[ch]\n    return total\n",
+   "javascript": "function solve(s) {\n  const value = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };\n  let total = 0;\n  for (let i = 0; i < s.length; i++) {\n    if (i + 1 < s.length && value[s[i]] < value[s[i + 1]]) total -= value[s[i]];\n    else total += value[s[i]];\n  }\n  return total;\n}\n"
+  }
+ },
+ "excel-sheet-column-number": {
+  "editorial": "## Approach\n\nHorner's rule: start with 0 and for each character multiply by 26 and add its value 1..26. For example 'AA' gives 1*26 + 1 = 27. Long titles may need 64-bit integers.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(string columnTitle) {\n    long long number = 0;\n    for (char ch : columnTitle) number = number * 26 + (ch - 'A' + 1);\n    return (int)number;\n}\n",
+   "java": "static int solve(String columnTitle) {\n    long number = 0;\n    for (char ch : columnTitle.toCharArray()) number = number * 26 + (ch - 'A' + 1);\n    return (int) number;\n}\n",
+   "python": "def solve(columnTitle):\n    number = 0\n    for ch in columnTitle:\n        number = number * 26 + (ord(ch) - ord('A') + 1)\n    return number\n",
+   "javascript": "function solve(columnTitle) {\n  let number = 0;\n  for (const ch of columnTitle) number = number * 26 + (ch.charCodeAt(0) - 64);\n  return number;\n}\n"
+  }
+ },
+ "count-primes": {
+  "editorial": "## Approach\n\nSieve of Eratosthenes: mark 0 and 1 as non-prime, and for each prime p up to √n mark p², p²+p, … as composite. The unmarked numbers below n are the primes.\n\n**Complexity:** O(n log log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "int solve(int n) {\n    if (n < 3) return 0;\n    vector<bool> composite(n, false);\n    int count = 0;\n    for (int i = 2; i < n; i++) {\n        if (composite[i]) continue;\n        count++;\n        for (long long multiple = (long long)i * i; multiple < n; multiple += i) composite[multiple] = true;\n    }\n    return count;\n}\n",
+   "java": "static int solve(int n) {\n    if (n < 3) return 0;\n    boolean[] composite = new boolean[n];\n    int count = 0;\n    for (int i = 2; i < n; i++) {\n        if (composite[i]) continue;\n        count++;\n        for (long multiple = (long) i * i; multiple < n; multiple += i) composite[(int) multiple] = true;\n    }\n    return count;\n}\n",
+   "python": "def solve(n):\n    if n < 3:\n        return 0\n    composite = bytearray(n)\n    for p in range(2, int(n ** 0.5) + 1):\n        if not composite[p]:\n            for multiple in range(p * p, n, p):\n                composite[multiple] = 1\n    return sum(1 for i in range(2, n) if not composite[i])\n",
+   "javascript": "function solve(n) {\n  if (n < 3) return 0;\n  const composite = new Array(n).fill(false);\n  let count = 0;\n  for (let i = 2; i < n; i++) {\n    if (composite[i]) continue;\n    count++;\n    for (let multiple = i * i; multiple < n; multiple += i) composite[multiple] = true;\n  }\n  return count;\n}\n"
+  }
+ },
+ "fast-power-mod": {
+  "editorial": "## Approach\n\nBinary exponentiation: result = 1 % mod; base %= mod; while exp > 0: if exp is odd result = result * base % mod; base = base * base % mod; exp >>= 1. About 30 iterations. Use long/int64 (or Python integers) for the products; 0^0 = 1 per the statement.\n\n**Complexity:** O(log exp) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(int base, int exp, int mod) {\n    long long m = mod, result = 1 % m, b = base % m;\n    long long e = exp;\n    while (e > 0) {\n        if (e & 1) result = result * b % m;\n        b = b * b % m;\n        e >>= 1;\n    }\n    return (int)result;\n}\n",
+   "java": "static int solve(int base, int exp, int mod) {\n    long m = mod, result = 1 % m, b = base % m;\n    long e = exp;\n    while (e > 0) {\n        if ((e & 1) == 1) result = result * b % m;\n        b = b * b % m;\n        e >>= 1;\n    }\n    return (int) result;\n}\n",
+   "python": "def solve(base, exp, mod):\n    result = 1 % mod\n    base %= mod\n    while exp:\n        if exp & 1:\n            result = result * base % mod\n        base = base * base % mod\n        exp >>= 1\n    return result\n",
+   "javascript": "function solve(base, exp, mod) {\n  const m = BigInt(mod);\n  let b = BigInt(base) % m;\n  let e = BigInt(exp);\n  let result = 1n % m;\n  while (e > 0n) {\n    if (e & 1n) result = (result * b) % m;\n    b = (b * b) % m;\n    e >>= 1n;\n  }\n  return Number(result);\n}\n"
+  }
+ },
+ "reverse-integer": {
+  "editorial": "## Approach\n\nWhile x != 0: digit = x % 10 (sign-preserving in C-like languages); before result = result * 10 + digit check result > INT_MAX/10 (or < INT_MIN/10), including the boundary digit; if it would overflow return 0. In languages with big integers, reverse then range-check.\n\n**Complexity:** O(log |x|) time, O(1) space.",
+  "solutions": {
+   "cpp": "int solve(int x) {\n    long long value = x, reversed = 0;\n    bool negative = value < 0;\n    if (negative) value = -value;\n    while (value > 0) {\n        reversed = reversed * 10 + value % 10;\n        value /= 10;\n    }\n    if (negative) reversed = -reversed;\n    return (reversed < INT_MIN || reversed > INT_MAX) ? 0 : (int)reversed;\n}\n",
+   "java": "static int solve(int x) {\n    long value = x, reversed = 0;\n    boolean negative = value < 0;\n    if (negative) value = -value;\n    while (value > 0) {\n        reversed = reversed * 10 + value % 10;\n        value /= 10;\n    }\n    if (negative) reversed = -reversed;\n    return (reversed < Integer.MIN_VALUE || reversed > Integer.MAX_VALUE) ? 0 : (int) reversed;\n}\n",
+   "python": "def solve(x):\n    sign = -1 if x < 0 else 1\n    reversed_value = sign * int(str(abs(x))[::-1])\n    return reversed_value if -2**31 <= reversed_value <= 2**31 - 1 else 0\n",
+   "javascript": "function solve(x) {\n  const sign = x < 0 ? -1 : 1;\n  const reversed = sign * Number(String(Math.abs(x)).split(\"\").reverse().join(\"\"));\n  return reversed >= -(2 ** 31) && reversed <= 2 ** 31 - 1 ? reversed : 0;\n}\n"
+  }
  }
 }
