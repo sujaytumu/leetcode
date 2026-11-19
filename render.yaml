@@ -24,6 +24,16 @@ services:
       # Signs login tokens. Render generates a random value once; keep it so logins survive restarts.
       - key: AUTH_SECRET
         generateValue: true
+      # Email through Resend: password reset links and the optional daily problem email.
+      # Without RESEND_API_KEY the app works and simply sends nothing.
+      - key: RESEND_API_KEY
+        sync: false
+      # e.g. LeetCode Practice <hello@yourdomain.com>; the domain must be verified in Resend.
+      - key: MAIL_FROM
+        sync: false
+      # Your Vercel URL again; used for the links inside emails (no trailing slash).
+      - key: FRONTEND_URL
+        sync: false
       # Optional: a Judge0 instance. Without it the app runs but Run/Submit report "not configured".
       - key: JUDGE0_URL
         sync: false
