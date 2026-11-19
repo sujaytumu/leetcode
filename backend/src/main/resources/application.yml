@@ -43,6 +43,14 @@ app:
     # Set AUTH_SECRET (32+ random chars) in production so tokens survive restarts.
     secret: ${AUTH_SECRET:}
     token-days: 30
+  mail:
+    # Set RESEND_API_KEY to send password-reset and daily-problem emails; without it nothing is sent.
+    api-key: ${RESEND_API_KEY:}
+    # Must be on a domain verified in Resend (the default only delivers to the Resend account owner).
+    from: ${MAIL_FROM:LeetCode Practice <onboarding@resend.dev>}
+    frontend-url: ${FRONTEND_URL:http://localhost:3000}
+    daily-hour: ${DAILY_EMAIL_HOUR:8}
+    zone: ${DAILY_EMAIL_ZONE:Asia/Kolkata}
   rate-limit:
     runs-per-minute: ${RUNS_PER_MINUTE:20}
   judge0:

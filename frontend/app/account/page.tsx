@@ -15,11 +15,14 @@ export default function AccountPage() {
   const [next, setNext] = useState("");
   const [again, setAgain] = useState("");
   const [busy, setBusy] = useState(false);
+  const [daily, setDaily] = useState<boolean | null>(null);
+  const [dailyBusy, setDailyBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     if (!authToken()) { window.location.replace("/login"); return; }
     setUser(authUser() ?? ""); setEmail(authEmail() ?? ""); setReady(true);
+    api<{ email: string | null; dailyEmail: boolean }>("/api/auth/email-prefs").then((p) => setDaily(p.dailyEmail)).catch(() => setDaily(null));
   }, []);
 
   async function change(e: React.FormEvent) {
@@ -38,6 +41,16 @@ export default function AccountPage() {
     setBusy(false);
   }
 
+  async function toggleDaily(on: boolean) {
+    if (dailyBusy) return;
+    setDailyBusy(true);
+    try {
+      const p = await api<{ dailyEmail: boolean }>("/api/auth/email-prefs", { method: "PUT", body: JSON.stringify({ dailyEmail: on }) });
+      setDaily(p.dailyEmail);
+    } catch (err) { setMsg({ ok: false, text: (err as Error).message }); }
+    setDailyBusy(false);
+  }
+
   if (!ready) return null;
   return (
     <section className="card authcard" style={{ maxWidth: 440 }}>
@@ -46,6 +59,12 @@ export default function AccountPage() {
         <div><span className="mute">Name</span><b>{user}</b></div>
         <div><span className="mute">Email</span><b>{email || "not set (log in with your username)"}</b></div>
       </div>
+      {email && daily !== null && (
+        <label className="authcheck" style={{ marginTop: 14 }}>
+          <input type="checkbox" checked={daily} disabled={dailyBusy} onChange={(e) => toggleDaily(e.target.checked)} />
+          Email me the daily problem every morning
+        </label>
+      )}
       <h3 style={{ margin: "18px 0 8px" }}>Change password</h3>
       <form onSubmit={change} style={{ display: "grid", gap: 10 }}>
         <input type="password" value={current} onChange={(e) => setCurrent(e.target.value)} placeholder="Current password" autoComplete="current-password" maxLength={72} required />

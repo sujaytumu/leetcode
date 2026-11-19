@@ -1,0 +1,18 @@
+package com.sujaytumu.leetcode.mail;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@Configuration
+@EnableScheduling
+@EnableConfigurationProperties(MailProperties.class)
+public class MailConfig {
+
+    @Bean
+    public EmailSender emailSender(MailProperties props, ObjectMapper mapper) {
+        return props.enabled() ? new ResendEmailSender(props, mapper) : new LoggingEmailSender();
+    }
+}
