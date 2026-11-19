@@ -16,7 +16,7 @@ export default function WeeklySummary({ calendar }: { calendar: DayCount[] }) {
   return (
     <section className="card">
       <div className="bar" style={{ marginBottom: 8 }}>
-        <h3 style={{ margin: 0 }}>This week</h3><span className="grow" />
+        <h3 style={{ margin: 0, whiteSpace: "nowrap" }}>This week</h3><span className="grow" />
         <span className="mute" style={{ fontSize: 13 }}>
           <b style={{ display: "inline", fontSize: 16 }}>{thisWeek}</b> submissions
           {lastWeek > 0 || thisWeek > 0 ? <> · <span className={diff >= 0 ? "EASY" : "HARD"}>{diff >= 0 ? "+" : ""}{diff}</span> vs last week</> : null}

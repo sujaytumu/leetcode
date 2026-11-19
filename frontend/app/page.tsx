@@ -147,15 +147,15 @@ export default function Home() {
               onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
           </div>
           <table>
-            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
+            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
             <tbody ref={tbodyRef}>
               {data?.items.map((p, i) => (
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
-                    <div className="show-sm">{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
+                    <div className="show-sm">{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
                   <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</td>
-                  <td className="th-num mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
+                  <td className="th-num col-acc mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
                   <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                 </tr>
               ))}
