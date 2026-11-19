@@ -685,3 +685,10 @@ main:focus { outline:none; }
 .md code { background:var(--cell); border:0; border-radius:5px; padding:1px 6px; }
 .authcheck { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--mute); line-height:1.4; }
 .authcheck input { margin-top:2px; }
+
+/* Pinned official solution */
+.solrow.official { cursor:default; border-left:3px solid var(--easy); }
+.solrow.official .officialhead { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
+.official-pill { background:rgba(44,187,93,.15); color:var(--easy); font-size:11px; padding:1px 8px; margin-left:6px; }
+.officialbody { margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+.officialbody .answer-code { background:var(--cell); border-radius:8px; padding:12px 14px; margin:8px 0 0; }
