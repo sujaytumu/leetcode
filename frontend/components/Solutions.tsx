@@ -1,6 +1,7 @@
 "use client";
 import Markdown from "react-markdown";
 import { useCallback, useEffect, useState } from "react";
+import OfficialSolution from "@/components/OfficialSolution";
 import { api } from "@/lib/api";
 
 interface Summary {
@@ -48,9 +49,10 @@ function List({ slug, onOpen, onWrite }: { slug: string; onOpen: (id: number) =>
         <button className={sort === "new" ? "on" : ""} onClick={() => setSort("new")}>Newest</button>
         <button className="primary" onClick={onWrite}>Write a solution</button>
       </div>
+      <OfficialSolution slug={slug} />
       {error && <div className="banner err" style={{ margin: "8px 0" }}>{error}</div>}
       {items === null && !error && <p className="mute">Loading…</p>}
-      {items !== null && items.length === 0 && <p className="mute">No solutions yet. Be the first to share one.</p>}
+      {items !== null && items.length === 0 && <p className="mute">No community solutions yet. Be the first to share one.</p>}
       {items?.map((s) => (
         <div key={s.id} className="solrow" role="button" tabIndex={0} onClick={() => onOpen(s.id)}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(s.id); } }}>
