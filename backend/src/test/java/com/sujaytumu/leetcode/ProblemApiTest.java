@@ -28,7 +28,7 @@ class ProblemApiTest {
         mvc.perform(get("/api/problems").param("size", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(175))
-                .andExpect(jsonPath("$.totalPages").value(25))
+                .andExpect(jsonPath("$.totalPages").value(35))
                 .andExpect(jsonPath("$.items.length()").value(5))
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"))
                 .andExpect(jsonPath("$.items[0].number").value(1))
@@ -47,14 +47,14 @@ class ProblemApiTest {
     void filtersByDifficultyCaseInsensitively() throws Exception {
         mvc.perform(get("/api/problems").param("difficulty", "hard"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(11));
+                .andExpect(jsonPath("$.totalElements").value(15));
     }
 
     @Test
     void filtersByTag() throws Exception {
         mvc.perform(get("/api/problems").param("tag", "dynamic-programming"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(28))
+                .andExpect(jsonPath("$.totalElements").value(42))
                 .andExpect(jsonPath("$.items[*].slug").value(hasItem("coin-change")));
     }
 
@@ -62,7 +62,7 @@ class ProblemApiTest {
     void searchesTitleAndSlugAndTreatsWildcardsLiterally() throws Exception {
         mvc.perform(get("/api/problems").param("q", "SUM"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(11))
+                .andExpect(jsonPath("$.totalElements").value(19))
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
 
         mvc.perform(get("/api/problems").param("q", "%"))
