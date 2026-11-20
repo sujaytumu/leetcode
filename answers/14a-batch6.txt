@@ -1,0 +1,590 @@
+=== single-number-ii
+--- py
+def solve(nums):
+    ones = twos = 0
+    for x in nums:
+        ones = (ones ^ x) & ~twos
+        twos = (twos ^ x) & ~ones
+    return ones
+--- js
+function solve(nums) {
+  let ones = 0, twos = 0;
+  for (const x of nums) {
+    ones = (ones ^ x) & ~twos;
+    twos = (twos ^ x) & ~ones;
+  }
+  return ones;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int ones = 0, twos = 0;
+    for (int x : nums) {
+        ones = (ones ^ x) & ~twos;
+        twos = (twos ^ x) & ~ones;
+    }
+    return ones;
+}
+--- java
+static int solve(int[] nums) {
+    int ones = 0, twos = 0;
+    for (int x : nums) {
+        ones = (ones ^ x) & ~twos;
+        twos = (twos ^ x) & ~ones;
+    }
+    return ones;
+}
+=== integer-break
+--- py
+def solve(n):
+    if n <= 3:
+        return n - 1
+    r = n % 3
+    k = n // 3
+    if r == 0:
+        return 3 ** k
+    if r == 1:
+        return 3 ** (k - 1) * 4
+    return 3 ** k * 2
+--- js
+function solve(n) {
+  if (n <= 3) return n - 1;
+  const r = n % 3, k = Math.floor(n / 3);
+  if (r === 0) return 3 ** k;
+  if (r === 1) return 3 ** (k - 1) * 4;
+  return 3 ** k * 2;
+}
+--- cpp
+int solve(int n) {
+    if (n <= 3) return n - 1;
+    long long p = 1;
+    int k = n / 3, r = n % 3;
+    if (r == 1) k--;
+    for (int i = 0; i < k; i++) p *= 3;
+    if (r == 0) return (int)p;
+    if (r == 1) return (int)(p * 4);
+    return (int)(p * 2);
+}
+--- java
+static int solve(int n) {
+    if (n <= 3) return n - 1;
+    long p = 1;
+    int k = n / 3, r = n % 3;
+    if (r == 1) k--;
+    for (int i = 0; i < k; i++) p *= 3;
+    if (r == 0) return (int) p;
+    if (r == 1) return (int) (p * 4);
+    return (int) (p * 2);
+}
+=== coin-change-ii
+--- py
+def solve(amount, coins):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for c in coins:
+        for a in range(c, amount + 1):
+            dp[a] += dp[a - c]
+    return dp[amount]
+--- js
+function solve(amount, coins) {
+  const dp = new Array(amount + 1).fill(0);
+  dp[0] = 1;
+  for (const c of coins) {
+    for (let a = c; a <= amount; a++) dp[a] += dp[a - c];
+  }
+  return dp[amount];
+}
+--- cpp
+int solve(int amount, vector<int> coins) {
+    vector<long long> dp(amount + 1, 0);
+    dp[0] = 1;
+    for (int c : coins)
+        for (int a = c; a <= amount; a++) dp[a] += dp[a - c];
+    return (int)dp[amount];
+}
+--- java
+static int solve(int amount, int[] coins) {
+    long[] dp = new long[amount + 1];
+    dp[0] = 1;
+    for (int c : coins)
+        for (int a = c; a <= amount; a++) dp[a] += dp[a - c];
+    return (int) dp[amount];
+}
+=== interleaving-string
+--- py
+def solve(s1, s2, s3):
+    m, n = len(s1), len(s2)
+    if m + n != len(s3):
+        return False
+    dp = [False] * (n + 1)
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0 and j == 0:
+                dp[j] = True
+                continue
+            ok = False
+            if i > 0 and dp[j] and s1[i - 1] == s3[i + j - 1]:
+                ok = True
+            if j > 0 and dp[j - 1] and s2[j - 1] == s3[i + j - 1]:
+                ok = True
+            dp[j] = ok
+    return dp[n]
+--- js
+function solve(s1, s2, s3) {
+  const m = s1.length, n = s2.length;
+  if (m + n !== s3.length) return false;
+  const dp = new Array(n + 1).fill(false);
+  for (let i = 0; i <= m; i++) {
+    for (let j = 0; j <= n; j++) {
+      if (i === 0 && j === 0) { dp[j] = true; continue; }
+      let ok = false;
+      if (i > 0 && dp[j] && s1[i - 1] === s3[i + j - 1]) ok = true;
+      if (j > 0 && dp[j - 1] && s2[j - 1] === s3[i + j - 1]) ok = true;
+      dp[j] = ok;
+    }
+  }
+  return dp[n];
+}
+--- cpp
+bool solve(string s1, string s2, string s3) {
+    int m = s1.size(), n = s2.size();
+    if (m + n != (int)s3.size()) return false;
+    vector<char> dp(n + 1, 0);
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 && j == 0) { dp[j] = 1; continue; }
+            bool ok = false;
+            if (i > 0 && dp[j] && s1[i - 1] == s3[i + j - 1]) ok = true;
+            if (j > 0 && dp[j - 1] && s2[j - 1] == s3[i + j - 1]) ok = true;
+            dp[j] = ok;
+        }
+    }
+    return dp[n];
+}
+--- java
+static boolean solve(String s1, String s2, String s3) {
+    int m = s1.length(), n = s2.length();
+    if (m + n != s3.length()) return false;
+    boolean[] dp = new boolean[n + 1];
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 && j == 0) { dp[j] = true; continue; }
+            boolean ok = false;
+            if (i > 0 && dp[j] && s1.charAt(i - 1) == s3.charAt(i + j - 1)) ok = true;
+            if (j > 0 && dp[j - 1] && s2.charAt(j - 1) == s3.charAt(i + j - 1)) ok = true;
+            dp[j] = ok;
+        }
+    }
+    return dp[n];
+}
+=== wildcard-matching
+--- py
+def solve(s, p):
+    i = j = 0
+    star = -1
+    mark = 0
+    while i < len(s):
+        if j < len(p) and (p[j] == '?' or p[j] == s[i]):
+            i += 1
+            j += 1
+        elif j < len(p) and p[j] == '*':
+            star = j
+            mark = i
+            j += 1
+        elif star != -1:
+            j = star + 1
+            mark += 1
+            i = mark
+        else:
+            return False
+    while j < len(p) and p[j] == '*':
+        j += 1
+    return j == len(p)
+--- js
+function solve(s, p) {
+  let i = 0, j = 0, star = -1, mark = 0;
+  while (i < s.length) {
+    if (j < p.length && (p[j] === '?' || p[j] === s[i])) { i++; j++; }
+    else if (j < p.length && p[j] === '*') { star = j; mark = i; j++; }
+    else if (star !== -1) { j = star + 1; mark++; i = mark; }
+    else return false;
+  }
+  while (j < p.length && p[j] === '*') j++;
+  return j === p.length;
+}
+--- cpp
+bool solve(string s, string p) {
+    int i = 0, j = 0, star = -1, mark = 0;
+    int n = s.size(), m = p.size();
+    while (i < n) {
+        if (j < m && (p[j] == '?' || p[j] == s[i])) { i++; j++; }
+        else if (j < m && p[j] == '*') { star = j; mark = i; j++; }
+        else if (star != -1) { j = star + 1; mark++; i = mark; }
+        else return false;
+    }
+    while (j < m && p[j] == '*') j++;
+    return j == m;
+}
+--- java
+static boolean solve(String s, String p) {
+    int i = 0, j = 0, star = -1, mark = 0;
+    int n = s.length(), m = p.length();
+    while (i < n) {
+        if (j < m && (p.charAt(j) == '?' || p.charAt(j) == s.charAt(i))) { i++; j++; }
+        else if (j < m && p.charAt(j) == '*') { star = j; mark = i; j++; }
+        else if (star != -1) { j = star + 1; mark++; i = mark; }
+        else return false;
+    }
+    while (j < m && p.charAt(j) == '*') j++;
+    return j == m;
+}
+=== longest-substring-with-at-most-k-distinct-characters
+--- py
+def solve(s, k):
+    if k == 0:
+        return 0
+    cnt = {}
+    left = best = 0
+    for right, ch in enumerate(s):
+        cnt[ch] = cnt.get(ch, 0) + 1
+        while len(cnt) > k:
+            c = s[left]
+            cnt[c] -= 1
+            if cnt[c] == 0:
+                del cnt[c]
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+--- js
+function solve(s, k) {
+  if (k === 0) return 0;
+  const cnt = new Map();
+  let left = 0, best = 0;
+  for (let right = 0; right < s.length; right++) {
+    cnt.set(s[right], (cnt.get(s[right]) || 0) + 1);
+    while (cnt.size > k) {
+      const c = s[left];
+      cnt.set(c, cnt.get(c) - 1);
+      if (cnt.get(c) === 0) cnt.delete(c);
+      left++;
+    }
+    best = Math.max(best, right - left + 1);
+  }
+  return best;
+}
+--- cpp
+int solve(string s, int k) {
+    if (k == 0) return 0;
+    unordered_map<char, int> cnt;
+    int left = 0, best = 0;
+    for (int right = 0; right < (int)s.size(); right++) {
+        cnt[s[right]]++;
+        while ((int)cnt.size() > k) {
+            if (--cnt[s[left]] == 0) cnt.erase(s[left]);
+            left++;
+        }
+        best = max(best, right - left + 1);
+    }
+    return best;
+}
+--- java
+static int solve(String s, int k) {
+    if (k == 0) return 0;
+    java.util.HashMap<Character, Integer> cnt = new java.util.HashMap<>();
+    int left = 0, best = 0;
+    for (int right = 0; right < s.length(); right++) {
+        cnt.merge(s.charAt(right), 1, Integer::sum);
+        while (cnt.size() > k) {
+            char c = s.charAt(left);
+            if (cnt.merge(c, -1, Integer::sum) == 0) cnt.remove(c);
+            left++;
+        }
+        best = Math.max(best, right - left + 1);
+    }
+    return best;
+}
+=== contiguous-array
+--- py
+def solve(nums):
+    first = {0: -1}
+    bal = best = 0
+    for i, x in enumerate(nums):
+        bal += 1 if x == 1 else -1
+        if bal in first:
+            best = max(best, i - first[bal])
+        else:
+            first[bal] = i
+    return best
+--- js
+function solve(nums) {
+  const first = new Map([[0, -1]]);
+  let bal = 0, best = 0;
+  for (let i = 0; i < nums.length; i++) {
+    bal += nums[i] === 1 ? 1 : -1;
+    if (first.has(bal)) best = Math.max(best, i - first.get(bal));
+    else first.set(bal, i);
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> nums) {
+    unordered_map<int, int> first;
+    first[0] = -1;
+    int bal = 0, best = 0;
+    for (int i = 0; i < (int)nums.size(); i++) {
+        bal += nums[i] == 1 ? 1 : -1;
+        auto it = first.find(bal);
+        if (it != first.end()) best = max(best, i - it->second);
+        else first[bal] = i;
+    }
+    return best;
+}
+--- java
+static int solve(int[] nums) {
+    java.util.HashMap<Integer, Integer> first = new java.util.HashMap<>();
+    first.put(0, -1);
+    int bal = 0, best = 0;
+    for (int i = 0; i < nums.length; i++) {
+        bal += nums[i] == 1 ? 1 : -1;
+        Integer f = first.get(bal);
+        if (f != null) best = Math.max(best, i - f);
+        else first.put(bal, i);
+    }
+    return best;
+}
+=== valid-sudoku
+--- py
+def solve(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for r in range(9):
+        for c in range(9):
+            v = board[r][c]
+            if v == 0:
+                continue
+            b = (r // 3) * 3 + c // 3
+            if v in rows[r] or v in cols[c] or v in boxes[b]:
+                return False
+            rows[r].add(v)
+            cols[c].add(v)
+            boxes[b].add(v)
+    return True
+--- js
+function solve(board) {
+  const rows = Array.from({ length: 9 }, () => new Set());
+  const cols = Array.from({ length: 9 }, () => new Set());
+  const boxes = Array.from({ length: 9 }, () => new Set());
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const v = board[r][c];
+      if (v === 0) continue;
+      const b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+      if (rows[r].has(v) || cols[c].has(v) || boxes[b].has(v)) return false;
+      rows[r].add(v);
+      cols[c].add(v);
+      boxes[b].add(v);
+    }
+  }
+  return true;
+}
+--- cpp
+bool solve(vector<vector<int>> board) {
+    bool rows[9][10] = {}, cols[9][10] = {}, boxes[9][10] = {};
+    for (int r = 0; r < 9; r++) {
+        for (int c = 0; c < 9; c++) {
+            int v = board[r][c];
+            if (v == 0) continue;
+            int b = (r / 3) * 3 + c / 3;
+            if (rows[r][v] || cols[c][v] || boxes[b][v]) return false;
+            rows[r][v] = cols[c][v] = boxes[b][v] = true;
+        }
+    }
+    return true;
+}
+--- java
+static boolean solve(int[][] board) {
+    boolean[][] rows = new boolean[9][10], cols = new boolean[9][10], boxes = new boolean[9][10];
+    for (int r = 0; r < 9; r++) {
+        for (int c = 0; c < 9; c++) {
+            int v = board[r][c];
+            if (v == 0) continue;
+            int b = (r / 3) * 3 + c / 3;
+            if (rows[r][v] || cols[c][v] || boxes[b][v]) return false;
+            rows[r][v] = cols[c][v] = boxes[b][v] = true;
+        }
+    }
+    return true;
+}
+=== game-of-life
+--- py
+def solve(board):
+    m, n = len(board), len(board[0])
+    res = [[0] * n for _ in range(m)]
+    for i in range(m):
+        for j in range(n):
+            cnt = 0
+            for di in (-1, 0, 1):
+                for dj in (-1, 0, 1):
+                    if di == 0 and dj == 0:
+                        continue
+                    a, b = i + di, j + dj
+                    if 0 <= a < m and 0 <= b < n:
+                        cnt += board[a][b]
+            if board[i][j] == 1:
+                res[i][j] = 1 if cnt in (2, 3) else 0
+            else:
+                res[i][j] = 1 if cnt == 3 else 0
+    return res
+--- js
+function solve(board) {
+  const m = board.length, n = board[0].length;
+  const res = Array.from({ length: m }, () => new Array(n).fill(0));
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      let cnt = 0;
+      for (let di = -1; di <= 1; di++) {
+        for (let dj = -1; dj <= 1; dj++) {
+          if (di === 0 && dj === 0) continue;
+          const a = i + di, b = j + dj;
+          if (a >= 0 && a < m && b >= 0 && b < n) cnt += board[a][b];
+        }
+      }
+      if (board[i][j] === 1) res[i][j] = (cnt === 2 || cnt === 3) ? 1 : 0;
+      else res[i][j] = cnt === 3 ? 1 : 0;
+    }
+  }
+  return res;
+}
+--- cpp
+vector<vector<int>> solve(vector<vector<int>> board) {
+    int m = board.size(), n = board[0].size();
+    vector<vector<int>> res(m, vector<int>(n, 0));
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            int cnt = 0;
+            for (int di = -1; di <= 1; di++) {
+                for (int dj = -1; dj <= 1; dj++) {
+                    if (di == 0 && dj == 0) continue;
+                    int a = i + di, b = j + dj;
+                    if (a >= 0 && a < m && b >= 0 && b < n) cnt += board[a][b];
+                }
+            }
+            if (board[i][j] == 1) res[i][j] = (cnt == 2 || cnt == 3) ? 1 : 0;
+            else res[i][j] = cnt == 3 ? 1 : 0;
+        }
+    }
+    return res;
+}
+--- java
+static int[][] solve(int[][] board) {
+    int m = board.length, n = board[0].length;
+    int[][] res = new int[m][n];
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            int cnt = 0;
+            for (int di = -1; di <= 1; di++) {
+                for (int dj = -1; dj <= 1; dj++) {
+                    if (di == 0 && dj == 0) continue;
+                    int a = i + di, b = j + dj;
+                    if (a >= 0 && a < m && b >= 0 && b < n) cnt += board[a][b];
+                }
+            }
+            if (board[i][j] == 1) res[i][j] = (cnt == 2 || cnt == 3) ? 1 : 0;
+            else res[i][j] = cnt == 3 ? 1 : 0;
+        }
+    }
+    return res;
+}
+=== surrounded-regions
+--- py
+def solve(board):
+    m, n = len(board), len(board[0])
+    res = [[0] * n for _ in range(m)]
+    stack = []
+    for i in range(m):
+        for j in range(n):
+            if (i == 0 or j == 0 or i == m - 1 or j == n - 1) and board[i][j] == 1 and not res[i][j]:
+                res[i][j] = 1
+                stack.append((i, j))
+    while stack:
+        i, j = stack.pop()
+        for a, b in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= a < m and 0 <= b < n and board[a][b] == 1 and not res[a][b]:
+                res[a][b] = 1
+                stack.append((a, b))
+    return res
+--- js
+function solve(board) {
+  const m = board.length, n = board[0].length;
+  const res = Array.from({ length: m }, () => new Array(n).fill(0));
+  const stack = [];
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if ((i === 0 || j === 0 || i === m - 1 || j === n - 1) && board[i][j] === 1 && !res[i][j]) {
+        res[i][j] = 1;
+        stack.push([i, j]);
+      }
+    }
+  }
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  while (stack.length) {
+    const [i, j] = stack.pop();
+    for (const [di, dj] of dirs) {
+      const a = i + di, b = j + dj;
+      if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] === 1 && !res[a][b]) {
+        res[a][b] = 1;
+        stack.push([a, b]);
+      }
+    }
+  }
+  return res;
+}
+--- cpp
+vector<vector<int>> solve(vector<vector<int>> board) {
+    int m = board.size(), n = board[0].size();
+    vector<vector<int>> res(m, vector<int>(n, 0));
+    vector<pair<int, int>> st;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1 && !res[i][j]) {
+                res[i][j] = 1;
+                st.push_back({i, j});
+            }
+    int dx[4] = {1, -1, 0, 0}, dy[4] = {0, 0, 1, -1};
+    while (!st.empty()) {
+        auto [i, j] = st.back();
+        st.pop_back();
+        for (int d = 0; d < 4; d++) {
+            int a = i + dx[d], b = j + dy[d];
+            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1 && !res[a][b]) {
+                res[a][b] = 1;
+                st.push_back({a, b});
+            }
+        }
+    }
+    return res;
+}
+--- java
+static int[][] solve(int[][] board) {
+    int m = board.length, n = board[0].length;
+    int[][] res = new int[m][n];
+    java.util.ArrayDeque<int[]> st = new java.util.ArrayDeque<>();
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1 && res[i][j] == 0) {
+                res[i][j] = 1;
+                st.push(new int[]{i, j});
+            }
+    int[] dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1};
+    while (!st.isEmpty()) {
+        int[] cur = st.pop();
+        for (int d = 0; d < 4; d++) {
+            int a = cur[0] + dx[d], b = cur[1] + dy[d];
+            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1 && res[a][b] == 0) {
+                res[a][b] = 1;
+                st.push(new int[]{a, b});
+            }
+        }
+    }
+    return res;
+}
