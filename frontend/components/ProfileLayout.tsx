@@ -103,8 +103,8 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
         <section className="card activitycard">
           <div className="act-title"><b>{p.submissionsPastYear}</b> <span>submissions in the past one year</span><span className="act-info" title="Counts every accepted or attempted submission in the last 365 days. Darker squares mean more submissions that day." aria-label="About this calendar">i</span></div>
           <div className="act-stats">
-            <span className="mute">Total active<br />days: <b>{p.activeDays}</b></span>
-            <span className="mute">Max<br />streak: <b>{p.maxStreak}</b></span>
+            <span className="mute">Total active{" "}<br />days: <b>{p.activeDays}</b></span>
+            <span className="mute">Max{" "}<br />streak: <b>{p.maxStreak}</b></span>
             <span className="grow" />
             <select className="act-year" aria-label="Calendar range" value={String(year)}
               onChange={(e) => setYear(e.target.value === "current" ? "current" : Number(e.target.value))}>
