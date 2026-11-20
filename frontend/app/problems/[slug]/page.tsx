@@ -1,4 +1,6 @@
 "use client";
+import ThemeToggle from "@/components/ThemeToggle";
+import AccountMenu from "@/components/AccountMenu";
 import dynamic from "next/dynamic";
 import Markdown from "react-markdown";
 import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -415,7 +417,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       )}
       <div className="lctop">
         <div className="lctop-l">
-          <button onClick={() => setShowList(true)} title="Problem list">☰ <span className="hide-sm">Problem List</span></button>
+          <Link href="/" className="lclogo" title="LeetCode Practice home" aria-label="Home">&lt;/&gt;</Link>
+          <button className="lclist" onClick={() => setShowList(true)} title="Problem list">☰ <span className="hide-sm">Problem List</span></button>
           {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title} aria-label="Previous problem">‹</Link> : <span className="navbtn off" aria-hidden="true">‹</span>}
           {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title} aria-label="Next problem">›</Link> : <span className="navbtn off" aria-hidden="true">›</span>}
           <button onClick={shuffle} title="Pick a random problem" aria-label="Random problem">⤮</button>
@@ -432,6 +435,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
             ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
           </button>
+          <div className="nav-end"><ThemeToggle /><AccountMenu /></div>
         </div>
       </div>
       <div ref={workspaceRef} data-pane={pane} className={`workspace${drag ? " dragging" : ""}${focus ? " focus" : ""}`}
@@ -616,6 +620,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <select className="sizepick" value={fontSize} title="Editor font size" aria-label="Editor font size" onChange={(e) => setEd({ fontSize: Number(e.target.value) })}>
                 {[12, 14, 16, 18, 20].map((n) => <option key={n} value={n}>{n}px</option>)}
               </select>
+              <span className="autotag mute" title="Auto-closing brackets and quotes">🔒 Auto</span>
               {savedFlash && <span className="mute savedtag" role="status">✔ Saved</span>}
               <span className="grow" />
               {undoReset !== null && <button className="iconbtn" onClick={undoResetCode} title="Bring back the code you had before Reset">↶ Undo reset</button>}
@@ -643,9 +648,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             title="Drag to resize" onPointerDown={startDrag("h")} />
           <div className="pane console result-pane">
             <div className="lctabs">
-              <button className={consoleTab === "case" ? "on" : ""} onClick={() => setConsoleTab("case")}>Testcase</button>
+              <button className={consoleTab === "case" ? "on" : ""} onClick={() => setConsoleTab("case")}><span className="tabicon tc-ok" aria-hidden="true">☑</span>Testcase</button>
               <button className={consoleTab === "result" ? "on" : ""} onClick={() => setConsoleTab("result")}>
-                Test Result{result && !busy ? <span className={result.verdict === "ACCEPTED" ? "ACCEPTED" : "WRONG_ANSWER"}> ●</span> : null}
+                <span className="tabicon tc-term" aria-hidden="true">&gt;_</span>Test Result{result && !busy ? <span className={result.verdict === "ACCEPTED" ? "ACCEPTED" : "WRONG_ANSWER"}> ●</span> : null}
               </button>
             </div>
             <div className="body">

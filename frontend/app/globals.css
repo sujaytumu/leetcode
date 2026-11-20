@@ -1078,3 +1078,42 @@ td { font-size:14px; font-weight:400; }
 .workspace.dragging { cursor:inherit; }
 .workspace.dragging .pane { pointer-events:none; }
 .workspace.dragging .right .codebody * { pointer-events:none; }
+
+/* ==== Problem page = real LeetCode's single top bar + floating rounded panels (laptop) ==== */
+body:has(.workspace) .nav { display:none; }
+body:has(.workspace) { --lc-bg:#0a0a0a; --lc-pane:#1a1a1a; --lc-strip:#262626; background:var(--lc-bg); }
+html[data-theme="light"] body:has(.workspace) { --lc-bg:#f0f0f0; --lc-pane:#ffffff; --lc-strip:#f5f5f5; }
+html:has(.workspace) { background:#0a0a0a; }
+html[data-theme="light"]:has(.workspace) { background:#f0f0f0; }
+main:has(.workspace) { padding:0 8px 8px; }
+.lctop { height:var(--lctop-h); padding:0 8px; }
+.lctop button, .lctop .navbtn { background:transparent; border:0; color:var(--mute); border-radius:6px; }
+.lctop button:hover, .lctop .navbtn:hover { background:var(--lc-strip); color:var(--text); }
+.lclogo { font-weight:800; font-size:20px; color:var(--accent); padding:4px 10px; letter-spacing:-.04em; }
+.lclist { color:var(--text) !important; font-weight:600; font-size:16px; }
+.runbar { background:transparent; border:0; gap:6px; padding:0; }
+.runbar button { background:var(--lc-strip) !important; color:var(--text) !important; padding:7px 16px; border-radius:8px !important; font-weight:600; }
+.runbar button.primary { color:#2cbb5d !important; }
+.runbar button:hover { filter:brightness(1.15); }
+.lctop-r .nav-end { margin-left:6px; }
+.lctop-r > button { color:var(--text); }
+.workspace { gap:0; }
+.workspace .pane { background:var(--lc-pane); border:0; border-radius:8px; }
+.workspace .vdivider { width:8px; }
+.workspace .vdivider::after { left:3px; width:2px; top:30%; bottom:30%; background:transparent; }
+.workspace .vdivider:hover::after, .workspace .vdivider.drag::after { background:var(--accent); }
+.workspace .hdivider::after { top:3px; left:30%; right:30%; background:transparent; }
+.workspace .hdivider:hover::after, .workspace .hdivider.drag::after { background:var(--accent); }
+.lctabs { background:var(--lc-strip); border-bottom:0; border-radius:8px 8px 0 0; padding:0 6px; flex-wrap:nowrap; }
+.lctabs button { padding:9px 10px; font-size:13px; }
+.lctabs button.on { color:var(--text); border-bottom-color:transparent; font-weight:600; }
+.lctabs button:not(.on) { color:var(--mute); }
+.codehead { background:var(--lc-strip); border-bottom:0; border-radius:8px 8px 0 0; }
+.codebar { border-bottom:0; background:var(--lc-pane); }
+.codebar .autotag { font-size:12px; padding:0 6px; }
+.codestatus { border-top:0; color:var(--mute); }
+.ptitle { font-size:24px; font-weight:700; margin:0; }
+.solved { color:var(--mute); font-weight:500; }
+.solved { color:var(--mute) !important; font-size:16px; }
+.pmeta .pill { padding:3px 12px; }
+@media (min-width:901px) { .workspace { height:calc(100dvh - var(--lctop-h) - 8px); } }
