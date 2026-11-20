@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type Page } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { timeAgo } from "@/lib/timeago";
 
 interface Item {
   id: number; slug: string; title: string; verdict: string; language: string;
@@ -42,22 +43,23 @@ export default function SubmissionsPage() {
       {!data && !error && <Skeleton />}
       {data && (
         <>
-          <table>
-            <thead><tr><th>Problem</th><th>Status</th><th>Language</th><th className="th-num">Passed</th>
-              <th className="th-num">Runtime</th><th className="th-num">Memory</th><th>Submitted</th></tr></thead>
+          <table className="subtable">
+            <thead><tr><th>Time Submitted</th><th>Question</th><th>Status</th><th className="th-num">Runtime</th><th className="th-num">Memory</th><th>Language</th></tr></thead>
             <tbody>
               {data.items.map((s) => (
                 <tr key={s.id}>
+                  <td className="mute" title={new Date(s.createdAt).toLocaleString()}>{timeAgo(s.createdAt)}</td>
                   <td>{s.slug ? <Link href={`/problems/${s.slug}`}>{s.title}</Link> : s.title}</td>
-                  <td className={s.verdict}><b>{label(s.verdict)}</b></td>
-                  <td>{s.language}</td>
-                  <td className="th-num">{s.passed}/{s.total}</td>
-                  <td className="th-num">{s.runtimeMs != null ? `${s.runtimeMs} ms` : "–"}</td>
-                  <td className="th-num">{s.memoryKb != null ? `${(s.memoryKb / 1024).toFixed(1)} MB` : "–"}</td>
-                  <td className="mute">{new Date(s.createdAt).toLocaleString()}</td>
+                  <td className={s.verdict === "ACCEPTED" ? "ACCEPTED" : "REJECTED"}>
+                    <b>{label(s.verdict)}</b>
+                    {s.verdict !== "ACCEPTED" && s.total > 0 && <div className="mute" style={{ fontSize: 12, fontWeight: 400 }}>{s.passed}/{s.total} testcases passed</div>}
+                  </td>
+                  <td className="th-num">{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td>
+                  <td className="th-num">{s.memoryKb != null ? `${(s.memoryKb / 1024).toFixed(1)} MB` : "N/A"}</td>
+                  <td><span className="langpill">{s.language}</span></td>
                 </tr>
               ))}
-              {data.items.length === 0 && <tr><td colSpan={7} className="mute">No submissions yet.</td></tr>}
+              {data.items.length === 0 && <tr><td colSpan={6} className="mute">No submissions yet.</td></tr>}
             </tbody>
           </table>
           {data.totalPages > 1 && (
