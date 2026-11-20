@@ -844,3 +844,6 @@ td { font-size:14px; font-weight:400; }
 /* Solutions search / language filter */
 .solfilters { display:flex; flex-direction:column; gap:8px; margin:0 0 10px; }
 .solfilters input[type=search] { width:100%; }
+
+/* Editor status line: drafts autosave on every keystroke, so it always reads Saved. */
+.codestatus { display:flex; justify-content:space-between; padding:4px 14px; font-size:12px; border-top:1px solid var(--line); flex:none; }

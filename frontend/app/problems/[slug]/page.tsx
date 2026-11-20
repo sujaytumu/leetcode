@@ -93,6 +93,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [commentCount, setCommentCount] = useState<number | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [cursor, setCursor] = useState({ ln: 1, col: 1 });
   const [showKeys, setShowKeys] = useState(false);
   const [showList, setShowList] = useState(false);
   const [answer, setAnswer] = useState<AnswerState>({ status: "idle" });
@@ -619,7 +620,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               </button>
             </div>
             <div className="codebody">
-              <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}
+              <Editor height="100%" onMount={(ed) => { ed.onDidChangeCursorPosition((e) => setCursor({ ln: e.position.lineNumber, col: e.position.column })); }} theme={monacoTheme(ed.editorTheme, theme)}
               language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"}
               value={code} onChange={onChange}
               options={{
@@ -628,6 +629,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 automaticLayout: true, scrollBeyondLastLine: false,
               }} />
             </div>
+            <div className="codestatus mute"><span>Saved</span><span>Ln {cursor.ln}, Col {cursor.col}</span></div>
           </div>
           <div className={`hdivider${drag === "h" ? " drag" : ""}`} role="separator" aria-orientation="horizontal"
             title="Drag to resize" onPointerDown={startDrag("h")} />
