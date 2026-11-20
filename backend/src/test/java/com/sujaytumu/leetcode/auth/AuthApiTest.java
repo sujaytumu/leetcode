@@ -197,4 +197,21 @@ class AuthApiTest {
                         .content(signup(email, "another pass")))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    void logoutEverywhereEndsOtherSessionsButKeepsTheCallerSignedIn() throws Exception {
+        String name = user();
+        String first = register(name, "correct horse", UUID.randomUUID()).get("token").asText();
+        String second = json.readTree(mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content(creds(name, "correct horse")))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).get("token").asText();
+
+        String fresh = json.readTree(mvc.perform(post("/api/auth/logout-all").header("Authorization", "Bearer " + first))
+                        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).get("token").asText();
+
+        mvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + first)).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + second)).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + fresh)).andExpect(status().isOk());
+        mvc.perform(post("/api/auth/logout-all")).andExpect(status().isUnauthorized());
+    }
 }

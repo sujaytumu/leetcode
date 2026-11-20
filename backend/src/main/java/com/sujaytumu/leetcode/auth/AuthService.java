@@ -117,6 +117,15 @@ public class AuthService {
         return new Session(tokens.issue(account), account.getClientId(), account.getUsername(), account.getEmail());
     }
 
+    /** Signs out every device, including this one, then issues a fresh token so the caller stays signed in here. */
+    @Transactional
+    public Session logoutEverywhere(String authorization) {
+        Account account = authenticate(authorization);
+        account.revokeTokens();
+        accounts.save(account);
+        return new Session(tokens.issue(account), account.getClientId(), account.getUsername(), account.getEmail());
+    }
+
     public record EmailPrefs(String email, boolean dailyEmail) {}
 
     @Transactional(readOnly = true)

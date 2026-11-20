@@ -82,6 +82,11 @@ public class Account {
     public void setDailyEmail(boolean on) { this.dailyEmail = on; }
     public LocalDate getLastDailySent() { return lastDailySent; }
 
+    /** Ends every signed-in session of this account (all issued tokens stop working). */
+    public void revokeTokens() {
+        this.tokenVersion++;
+    }
+
     public void changePassword(String newHash) {
         this.passwordHash = newHash;
         this.tokenVersion++;

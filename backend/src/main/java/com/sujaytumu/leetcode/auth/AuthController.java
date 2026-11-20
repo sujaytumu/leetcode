@@ -78,6 +78,12 @@ public class AuthController {
                 authorization, body.currentPassword(), body.newPassword(), request.getRemoteAddr());
     }
 
+    /** "Sign out everywhere": every other device must log in again; the response keeps this one signed in. */
+    @PostMapping("/logout-all")
+    public Session logoutAll(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization) {
+        return service.logoutEverywhere(authorization);
+    }
+
     /** Always answers ok, whether or not the email has an account, so it cannot be used to look accounts up. */
     @PostMapping("/forgot")
     public Ack forgot(@RequestBody Forgot body, HttpServletRequest request) {

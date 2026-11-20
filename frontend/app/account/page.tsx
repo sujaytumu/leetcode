@@ -51,6 +51,17 @@ export default function AccountPage() {
     setDailyBusy(false);
   }
 
+  async function signOutOthers() {
+    if (busy) return;
+    setBusy(true); setMsg(null);
+    try {
+      const s = await api<Session>("/api/auth/logout-all", { method: "POST" });
+      setSession(s);
+      setMsg({ ok: true, text: "Signed out of every other device." });
+    } catch (err) { setMsg({ ok: false, text: (err as Error).message }); }
+    setBusy(false);
+  }
+
   if (!ready) return null;
   return (
     <section className="card authcard" style={{ maxWidth: 440 }}>
@@ -73,6 +84,9 @@ export default function AccountPage() {
         {msg && <div className={`banner ${msg.ok ? "" : "err"}`}>{msg.text}</div>}
         <button className="primary" disabled={busy || !current || !next || !again}>{busy ? "Please wait…" : "Change password"}</button>
       </form>
+      <h3 style={{ margin: "18px 0 6px" }}>Devices</h3>
+      <p className="mute" style={{ margin: "0 0 8px", fontSize: 13 }}>Lost a phone or used a shared computer? Sign out everywhere else. You stay signed in here.</p>
+      <button type="button" onClick={signOutOthers} disabled={busy}>Sign out other devices</button>
       <div className="bar" style={{ marginTop: 16 }}>
         <Link href="/profile">← Profile</Link><span className="grow" />
         <button type="button" onClick={() => { clearSession(); window.location.href = "/"; }}>Log out</button>
