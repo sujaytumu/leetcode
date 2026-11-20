@@ -1,7 +1,7 @@
-:root { --nav-h:52px; --bg:#0f1115; --panel:#181b22; --line:#2a2f3a; --text:#e6e8ee; --mute:#8b93a5; --accent:#ffa116;
+:root { --nav-h:52px; --bg:#0f1115; --panel:#181b22; --line:#2a2f3a; --text:#e6e8ee; --mute:#8b93a5; --accent:var(--accent-d,#ffa116);
   --easy:#2cbb5d; --med:#ffb800; --hard:#ef4743;
   --code-bg:#0c0e12; --hover:#1d212a; --warn-bg:#2a2412; --err-bg:#2a1414; --cell:#232834; }
-html[data-theme="light"] { --bg:#f3f4f6; --panel:#ffffff; --line:#e1e4ea; --text:#1a1d24; --mute:#6a7385; --accent:#e08a00;
+html[data-theme="light"] { --bg:#f3f4f6; --panel:#ffffff; --line:#e1e4ea; --text:#1a1d24; --mute:#6a7385; --accent:var(--accent-l,#e08a00);
   --easy:#14a44d; --med:#c98a00; --hard:#e0393e; --code-bg:#f2f4f8; --hover:#f4f6fa; --warn-bg:#fff6df; --err-bg:#ffecec; --cell:#e7eaf0; }
 * { box-sizing: border-box; }
 html, body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui, sans-serif; }
@@ -866,3 +866,7 @@ td { font-size:14px; font-weight:400; }
 @media (max-width:900px) { .install-toast { bottom:calc(76px + env(safe-area-inset-bottom)); left:16px; right:16px; max-width:none; } }
 
 .notebody { white-space:pre-wrap; margin:8px 0 0; font:inherit; font-size:14px; overflow-wrap:anywhere; }
+
+.swatches { display:flex; gap:10px; flex-wrap:wrap; }
+.swatch { width:30px; height:30px; border-radius:50%; padding:0; border:2px solid transparent; }
+.swatch.on { border-color:var(--text); box-shadow:0 0 0 2px var(--panel) inset; }

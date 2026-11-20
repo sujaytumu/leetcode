@@ -7,6 +7,7 @@ import NavLinks from "@/components/NavLinks";
 import AccountMenu from "@/components/AccountMenu";
 import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
+import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
 import CommandPalette, { PaletteButton } from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
         <script dangerouslySetInnerHTML={{ __html:
-          "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" +
+          "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" + ACCENT_BOOT_SCRIPT +
           // Start waking the (free-tier) backend the moment the page arrives, before any app code runs.
           `try{fetch(${JSON.stringify((process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") + "/actuator/health")},{mode:'no-cors',keepalive:true})}catch(e){}` }} />
       </head>
