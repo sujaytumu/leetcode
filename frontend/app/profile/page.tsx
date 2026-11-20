@@ -1,5 +1,6 @@
 "use client";
 import BackupCard from "@/components/BackupCard";
+import ShareCard from "@/components/ShareCard";
 import WeeklySummary from "@/components/WeeklySummary";
 import ExportCard from "@/components/ExportCard";
 import SyncCard from "@/components/SyncCard";
@@ -31,7 +32,7 @@ export default function ProfilePage() {
     <ProfileLayout
       p={p}
       header={<ProfileCard social={p.social} />}
-      extras={<div className="stack"><WeeklySummary calendar={p.calendar} /><SyncCard /><ExportCard /><BackupCard /></div>}
+      extras={<div className="stack"><WeeklySummary calendar={p.calendar} /><ShareCard p={p} name="" /><SyncCard /><ExportCard /><BackupCard /></div>}
     />
   );
 }
