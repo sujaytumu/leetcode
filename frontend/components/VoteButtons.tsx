@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 
 interface Votes { likes: number; dislikes: number; myVote: "LIKE" | "DISLIKE" | null }
 
-const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K` : String(n));
+const compact = (raw: number | undefined) => { const n = Number(raw) || 0; return n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K` : String(n); };
 
 /** Like / dislike for a problem, one vote per browser, switchable and removable. */
 export default function VoteButtons({ slug }: { slug: string }) {
