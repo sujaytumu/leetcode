@@ -8,7 +8,15 @@ import { bannerFor, planLevel } from "@/lib/planMeta";
 /** Row of study-plan cards above the problem table (LeetCode's problemset header). Hidden on phones. */
 export default function PlanStrip() {
   const [plans, setPlans] = useState<Plan[] | null>(null);
-  useEffect(() => { swr<Plan[]>("/api/plans", (d) => setPlans(d), () => {}).catch(() => setPlans([])); }, []);
+  useEffect(() => {
+    // Hidden on phones, so don't pay for the (large) plans payload there; elsewhere wait until the list has had its turn.
+    if (window.matchMedia("(max-width:640px)").matches) return;
+    const load = () => { swr<Plan[]>("/api/plans", (d) => setPlans(d), () => {}).catch(() => setPlans([])); };
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (n: number) => void };
+    if (w.requestIdleCallback) { const id = w.requestIdleCallback(load, { timeout: 2500 }); return () => w.cancelIdleCallback?.(id); }
+    const t = setTimeout(load, 800);
+    return () => clearTimeout(t);
+  }, []);
   if (!plans || plans.length === 0) return null;
   return (
     <div className="planstrip">

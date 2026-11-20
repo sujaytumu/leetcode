@@ -21,6 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* The code editor (Monaco) is fetched from this CDN when a problem opens; connect early so it starts sooner. */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
         <script dangerouslySetInnerHTML={{ __html:
           "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" + ACCENT_BOOT_SCRIPT +
