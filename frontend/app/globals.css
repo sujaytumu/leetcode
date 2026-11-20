@@ -847,3 +847,13 @@ td { font-size:14px; font-weight:400; }
 
 /* Editor status line: drafts autosave on every keystroke, so it always reads Saved. */
 .codestatus { display:flex; justify-content:space-between; padding:4px 14px; font-size:12px; border-top:1px solid var(--line); flex:none; }
+
+/* Phones: the top bar is one compact, scrollable row instead of three stacked rows. */
+@media (max-width:700px) {
+  .lctop { display:flex; flex-wrap:nowrap; overflow-x:auto; gap:6px; padding:0 0 6px; scrollbar-width:none; }
+  .lctop::-webkit-scrollbar { display:none; }
+  .lctop-l, .lctop-c, .lctop-r { flex:none; }
+  .lctop-c { order:-1; }
+  .lctop button, .lctop .navbtn { padding:4px 8px; min-width:0; }
+}
+@media (max-width:700px) { .lcmaintabs .tabicon { display:none; } .lcmaintabs button { padding-left:8px; padding-right:8px; } }
