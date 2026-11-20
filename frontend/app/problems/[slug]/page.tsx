@@ -17,6 +17,7 @@ import AddToList from "@/components/AddToList";
 import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
 import ProblemDescription from "@/components/ProblemDescription";
+import { formatInputParts, formatOutput } from "@/lib/example";
 import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
@@ -714,9 +715,21 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       )}
                       {cur && (cur.input != null ? (
                         <>
-                          <div className="iolabel">Input</div><pre>{cur.input}</pre>
-                          <div className="iolabel">Output</div><pre>{cur.actual || "(empty)"}</pre>
-                          {cur.expected != null && <><div className="iolabel">Expected</div><pre>{cur.expected}</pre></>}
+                          {(() => {
+                            // LeetCode shows each argument by name; fall back to the raw stdin text if the layout is unknown.
+                            const py = problem.starterCode?.python;
+                            const args = py ? formatInputParts(py, cur.input) : null;
+                            const show = (raw: string) => (py && raw.trim() ? formatOutput(py, raw) : null) ?? raw;
+                            return (
+                              <>
+                                {args
+                                  ? args.map((a) => <div key={a.name}><div className="iolabel">{a.name} =</div><pre>{a.value}</pre></div>)
+                                  : <><div className="iolabel">Input</div><pre>{cur.input}</pre></>}
+                                <div className="iolabel">Output</div><pre>{cur.actual ? show(cur.actual) : "(empty)"}</pre>
+                                {cur.expected != null && <><div className="iolabel">Expected</div><pre>{show(cur.expected)}</pre></>}
+                              </>
+                            );
+                          })()}
                           {cur.error && <><div className="iolabel">Error</div><pre className="err">{fix(cur.error)}</pre></>}
                         </>
                       ) : (

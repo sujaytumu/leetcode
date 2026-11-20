@@ -42,14 +42,14 @@ const arr = (items: string[]) => `[${items.join(",")}]`;
 const NUM = /^-?\d+(\.\d+)?$/;
 const literal = (t: string) => (NUM.test(t) || t === "null" || t === "true" || t === "false" ? t : JSON.stringify(t));
 
-/** "nums = [2,7,11,15], target = 9" for the raw stdin text, or null if the layout is not recognised. */
-export function formatInput(python: string, input: string): string | null {
+/** The arguments of an example as name/value pairs, e.g. [{name:"nums", value:"[2,7,11,15]"}, ...]; null if unrecognised. */
+export function formatInputParts(python: string, input: string): { name: string; value: string }[] | null {
   const spec = parseInputSpec(python);
   if (!spec) return null;
   const lines = input.replace(/\r/g, "").split("\n");
   let pos = 0;
   let count = 0;
-  const parts: string[] = [];
+  const parts: { name: string; value: string }[] = [];
   for (const s of spec) {
     if (pos > lines.length) return null;
     if (s.kind === "count" || s.kind === "rowcount") {
@@ -60,23 +60,29 @@ export function formatInput(python: string, input: string): string | null {
     }
     switch (s.kind) {
       case "ints": case "list": case "tree":
-        parts.push(`${s.name} = ${arr(count > 0 ? words(lines[pos]).map(literal) : [])}`);
+        parts.push({ name: s.name, value: arr(count > 0 ? words(lines[pos]).map(literal) : []) });
         pos += 1; break;
       case "int":
         if (!NUM.test((lines[pos] ?? "").trim())) return null;
-        parts.push(`${s.name} = ${lines[pos].trim()}`); pos += 1; break;
+        parts.push({ name: s.name, value: lines[pos].trim() }); pos += 1; break;
       case "str":
         if (lines[pos] === undefined) return null;
-        parts.push(`${s.name} = ${JSON.stringify(lines[pos])}`); pos += 1; break;
+        parts.push({ name: s.name, value: JSON.stringify(lines[pos]) }); pos += 1; break;
       case "strs":
-        parts.push(`${s.name} = ${arr(lines.slice(pos, pos + count).map((x) => JSON.stringify(x)))}`);
+        parts.push({ name: s.name, value: arr(lines.slice(pos, pos + count).map((x) => JSON.stringify(x))) });
         pos += count; break;
       case "matrix":
-        parts.push(`${s.name} = ${arr(Array.from({ length: count }, (_, i) => arr(words(lines[pos + i]))))}`);
+        parts.push({ name: s.name, value: arr(Array.from({ length: count }, (_, i) => arr(words(lines[pos + i])))) });
         pos += count; break;
     }
   }
-  return parts.length ? parts.join(", ") : null;
+  return parts.length ? parts : null;
+}
+
+/** "nums = [2,7,11,15], target = 9" for the raw stdin text, or null if the layout is not recognised. */
+export function formatInput(python: string, input: string): string | null {
+  const parts = formatInputParts(python, input);
+  return parts ? parts.map((p) => `${p.name} = ${p.value}`).join(", ") : null;
 }
 
 /** "[0,1]" / "true" / "[[1,6],[8,10]]" for the raw expected stdout, or null if the output layout is unknown. */

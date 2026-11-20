@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { formatInput, formatOutput } from "../lib/example.ts";
+import { formatInput, formatInputParts, formatOutput } from "../lib/example.ts";
 
 const TWO_SUM = `import sys
 
@@ -26,6 +26,13 @@ test("named arguments and list output, as on LeetCode", () => {
   assert.equal(formatOutput(TWO_SUM, "0 1\n"), "[0,1]");
   assert.equal(formatInput(TWO_SUM, "0\n\n5\n"), "nums = [], target = 5");
   assert.equal(formatOutput(TWO_SUM, "\n"), "[]");
+});
+
+test("arguments are also available as name/value pairs", () => {
+  assert.deepEqual(formatInputParts(TWO_SUM, "4\n2 7 11 15\n9\n"), [
+    { name: "nums", value: "[2,7,11,15]" },
+    { name: "target", value: "9" },
+  ]);
 });
 
 test("unknown layouts fall back to null instead of guessing", () => {
