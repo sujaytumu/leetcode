@@ -904,3 +904,12 @@ td { font-size:14px; font-weight:400; }
 .lcchips .chipn { margin-left:6px; font-size:11px; background:var(--cell); border-radius:99px; padding:0 6px; color:var(--mute); }
 .lcchips button.on .chipn { background:transparent; color:inherit; }
 .lcchips .chipmore { border-style:dashed; color:var(--mute); }
+
+/* LeetCode-style contest header and countdown tiles */
+.lcbanner { background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, var(--panel)), var(--panel)); }
+.cdtiles { text-align:center; }
+.cdlabel { font-size:12px; margin-bottom:4px; text-transform:uppercase; letter-spacing:.08em; }
+.cdrow { display:flex; gap:8px; }
+.cdtile { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:6px 10px; min-width:56px; }
+.cdtile b { font-size:22px; display:block; font-variant-numeric:tabular-nums; line-height:1.2; }
+.cdtile span { font-size:11px; color:var(--mute); }

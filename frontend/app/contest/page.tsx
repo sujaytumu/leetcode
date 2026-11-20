@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { api, type Difficulty } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import CountdownTiles from "@/components/CountdownTiles";
 
 interface ContestProblem { slug: string; title: string; difficulty: Difficulty; points: number }
 interface ContestView { id: number; title: string; start: string; end: string; state: "UPCOMING" | "RUNNING" | "FINISHED"; problems: ContestProblem[] | null }
@@ -12,12 +13,6 @@ interface Standings { contest: ContestView; participants: number; rows: Row[]; m
 interface Overview { now: string; current: ContestView; past: ContestView[] }
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const clock = (secs: number) => {
-  const s = Math.max(0, Math.floor(secs));
-  const d = Math.floor(s / 86400);
-  const rest = `${pad(Math.floor((s % 86400) / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
-  return d > 0 ? `${d}d ${rest}` : rest;
-};
 const finish = (secs: number) => `${Math.floor(secs / 3600)}:${pad(Math.floor((secs % 3600) / 60))}:${pad(secs % 60)}`;
 const when = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
@@ -82,15 +77,15 @@ export default function ContestPage() {
       {overview && !standings && !error && <Skeleton />}
       {c && standings && (
         <>
-          <div className="card contest-head">
+          <div className="card contest-head lcbanner">
             <div>
               <b style={{ fontSize: 18 }}>{c.title}</b>{" "}
               <span className={`pill ${c.state === "RUNNING" ? "EASY" : c.state === "UPCOMING" ? "MEDIUM" : ""}`}>{c.state.toLowerCase()}</span>
               <div className="mute">{when(c.start)} – {new Date(c.end).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}</div>
             </div>
             <span className="grow" />
-            {c.state === "UPCOMING" && <div className="countdown"><div className="mute">Starts in</div><b>{clock(toStart)}</b></div>}
-            {c.state === "RUNNING" && <div className="countdown"><div className="mute">Ends in</div><b>{clock(toEnd)}</b></div>}
+            {c.state === "UPCOMING" && <CountdownTiles label="Starts in" seconds={toStart} />}
+            {c.state === "RUNNING" && <CountdownTiles label="Ends in" seconds={toEnd} />}
             {c.state === "FINISHED" && <div className="countdown"><div className="mute">Participants</div><b>{standings.participants}</b></div>}
           </div>
 
@@ -101,7 +96,7 @@ export default function ContestPage() {
                 {c.problems.map((p, i) => (
                   <tr key={p.slug}>
                     <td className="EASY">{mine[i] ? "✔" : ""}</td>
-                    <td><Link href={`/problems/${p.slug}`}>Q{i + 1}. {p.title}</Link></td>
+                    <td><Link href={`/problems/${p.slug}`}>Q{i + 1}. {p.title}</Link> <span className="mute" style={{ fontSize: 12 }}>({p.points})</span></td>
                     <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                     <td className="th-num">{p.points}</td>
                   </tr>
