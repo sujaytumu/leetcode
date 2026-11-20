@@ -913,3 +913,33 @@ td { font-size:14px; font-weight:400; }
 .cdtile { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:6px 10px; min-width:56px; }
 .cdtile b { font-size:22px; display:block; font-variant-numeric:tabular-nums; line-height:1.2; }
 .cdtile span { font-size:11px; color:var(--mute); }
+
+/* ===== PHONE UI OVERHAUL (<=640px only; laptop is untouched) ===== */
+@media (max-width:640px) {
+  /* Loading: just the thin top bar. The word used to squeeze the logo and shift the nav. */
+  .nav nav .loading-word { display:none; }
+  .topbar { height:3px; }
+
+  /* Topic chips: touch-sized, single swipeable row, Expand/Collapse not needed */
+  .lcchips { gap:8px; margin:0 -16px 10px; padding:2px 16px 6px; }
+  .lcchips button { padding:7px 14px; font-size:13px; }
+  .lcchips .chipmore { display:none; }
+
+  /* Filters: search, then difficulty | status, then bookmarked | clear. Topic dropdown is redundant with the chips. */
+  .filters { gap:8px; margin-bottom:10px; }
+  .filters input, .filters select { font-size:16px; height:42px; padding:0 12px; border-radius:10px; } /* 16px stops iOS zoom-on-focus */
+  .filters select:nth-of-type(2) { display:none; }
+  .filters label.bar { order:3; grid-column:1; height:42px; margin:0; padding:0 12px; border:1px solid var(--line); border-radius:10px; background:var(--panel); font-size:14px; gap:8px; display:flex; align-items:center; }
+  .filters label.bar input { width:18px; height:18px; padding:0; }
+  .filters > button { order:4; grid-column:2; height:42px; border-radius:10px; font-size:14px; }
+
+  /* Problem rows: calm, two-line, no heavy striping */
+  .home thead { display:none; }
+  .home tbody tr:nth-child(odd) td { background:transparent; }
+  .home td { padding:11px 8px; vertical-align:middle; }
+  .home tbody tr td:nth-child(2) a { font-size:15px; line-height:1.35; }
+  .home .show-sm { display:flex; align-items:center; gap:6px; flex-wrap:nowrap; overflow:hidden; margin-top:5px; }
+  .home .show-sm .tag { font-size:11px; padding:1px 8px; white-space:nowrap; flex:none; }
+  .home .show-sm .tag:nth-child(n+4) { display:none; }
+  .home td:last-child { font-size:13px; font-weight:600; text-align:right; padding-right:12px; white-space:nowrap; }
+}
