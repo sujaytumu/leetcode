@@ -1054,3 +1054,11 @@ td { font-size:14px; font-weight:400; }
 .bd-hex { width:60px; height:68px; font-size:28px; }
 .bd-hex.locked { opacity:.28; filter:grayscale(1); }
 .bd-medals { gap:14px; }
+
+/* ---- Problem page scrolling: one scroller per pane, and the wheel never leaks to the page behind it ---- */
+.console { overflow:hidden; min-height:90px; }
+.console .body, .left-body { overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; scrollbar-gutter:stable; -webkit-overflow-scrolling:touch; }
+.console .body pre, .left-body pre { overflow-x:auto; overflow-y:hidden; overscroll-behavior-y:auto; max-width:100%; }
+.console .body textarea.consoletext { overscroll-behavior:contain; }
+.pane.left { overflow:hidden; min-height:0; }
+.right > .pane { min-height:0; }
