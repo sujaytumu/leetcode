@@ -17,6 +17,7 @@ export default function ProfileCard({ social }: { social?: { followers: number; 
   const [info, setInfo] = useState<ProfileInfo | null>(null);
   const [rank, setRank] = useState<number | null>(null);
   const [editing, setEditing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     swr<ProfileInfo>("/api/profile/info", (d) => setInfo(d), () => {}).catch(() => {});
@@ -24,6 +25,13 @@ export default function ProfileCard({ social }: { social?: { followers: number; 
   }, []);
 
   if (!info) return <aside className="card profilecard"><div className="skel" style={{ width: "70%", height: 96 }} /></aside>;
+  const share = async () => {
+    if (!info.username) { setEditing(true); return; }
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/u/${encodeURIComponent(info.username)}`);
+      setCopied(true); setTimeout(() => setCopied(false), 1800);
+    } catch { /* clipboard blocked */ }
+  };
   const blank = !info.displayName && !info.username && !info.headline;
   return (
     <>
@@ -31,7 +39,15 @@ export default function ProfileCard({ social }: { social?: { followers: number; 
         info={info}
         rank={rank}
         social={social}
-        action={<button className="pc-edit" onClick={() => setEditing(true)}>{blank ? "Set up profile" : "Edit Profile"}</button>}
+        action={
+          <div className="pc-actions">
+            <button className="pc-edit" onClick={() => setEditing(true)}>{blank ? "Set up profile" : "Edit Profile"}</button>
+            <button type="button" className="pc-share" onClick={share} aria-label="Copy public profile link" title={info.username ? (copied ? "Link copied" : "Copy public profile link") : "Set a username to share"}>
+              {copied
+                ? <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                : <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6" /></svg>}
+            </button>
+          </div>}
         footer={info.username
           ? <Link className="pc-public" href={`/u/${encodeURIComponent(info.username)}`}>View your public profile →</Link>
           : <p className="mute pc-public">Set a username to get a public profile page.</p>}

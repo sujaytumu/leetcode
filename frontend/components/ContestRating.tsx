@@ -19,15 +19,31 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
   if (!r) return null;
 
   if (r.rating === null) {
+    // No rating yet: still show both LeetCode cards (rating + graph, Top %) with placeholders, so the page keeps its shape.
+    const ghost = [8, 14, 26, 44, 70, 100, 82, 56, 36, 22, 14, 9, 6, 4];
     return (
-      <section className="card ratingcard">
-        <div className="ratinghead">
-          <div><div className="mute">Contest Rating</div><div className="ratingbig">–</div></div>
-        </div>
-        <p className="mute" style={{ margin: "12px 0 0", fontSize: 14 }}>
-          You get a rating after your first weekly contest. <Link href="/contest">Go to Contest</Link>
-        </p>
-      </section>
+      <>
+        <section className="card ratingcard">
+          <div className="ratinghead">
+            <div><div className="mute">Contest Rating</div><div className="ratingbig">–</div></div>
+            <div><div className="mute">Global Ranking</div><div className="ratingrank"><b>–</b></div></div>
+            <div><div className="mute">Attended</div><div className="ratingrank"><b>{r.attended}</b></div></div>
+          </div>
+          <svg viewBox="0 0 320 130" className="ratinggraph ghost" aria-hidden="true">
+            <path d="M14,90 L306,90" stroke="var(--mute)" strokeWidth="1.5" strokeDasharray="4 5" fill="none" />
+          </svg>
+          <p className="mute" style={{ margin: "4px 0 0", fontSize: 14 }}>
+            You get a rating after your first weekly contest. <Link href="/contest">Go to Contest</Link>
+          </p>
+        </section>
+        <section className="card ratingcard">
+          <div className="mute">Top</div>
+          <div className="ratingbig">–</div>
+          <div className="ratingdist ghost" aria-hidden="true">
+            {ghost.map((h, i) => <div key={i} className="bar" style={{ height: `${h}%` }} />)}
+          </div>
+        </section>
+      </>
     );
   }
   return (
@@ -39,6 +55,7 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
             <div className="mute">Global Ranking</div>
             <div className="ratingrank"><b>{fmt(r.globalRank ?? 0)}</b><span className="mute">/{fmt(r.rated)}</span></div>
           </div>
+          <div><div className="mute">Attended</div><div className="ratingrank"><b>{r.attended}</b></div></div>
         </div>
         <RatingGraph points={r.history} peak={r.peak ?? r.rating} />
       </section>

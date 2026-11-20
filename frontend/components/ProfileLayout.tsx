@@ -69,8 +69,8 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
                     <div className="bd-count">{earned.length}</div>
                   </div>
                   <div className="bd-medals" aria-hidden="true">
-                    {earned.slice(-3).reverse().map((b) => (
-                      <span key={b.id} className={`bd-hex cat-${b.category}`} title={b.title}>{BADGE_ICON[b.category] ?? "🏅"}</span>
+                    {[...earned.slice(-3).reverse(), ...p.badges.filter((b) => !b.earned)].slice(0, 3).map((b) => (
+                      <span key={b.id} className={`bd-hex cat-${b.category}${b.earned ? "" : " locked"}`} title={b.earned ? b.title : `${b.title} (locked)`}>{BADGE_ICON[b.category] ?? "🏅"}</span>
                     ))}
                   </div>
                 </div>
