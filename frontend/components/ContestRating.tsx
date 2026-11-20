@@ -59,19 +59,22 @@ function RatingGraph({ points, peak }: { points: Point[]; peak: number }) {
   const x = (i: number) => (points.length === 1 ? W / 2 : PX + (i * (W - 2 * PX)) / (points.length - 1));
   const y = (v: number) => PT + (1 - (v - lo) / span) * (H - PT - PB);
   const path = points.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.rating).toFixed(1)}`).join(" ");
-  const pi = ys.indexOf(peak);
-  const px = x(Math.max(0, pi)), py = y(peak);
+  // Mark the highest point actually plotted, so the bubble always sits on the line (the server's peak can span
+  // older contests than the graph shows).
+  const top = hi;
+  const pi = ys.indexOf(top);
+  const px = x(Math.max(0, pi)), py = y(top);
   const bw = 58, bx = Math.min(W - bw - 2, Math.max(2, px - bw / 2));
   const year = (iso: string) => new Date(iso).getUTCFullYear();
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="ratinggraph" role="img" aria-label={`Rating history, peak ${peak}`}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="ratinggraph" role="img" aria-label={`Rating history, highest ${hi}`}>
       <path d={path} fill="none" stroke="#ffa116" strokeWidth="1.8" strokeLinejoin="round" />
       <circle cx={px} cy={py} r="4.5" fill="#fff" />
       <g>
         <rect x={bx} y={py - 31} width={bw} height="22" rx="5" fill="var(--panel)" stroke="var(--line)" />
         <path d={`M${px - 5},${py - 9} L${px},${py - 4} L${px + 5},${py - 9}`} fill="var(--panel)" stroke="var(--line)" />
         <rect x={px - 4} y={py - 10} width="8" height="3" fill="var(--panel)" />
-        <text x={bx + bw / 2} y={py - 16} textAnchor="middle" fontSize="12" fill="var(--text)">{fmt(peak)}</text>
+        <text x={bx + bw / 2} y={py - 16} textAnchor="middle" fontSize="12" fill="var(--text)">{fmt(top)}</text>
       </g>
       <text x={PX} y={H - 6} fontSize="12" fill="var(--mute)">{year(points[0].at)}</text>
       <text x={W - PX} y={H - 6} fontSize="12" fill="var(--mute)" textAnchor="end">{year(points[points.length - 1].at)}</text>
