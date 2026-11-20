@@ -3,6 +3,8 @@ package com.sujaytumu.leetcode.judge;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sujaytumu.leetcode.common.ApiExceptions.ExecutionUnavailableException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.MediaType;
@@ -29,10 +31,11 @@ public class Judge0CodeExecutor implements CodeExecutor {
 
     @Override
     public ExecutionResult execute(Language language, String sourceCode, String stdin) {
+        // Base64 both ways: Judge0 answers 400 for stdin/source holding characters it cannot round-trip as plain JSON text.
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("source_code", sourceCode);
+        body.put("source_code", encode(sourceCode));
         body.put("language_id", language.judge0Id());
-        body.put("stdin", stdin);
+        body.put("stdin", encode(stdin));
         body.put("cpu_time_limit", cpuTimeLimitSeconds);
         body.put("wall_time_limit", cpuTimeLimitSeconds * 5);
 
@@ -44,9 +47,9 @@ public class Judge0CodeExecutor implements CodeExecutor {
         int statusId = response.status().id();
         Double time = parseTime(response.time());
         Integer memory = response.memory();
-        String stdout = nullToEmpty(response.stdout());
-        String stderr = nullToEmpty(response.stderr());
-        String compile = nullToEmpty(response.compileOutput());
+        String stdout = decode(response.stdout());
+        String stderr = decode(response.stderr());
+        String compile = decode(response.compileOutput());
 
         if (statusId == ACCEPTED) {
             return new ExecutionResult(Status.OK, stdout, stderr, compile, time, memory);
@@ -62,7 +65,7 @@ public class Judge0CodeExecutor implements CodeExecutor {
             return new ExecutionResult(Status.RUNTIME_ERROR, stdout, detail, compile, time, memory);
         }
         return new ExecutionResult(
-                Status.INTERNAL_ERROR, stdout, nullToEmpty(response.message()), compile, time, memory);
+                Status.INTERNAL_ERROR, stdout, decode(response.message()), compile, time, memory);
     }
 
     private static final int MAX_ATTEMPTS = 3;
@@ -70,10 +73,11 @@ public class Judge0CodeExecutor implements CodeExecutor {
     /** Posts a synchronous submission, retrying briefly when the free public instance is rate limited or busy. */
     private Judge0Response submit(Map<String, Object> body) {
         ExecutionUnavailableException last = null;
+        boolean limitsDropped = false;
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
                 return client.post()
-                        .uri("/submissions?base64_encoded=false&wait=true")
+                        .uri("/submissions?base64_encoded=true&wait=true")
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(body)
                         .retrieve()
@@ -86,9 +90,21 @@ public class Judge0CodeExecutor implements CodeExecutor {
                 } else if (status == 502 || status == 503 || status == 504) {
                     last = new ExecutionUnavailableException(
                             "The code-execution service is busy or restarting (HTTP " + status + "). Try again shortly.", ex);
+                } else if (status == 400 && !limitsDropped) {
+                    // Some Judge0 instances refuse custom time limits; the instance's own defaults still apply.
+                    limitsDropped = true;
+                    body.remove("cpu_time_limit");
+                    body.remove("wall_time_limit");
+                    last = new ExecutionUnavailableException("The code-execution service rejected the request (HTTP 400).", ex);
+                    continue;
                 } else {
+                    String detail = ex.getResponseBodyAsString();
+                    if (detail != null && detail.length() > 300) {
+                        detail = detail.substring(0, 300);
+                    }
                     throw new ExecutionUnavailableException(
-                            "The code-execution service rejected the request (HTTP " + status + ").", ex);
+                            "The code-execution service rejected the request (HTTP " + status + ")"
+                                    + (detail == null || detail.isBlank() ? "." : ": " + detail), ex);
                 }
                 if (attempt < MAX_ATTEMPTS) {
                     pause(1500L * attempt);
@@ -127,6 +143,22 @@ public class Judge0CodeExecutor implements CodeExecutor {
             return Double.parseDouble(value);
         } catch (NumberFormatException ex) {
             return null;
+        }
+    }
+
+    private static String encode(String value) {
+        return Base64.getEncoder().encodeToString(nullToEmpty(value).getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** Judge0 returns output fields base64-encoded (with line breaks) when base64_encoded=true. */
+    private static String decode(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        try {
+            return new String(Base64.getMimeDecoder().decode(value), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException ex) {
+            return value;
         }
     }
 
