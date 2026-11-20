@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Skeleton from "@/components/Skeleton";
 import { DailyCalendar, DailyDay, localDate } from "@/lib/api";
 import { swr } from "@/lib/local";
+import { dailyStreak } from "@/lib/dailyStats";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthKey = (y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`;
@@ -45,7 +46,22 @@ export default function DailyPage() {
       {!cal && !error && <Skeleton lines={8} />}
       {cal && (
         <>
-          <p className="mute" style={{ marginTop: 0 }}>Solved <b style={{ color: "var(--text)" }}>{cal.solved}</b> of {cal.total} daily problems this month.</p>
+          <section className="card dailyhead">
+            <div className="dailybadge" data-earned={cal.total > 0 && cal.solved >= cal.total}>
+              <span aria-hidden="true">{cal.total > 0 && cal.solved >= cal.total ? "🏅" : "🔒"}</span>
+            </div>
+            <div className="grow">
+              <b style={{ display: "block", fontSize: 16 }}>{title} Daily Challenge badge</b>
+              <span className="mute" style={{ fontSize: 13 }}>
+                {cal.total > 0 && cal.solved >= cal.total ? "Earned. Every daily problem this month is solved." : "Solve every daily problem this month to earn it."}
+              </span>
+              <div className="progress" style={{ marginTop: 8 }}><div style={{ width: `${cal.total ? Math.round((cal.solved / cal.total) * 100) : 0}%` }} /></div>
+            </div>
+            <div className="dailynums">
+              <div><b>{cal.solved}</b><span className="mute">/{cal.total}</span><div className="mute" style={{ fontSize: 12 }}>solved</div></div>
+              {atCurrent && <div><b>{dailyStreak(cal.days, today)}</b><div className="mute" style={{ fontSize: 12 }}>day streak</div></div>}
+            </div>
+          </section>
           <div className="daygrid">
             {WEEKDAYS.map((w) => <div key={w} className="dayhead">{w}</div>)}
             {Array.from({ length: lead }, (_, i) => <div key={`b${i}`} />)}
