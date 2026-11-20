@@ -1,6 +1,7 @@
 "use client";
 import { Children, isValidElement, ReactNode } from "react";
-import Markdown from "react-markdown";
+import Markdown, { type Components } from "react-markdown";
+import { formatInput, formatOutput } from "@/lib/example";
 
 const textOf = (n: ReactNode): string =>
   Children.toArray(n).map((c) => (typeof c === "string" ? c : isValidElement(c) ? textOf((c.props as { children?: ReactNode }).children) : "")).join("");
@@ -22,11 +23,40 @@ function boldLabels(code: string): ReactNode {
  * A problem statement laid out like LeetCode's: section titles are bold "Constraints:" lines, "Example 1:" labels,
  * and each example sits in a box with a left rule and bold Input / Output labels.
  */
-export default function ProblemDescription({ markdown }: { markdown: string }) {
-  return (
-    <div className="md lcdesc">
-      <Markdown
-        components={{
+/** Split "intro ### A ... ### B ..." into the intro and its titled sections. */
+export function splitSections(md: string): { intro: string; sections: { title: string; body: string }[] } {
+  const parts = md.split(/^### +/m);
+  const sections = parts.slice(1).map((p) => {
+    const nl = p.indexOf("\n");
+    return nl < 0 ? { title: p.trim(), body: "" } : { title: p.slice(0, nl).trim(), body: p.slice(nl + 1) };
+  });
+  return { intro: parts[0], sections };
+}
+
+const IO_TITLES = new Set(["input", "output"]);
+
+/**
+ * LeetCode's order is statement, Examples, Constraints, then anything else (follow-ups). Ours also carries "Input"
+ * and "Output" sections that describe the stdin layout; those go in a collapsed block at the end.
+ */
+export function reorderForLeetCode(md: string): { main: string; ioFormat: string } {
+  const { intro, sections } = splitSections(md);
+  if (sections.length === 0) return { main: md, ioFormat: "" };
+  const lower = (t: string) => t.trim().toLowerCase();
+  const take = (name: string) => sections.filter((s) => lower(s.title) === name);
+  const examples = take("examples"), constraints = take("constraints");
+  const io = sections.filter((s) => IO_TITLES.has(lower(s.title)));
+  const rest = sections.filter((s) => !["examples", "constraints"].includes(lower(s.title)) && !IO_TITLES.has(lower(s.title)));
+  const render = (list: { title: string; body: string }[]) => list.map((x) => `### ${x.title}\n${x.body}`).join("\n");
+  return {
+    main: [intro.trimEnd(), examples.map((x) => x.body.trim()).join("\n\n"), render(constraints), render(rest)].filter(Boolean).join("\n\n"),
+    ioFormat: render(io),
+  };
+}
+
+export default function ProblemDescription({ markdown, python }: { markdown: string; python?: string }) {
+  const { main, ioFormat } = reorderForLeetCode(markdown);
+  const components: Components = {
           h3: ({ children }) => <p className="lchead"><b>{children}:</b></p>,
           strong: ({ children }) => {
             const t = textOf(children);
@@ -34,12 +64,25 @@ export default function ProblemDescription({ markdown }: { markdown: string }) {
           },
           pre: ({ children }) => {
             const code = textOf(children).replace(/\n$/, "");
+            // Show examples the way LeetCode does (named arguments on one line) when the layout is recognised.
+            const m = python ? /^Input:\n([\s\S]*?)\n\nOutput:\n([\s\S]*)$/.exec(code) : null;
+            const input = m && python ? formatInput(python, m[1] + "\n") : null;
+            const output = m && python ? formatOutput(python, m[2] + "\n") : null;
+            if (input !== null && output !== null) {
+              return <pre className="lcbox"><b>Input:</b> {input}{"\n"}<b>Output:</b> {output}</pre>;
+            }
             return <pre className="lcbox">{boldLabels(code)}</pre>;
           },
-        }}
-      >
-        {markdown}
-      </Markdown>
+  };
+  return (
+    <div className="md lcdesc">
+      <Markdown components={components}>{main}</Markdown>
+      {ioFormat && (
+        <details className="iofmt">
+          <summary>Input / Output format</summary>
+          <Markdown components={components}>{ioFormat}</Markdown>
+        </details>
+      )}
     </div>
   );
 }

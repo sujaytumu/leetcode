@@ -1,0 +1,97 @@
+/**
+ * Turns a problem's stdin-style example into LeetCode's named-argument form:
+ *   4 / 2 7 11 15 / 9   ->   nums = [2,7,11,15], target = 9
+ * The input layout is read from the Python starter's main(), which is generated from a small fixed set of
+ * statements, so nothing is guessed. Anything unrecognised returns null and the caller shows the raw text.
+ */
+type Stmt =
+  | { kind: "count" }
+  | { kind: "rowcount" }
+  | { kind: "ints" | "int" | "str" | "strs" | "matrix" | "tree" | "list"; name: string };
+
+function mainBody(python: string): string[] | null {
+  const m = /def main\(\):\n([\s\S]*?)\n\s*\nif __name__/.exec(python);
+  return m ? m[1].split("\n").map((l) => l.trim()).filter(Boolean) : null;
+}
+
+/** The input statements of main(), in order (count lines included, as they consume a line too). */
+export function parseInputSpec(python: string): Stmt[] | null {
+  const body = mainBody(python);
+  if (!body) return null;
+  const out: Stmt[] = [];
+  for (const l of body) {
+    if (l === "pos = 0" || l.startsWith("lines = ")) continue;
+    if (l.startsWith("result = solve(")) break;
+    let m: RegExpExecArray | null;
+    if ((m = /^(\w+)_len = int\(lines\[pos\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "count" }); continue; }
+    if (/^\w+_rows = int\(lines\[pos\]\.split\(\)\[0\]\); pos \+= 1$/.test(l)) { out.push({ kind: "rowcount" }); continue; }
+    if ((m = /^(\w+) = list\(map\(int, lines\[pos\]\.split\(\)\)\) if \1_len > 0 else \[\]; pos \+= 1$/.exec(l))) { out.push({ kind: "ints", name: m[1] }); continue; }
+    if ((m = /^(\w+) = int\(lines\[pos\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "int", name: m[1] }); continue; }
+    if ((m = /^(\w+) = lines\[pos\]; pos \+= 1$/.exec(l))) { out.push({ kind: "str", name: m[1] }); continue; }
+    if ((m = /^(\w+) = lines\[pos:pos \+ \1_rows\]; pos \+= \1_rows$/.exec(l))) { out.push({ kind: "strs", name: m[1] }); continue; }
+    if ((m = /^(\w+) = \[list\(map\(int, lines\[pos \+ i\]\.split\(\)\)\) for i in range\(\1_len\)\]; pos \+= \1_len$/.exec(l))) { out.push({ kind: "matrix", name: m[1] }); continue; }
+    if ((m = /^(\w+) = build_tree\(lines\[pos\]\.split\(\) if \1_len > 0 else \[\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "tree", name: m[1] }); continue; }
+    if ((m = /^(\w+) = build_list\(list\(map\(int, lines\[pos\]\.split\(\)\)\) if \1_len > 0 else \[\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "list", name: m[1] }); continue; }
+    return null; // a statement this formatter does not know
+  }
+  return out.length ? out : null;
+}
+
+const words = (line: string | undefined) => (line ?? "").trim().split(/\s+/).filter(Boolean);
+const arr = (items: string[]) => `[${items.join(",")}]`;
+const NUM = /^-?\d+(\.\d+)?$/;
+const literal = (t: string) => (NUM.test(t) || t === "null" || t === "true" || t === "false" ? t : JSON.stringify(t));
+
+/** "nums = [2,7,11,15], target = 9" for the raw stdin text, or null if the layout is not recognised. */
+export function formatInput(python: string, input: string): string | null {
+  const spec = parseInputSpec(python);
+  if (!spec) return null;
+  const lines = input.replace(/\r/g, "").split("\n");
+  let pos = 0;
+  let count = 0;
+  const parts: string[] = [];
+  for (const s of spec) {
+    if (pos > lines.length) return null;
+    if (s.kind === "count" || s.kind === "rowcount") {
+      count = parseInt(words(lines[pos])[0] ?? "", 10);
+      if (Number.isNaN(count)) return null;
+      pos += 1;
+      continue;
+    }
+    switch (s.kind) {
+      case "ints": case "list": case "tree":
+        parts.push(`${s.name} = ${arr(count > 0 ? words(lines[pos]).map(literal) : [])}`);
+        pos += 1; break;
+      case "int":
+        if (!NUM.test((lines[pos] ?? "").trim())) return null;
+        parts.push(`${s.name} = ${lines[pos].trim()}`); pos += 1; break;
+      case "str":
+        if (lines[pos] === undefined) return null;
+        parts.push(`${s.name} = ${JSON.stringify(lines[pos])}`); pos += 1; break;
+      case "strs":
+        parts.push(`${s.name} = ${arr(lines.slice(pos, pos + count).map((x) => JSON.stringify(x)))}`);
+        pos += count; break;
+      case "matrix":
+        parts.push(`${s.name} = ${arr(Array.from({ length: count }, (_, i) => arr(words(lines[pos + i]))))}`);
+        pos += count; break;
+    }
+  }
+  return parts.length ? parts.join(", ") : null;
+}
+
+/** "[0,1]" / "true" / "[[1,6],[8,10]]" for the raw expected stdout, or null if the output layout is unknown. */
+export function formatOutput(python: string, expected: string): string | null {
+  const body = mainBody(python);
+  if (!body) return null;
+  const tail = body.slice(body.findIndex((l) => l.startsWith("result = solve(")) + 1).join("\n");
+  const lines = expected.replace(/\r/g, "").split("\n");
+  while (lines.length && lines[lines.length - 1].trim() === "") lines.pop();
+  if (tail.includes("for row in result:")) return arr(lines.map((l) => arr(words(l).map(literal))));
+  if (/" "\.join\(map\(str, (list_values\(result\)|result)\)\)|tree_tokens\(result\)/.test(tail)) return arr(words(lines.join(" ")).map(literal));
+  if (tail.includes('"true" if result else "false"')) return lines.join("").trim();
+  if (/^print\(result\)$/.test(tail.trim())) {
+    const v = lines.join("\n").trim();
+    return NUM.test(v) || v === "true" || v === "false" || v === "null" ? v : JSON.stringify(v);
+  }
+  return null;
+}

@@ -1024,3 +1024,8 @@ td { font-size:14px; font-weight:400; }
 @media (max-width:640px) { .planstrip { display:none; } }
 /* Laptop: heatmap stats on one line like LeetCode (two-line version stays on phones) */
 @media (min-width:901px) { .act-stats br { display:none; } .act-stats > span { white-space:nowrap; } .act-stats { gap:22px; align-items:center; } }
+
+/* Stdin format notes: kept, but folded away like a footnote, since LeetCode shows function arguments instead. */
+.iofmt { margin-top:14px; border-top:1px solid var(--line); padding-top:8px; }
+.iofmt summary { cursor:pointer; color:var(--mute); font-size:13px; }
+.iofmt summary:hover { color:var(--text); }

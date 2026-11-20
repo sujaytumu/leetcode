@@ -458,7 +458,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   )}
                 </div>
                 {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>}
-                <ProblemDescription markdown={problem.description} />
+                <ProblemDescription markdown={problem.description} python={problem.starterCode?.python} />
                 {problem.acceptance != null && (
                   <div className="statstrip mute">Acceptance Rate <b>{problem.acceptance.toFixed(1)}%</b></div>
                 )}
