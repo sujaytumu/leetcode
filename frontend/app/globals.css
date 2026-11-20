@@ -1062,3 +1062,19 @@ td { font-size:14px; font-weight:400; }
 .console .body textarea.consoletext { overscroll-behavior:contain; }
 .pane.left { overflow:hidden; min-height:0; }
 .right > .pane { min-height:0; }
+
+/* ---- Problem page: LeetCode-style fixed viewport, every pane scrolls on its own, dividers grab reliably ---- */
+@media (min-width:901px) {
+  html:has(.workspace), body:has(.workspace) { overflow:hidden; height:100dvh; }
+  .workspace { min-height:0; overflow:hidden; }
+  .workspace > .left, .workspace > .right { overflow:hidden; min-height:0; }
+  .right { height:100%; }
+  .editor-wrap { min-height:120px; }
+  .console { min-height:90px; overflow:hidden; }
+}
+.vdivider, .hdivider { z-index:2; }
+.vdivider::before { content:""; position:absolute; inset:0 -4px; }
+.hdivider::before { content:""; position:absolute; inset:-4px 0; }
+.workspace.dragging { cursor:inherit; }
+.workspace.dragging .pane { pointer-events:none; }
+.workspace.dragging .right .codebody * { pointer-events:none; }

@@ -162,13 +162,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   useEffect(() => { if (hasProblem) loadAll((items) => setAll(items), () => {}).catch(() => {}); }, [hasProblem]);
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("lc-layout") ?? "null") as { leftPct?: number; editorPct?: number } | null;
+      const saved = JSON.parse(localStorage.getItem("lc-layout-v2") ?? "null") as { leftPct?: number; editorPct?: number } | null;
       if (saved?.leftPct) setLeftPct(clamp(saved.leftPct, 22, 70));
-      if (saved?.editorPct) setEditorPct(clamp(saved.editorPct, 25, 80));
+      if (saved?.editorPct) setEditorPct(clamp(saved.editorPct, 20, 80));
     } catch { /* ignore corrupt layout */ }
   }, []);
   useEffect(() => {
-    try { localStorage.setItem("lc-layout", JSON.stringify({ leftPct, editorPct })); } catch { /* storage blocked */ }
+    try { localStorage.setItem("lc-layout-v2", JSON.stringify({ leftPct, editorPct })); } catch { /* storage blocked */ }
   }, [leftPct, editorPct]);
   useEffect(() => {
     const sync = () => setTheme(currentTheme());
@@ -373,8 +373,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
           setLeftPct(clamp(((ev.clientX - r.left) / r.width) * 100, 22, 70));
         } else if (kind === "h" && rightRef.current) {
           const r = rightRef.current.getBoundingClientRect();
-          const barH = (rightRef.current.firstElementChild as HTMLElement | null)?.offsetHeight ?? 0;
-          setEditorPct(clamp(((ev.clientY - r.top - barH - 8) / r.height) * 100, 25, 80));
+          // The editor's share of the right column; the pointer sits on the divider, so subtract half its height.
+          setEditorPct(clamp(((ev.clientY - r.top - 4) / r.height) * 100, 20, 80));
         }
       };
       const up = () => {

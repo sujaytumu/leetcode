@@ -8,7 +8,7 @@ import AccountMenu from "@/components/AccountMenu";
 import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
 import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
-import CommandPalette, { PaletteButton } from "@/components/CommandPalette";
+import CommandPalette from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
   title: "LeetCode Practice", description: "Practice coding problems",
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /></nav>
           {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
-          <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>
+          <div className="nav-end"><ThemeToggle /><AccountMenu /></div>
         </header>
         <PwaRegister />
         <MockBar />
