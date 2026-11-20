@@ -4618,6 +4618,717 @@ PROBLEMS += [
 ]
 
 
+# ================================================================ batch 6: more problems (bits, DP, grids, graphs, strings, trees)
+def b6_single_number_ii(a):
+    ones = twos = 0
+    for x in a:
+        ones = (ones ^ x) & ~twos
+        twos = (twos ^ x) & ~ones
+    return ones if ones < 2**31 else ones - 2**32
+
+
+def b6_integer_break(n):
+    if n <= 3:
+        return n - 1
+    q, r = divmod(n, 3)
+    return 3**q if r == 0 else 3**(q - 1) * 4 if r == 1 else 3**q * 2
+
+
+def b6_coin_change_ii(amount, coins):
+    ways = [1] + [0] * amount
+    for c in coins:
+        for t in range(c, amount + 1):
+            ways[t] += ways[t - c]
+    return ways[amount]
+
+
+def b6_interleave(a, b, c):
+    if len(a) + len(b) != len(c):
+        return False
+    dp = [[False] * (len(b) + 1) for _ in range(len(a) + 1)]
+    dp[0][0] = True
+    for i in range(len(a) + 1):
+        for j in range(len(b) + 1):
+            if i and dp[i - 1][j] and a[i - 1] == c[i + j - 1]:
+                dp[i][j] = True
+            if j and dp[i][j - 1] and b[j - 1] == c[i + j - 1]:
+                dp[i][j] = True
+    return dp[len(a)][len(b)]
+
+
+def b6_wildcard(s, p):
+    dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
+    dp[0][0] = True
+    for j in range(1, len(p) + 1):
+        dp[0][j] = dp[0][j - 1] and p[j - 1] == "*"
+    for i in range(1, len(s) + 1):
+        for j in range(1, len(p) + 1):
+            if p[j - 1] == "*":
+                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]
+            else:
+                dp[i][j] = dp[i - 1][j - 1] and p[j - 1] in ("?", s[i - 1])
+    return dp[len(s)][len(p)]
+
+
+def b6_k_distinct(s, k):
+    cnt, best, l = collections.Counter(), 0, 0
+    for r, ch in enumerate(s):
+        cnt[ch] += 1
+        while len(cnt) > k:
+            cnt[s[l]] -= 1
+            if cnt[s[l]] == 0:
+                del cnt[s[l]]
+            l += 1
+        best = max(best, r - l + 1)
+    return best
+
+
+def b6_contiguous(a):
+    first, bal, best = {0: -1}, 0, 0
+    for i, x in enumerate(a):
+        bal += 1 if x else -1
+        if bal in first:
+            best = max(best, i - first[bal])
+        else:
+            first[bal] = i
+    return best
+
+
+def b6_valid_sudoku(b):
+    seen = set()
+    for i in range(9):
+        for j in range(9):
+            v = b[i][j]
+            if v:
+                for key in (("r", i, v), ("c", j, v), ("b", i // 3, j // 3, v)):
+                    if key in seen:
+                        return False
+                    seen.add(key)
+    return True
+
+
+def b6_life(b):
+    m, n = len(b), len(b[0])
+    out = [[0] * n for _ in range(m)]
+    for i in range(m):
+        for j in range(n):
+            c = sum(b[x][y] for x in range(max(0, i - 1), min(m, i + 2)) for y in range(max(0, j - 1), min(n, j + 2))) - b[i][j]
+            out[i][j] = 1 if c == 3 or (b[i][j] and c == 2) else 0
+    return out
+
+
+def b6_surrounded(b):
+    m, n = len(b), len(b[0])
+    keep, stack = set(), [(i, j) for i in range(m) for j in range(n) if (i in (0, m - 1) or j in (0, n - 1)) and b[i][j] == 1]
+    while stack:
+        i, j = stack.pop()
+        if (i, j) in keep:
+            continue
+        keep.add((i, j))
+        for x, y in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= x < m and 0 <= y < n and b[x][y] == 1 and (x, y) not in keep:
+                stack.append((x, y))
+    return [[1 if (i, j) in keep else 0 for j in range(n)] for i in range(m)]
+
+
+def b6_zero_one(g):
+    m, n = len(g), len(g[0])
+    dist = [[-1] * n for _ in range(m)]
+    q = collections.deque()
+    for i in range(m):
+        for j in range(n):
+            if g[i][j] == 0:
+                dist[i][j] = 0
+                q.append((i, j))
+    while q:
+        i, j = q.popleft()
+        for x, y in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= x < m and 0 <= y < n and dist[x][y] < 0:
+                dist[x][y] = dist[i][j] + 1
+                q.append((x, y))
+    return dist
+
+
+def b6_bipartite(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    color = [-1] * n
+    for s in range(n):
+        if color[s] != -1:
+            continue
+        color[s] = 0
+        q = collections.deque([s])
+        while q:
+            u = q.popleft()
+            for v in adj[u]:
+                if color[v] == -1:
+                    color[v] = 1 - color[u]
+                    q.append(v)
+                elif color[v] == color[u]:
+                    return False
+    return True
+
+
+def b6_cheapest(n, flights, src, dst, k):
+    INF = math.inf
+    dist = [INF] * n
+    dist[src] = 0
+    for _ in range(k + 1):
+        nxt = dist[:]
+        for u, v, w in flights:
+            if dist[u] + w < nxt[v]:
+                nxt[v] = dist[u] + w
+        dist = nxt
+    return -1 if dist[dst] == INF else dist[dst]
+
+
+def b6_min_effort(h):
+    m, n = len(h), len(h[0])
+    best = [[math.inf] * n for _ in range(m)]
+    best[0][0] = 0
+    heap = [(0, 0, 0)]
+    while heap:
+        d, i, j = heapq.heappop(heap)
+        if (i, j) == (m - 1, n - 1):
+            return d
+        if d > best[i][j]:
+            continue
+        for x, y in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= x < m and 0 <= y < n:
+                nd = max(d, abs(h[x][y] - h[i][j]))
+                if nd < best[x][y]:
+                    best[x][y] = nd
+                    heapq.heappush(heap, (nd, x, y))
+    return 0
+
+
+def b6_swim(g):
+    n = len(g)
+    best = [[math.inf] * n for _ in range(n)]
+    best[0][0] = g[0][0]
+    heap = [(g[0][0], 0, 0)]
+    while heap:
+        d, i, j = heapq.heappop(heap)
+        if (i, j) == (n - 1, n - 1):
+            return d
+        if d > best[i][j]:
+            continue
+        for x, y in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+            if 0 <= x < n and 0 <= y < n:
+                nd = max(d, g[x][y])
+                if nd < best[x][y]:
+                    best[x][y] = nd
+                    heapq.heappush(heap, (nd, x, y))
+    return 0
+
+
+def b6_max_rectangle(mat):
+    n = len(mat[0])
+    heights, best = [0] * n, 0
+    for row in mat:
+        heights = [h + 1 if v else 0 for h, v in zip(heights, row)]
+        st = []
+        for i, h in enumerate(heights + [0]):
+            start = i
+            while st and st[-1][1] >= h:
+                idx, hh = st.pop()
+                best = max(best, hh * (i - idx))
+                start = idx
+            st.append((start, h))
+    return best
+
+
+def b6_circular(a):
+    total, cur_max, cur_min, best_max, best_min = 0, 0, 0, a[0], a[0]
+    for x in a:
+        cur_max = max(cur_max + x, x)
+        best_max = max(best_max, cur_max)
+        cur_min = min(cur_min + x, x)
+        best_min = min(best_min, cur_min)
+        total += x
+    return best_max if best_max < 0 else max(best_max, total - best_min)
+
+
+def b6_zigzag(t):
+    out = b5_level_order(t)
+    return [row if i % 2 == 0 else row[::-1] for i, row in enumerate(out)]
+
+
+def b6_count_nodes(t): return sum(1 for x in t if x is not None)
+
+
+def b6_min_window_len(s, t):
+    need = collections.Counter(t)
+    missing, best, l = len(t), math.inf, 0
+    for r, ch in enumerate(s):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while need[s[l]] < 0:
+                need[s[l]] += 1
+                l += 1
+            best = min(best, r - l + 1)
+            need[s[l]] += 1
+            missing += 1
+            l += 1
+    return 0 if best == math.inf else best
+
+
+def b6_palin2(s):
+    def pal(l, r):
+        while l < r:
+            if s[l] != s[r]:
+                return False
+            l += 1
+            r -= 1
+        return True
+    l, r = 0, len(s) - 1
+    while l < r:
+        if s[l] != s[r]:
+            return pal(l + 1, r) or pal(l, r - 1)
+        l += 1
+        r -= 1
+    return True
+
+
+def b6_isomorphic(s, t):
+    a, b = {}, {}
+    for x, y in zip(s, t):
+        if a.setdefault(x, y) != y or b.setdefault(y, x) != x:
+            return False
+    return True
+
+
+def b6_first_unique(s):
+    c = collections.Counter(s)
+    return next((i for i, ch in enumerate(s) if c[ch] == 1), -1)
+
+
+def b6_repeated(s): return (s + s)[1:-1].find(s) != -1
+
+
+def b6_min_add_paren(s):
+    open_, add = 0, 0
+    for ch in s:
+        if ch == "(":
+            open_ += 1
+        elif open_:
+            open_ -= 1
+        else:
+            add += 1
+    return add + open_
+
+
+def b6_town_judge(n, trust):
+    score = [0] * (n + 1)
+    for a, b in trust:
+        score[a] -= 1
+        score[b] += 1
+    return next((i for i in range(1, n + 1) if score[i] == n - 1), -1)
+
+
+def b6_four_sum_count(a, target):
+    a, res = sorted(a), set()
+    for i in range(len(a)):
+        for j in range(i + 1, len(a)):
+            l, r = j + 1, len(a) - 1
+            while l < r:
+                s = a[i] + a[j] + a[l] + a[r]
+                if s == target:
+                    res.add((a[i], a[j], a[l], a[r]))
+                    l += 1
+                    r -= 1
+                elif s < target:
+                    l += 1
+                else:
+                    r -= 1
+    return len(res)
+
+
+def b6_kth_matrix(m, k): return sorted(v for r in m for v in r)[k - 1]
+
+
+def b6_merge_sorted(a, m, b, n): return sorted(a[:m] + b[:n])
+
+
+def b6_sum_two(a, b): return a + b
+
+
+def b6_grid(m, n, p=0.5): return [[1 if rng.random() < p else 0 for _ in range(n)] for _ in range(m)]
+
+
+def b6_c_single_ii():
+    cases = [[2, 2, 3, 2], [0, 1, 0, 1, 0, 1, 99], [-2, -2, 1, -2], [7], [5, 5, 5, 9]]
+    for n in (4, 10, 31, 100, 300):
+        vals = rng.sample(range(-10**6, 10**6), n // 3 + 1)
+        arr = [v for v in vals[1:] for _ in range(3)] + [vals[0]]
+        rng.shuffle(arr)
+        cases.append(arr)
+    return cases
+
+
+def b6_c_integer_break(): return [2, 10, 3, 4, 5, 6, 7, 8, 9, 11, 25, 40, 58]
+
+
+def b6_c_coin_ii():
+    cases = [(5, [1, 2, 5]), (3, [2]), (10, [10]), (0, [1]), (4, [1, 2, 3])]
+    for n, amt in ((3, 50), (4, 120), (5, 300), (6, 500), (4, 1000)):
+        cases.append((amt, rng.sample(range(1, 60), n)))
+    return cases
+
+
+def b6_c_interleave():
+    cases = [("aabcc", "dbbca", "aadbbcbcac"), ("aabcc", "dbbca", "aadbbbaccc"), ("", "", ""), ("a", "", "a"), ("ab", "cd", "acbd"), ("ab", "cd", "adbc")]
+    cases = [c for c in cases if all(c)]  # inputs are single lines, so keep every string non-empty
+    for n, m in ((3, 3), (5, 4), (8, 8), (12, 10), (20, 20)):
+        a = "".join(rng.choices("ab", k=n))
+        b = "".join(rng.choices("ab", k=m))
+        merged, i, j = [], 0, 0
+        while i < n or j < m:
+            if j >= m or (i < n and rng.random() < 0.5):
+                merged.append(a[i])
+                i += 1
+            else:
+                merged.append(b[j])
+                j += 1
+        c = "".join(merged)
+        cases.append((a, b, c))
+        t = list(c)
+        p = rng.randrange(len(t))
+        t[p] = "b" if t[p] == "a" else "a"
+        cases.append((a, b, "".join(t)))
+    return cases
+
+
+def b6_c_wildcard():
+    cases = [("aa", "a"), ("aa", "*"), ("cb", "?a"), ("adceb", "*a*b"), ("acdcb", "a*c?b"), ("a", "?"), ("abc", "a?c"), ("abc", "*")]
+    for _ in range(8):
+        s = "".join(rng.choices("abc", k=rng.randint(1, 10)))
+        p = "".join(rng.choice("abc?*") if rng.random() < 0.8 else rng.choice("?*") for _ in range(rng.randint(1, 7)))
+        cases.append((s, p))
+        cases.append((s, "".join(c if rng.random() < 0.6 else rng.choice("?*") for c in s)))
+    return cases
+
+
+def b6_c_k_distinct():
+    cases = [("eceba", 2), ("aa", 1), ("a", 3), ("abcabc", 2), ("abaccc", 2)]
+    for n, k in ((8, 2), (15, 3), (40, 2), (100, 4), (300, 5)):
+        cases.append(("".join(rng.choices("abcdefgh", k=n)), k))
+    return cases
+
+
+def b6_c_contiguous():
+    return [[0, 1], [0, 1, 0], [0], [1, 1, 1], [0, 0, 1, 0, 0, 0, 1, 1]] + [[rng.randint(0, 1) for _ in range(n)] for n in (6, 15, 60, 300, 1000)]
+
+
+def b6_valid_board(blank):
+    base = [[(3 * (r % 3) + r // 3 + c) % 9 + 1 for c in range(9)] for r in range(9)]
+    digits = list(range(1, 10))
+    rng.shuffle(digits)
+    rows = [r for g in rng.sample(range(3), 3) for r in rng.sample(range(g * 3, g * 3 + 3), 3)]
+    cols = [c for g in rng.sample(range(3), 3) for c in rng.sample(range(g * 3, g * 3 + 3), 3)]
+    b = [[digits[base[r][c] - 1] for c in cols] for r in rows]
+    for _ in range(blank):
+        b[rng.randrange(9)][rng.randrange(9)] = 0
+    return b
+
+
+def b6_c_sudoku():
+    cases = []
+    for blank in (50, 30, 60):
+        cases.append(b6_valid_board(blank))
+    for blank in (45, 20, 55, 35):
+        b = b6_valid_board(blank)
+        filled = [(i, j) for i in range(9) for j in range(9) if b[i][j]]
+        i, j = rng.choice(filled)
+        i2, j2 = rng.choice([(x, y) for x, y in filled if (x, y) != (i, j) and (x == i or y == j or (x // 3, y // 3) == (i // 3, j // 3))] or [(i, j)])
+        b[i2][j2] = b[i][j]
+        cases.append(b)
+        cases.append(b6_valid_board(blank))
+    return cases
+
+
+def b6_c_life():
+    return [[[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]], [[1, 1], [1, 0]], [[1]], [[0, 0], [0, 0]]] + [b6_grid(m, n) for m, n in ((4, 4), (5, 6), (8, 8), (10, 6), (12, 12))]
+
+
+def b6_c_surrounded():
+    return [[[1, 1, 1, 1], [1, 0, 0, 1], [1, 1, 0, 1], [1, 0, 1, 1]], [[0]], [[1]], [[1, 1, 1], [1, 1, 1], [1, 1, 1]]] + \
+        [b6_grid(m, n, 0.6) for m, n in ((4, 4), (5, 7), (8, 8), (10, 10), (12, 6))]
+
+
+def b6_c_01():
+    cases = [[[0, 0, 0], [0, 1, 0], [0, 0, 0]], [[0, 0, 0], [0, 1, 0], [1, 1, 1]], [[0]], [[1, 0]]]
+    for m, n in ((4, 4), (5, 7), (8, 8), (10, 10), (12, 6)):
+        g = b6_grid(m, n, 0.8)
+        g[rng.randrange(m)][rng.randrange(n)] = 0
+        cases.append(g)
+    return cases
+
+
+def b6_c_bipartite():
+    cases = [(4, [[0, 1], [0, 2], [0, 3], [1, 2], [2, 3]]), (4, [[0, 2], [0, 3], [1, 2], [1, 3]]), (2, [[0, 1]]), (3, [[0, 1], [1, 2], [2, 0]])]
+    for n, m in ((6, 6), (8, 7), (12, 10), (20, 22), (40, 45)):
+        if rng.random() < 0.5:  # bipartite by construction
+            side = [rng.randint(0, 1) for _ in range(n)]
+            pairs = [[u, v] for u in range(n) for v in range(u + 1, n) if side[u] != side[v]]
+            cases.append((n, rng.sample(pairs, min(len(pairs), m)) or [[0, 1]]))
+        else:
+            pairs = [[u, v] for u in range(n) for v in range(u + 1, n)]
+            cases.append((n, rng.sample(pairs, m)))
+    return cases
+
+
+def b6_c_cheapest():
+    cases = [(4, [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]], 0, 3, 1),
+             (3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 1), (3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 0), (2, [[0, 1, 5]], 1, 0, 3)]
+    for n, m in ((5, 9), (8, 16), (12, 30), (20, 60), (40, 120)):
+        fl = [[rng.randrange(n), rng.randrange(n), rng.randint(1, 100)] for _ in range(m)]
+        fl = [f for f in fl if f[0] != f[1]]
+        cases.append((n, fl, rng.randrange(n), rng.randrange(n), rng.randint(0, 4)))
+    return cases
+
+
+def b6_c_effort():
+    cases = [[[1, 2, 2], [3, 8, 2], [5, 3, 5]], [[1, 2, 3], [3, 8, 4], [5, 3, 5]], [[1]], [[1, 10, 6, 7, 9, 10, 4, 9]]]
+    for m, n in ((3, 3), (4, 6), (6, 6), (10, 10), (15, 12)):
+        cases.append(b5_matrix(m, n, 1, 100))
+    return cases
+
+
+def b6_c_swim():
+    cases = [[[0, 2], [1, 3]], [[0, 1, 2, 3, 4], [24, 23, 22, 21, 5], [12, 13, 14, 15, 16], [11, 17, 18, 19, 20], [10, 9, 8, 7, 6]], [[0]]]
+    for n in (3, 4, 6, 8, 12, 20):
+        vals = list(range(n * n))
+        rng.shuffle(vals)
+        cases.append([vals[i * n:(i + 1) * n] for i in range(n)])
+    return cases
+
+
+def b6_c_max_rect():
+    return [[[1, 0, 1, 0, 0], [1, 0, 1, 1, 1], [1, 1, 1, 1, 1], [1, 0, 0, 1, 0]], [[0]], [[1]], [[1, 1], [1, 1]]] + \
+        [b6_grid(m, n, 0.75) for m, n in ((4, 4), (5, 8), (8, 8), (10, 12), (16, 10))]
+
+
+def b6_c_circular():
+    return [[1, -2, 3, -2], [5, -3, 5], [-3, -2, -3], [7], [-1], [3, -1, 2, -1]] + [rand_arr(n, -30, 30) for n in (6, 15, 60, 300, 1000)]
+
+
+def b6_c_zigzag():
+    return [[3, 9, 20, None, None, 15, 7], [1], [], [1, 2, 3, 4, None, None, 5], [1, 2, 3, 4, 5, 6, 7]] + [rand_tree(m) for m in (6, 14, 30, 70, 100)]
+
+
+def b6_c_count_nodes():
+    return [[1, 2, 3, 4, 5, 6], [], [1], [1, 2], [1, 2, 3]] + [rand_tree(m) for m in (6, 14, 30, 70, 100)]
+
+
+def b6_c_min_window():
+    cases = [("ADOBECODEBANC", "ABC"), ("a", "a"), ("a", "aa"), ("abc", "d"), ("aab", "ab")]
+    for n, m in ((10, 3), (20, 4), (60, 5), (150, 6), (300, 8)):
+        s = "".join(rng.choices("ABCDEF", k=n))
+        t = "".join(rng.sample(s, min(m, n)))
+        cases.append((s, t))
+    return cases
+
+
+def b6_c_palin2():
+    cases = ["aba", "abca", "abc", "a", "ab", "aa", "deeee", "cupuufxoohdfpgjdmysgvhmvffcnqxjjxqncffvmhvgsymdjgpfdhooxfuupuc"]
+    for n in (6, 12, 30, 100):
+        half = "".join(rng.choices("abc", k=n // 2))
+        s = half + half[::-1]
+        t = list(s)
+        t[rng.randrange(len(t))] = rng.choice("abc")
+        cases.append("".join(t))
+        s2 = list(s)
+        s2.insert(rng.randrange(len(s2)), rng.choice("abc"))
+        cases.append("".join(s2))
+    return cases
+
+
+def b6_c_isomorphic():
+    cases = [("egg", "add"), ("foo", "bar"), ("paper", "title"), ("ab", "aa"), ("a", "b"), ("badc", "baba")]
+    for n in (6, 12, 30, 100):
+        s = "".join(rng.choices("abcdefg", k=n))
+        mp = dict(zip("abcdefg", rng.sample("pqrstuv", 7)))
+        t = "".join(mp[c] for c in s)
+        cases.append((s, t))
+        t2 = list(t)
+        t2[rng.randrange(n)] = rng.choice("pqrstuv")
+        cases.append((s, "".join(t2)))
+    return cases
+
+
+def b6_c_first_unique():
+    return ["leetcode", "loveleetcode", "aabb", "z", "abcabc", "aadadaad"] + ["".join(rng.choices("abcdef", k=n)) for n in (8, 20, 60)] + ["".join(rng.choices("abcdefghij", k=300))]
+
+
+def b6_c_repeated():
+    cases = ["abab", "aba", "abcabcabcabc", "a", "aa", "ab", "abaababaab"]
+    for n in (2, 3, 5, 12):
+        unit = "".join(rng.choices("ab", k=n))
+        cases.append(unit * rng.randint(2, 6))
+        cases.append("".join(rng.choices("ab", k=n * 3)))
+    return cases
+
+
+def b6_c_min_add():
+    return ["())", "(((", "()", ")(", "()))((", "()()"] + ["".join(rng.choices("()", k=n)) for n in (6, 12, 30, 100, 300)]
+
+
+def b6_c_judge():
+    cases = [(2, [[1, 2]]), (3, [[1, 3], [2, 3]]), (3, [[1, 3], [2, 3], [3, 1]]), (4, [[1, 3], [1, 4], [2, 3], [2, 4], [4, 3]])]
+    for n in (5, 10, 30, 100):
+        j = rng.randint(1, n)
+        trust = [[i, j] for i in range(1, n + 1) if i != j]
+        extra = [[a, b] for a in range(1, n + 1) for b in range(1, n + 1) if a != b and a != j and b != j and rng.random() < 0.05]
+        trust += extra
+        if rng.random() < 0.4:
+            trust = [t for t in trust if t != trust[0]]
+        if not trust:
+            trust = [[1, 2]]
+        rng.shuffle(trust)
+        cases.append((n, trust))
+    return cases
+
+
+def b6_c_four_sum():
+    cases = [([1, 0, -1, 0, -2, 2], 0), ([2, 2, 2, 2, 2], 8), ([0, 0, 0, 0], 0), ([1, 2, 3, 4], 100)]
+    for n in (6, 10, 20, 40, 80):
+        a = rand_arr(n, -10, 10)
+        cases.append((a, rng.randint(-10, 10)))
+    return cases
+
+
+def b6_c_kth_matrix():
+    cases = [([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8), ([[-5]], 1), ([[1, 2], [1, 3]], 2)]
+    for n in (3, 5, 8, 12, 20):
+        rows = [sorted(rng.randint(-100, 100) for _ in range(n)) for _ in range(n)]
+        cols = [list(c) for c in zip(*rows)]
+        cols = [sorted(c) for c in cols]
+        mat = [list(r) for r in zip(*cols)]
+        mat = [sorted(r) for r in mat]
+        # sort rows then columns repeatedly until stable so both rows and columns are non-decreasing
+        for _ in range(n):
+            mat = [sorted(r) for r in mat]
+            mat = [list(r) for r in zip(*[sorted(c) for c in zip(*mat)])]
+        cases.append((mat, rng.randint(1, n * n)))
+    return cases
+
+
+def b6_c_merge_sorted():
+    cases = [([1, 2, 3, 0, 0, 0], 3, [2, 5, 6], 3), ([1], 1, [], 0), ([0], 0, [1], 1), ([4, 5, 6, 0, 0, 0], 3, [1, 2, 3], 3)]
+    for m, n in ((3, 4), (8, 8), (20, 5), (50, 50)):
+        a = sorted(rand_arr(m, -100, 100)) + [0] * n
+        cases.append((a, m, sorted(rand_arr(n, -100, 100)), n))
+    return [c for c in cases if c[3] > 0]
+
+
+def b6_c_sum_two():
+    return [(1, 2), (-2, 3), (0, 0), (-1000, 1000), (1000, 1000), (-1000, -1000), (-5, -7)] + [(rng.randint(-1000, 1000), rng.randint(-1000, 1000)) for _ in range(4)]
+
+
+PROBLEMS += [
+    mk("single-number-ii", "Single Number II", "MEDIUM", ["array", "bit-manipulation"], [("nums", "int[]")], "int", b6_single_number_ii, b6_c_single_ii(),
+       "Every element of `nums` appears exactly three times except one, which appears once. Return that single element using linear time and constant extra space.",
+       ARR_IN, "The element that appears once.", ["`1 <= n <= 300`", "`-2^31 <= nums[i] <= 2^31 - 1`"]),
+    mk("integer-break", "Integer Break", "MEDIUM", ["math", "dynamic-programming"], [("n", "int")], "int", b6_integer_break, b6_c_integer_break(),
+       "Break `n` into the sum of at least two positive integers and return the largest product you can get from those integers.", "A single integer `n`.",
+       "The maximum product.", ["`2 <= n <= 58`"]),
+    mk("coin-change-ii", "Coin Change II", "MEDIUM", ["array", "dynamic-programming"], [("amount", "int"), ("coins", "int[]")], "int", b6_coin_change_ii, b6_c_coin_ii(),
+       "Return the number of combinations of the given coins (unlimited supply of each, order does not matter) that make up `amount`.",
+       "Line 1: `amount`.\nLine 2: `n`.\nLine 3: the `n` coin values.", "The number of combinations.",
+       ["`1 <= n <= 6`", "`1 <= coins[i] <= 60`, all distinct", "`0 <= amount <= 1000`", "The answer fits in a 32-bit integer"]),
+    mk("interleaving-string", "Interleaving String", "HARD", ["string", "dynamic-programming"], [("s1", "str"), ("s2", "str"), ("s3", "str")], "bool", b6_interleave, b6_c_interleave(),
+       "Return `true` if `s3` is formed by interleaving `s1` and `s2`: both strings are split into pieces, joined alternately, and the relative order of characters within each string is kept.",
+       "Line 1: `s1`.\nLine 2: `s2`.\nLine 3: `s3`.", "`true` or `false`.", ["`1 <= s1.length, s2.length <= 20`", "`1 <= s3.length <= 40`", "Lowercase English letters"]),
+    mk("wildcard-matching", "Wildcard Matching", "HARD", ["string", "dynamic-programming"], [("s", "str"), ("p", "str")], "bool", b6_wildcard, b6_c_wildcard(),
+       "Match the **entire** string `s` against pattern `p`, where `?` matches any single character and `*` matches any sequence of characters (including the empty one).",
+       "Line 1: `s`.\nLine 2: `p`.", "`true` or `false`.", ["`1 <= s.length, p.length <= 20`", "`s` has lowercase letters", "`p` has lowercase letters, `?` and `*`"]),
+    mk("longest-substring-with-at-most-k-distinct-characters", "Longest Substring with At Most K Distinct Characters", "MEDIUM", ["string", "sliding-window", "hash-table"],
+       [("s", "str"), ("k", "int")], "int", b6_k_distinct, b6_c_k_distinct(),
+       "Return the length of the longest substring of `s` that contains at most `k` distinct characters.", "Line 1: `s`.\nLine 2: `k`.", "The length.",
+       ["`1 <= s.length <= 300`", "`1 <= k <= 20`", "Lowercase English letters"]),
+    mk("contiguous-array", "Contiguous Array", "MEDIUM", ["array", "hash-table"], [("nums", "int[]")], "int", b6_contiguous, b6_c_contiguous(),
+       "Given a binary array, return the maximum length of a contiguous subarray with an equal number of `0` and `1`.", ARR_IN, "The maximum length (`0` if none).",
+       ["`1 <= n <= 1000`", "`nums[i]` is `0` or `1`"]),
+    mk("valid-sudoku", "Valid Sudoku", "MEDIUM", ["matrix", "hash-table"], [("board", "int[][]")], "bool", b6_valid_sudoku, b6_c_sudoku(),
+       "Determine whether a partially filled `9 x 9` Sudoku board is valid: digits `1-9` must not repeat in any row, column or `3 x 3` box. Empty cells are `0`. The board does not need to be solvable.",
+       "Line 1: `9`.\nNext 9 lines: the 9 cells of each row, space separated.", "`true` or `false`.", ["`board.length == 9` and every row has 9 cells", "`0 <= board[i][j] <= 9`"]),
+    mk("game-of-life", "Game of Life", "MEDIUM", ["matrix", "array"], [("board", "int[][]")], "int[][]", b6_life, b6_c_life(),
+       "Apply one step of Conway's Game of Life to the board (`1` live, `0` dead; neighbours are the 8 surrounding cells, outside the board counts as dead). A live cell survives with 2 or 3 live neighbours, a dead cell with exactly 3 becomes alive, and everything else is dead next step. All cells update at once.",
+       MAT_IN, MAT_OUT, ["`1 <= m, n <= 12`", "`board[i][j]` is `0` or `1`"]),
+    mk("surrounded-regions", "Surrounded Regions", "MEDIUM", ["matrix", "dfs", "bfs", "graph"], [("board", "int[][]")], "int[][]", b6_surrounded, b6_c_surrounded(),
+       "The board holds `1` (O) and `0` (X). Capture every region of `1`s that is fully surrounded by `0`s: flip all its cells to `0`. A region touching the border (directly or through connected `1`s) is never captured. Four-directional connectivity.",
+       MAT_IN, MAT_OUT, ["`1 <= m, n <= 12`", "`board[i][j]` is `0` or `1`"]),
+    mk("01-matrix", "01 Matrix", "MEDIUM", ["matrix", "bfs", "graph"], [("mat", "int[][]")], "int[][]", b6_zero_one, b6_c_01(),
+       "For every cell return the distance to the nearest `0` (distance between adjacent cells is `1`, four directions). The matrix has at least one `0`.",
+       MAT_IN, MAT_OUT, ["`1 <= m, n <= 12`", "`mat[i][j]` is `0` or `1`", "At least one `0` exists"]),
+    mk("is-graph-bipartite", "Is Graph Bipartite?", "MEDIUM", ["graph", "bfs", "dfs"], [("n", "int"), ("edges", "int[][]")], "bool", b6_bipartite, b6_c_bipartite(),
+       "An undirected graph with nodes `0..n-1` is bipartite if its nodes can be split into two sets so that every edge joins nodes from different sets. Return whether it is. The graph may be disconnected.",
+       "Line 1: `n`.\nLine 2: `m`, the number of edges.\nNext `m` lines: `u v`.", "`true` or `false`.", ["`2 <= n <= 40`", "`1 <= m <= 100`", "No self-loops or repeated edges"]),
+    mk("cheapest-flights-within-k-stops", "Cheapest Flights Within K Stops", "MEDIUM", ["graph", "dynamic-programming", "heap"],
+       [("n", "int"), ("flights", "int[][]"), ("src", "int"), ("dst", "int"), ("k", "int")], "int", b6_cheapest, b6_c_cheapest(),
+       "There are `n` cities and directed flights `[from, to, price]`. Return the cheapest price from `src` to `dst` using **at most `k` stops** (so at most `k + 1` flights), or `-1` if impossible.",
+       "Line 1: `n`.\nLine 2: `m`, the number of flights.\nNext `m` lines: `from to price`.\nThen `src`, `dst` and `k`, one per line.", "The cheapest price, or `-1`.",
+       ["`1 <= n <= 40`", "`1 <= price <= 100`", "`0 <= k <= 4`"]),
+    mk("path-with-minimum-effort", "Path With Minimum Effort", "MEDIUM", ["matrix", "graph", "heap", "binary-search"], [("heights", "int[][]")], "int", b6_min_effort, b6_c_effort(),
+       "Travel from the top-left to the bottom-right cell moving up, down, left or right. The effort of a route is the largest absolute height difference between two consecutive cells on it. Return the minimum effort.",
+       MAT_IN, "The minimum effort.", ["`1 <= m, n <= 15`", "`1 <= heights[i][j] <= 100`"]),
+    mk("swim-in-rising-water", "Swim in Rising Water", "HARD", ["matrix", "graph", "heap", "binary-search"], [("grid", "int[][]")], "int", b6_swim, b6_c_swim(),
+       "In an `n x n` grid of distinct elevations, at time `t` the water covers every cell with elevation at most `t`, and you may swim between adjacent cells that are both covered. Return the earliest time you can reach the bottom-right cell from the top-left.",
+       MAT_IN, "The least time.", ["`1 <= n <= 20`", "Values are a permutation of `0..n*n-1`"]),
+    mk("maximal-rectangle", "Maximal Rectangle", "HARD", ["matrix", "dynamic-programming", "stack", "monotonic-stack"], [("matrix", "int[][]")], "int", b6_max_rectangle, b6_c_max_rect(),
+       "In a binary matrix, find the largest rectangle containing only `1`s and return its area.", MAT_IN, "The area.", ["`1 <= m, n <= 16`", "`matrix[i][j]` is `0` or `1`"]),
+    mk("maximum-sum-circular-subarray", "Maximum Sum Circular Subarray", "MEDIUM", ["array", "dynamic-programming"], [("nums", "int[]")], "int", b6_circular, b6_c_circular(),
+       "The array is circular (the end connects back to the start). Return the maximum sum of a non-empty subarray, where a subarray may wrap around but uses each element at most once.",
+       ARR_IN, "The maximum sum.", ["`1 <= n <= 1000`", "`-30000 <= nums[i] <= 30000`"]),
+    mk("binary-tree-zigzag-level-order-traversal", "Binary Tree Zigzag Level Order Traversal", "MEDIUM", ["tree", "bfs"], [("root", "tree")], "int[][]", b6_zigzag, b6_c_zigzag(),
+       "Return the level order traversal, but alternate direction: the first level left to right, the next right to left, and so on.", TREE_IN,
+       "One line per level (a blank line for the empty tree).", [LC, "`-20 <= val <= 50`"]),
+    mk("count-complete-tree-nodes", "Count Complete Tree Nodes", "EASY", ["tree", "binary-search", "dfs"], [("root", "tree")], "int", b6_count_nodes, b6_c_count_nodes(),
+       "Return the number of nodes in the tree. (For a complete tree there is an `O(log^2 n)` solution; any tree is accepted here.)", TREE_IN, "The number of nodes.", [LC, VAL]),
+    mk("minimum-window-substring-length", "Minimum Window Substring (Length)", "HARD", ["string", "sliding-window", "hash-table"], [("s", "str"), ("t", "str")], "int", b6_min_window_len, b6_c_min_window(),
+       "Return the length of the smallest substring of `s` that contains every character of `t` (including duplicates), or `0` if there is none.", "Line 1: `s`.\nLine 2: `t`.",
+       "The length, or `0`.", ["`1 <= s.length <= 300`", "`1 <= t.length <= 300`", "Uppercase English letters"]),
+    mk("valid-palindrome-ii", "Valid Palindrome II", "EASY", ["string", "two-pointers"], [("s", "str")], "bool", b6_palin2, b6_c_palin2(),
+       "Return `true` if `s` can become a palindrome after deleting **at most one** character.", "A single line containing `s`.", "`true` or `false`.",
+       ["`1 <= s.length <= 100000`", "Lowercase English letters"]),
+    mk("isomorphic-strings", "Isomorphic Strings", "EASY", ["string", "hash-table"], [("s", "str"), ("t", "str")], "bool", b6_isomorphic, b6_c_isomorphic(),
+       "Two strings are isomorphic if the characters of `s` can be replaced to get `t`, with every occurrence replaced consistently and no two different characters mapping to the same one.",
+       "Line 1: `s`.\nLine 2: `t`.", "`true` or `false`.", ["`1 <= s.length <= 100`", "`s.length == t.length`"]),
+    mk("first-unique-character-in-a-string", "First Unique Character in a String", "EASY", ["string", "hash-table"], [("s", "str")], "int", b6_first_unique, b6_c_first_unique(),
+       "Return the index of the first character that does not repeat anywhere in `s`, or `-1` if there is none.", "A single line containing `s`.", "The index, or `-1`.",
+       ["`1 <= s.length <= 300`", "Lowercase English letters"]),
+    mk("repeated-substring-pattern", "Repeated Substring Pattern", "EASY", ["string"], [("s", "str")], "bool", b6_repeated, b6_c_repeated(),
+       "Return `true` if `s` can be built by repeating one of its substrings two or more times.", "A single line containing `s`.", "`true` or `false`.",
+       ["`1 <= s.length <= 100`", "Lowercase English letters"]),
+    mk("minimum-add-to-make-parentheses-valid", "Minimum Add to Make Parentheses Valid", "MEDIUM", ["string", "stack", "greedy"], [("s", "str")], "int", b6_min_add_paren, b6_c_min_add(),
+       "Return the minimum number of parentheses you must insert (anywhere) to make the string of `(` and `)` valid.", "A single line containing `s`.", "The minimum insertions.",
+       ["`1 <= s.length <= 300`", "`s` has only `(` and `)`"]),
+    mk("find-the-town-judge", "Find the Town Judge", "EASY", ["graph", "array", "hash-table"], [("n", "int"), ("trust", "int[][]")], "int", b6_town_judge, b6_c_judge(),
+       "People are labelled `1..n`. The town judge trusts nobody and is trusted by everybody else. Each row `a b` of `trust` means `a` trusts `b`. Return the judge's label, or `-1`.",
+       "Line 1: `n`.\nLine 2: `m`, the number of trust pairs.\nNext `m` lines: `a b`.", "The judge's label, or `-1`.", ["`2 <= n <= 100`", "`1 <= m <= 10^4`", "All pairs are distinct"]),
+    mk("4sum-count", "4Sum (Count Quadruplets)", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]"), ("target", "int")], "int", b6_four_sum_count, b6_c_four_sum(),
+       "Return how many **distinct** value quadruplets `[a, b, c, d]` (from four different indices) in `nums` add up to `target`. Quadruplets with the same four values count once.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "The number of unique quadruplets.", ["`4 <= n <= 80`", "`-10 <= nums[i], target <= 10`"]),
+    mk("kth-smallest-element-in-a-sorted-matrix", "Kth Smallest Element in a Sorted Matrix", "MEDIUM", ["matrix", "heap", "binary-search"], [("matrix", "int[][]"), ("k", "int")], "int",
+       b6_kth_matrix, b6_c_kth_matrix(),
+       "Every row and every column of the `n x n` matrix is sorted in non-decreasing order. Return the `k`-th smallest element (counting duplicates, 1-indexed).",
+       MAT_IN + "\nLast line: `k`.", "The `k`-th smallest value.", ["`1 <= n <= 20`", "`1 <= k <= n * n`", "`-100 <= matrix[i][j] <= 100`"]),
+    mk("merge-sorted-array", "Merge Sorted Array", "EASY", ["array", "two-pointers", "sorting"], [("nums1", "int[]"), ("m", "int"), ("nums2", "int[]"), ("n", "int")], "int[]",
+       b6_merge_sorted, b6_c_merge_sorted(),
+       "`nums1` has `m` sorted values followed by `n` placeholder zeros, and `nums2` has `n` sorted values. Merge them into one sorted array of length `m + n` and return it (in place from the back is the classic approach).",
+       "Line 1: the length of `nums1` (`m + n`).\nLine 2: `nums1`.\nLine 3: `m`.\nLine 4: the length of `nums2`.\nLine 5: `nums2`.\nLine 6: `n`.",
+       "The merged array, space separated.", ["`1 <= n <= 50`", "`0 <= m <= 50`", "`-100 <= values <= 100`"]),
+    mk("sum-of-two-integers", "Sum of Two Integers", "EASY", ["bit-manipulation", "math"], [("a", "int"), ("b", "int")], "int", b6_sum_two, b6_c_sum_two(),
+       "Return `a + b` **without using the `+` or `-` operators** (use XOR for the sum without carry and AND plus shift for the carry).",
+       "Line 1: `a`.\nLine 2: `b`.", "The sum.", ["`-1000 <= a, b <= 1000`"]),
+]
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []

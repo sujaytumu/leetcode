@@ -60,7 +60,7 @@ database, so it works with zero setup.
 3. Keep `spring.profiles.active=prod` in that file (in Docker or on a host, set the `SPRING_PROFILES_ACTIVE=prod`
    environment variable instead), then run `mvn spring-boot:run` as usual.
 
-Tables are created on first start and the 175 seed problems are inserted. If you use Neon's pooled host (`-pooler`),
+Tables are created on first start and the 205 seed problems are inserted. If you use Neon's pooled host (`-pooler`),
 append `&prepareThreshold=0` to the URL. Never commit `.env`; it is git-ignored.
 
 | Endpoint | Purpose |
@@ -120,7 +120,7 @@ local-only data; skip link, focus ring and per-page tab titles.
 
 Work in progress.
 
-- Backend API, 175 seeded problems (1699 test cases) and backend tests are in place.
+- Backend API, 205 seeded problems (2023 test cases) and backend tests are in place.
 - Frontend, Docker setup and CI are in place.
 
 ### Seed data
