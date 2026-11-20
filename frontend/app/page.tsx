@@ -29,6 +29,8 @@ export default function Home() {
   const [bookmarked, setBookmarked] = useState(false);
   const [page, setPage] = useState(0);
   const [tags, setTags] = useState<string[]>([]);
+  const [counts, setCounts] = useState<Map<string, number>>(new Map());
+  const [allTopics, setAllTopics] = useState(false);
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState("");
@@ -70,6 +72,7 @@ export default function Home() {
 
   useEffect(() => {
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
+    swr<{ tag: string; total: number }[]>("/api/topics", (t) => setCounts(new Map(t.map((x) => [x.tag, x.total]))), () => {}).catch(() => {});
     swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
     swr<Daily | undefined>(`/api/daily?date=${localDate()}`, (d) => setDailyData(d ?? null), () => {}).catch(() => {});
   }, [reload]);
@@ -146,11 +149,14 @@ export default function Home() {
     <>
       <div className="home">
         <div className="home-main">
-          <div className="chips">
-            <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All topics</button>
-            {tags.map((t) => (
-              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>{tagLabel(t)}</button>
+          <div className="chips lcchips">
+            <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All Topics</button>
+            {(allTopics ? tags : [...tags].sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0)).slice(0, 10)).map((t) => (
+              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>
+                {tagLabel(t)}{counts.has(t) && <span className="chipn">{counts.get(t)}</span>}
+              </button>
             ))}
+            {tags.length > 10 && <button type="button" className="chipmore" onClick={() => setAllTopics((v) => !v)}>{allTopics ? "Collapse ▴" : "Expand ▾"}</button>}
           </div>
           <div className="filters">
             <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />

@@ -899,3 +899,8 @@ td { font-size:14px; font-weight:400; }
 .dailybadge[data-earned="true"] { filter:none; opacity:1; background:linear-gradient(135deg,#ffa116,#ffc01e); }
 .dailynums { display:flex; gap:22px; text-align:center; }
 .dailynums b { font-size:22px; }
+
+/* topic chips with counts, like LeetCode's problemset header */
+.lcchips .chipn { margin-left:6px; font-size:11px; background:var(--cell); border-radius:99px; padding:0 6px; color:var(--mute); }
+.lcchips button.on .chipn { background:transparent; color:inherit; }
+.lcchips .chipmore { border-style:dashed; color:var(--mute); }
