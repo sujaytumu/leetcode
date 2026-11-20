@@ -11,6 +11,7 @@ import SolvedCard from "@/components/SolvedCard";
 import Skeleton from "@/components/Skeleton";
 import FreeSpace from "@/components/FreeSpace";
 import { useMeta } from "@/lib/meta";
+import { FILTER_KEY, parseFilters } from "@/lib/listFilters";
 
 const ICON = {
   SOLVED: <span className="st-done" title="Solved" aria-label="Solved">✔</span>,
@@ -40,6 +41,27 @@ export default function Home() {
   const meta = useMeta();
   const [cursor, setCursor] = useState(-1);
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
+  // Come back to the filters and sort you left; a /?tag= link from the Topics page still wins for the topic.
+  const [filtersReady, setFiltersReady] = useState(false);
+  useEffect(() => {
+    try {
+      const f = parseFilters(localStorage.getItem(FILTER_KEY));
+      const fromLink = new URLSearchParams(window.location.search).get("tag");
+      if (f.difficulty !== undefined) setDifficulty(f.difficulty);
+      if (f.status !== undefined) setStatus(f.status);
+      if (f.tag !== undefined && !fromLink) setTag(f.tag);
+      if (f.sort !== undefined) setSort(f.sort);
+      if (f.dir !== undefined) setDir(f.dir);
+      if (f.bookmarked !== undefined) setBookmarked(f.bookmarked);
+    } catch { /* storage blocked: start with defaults */ }
+    setFiltersReady(true);
+  }, []);
+  useEffect(() => {
+    if (!filtersReady) return;
+    try { localStorage.setItem(FILTER_KEY, JSON.stringify({ difficulty, tag, status, sort, dir, bookmarked })); } catch { /* storage blocked */ }
+  }, [filtersReady, difficulty, tag, status, sort, dir, bookmarked]);
+  const anyFilter = !!(q || difficulty || tag || status || sort || bookmarked);
+  const clearFilters = () => { setQ(""); setDifficulty(""); setTag(""); setStatus(""); setSort(""); setDir("asc"); setBookmarked(false); setPage(0); };
   // /?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("tag");
@@ -145,6 +167,7 @@ export default function Home() {
             </select>
             <label className="bar"><input type="checkbox" checked={bookmarked}
               onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
+            {anyFilter && <button type="button" onClick={clearFilters} title="Reset every filter and the sort order">Clear filters</button>}
           </div>
           <table>
             <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>

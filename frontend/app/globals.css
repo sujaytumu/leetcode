@@ -857,3 +857,10 @@ td { font-size:14px; font-weight:400; }
   .lctop button, .lctop .navbtn { padding:4px 8px; min-width:0; }
 }
 @media (max-width:700px) { .lcmaintabs .tabicon { display:none; } .lcmaintabs button { padding-left:8px; padding-right:8px; } }
+
+/* ---- offline notice and install prompt ---- */
+.offline-bar { position:sticky; top:0; z-index:40; padding:6px 16px; text-align:center; font-size:13px; font-weight:500; background:var(--warn-bg); color:var(--med); border-bottom:1px solid var(--line); }
+.install-toast { position:fixed; right:16px; bottom:16px; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:10px; max-width:min(440px, calc(100vw - 32px));
+  padding:12px 14px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.35); font-size:13px; }
+.install-toast span { flex:1 1 220px; }
+@media (max-width:900px) { .install-toast { bottom:calc(76px + env(safe-area-inset-bottom)); left:16px; right:16px; max-width:none; } }

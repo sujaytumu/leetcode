@@ -6,6 +6,7 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import NavLinks from "@/components/NavLinks";
 import AccountMenu from "@/components/AccountMenu";
 import MockBar from "@/components/MockBar";
+import PwaRegister from "@/components/PwaRegister";
 import CommandPalette, { PaletteButton } from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   icons: { icon: "/icon-192.png", apple: "/icon-192.png" },
   appleWebApp: { capable: true, title: "LeetCode", statusBarStyle: "black-translucent" },
 };
-export const viewport: Viewport = { themeColor: "#0f1115", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#1a1a1a", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
           <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>
         </header>
+        <PwaRegister />
         <MockBar />
         <main id="main" tabIndex={-1}>{children}</main>
         <CommandPalette />
