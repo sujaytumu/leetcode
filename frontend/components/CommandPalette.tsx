@@ -12,6 +12,7 @@ const PAGES = [
   { label: "My stats", hint: "Verdicts, languages and when you practise", href: "/stats" },
   { label: "Review queue", hint: "Solved problems due for spaced review", href: "/review" },
   { label: "Practice session", hint: "Random set by topic and difficulty", href: "/practice" },
+  { label: "My notes", hint: "Search the notes you wrote on problems", href: "/notes" },
   { label: "Profile", hint: "Your progress and activity", href: "/profile" },
 ];
 
