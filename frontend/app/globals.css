@@ -1029,3 +1029,16 @@ td { font-size:14px; font-weight:400; }
 .iofmt { margin-top:14px; border-top:1px solid var(--line); padding-top:8px; }
 .iofmt summary { cursor:pointer; color:var(--mute); font-size:13px; }
 .iofmt summary:hover { color:var(--text); }
+
+/* ---- Topics panel: its own boxed area with clear space before the filters and question list ---- */
+.topicpanel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px 6px; margin:4px 0 28px; }
+.topichead { display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; margin-bottom:12px; }
+.topichead .grow { flex:1; }
+.topicsel { font-size:12px; color:var(--easy); }
+.topicsearch { width:170px; height:30px; padding:0 10px; font-size:13px; border-radius:8px; }
+.topicsort { height:30px; font-size:13px; border-radius:8px; }
+.topicclear, .topichead .chipmore { font-size:12px; padding:3px 12px; border-radius:99px; }
+.topicpanel .chips.lcchips { max-height:none; overflow:visible; gap:8px; margin:0 0 10px; }
+.topicpanel .chips.lcchips button { padding:4px 12px; }
+.topicpanel + .filters { margin-top:0; }
+@media (max-width:640px) { .topicpanel { display:none; } }

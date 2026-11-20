@@ -32,6 +32,8 @@ export default function Home() {
   const [tags, setTags] = useState<string[]>([]);
   const [counts, setCounts] = useState<Map<string, number>>(new Map());
   const [allTopics, setAllTopics] = useState(false);
+  const [topicQ, setTopicQ] = useState("");
+  const [topicSort, setTopicSort] = useState<"count" | "az">("count");
   const [sheet, setSheet] = useState(false); // phone filter bottom sheet
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
@@ -145,6 +147,14 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [router]);
 
+  const shownTopics = (() => {
+    const byCount = (a: string, b: string) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0);
+    if (!allTopics) return [...tags].sort(byCount).slice(0, 10);
+    const q = topicQ.trim().toLowerCase();
+    const list = tags.filter((t) => !q || tagLabel(t).toLowerCase().includes(q));
+    return topicSort === "az" ? list.sort((a, b) => tagLabel(a).localeCompare(tagLabel(b))) : list.sort(byCount);
+  })();
+
   const reset = <T,>(set: (v: T) => void) => (v: T) => { setPage(0); set(v); };
 
   return (
@@ -152,15 +162,33 @@ export default function Home() {
       <div className="home">
         <div className="home-main">
           <PlanStrip />
-          <div className="chips lcchips">
-            <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All Topics</button>
-            {(allTopics ? tags : [...tags].sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0)).slice(0, 10)).map((t) => (
-              <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>
-                {tagLabel(t)}{counts.has(t) && <span className="chipn">{counts.get(t)}</span>}
-              </button>
-            ))}
-            {tags.length > 10 && <button type="button" className="chipmore" onClick={() => setAllTopics((v) => !v)}>{allTopics ? "Collapse ▴" : "Expand ▾"}</button>}
-          </div>
+          <section className="topicpanel" aria-label="Topics">
+            <div className="topichead">
+              <b>Topics</b>
+              {tag && <span className="topicsel">Selected: {tagLabel(tag)}</span>}
+              <span className="grow" />
+              {allTopics && (
+                <>
+                  <input className="topicsearch" placeholder="Find a topic…" value={topicQ} onChange={(e) => setTopicQ(e.target.value)} aria-label="Find a topic" />
+                  <select className="topicsort" value={topicSort} onChange={(e) => setTopicSort(e.target.value as "count" | "az")} aria-label="Sort topics">
+                    <option value="count">Most problems</option>
+                    <option value="az">A to Z</option>
+                  </select>
+                </>
+              )}
+              {tag && <button type="button" className="topicclear" onClick={() => reset(setTag)("")}>Clear</button>}
+              {tags.length > 10 && <button type="button" className="chipmore" onClick={() => { setAllTopics((v) => !v); setTopicQ(""); }}>{allTopics ? "Show less ▴" : `Show all ${tags.length} ▾`}</button>}
+            </div>
+            <div className="chips lcchips">
+              <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All Topics</button>
+              {shownTopics.map((t) => (
+                <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>
+                  {tagLabel(t)}{counts.has(t) && <span className="chipn">{counts.get(t)}</span>}
+                </button>
+              ))}
+              {allTopics && topicQ && shownTopics.length === 0 && <span className="mute">No topic matches “{topicQ}”.</span>}
+            </div>
+          </section>
           <div className="filters">
             <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
             <button type="button" className="ftoggle" onClick={() => setSheet(true)} aria-label="Open filters">
