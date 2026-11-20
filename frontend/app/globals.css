@@ -1008,3 +1008,17 @@ td { font-size:14px; font-weight:400; }
   .discuss > .bar > button.primary { flex:1 1 100%; order:5; height:42px; border-radius:10px; font-size:15px; }
   .solfilters input[type="search"] { font-size:16px; height:42px; }
 }
+
+/* Study-plan strip above the problem list (laptop only) */
+.planstrip { display:flex; gap:12px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; }
+.planstrip::-webkit-scrollbar { display:none; }
+.pscard { position:relative; flex:1 1 0; min-width:190px; max-width:260px; display:flex; flex-direction:column; gap:3px; padding:12px 14px; border-radius:12px; color:#fff; text-decoration:none; overflow:hidden; }
+.pscard:hover { filter:brightness(1.08); }
+.pscard b { font-size:15px; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+.pslevel { align-self:flex-start; font-size:11px; padding:1px 8px; border-radius:99px; background:rgba(0,0,0,.35); }
+.psmeta { font-size:12px; opacity:.92; }
+.psbar { height:4px; border-radius:2px; background:rgba(0,0,0,.28); overflow:hidden; margin-top:4px; }
+.psbar i { display:block; height:100%; background:#fff; }
+.psall { align-self:center; flex:none; padding:8px 12px; color:var(--mute); font-size:13px; text-decoration:none; white-space:nowrap; }
+.psall:hover { color:var(--text); }
+@media (max-width:640px) { .planstrip { display:none; } }

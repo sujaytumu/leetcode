@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import PlanStrip from "@/components/PlanStrip";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, Daily, tagLabel, fetchAllProblems, localDate, Page, Progress, ProblemSummary } from "@/lib/api";
@@ -150,6 +151,7 @@ export default function Home() {
     <>
       <div className="home">
         <div className="home-main">
+          <PlanStrip />
           <div className="chips lcchips">
             <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All Topics</button>
             {(allTopics ? tags : [...tags].sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0)).slice(0, 10)).map((t) => (
