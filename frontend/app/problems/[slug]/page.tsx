@@ -66,6 +66,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [error, setError] = useState("");
   const [caseTab, setCaseTab] = useState(0);
   const [tab, setTab] = useState<"desc" | "editorial" | "solutions" | "discuss" | "history" | "notes">("desc");
+  // Deep link from the problem list: /problems/two-sum?tab=solutions
+  useEffect(() => {
+    try {
+      const t = new URLSearchParams(window.location.search).get("tab");
+      if (t === "solutions" || t === "editorial" || t === "discuss") setTab(t);
+    } catch { /* no URL access: stay on Description */ }
+  }, [slug]);
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");

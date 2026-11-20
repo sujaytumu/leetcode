@@ -997,3 +997,6 @@ td { font-size:14px; font-weight:400; }
   .home .sm-acc::before { content:"·"; margin-right:8px; color:var(--mute); }
   .home td { padding:12px 6px; }
 }
+
+.solico { display:inline-grid; place-items:center; color:#4a9cf0; padding:4px; border-radius:6px; }
+.solico:hover { background:var(--hover); color:#79b6f7; }

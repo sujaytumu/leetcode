@@ -185,14 +185,18 @@ export default function Home() {
             </div>
           </div>
           <table>
-            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm">Topics</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
+            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm" style={{ width: 90, textAlign: "center" }}>Solution</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
             <tbody ref={tbodyRef}>
               {data?.items.map((p, i) => (
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                     <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
-                  <td className="hide-sm">{p.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</td>
+                  <td className="hide-sm" style={{ textAlign: "center" }}>
+                    <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>
+                      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                    </Link>
+                  </td>
                   <td className="th-num col-acc mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
                   <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                 </tr>
