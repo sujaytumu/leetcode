@@ -76,6 +76,8 @@ jobs:
       - run: node scripts/verify-answers.js
       - name: Solutions tab code passes when pasted into the editor (C++)
         run: node scripts/verify-paste.mjs --lang cpp
+      - name: Brute-force C++ answers pass when pasted into the editor
+        run: node scripts/verify-paste.mjs --lang cpp --from answers-brute/cpp.json
       - name: solutions.json is up to date
         run: |
           node scripts/build-solutions.js

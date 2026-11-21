@@ -59,3 +59,15 @@ console.log(`wrote ${Object.keys(out).length} problems with answers -> ${path.re
 require("child_process").execFileSync(process.execPath,
   ["--experimental-strip-types", "--disable-warning=ExperimentalWarning", "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", path.join(__dirname, "lc-style-cpp.mjs")],
   { stdio: "inherit" });
+
+// Brute-force versions (verified one by one with scripts/verify-paste.mjs) ride along as `bruteForce`.
+const bruteFile = path.join(__dirname, "..", "answers-brute", "cpp.json");
+if (fs.existsSync(bruteFile)) {
+  const brute = JSON.parse(fs.readFileSync(bruteFile, "utf8"));
+  const outFile = path.join(__dirname, "..", "backend/src/main/resources/seed/solutions.json");
+  const all = JSON.parse(fs.readFileSync(outFile, "utf8"));
+  let n = 0;
+  for (const [slug, v] of Object.entries(brute)) if (all[slug]) { all[slug].bruteForce = { cpp: v.solutions.cpp }; n++; }
+  fs.writeFileSync(outFile, JSON.stringify(all, null, 1) + "\n");
+  console.log(`added brute-force C++ to ${n} problems`);
+}

@@ -1500,3 +1500,4 @@ textarea, input[type="text"], input[type="search"], select { background:color-mi
 @media (min-width:901px) {
   html[data-theme="light"] .lcside a.on, html[data-theme="light"] .lcside .lcside-item.on, html[data-theme="light"] .lcside a[aria-current="page"] { background:color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 }
+.approach-sep { width:1px; height:18px; background:var(--line); margin:0 6px; align-self:center; }
