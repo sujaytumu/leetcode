@@ -86,6 +86,11 @@ function RatingGraph({ points, peak }: { points: Point[]; peak: number }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="ratinggraph" role="img" aria-label={`Rating history, highest ${hi}`}>
       <path d={path} fill="none" stroke="#ffa116" strokeWidth="1.8" strokeLinejoin="round" />
+      {points.map((p, i) => (
+        <circle key={i} cx={x(i)} cy={y(p.rating)} r="3" fill={p.change >= 0 ? "var(--ok)" : "var(--bad)"}>
+          <title>{`${p.title}: ${p.rating} (${p.change >= 0 ? "+" : ""}${p.change}), rank ${p.rank}`}</title>
+        </circle>
+      ))}
       <circle cx={px} cy={py} r="4.5" fill="#fff" />
       <g>
         <rect x={bx} y={py - 31} width={bw} height="22" rx="5" fill="var(--panel)" stroke="var(--line)" />
