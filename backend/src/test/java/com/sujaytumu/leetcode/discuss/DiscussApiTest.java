@@ -108,18 +108,18 @@ class DiscussApiTest {
     void mineListsOnlyMyCommentsNewestFirstWithProblemInfo() throws Exception {
         String me = UUID.randomUUID().toString();
         String other = UUID.randomUUID().toString();
-        long first = addComment("two-sum", me, "Hash map in one pass.", null);
-        addComment("two-sum", other, "Not mine.", null);
-        addComment("valid-parentheses", me, "Stack works.", null);
-        addComment("two-sum", me, "Reply to myself.", first);
+        long first = addComment("climbing-stairs", me, "Hash map in one pass.", null);
+        addComment("climbing-stairs", other, "Not mine.", null);
+        addComment("palindrome-number", me, "Stack works.", null);
+        addComment("climbing-stairs", me, "Reply to myself.", first);
 
         mvc.perform(get("/api/me/comments").header(CLIENT, me))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].body").value("Reply to myself."))
                 .andExpect(jsonPath("$[0].reply").value(true))
-                .andExpect(jsonPath("$[1].slug").value("valid-parentheses"))
-                .andExpect(jsonPath("$[2].problemTitle").value("Two Sum"));
+                .andExpect(jsonPath("$[1].slug").value("palindrome-number"))
+                .andExpect(jsonPath("$[2].problemTitle").value("Climbing Stairs"));
 
         mvc.perform(get("/api/me/comments").header(CLIENT, UUID.randomUUID().toString()))
                 .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
