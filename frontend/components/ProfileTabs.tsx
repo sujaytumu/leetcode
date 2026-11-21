@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api, Profile } from "@/lib/api";
 import type { ListDetail, ListSummary } from "@/lib/lists";
 
-type Tab = "recent" | "list" | "solutions";
+type Tab = "recent" | "list" | "solutions" | "discuss";
 
 function ago(iso: string): string {
   const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
@@ -24,6 +24,7 @@ export default function ProfileTabs({ p, own }: { p: Profile; own: boolean }) {
     { id: "recent", label: "Recent AC" },
     ...(own ? [{ id: "list" as Tab, label: "List" }] : []),
     { id: "solutions", label: "Solutions" },
+    ...(own ? [{ id: "discuss" as Tab, label: "Discuss" }] : []),
   ];
   return (
     <section className="card ptabs">
@@ -46,6 +47,7 @@ export default function ProfileTabs({ p, own }: { p: Profile; own: boolean }) {
         </div>
       )}
       {tab === "list" && own && <Lists />}
+      {tab === "discuss" && own && <MyComments />}
       {tab === "solutions" && (own ? <MySolutions fallbackCount={p.community?.solutions ?? 0} /> : (
         <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>{(p.community?.solutions ?? 0) > 0 ? `${p.community?.solutions} community solution${p.community?.solutions === 1 ? "" : "s"} posted.` : "No community solutions yet."}</p></div>
       ))}
@@ -108,6 +110,32 @@ function MySolutions({ fallbackCount }: { fallbackCount: number }) {
           <span className="prow-title">{r.title}<span className="mute" style={{ marginLeft: 8, fontSize: 12 }}>{r.problemTitle}{r.language ? ` · ${r.language}` : ""}</span></span>
           <span className="grow" />
           <span className="mute prow-when">▲ {r.score} · {ago(r.createdAt)}</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+interface CommentRow { id: number; slug: string; problemTitle: string; body: string; createdAt: string; reply: boolean }
+
+/** The signed-in user's own discussion comments and replies, newest first (LeetCode's profile Discuss tab). */
+function MyComments() {
+  const [rows, setRows] = useState<CommentRow[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    api<CommentRow[]>("/api/me/comments").then(setRows).catch(() => setFailed(true));
+  }, []);
+  const note = (t: string) => <div className="prows"><p className="mute" style={{ padding: "8px 4px" }}>{t}</p></div>;
+  if (failed) return note("Could not load your discussions right now.");
+  if (!rows) return note("Loading…");
+  if (rows.length === 0) return note("No discussions yet. Join one from any problem's Discuss tab.");
+  return (
+    <div className="prows">
+      {rows.map((r) => (
+        <Link key={r.id} href={`/problems/${r.slug}?tab=discuss`} className="prow">
+          <span className="prow-title">{r.body.length > 90 ? r.body.slice(0, 90) + "…" : r.body}<span className="mute" style={{ marginLeft: 8, fontSize: 12 }}>{r.reply ? "Reply on " : ""}{r.problemTitle}</span></span>
+          <span className="grow" />
+          <span className="mute prow-when">{ago(r.createdAt)}</span>
         </Link>
       ))}
     </div>
