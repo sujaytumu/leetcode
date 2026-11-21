@@ -36,6 +36,7 @@ export default function PlansPage() {
 
   return (
     <>
+      <span className="narrowmark" hidden />
       <h2 style={{ marginTop: 0 }}>Study Plan</h2>
       <p className="mute" style={{ marginTop: -4 }}>Follow a structured path, one problem at a time.</p>
       {error && <div className="banner err">{error}</div>}

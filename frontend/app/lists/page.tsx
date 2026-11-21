@@ -74,6 +74,7 @@ export default function ListsPage() {
 
   return (
     <>
+      <span className="narrowmark" hidden />
       <h2 style={{ marginTop: 0 }}>My lists</h2>
       <form onSubmit={create} className="filters" style={{ marginBottom: 14 }}>
         <input className="grow" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Name a new list, e.g. “Revise before interview”" aria-label="New list name" />
