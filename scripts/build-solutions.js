@@ -48,3 +48,8 @@ for (const [slug, byLang] of Object.entries(loadAnswers())) {
 const dest = path.join(root, "backend/src/main/resources/seed/solutions.json");
 fs.writeFileSync(dest, JSON.stringify(out, null, 1) + "\n");
 console.log(`wrote ${Object.keys(out).length} problems with answers -> ${path.relative(root, dest)}`);
+
+// Show C++ the way LeetCode does (class Solution + the real method name); needs Node 22.6+ to load the editor's TS helpers.
+require("child_process").execFileSync(process.execPath,
+  ["--experimental-strip-types", "--disable-warning=ExperimentalWarning", "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", path.join(__dirname, "lc-style-cpp.mjs")],
+  { stdio: "inherit" });
