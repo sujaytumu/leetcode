@@ -24,7 +24,7 @@ class SolutionApiTest {
     void returnsAnswersInSeveralLanguagesWhenPublished() throws Exception {
         mvc.perform(get("/api/problems/two-sum/solution"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.solutions.python").value(containsString("class Solution")))
+                .andExpect(jsonPath("$.solutions.python").value(containsString("def solve")))
                 .andExpect(jsonPath("$.solutions.java").exists())
                 .andExpect(jsonPath("$.solutions.cpp").exists());
     }
