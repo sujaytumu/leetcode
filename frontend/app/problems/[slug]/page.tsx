@@ -123,7 +123,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   // The editor shows only the user's part; the judge gets the full program (hidden shell + user code).
   const parts = useMemo(
-    () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang) : null), [problem, lang]);
+    () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang, { slug: problem.slug, java: problem.starterCode.java }) : null), [problem, lang]);
   const draftKey = (l: Lang) => `lc-draft2:${slug}:${l}`;
   // Notes and code drafts are mirrored to the server so they follow the device sync code.
   const langRef = useRef(lang); langRef.current = lang;
