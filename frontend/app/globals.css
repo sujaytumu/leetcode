@@ -1470,3 +1470,12 @@ tbody tr:hover td { background:var(--hover); }
 .lctabs button.on { border-bottom-width:2px; }
 .pill.chipdiff { background:color-mix(in srgb, currentColor 14%, transparent); border-color:transparent; }
 * { scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+
+/* Laptop problem list: LeetCode's proportions (56px rows, 16px titles, 15px difficulty) */
+@media (min-width:901px) {
+  .home tbody td { height:56px; font-size:14px; }
+  .home tbody tr td:nth-child(2) a { font-size:16px; }
+  .home tbody tr td:last-child { font-size:15px; font-weight:500; }
+  .home tbody td.th-num { font-size:14px; }
+  .home tbody tr td:nth-child(2) a:hover { color:var(--accent); }
+}
