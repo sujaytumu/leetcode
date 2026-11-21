@@ -1306,3 +1306,11 @@ main:has(.workspace) { padding:0 8px 8px; }
   .home tbody td.th-num { font-size:16px; }
 }
 @media (max-width:900px) { .lcside { display:none; } }
+
+/* LeetCode-style testcase editor */
+.caseargs { display:flex; flex-direction:column; gap:14px; margin-top:6px; }
+.caseArg { display:flex; flex-direction:column; gap:6px; }
+.argname { font-size:12px; font-weight:600; color:var(--mute); }
+.argbox { width:100%; box-sizing:border-box; background:var(--lc-strip, var(--pane2, #262626)); border:1px solid transparent; border-radius:8px; padding:10px 12px; color:var(--text); font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; outline:none; }
+.argbox:focus { border-color:var(--accent); }
+.argbox.bad { border-color:#ef4743; }

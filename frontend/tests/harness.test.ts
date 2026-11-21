@@ -70,3 +70,20 @@ test("LeetCode-style `class Solution` code gets a forwarding solve in C++, Java 
   const plain = splitTemplate(two.starterCode.cpp, "cpp")!;
   assert.ok(!composeProgram(plain, plain.stub).includes("Solution()"));
 });
+
+test("buildInput is the inverse of formatInputParts for every sample that formats", async () => {
+  const { buildInput, formatInputParts } = await import("../lib/example.ts");
+  const full = JSON.parse(readFileSync(new URL("../public/problems-snapshot.json", import.meta.url), "utf8")) as (Snap & { samples: { input: string }[] })[];
+  let checked = 0;
+  for (const p of full) {
+    for (const s of p.samples) {
+      const parts = formatInputParts(p.starterCode.python, s.input);
+      if (!parts) continue;
+      const back = buildInput(p.starterCode.python, parts);
+      assert.ok(back !== null, `${p.slug} should rebuild`);
+      assert.deepEqual(formatInputParts(p.starterCode.python, back!), parts, p.slug);
+      checked++;
+    }
+  }
+  assert.ok(checked > 150, `only ${checked} samples checked`);
+});
