@@ -1497,3 +1497,6 @@ a.card:hover, .plan:hover { transform:translateY(-1px); border-color:color-mix(i
 .pane { border-radius:12px; border-color:color-mix(in srgb, var(--line) 80%, transparent); }
 textarea, input[type="text"], input[type="search"], select { background:color-mix(in srgb, var(--cell) 70%, var(--panel)); }
 @media (prefers-reduced-motion:reduce) { .modal { animation:none; } .card, .plan { transition:none; } }
+@media (min-width:901px) {
+  html[data-theme="light"] .lcside a.on, html[data-theme="light"] .lcside .lcside-item.on, html[data-theme="light"] .lcside a[aria-current="page"] { background:color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+}
