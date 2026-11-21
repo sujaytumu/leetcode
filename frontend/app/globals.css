@@ -1527,3 +1527,6 @@ html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; text-renderin
 .modal, .drawer, .acct-pop { box-shadow:0 12px 40px rgba(0,0,0,.35); }
 html[data-theme="light"] .ratingdist .bar { background:#d4d8e0; }
 html[data-theme="light"] .ratingdist .bar.me { background:#ffa116; }
+
+/* Reading pages (ranking, contest, submissions) sit in a centred column on laptop, like LeetCode */
+@media (min-width:901px) { main:has(.narrowmark) { max-width:1120px; } }

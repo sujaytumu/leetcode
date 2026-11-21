@@ -30,6 +30,7 @@ export default function SubmissionsPage() {
 
   return (
     <>
+      <span className="narrowmark" hidden />
       <h2 style={{ marginBottom: 4 }}>My submissions</h2>
       <div className="filters" style={{ margin: "8px 0" }}>
         <select value={verdict} aria-label="Filter by status" onChange={(e) => { setVerdict(e.target.value); setPage(0); }}>

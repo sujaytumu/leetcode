@@ -33,6 +33,7 @@ export default function LeaderboardPage() {
 
   return (
     <>
+      <span className="narrowmark" hidden />
       <h2 style={{ marginBottom: 4 }}>Leaderboard</h2>
       <p className="mute" style={{ marginTop: 0 }}>
         Ranked by points: Easy 10, Medium 20, Hard 40 for each problem you have solved. Set a username on your profile to show a name.

@@ -57,6 +57,7 @@ export default function ContestPage() {
 
   return (
     <>
+      <span className="narrowmark" hidden />
       <h2 style={{ marginBottom: 4 }}>Contest</h2>
       <p className="mute" style={{ marginTop: 0 }}>
         A new contest runs every Sunday for 90 minutes. Solve the four problems on their normal pages; every accepted
