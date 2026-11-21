@@ -1220,3 +1220,31 @@ main:has(.workspace) { padding:0 8px 8px; }
   header.nav .acct-av { width:30px; height:30px; }
   header.nav .nav-end .nav-auth { padding:8px 16px; border-radius:10px; background:var(--cell); color:var(--text); font-size:14px; }
 }
+
+/* ===== Problem page: LeetCode's sizes (laptop) ===== */
+@media (min-width:901px) {
+  :root { --lctop-h:50px; }
+  .lctop button, .lctop .navbtn { height:32px; padding:0 12px; font-size:14px; line-height:1; }
+  .lctop .navbtn { min-width:32px; padding:0 8px; font-size:18px; display:inline-flex; align-items:center; justify-content:center; }
+  .lctabs { min-height:40px; }
+  .lctabs button { height:40px; padding:0 12px; font-size:14px; font-weight:500; line-height:1; }
+  .lctabs button.on { font-weight:500; }
+  .left-body { padding:16px 20px; }
+  .ptitle { font-size:18px; font-weight:500; line-height:1.4; }
+  .pmeta { gap:8px; margin:12px 0 16px; }
+  .pmeta .pill { padding:3px 10px; font-size:12px; }
+  .lcdesc { font-size:14px; line-height:1.5; }
+  .lcdesc .lchead { font-size:14px; font-weight:600; margin:18px 0 6px; }
+  .lcdesc pre.lcbox { font-size:13px; line-height:1.55; }
+  .codehead { height:40px; padding:0 16px; font-size:14px; }
+  .codebar { min-height:36px; padding:0 8px; }
+  .codebar select { font-size:13px; }
+  .codestatus { height:32px; padding:0 16px; align-items:center; font-size:12px; }
+  .console .body { padding:12px 16px; font-size:14px; }
+  .casechips button { height:32px; padding:0 14px; font-size:14px; border-radius:8px; }
+  .iolabel { font-size:12px; margin-top:10px; }
+  .console .body pre { font-size:14px; padding:9px 12px; border-radius:8px; border:0; background:var(--lc-strip); }
+  .consoletext { font-size:14px; padding:9px 12px; border-radius:8px; }
+  .verdict { font-size:20px; font-weight:500; }
+  .vstats { font-size:13px; }
+}
