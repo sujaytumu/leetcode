@@ -21,6 +21,7 @@ const ICON = {
 } as const;
 
 export default function Home() {
+  const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState("");
   const [dir, setDir] = useState("asc");
   const [q, setQ] = useState("");
@@ -189,8 +190,20 @@ export default function Home() {
               {allTopics && topicQ && shownTopics.length === 0 && <span className="mute">No topic matches “{topicQ}”.</span>}
             </div>
           </section>
-          <div className="filters">
+          <div className={`filters${showFilters ? " fopen" : ""}`}>
             <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
+            {/* Phone only (hidden by CSS on larger screens): collapse the filter controls behind one button. */}
+            <button type="button" className="mtoggle" aria-expanded={showFilters} onClick={() => setShowFilters((v) => !v)}>
+              Filters{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length > 0 && <span className="mbadge">{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length}</span>}
+            </button>
+            <select className="msort" aria-label="Sort problems" value={sort ? `${sort}|${dir}` : ""}
+              onChange={(e) => { const [k, d] = e.target.value.split("|"); setSort(k ?? ""); setDir(d ?? "asc"); setPage(0); }}>
+              <option value="">Study order</option>
+              <option value="difficulty|asc">Easiest first</option>
+              <option value="difficulty|desc">Hardest first</option>
+              <option value="acceptance|desc">Most accepted</option>
+              <option value="title|asc">Title A–Z</option>
+            </select>
             <button type="button" className="ftoggle" onClick={() => setSheet(true)} aria-label="Open filters">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg>
               {[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length > 0 && <span className="fcount">{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length}</span>}
