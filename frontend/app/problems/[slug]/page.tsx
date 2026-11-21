@@ -465,13 +465,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 </div>
                 {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>}
                 <ProblemDescription markdown={problem.description} python={problem.starterCode?.python} />
-                {study && study.hints.length > 0 && (
+                {study?.hints?.length ? (
                   <div className="deschints">
                     {study.hints.map((h, i) => (
                       <details key={i}><summary>💡 Hint {i + 1}</summary><p>{h}</p></details>
                     ))}
                   </div>
-                )}
+                ) : null}
                 {problem.acceptance != null && (
                   <div className="statstrip mute">Acceptance Rate <b>{problem.acceptance.toFixed(1)}%</b></div>
                 )}

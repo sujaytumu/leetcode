@@ -28,11 +28,11 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             """)
     List<Object[]> countSolvedByDifficulty(@Param("clientId") UUID clientId, @Param("verdict") Verdict verdict);
 
-    /** Rows of [problemId, total submissions, accepted submissions] across all clients. */
+    /** Rows of [problemId, total submissions, accepted submissions] across all clients. Judge outages (INTERNAL_ERROR) are not the user's attempts, so they are left out. */
     @Query("""
             select s.problemId, count(s), sum(case when s.verdict = :accepted then 1 else 0 end)
             from Submission s
-            where s.problemId in :ids
+            where s.problemId in :ids and s.verdict <> com.sujaytumu.leetcode.submission.Verdict.INTERNAL_ERROR
             group by s.problemId
             """)
     List<Object[]> acceptanceStats(@Param("ids") Collection<Long> ids, @Param("accepted") Verdict accepted);

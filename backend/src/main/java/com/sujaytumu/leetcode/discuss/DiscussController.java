@@ -35,6 +35,11 @@ public class DiscussController {
         return service.list(slug, clientId, sort);
     }
 
+    @GetMapping("/api/me/comments")
+    public List<DiscussService.Mine> mine(@RequestHeader(Headers.CLIENT_ID) UUID clientId) {
+        return service.mine(clientId);
+    }
+
     @PostMapping("/api/problems/{slug}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentView post(

@@ -16,8 +16,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class SolutionService {
 
-    /** {@code solutions} maps a language key (python, java, cpp, javascript) to source code. */
-    public record Answer(String editorial, Map<String, String> solutions) {}
+    /** {@code solutions} maps a language key (python, java, cpp, javascript) to the optimised source code;
+     *  {@code bruteForce} (optional, may be null) maps a language key to the naive version of the same problem. */
+    public record Answer(String editorial, Map<String, String> solutions, Map<String, String> bruteForce) {}
 
     private final Map<String, Answer> answers;
 
