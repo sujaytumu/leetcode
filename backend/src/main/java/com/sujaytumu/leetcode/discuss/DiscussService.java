@@ -28,6 +28,9 @@ public class DiscussService {
     public record CommentView(
             Long id, Long parentId, String author, String body, Instant createdAt, int score, boolean voted, boolean mine) {}
 
+    /** One of the caller's own comments, with the problem it was posted on (for the profile Discuss tab). */
+    public record Mine(Long id, String slug, String problemTitle, String body, Instant createdAt, boolean reply, int score) {}
+
     private final CommentRepository comments;
     private final CommentVoteRepository votes;
     private final ProblemRepository problems;
@@ -148,6 +151,20 @@ public class DiscussService {
             return "user-" + clientId.toString().substring(0, 4);
         }
         return name.length() > 60 ? name.substring(0, 60) : name;
+    }
+
+    /** The caller's own comments and replies, newest first. */
+    @Transactional(readOnly = true)
+    public List<Mine> mine(UUID clientId) {
+        List<Comment> own = comments.findTop100ByClientIdOrderByIdDesc(clientId);
+        List<Mine> out = new ArrayList<>();
+        for (Comment c : own) {
+            var problem = problems.findById(c.getProblemId());
+            out.add(new Mine(
+                    c.getId(), problem.map(pr -> pr.getSlug()).orElse(""), problem.map(pr -> pr.getTitle()).orElse(""),
+                    c.getBody(), c.getCreatedAt(), c.getParentId() != null, 0));
+        }
+        return out;
     }
 
     private Long requireProblemId(String slug) {
