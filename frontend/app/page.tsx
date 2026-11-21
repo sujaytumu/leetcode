@@ -20,6 +20,7 @@ const ICON = {
 } as const;
 
 export default function Home() {
+  const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState("");
   const [dir, setDir] = useState("asc");
   const [q, setQ] = useState("");
@@ -158,8 +159,20 @@ export default function Home() {
             ))}
             {tags.length > 10 && <button type="button" className="chipmore" onClick={() => setAllTopics((v) => !v)}>{allTopics ? "Collapse ▴" : "Expand ▾"}</button>}
           </div>
-          <div className="filters">
+          <div className={`filters${showFilters ? " fopen" : ""}`}>
             <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
+            {/* Phone only (hidden by CSS on larger screens): collapse the filter controls behind one button. */}
+            <button type="button" className="mtoggle" aria-expanded={showFilters} onClick={() => setShowFilters((v) => !v)}>
+              Filters{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length > 0 && <span className="mbadge">{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length}</span>}
+            </button>
+            <select className="msort" aria-label="Sort problems" value={sort ? `${sort}|${dir}` : ""}
+              onChange={(e) => { const [k, d] = e.target.value.split("|"); setSort(k ?? ""); setDir(d ?? "asc"); setPage(0); }}>
+              <option value="">Study order</option>
+              <option value="difficulty|asc">Easiest first</option>
+              <option value="difficulty|desc">Hardest first</option>
+              <option value="acceptance|desc">Most accepted</option>
+              <option value="title|asc">Title A–Z</option>
+            </select>
             <select value={difficulty} onChange={(e) => reset(setDifficulty)(e.target.value)}>
               <option value="">All difficulties</option>
               {meta?.difficulties.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}

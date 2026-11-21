@@ -8,6 +8,7 @@ import AccountMenu from "@/components/AccountMenu";
 import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
 import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
+import MobileTabBar from "@/components/MobileTabBar";
 import CommandPalette, { PaletteButton } from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   icons: { icon: "/icon-192.png", apple: "/icon-192.png" },
   appleWebApp: { capable: true, title: "LeetCode", statusBarStyle: "black-translucent" },
 };
-export const viewport: Viewport = { themeColor: "#1a1a1a", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#1a1a1a", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PwaRegister />
         <MockBar />
         <main id="main" tabIndex={-1}>{children}</main>
+        <MobileTabBar />
         <CommandPalette />
       </body>
     </html>
