@@ -133,6 +133,7 @@ public class SubmissionService {
             Integer timeMs = execution.timeSeconds() == null ? null : (int) Math.round(execution.timeSeconds() * 1000);
 
             CaseVerdict caseVerdict = evaluate(execution, testCase);
+            String printed = userStdout(execution.stdout());
             boolean ok = caseVerdict.verdict == Verdict.ACCEPTED;
             boolean reveal = testCase.isSample();
             results.add(new CaseResult(
@@ -142,9 +143,10 @@ public class SubmissionService {
                     caseVerdict.verdict,
                     reveal ? testCase.getInput() : null,
                     reveal ? testCase.getExpectedOutput() : null,
-                    reveal ? truncate(execution.stdout(), MAX_OUTPUT_CHARS) : null,
+                    reveal ? truncate(answerOf(execution.stdout()), MAX_OUTPUT_CHARS) : null,
                     reveal || caseVerdict.verdict == Verdict.COMPILE_ERROR ? caseVerdict.error : null,
-                    timeMs));
+                    timeMs,
+                    reveal && !printed.isEmpty() ? truncate(printed, MAX_OUTPUT_CHARS) : null));
 
             if (ok) {
                 passed++;
@@ -200,7 +202,8 @@ public class SubmissionService {
                     default -> "The judge hit an internal error.";
                 };
         CaseResult result = new CaseResult(
-                1, true, ok, verdict, stdin, null, truncate(execution.stdout(), MAX_OUTPUT_CHARS), error, timeMs);
+                1, true, ok, verdict, stdin, null, truncate(answerOf(execution.stdout()), MAX_OUTPUT_CHARS), error, timeMs,
+                userStdout(execution.stdout()).isEmpty() ? null : truncate(userStdout(execution.stdout()), MAX_OUTPUT_CHARS));
         return new RunResponse(verdict, ok ? 1 : 0, 1, timeMs, execution.memoryKb(), message, List.of(result), null);
     }
 
@@ -236,7 +239,7 @@ public class SubmissionService {
 
     private CaseVerdict evaluate(ExecutionResult execution, TestCase testCase) {
         return switch (execution.status()) {
-            case OK -> outputsMatch(execution.stdout(), testCase.getExpectedOutput())
+            case OK -> outputsMatch(answerOf(execution.stdout()), testCase.getExpectedOutput())
                     ? new CaseVerdict(Verdict.ACCEPTED, null)
                     : new CaseVerdict(Verdict.WRONG_ANSWER, null);
             case COMPILE_ERROR -> new CaseVerdict(
@@ -247,6 +250,31 @@ public class SubmissionService {
             case INTERNAL_ERROR -> new CaseVerdict(
                     Verdict.INTERNAL_ERROR, truncate(execution.stderr(), MAX_ERROR_CHARS));
         };
+    }
+
+    /**
+     * The generated program prints this marker right after the user's function returns, so anything the user's own
+     * code printed (debug output) comes before it and the answer after it, like LeetCode's separate "Stdout" box.
+     * Output without the marker (older clients, custom programs) is all answer.
+     */
+    static final char ANSWER_MARKER = '\u001e';
+
+    /** The answer part of a program's stdout: everything after the last marker, or all of it without one. */
+    static String answerOf(String stdout) {
+        if (stdout == null) {
+            return "";
+        }
+        int at = stdout.lastIndexOf(ANSWER_MARKER);
+        return at < 0 ? stdout : stdout.substring(at + 1);
+    }
+
+    /** What the user's code printed before the answer (empty when nothing or when there is no marker). */
+    static String userStdout(String stdout) {
+        if (stdout == null) {
+            return "";
+        }
+        int at = stdout.lastIndexOf(ANSWER_MARKER);
+        return at < 0 ? "" : stdout.substring(0, at).stripTrailing();
     }
 
     /** Compares ignoring line-ending style and trailing whitespace on each line and at the end. */

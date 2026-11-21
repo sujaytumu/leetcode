@@ -33,7 +33,9 @@ public final class SubmissionDtos {
             String expected,
             String actual,
             String error,
-            Integer timeMs) {}
+            Integer timeMs,
+            /** What the user's own code printed (cout, print, console.log...) before the answer; null when nothing. */
+            String stdout) {}
 
     public record RunResponse(
             Verdict verdict,

@@ -25,6 +25,8 @@ export interface Page<T> { items: T[]; page: number; size: number; totalElements
 export interface CaseResult {
   index: number; sample: boolean; passed: boolean; verdict: string;
   input: string | null; expected: string | null; actual: string | null; error: string | null; timeMs: number | null;
+  /** What the user's own code printed (debug output); absent on older servers. */
+  stdout?: string | null;
 }
 export interface RunResponse {
   verdict: string; passed: number; total: number; runtimeMs: number | null; memoryKb?: number | null;

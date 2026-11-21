@@ -29,4 +29,27 @@ class OutputComparisonTest {
         assertFalse(SubmissionService.outputsMatch("1\n2", "1\n\n2"));
         assertEquals(false, SubmissionService.outputsMatch("", "0"));
     }
+
+    @Test
+    void userPrintsBeforeTheMarkerDoNotChangeTheAnswer() {
+        String out = "debug 1\nx=5" + SubmissionService.ANSWER_MARKER + "0 1\n";
+        assertEquals("0 1\n", SubmissionService.answerOf(out));
+        assertEquals("debug 1\nx=5", SubmissionService.userStdout(out));
+        assertTrue(SubmissionService.outputsMatch(SubmissionService.answerOf(out), "0 1\n"));
+    }
+
+    @Test
+    void outputWithoutAMarkerIsAllAnswer() {
+        assertEquals("0 1\n", SubmissionService.answerOf("0 1\n"));
+        assertEquals("", SubmissionService.userStdout("0 1\n"));
+        assertEquals("", SubmissionService.answerOf(null));
+        assertEquals("", SubmissionService.userStdout(null));
+    }
+
+    @Test
+    void anAnswerPrintedAsNothingStillCompares() {
+        String out = "only debug" + SubmissionService.ANSWER_MARKER;
+        assertEquals("", SubmissionService.answerOf(out));
+        assertEquals("only debug", SubmissionService.userStdout(out));
+    }
 }

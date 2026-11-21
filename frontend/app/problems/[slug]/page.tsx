@@ -730,6 +730,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                                 {args
                                   ? args.map((a) => <div key={a.name}><div className="iolabel">{a.name} =</div><pre>{a.value}</pre></div>)
                                   : <><div className="iolabel">Input</div><pre>{cur.input}</pre></>}
+                                {cur.stdout ? <><div className="iolabel">Stdout</div><pre>{cur.stdout}</pre></> : null}
                                 <div className="iolabel">Output</div><pre>{cur.actual ? show(cur.actual) : "(empty)"}</pre>
                                 {cur.expected != null && <><div className="iolabel">Expected</div><pre>{show(cur.expected)}</pre></>}
                               </>

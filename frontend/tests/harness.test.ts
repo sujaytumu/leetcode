@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { composeProgram, extractUser, shiftErrorLines, splitTemplate } from "../lib/harness.ts";
+import { composeProgram, extractUser, markAnswer, shiftErrorLines, splitTemplate } from "../lib/harness.ts";
 
 interface Snap { slug: string; starterCode: Record<string, string> }
 const problems = JSON.parse(readFileSync(new URL("../public/problems-snapshot.json", import.meta.url), "utf8")) as Snap[];
@@ -34,7 +34,7 @@ test("composing the untouched stub keeps the hidden prefix and suffix intact", (
   const p = problems[0], parts = splitTemplate(p.starterCode.python, "python")!;
   const full = composeProgram(parts, "def solve(x):\n    return 1");
   assert.ok(full.startsWith(parts.prefix));
-  assert.ok(full.endsWith(parts.suffix));
+  assert.ok(full.endsWith(markAnswer(parts.suffix, parts.lang)));
   assert.ok(full.includes("def solve(x):\n    return 1"));
 });
 
@@ -86,4 +86,29 @@ test("buildInput is the inverse of formatInputParts for every sample that format
     }
   }
   assert.ok(checked > 150, `only ${checked} samples checked`);
+});
+
+test("the answer marker is printed right after solve returns, in every language", () => {
+  const p = problems.find((x) => x.slug === "two-sum")!;
+  for (const lang of LANGS) {
+    const parts = splitTemplate(p.starterCode[lang], lang, { slug: "two-sum" })!;
+    const full = composeProgram(parts, parts.stub);
+    assert.equal((full.match(/x1e|\(char\) 30/g) ?? []).length, 1, lang);
+    const lines = full.split("\n");
+    const at = lines.findIndex((l) => /\bresult\s*=\s*solve\(/.test(l));
+    assert.ok(/x1e|\(char\) 30/.test(lines[at + 1]), `${lang}: marker follows the solve call`);
+  }
+});
+
+test("every bundled template gets exactly one marker and C++ keeps cout and printf in order", () => {
+  for (const p of problems) {
+    for (const lang of LANGS) {
+      const t = p.starterCode[lang];
+      if (t === undefined) continue;
+      const parts = splitTemplate(t, lang, { slug: p.slug })!;
+      const full = composeProgram(parts, parts.stub);
+      assert.equal((full.match(/x1e|\(char\) 30/g) ?? []).length, 1, `${p.slug} (${lang})`);
+      if (lang === "cpp") assert.ok(!full.includes("sync_with_stdio(false)"), p.slug);
+    }
+  }
 });
