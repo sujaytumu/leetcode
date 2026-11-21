@@ -1365,3 +1365,10 @@ main:has(.workspace) { padding:0 8px 8px; }
 .argbox { width:100%; box-sizing:border-box; background:var(--lc-strip, var(--pane2, #262626)); border:1px solid transparent; border-radius:8px; padding:10px 12px; color:var(--text); font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; outline:none; }
 .argbox:focus { border-color:var(--accent); }
 .argbox.bad { border-color:#ef4743; }
+
+/* LeetCode-style collapsible hints under the description */
+.deschints { margin-top:16px; }
+.deschints details { border-top:1px solid var(--line); padding:12px 0; }
+.deschints details:last-child { border-bottom:1px solid var(--line); }
+.deschints summary { cursor:pointer; font-weight:500; font-size:14px; }
+.deschints p { margin:10px 0 0; color:var(--mute); font-size:14px; line-height:1.6; }
