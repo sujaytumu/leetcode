@@ -53,14 +53,64 @@ export function splitTemplate(template: string, lang: string): Parts | null {
   return { prefix, stub: nodeHint(prefix, lang) + body, suffix, lang };
 }
 
+const NOT_METHODS = new Set(["if", "for", "while", "switch", "return", "catch", "Solution", "sizeof"]);
+
+/** Splits a parameter list on its top-level commas (generics like `map<int, int>` stay whole). */
+function splitParams(params: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let cur = "";
+  for (const ch of params) {
+    if ("<([".includes(ch)) depth++;
+    if (">)]".includes(ch)) depth--;
+    if (ch === "," && depth === 0) { out.push(cur.trim()); cur = ""; } else cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+/**
+ * LeetCode-style code (`class Solution { ... twoSum(...) }`) has no `solve`, which the hidden program calls.
+ * Returns a small forwarding `solve` built from the stub's own signature, or "" when the code already defines `solve`
+ * or is not shaped like a Solution class.
+ */
+function leetCodeAdapter(parts: Parts, user: string): string {
+  const lang = parts.lang;
+  if (!/\bclass\s+Solution\b/.test(user) || /\bsolve\s*\(/.test(user)) return "";
+  const sig = parts.stub.split("\n").find((l) => /\bsolve\s*\(/.test(l));
+  if (!sig) return "";
+  const m = sig.match(/^(.*?)\bsolve\s*\((.*)\)\s*\{?\s*:?\s*$/);
+  if (!m) return "";
+  const head = m[1];
+  const rawParams = m[2];
+  const afterClass = user.slice(user.search(/\bclass\s+Solution\b/));
+  let method: string | undefined;
+  if (lang === "python") {
+    method = [...afterClass.matchAll(/def\s+(\w+)\s*\(\s*self/g)].map((x) => x[1]).find((n) => !n.startsWith("__"));
+    if (!method) return "";
+    return `\ndef solve(*args):\n    return Solution().${method}(*args)\n`;
+  }
+  if (lang !== "cpp" && lang !== "java") return "";
+  method = [...afterClass.matchAll(/(\w+)\s*\([^;{)]*\)\s*(?:const\s*)?\{/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n));
+  if (!method) return "";
+  const names = splitParams(rawParams).map((p) => p.match(/(\w+)\s*(?:\[\s*\])*\s*$/)?.[1] ?? "").filter(Boolean);
+  const isVoid = /\bvoid\s*$/.test(head.trim());
+  const ctor = lang === "java" ? "new Solution()" : "Solution()";
+  const call = `${ctor}.${method}(${names.join(", ")})`;
+  const fn = `${head}solve(${rawParams}) { ${isVoid ? "" : "return "}${call}; }`;
+  return lang === "java" ? `\n${JAVA_INDENT}${fn}\n` : `\n${fn}\n`;
+}
+
 /** The full program to send to the judge: the hidden parts around the user's code. */
 export function composeProgram(parts: Parts, user: string): string {
   const c = COMMENT[parts.lang];
-  const body = user.replace(/\s+$/, "");
+  let body = user.replace(/\s+$/, "");
+  if (parts.lang === "java") body = body.replace(/^(\s*)((?:public\s+)?)class\s+Solution\b/m, "$1static class Solution");
+  const adapter = leetCodeAdapter(parts, user);
   const placed = parts.lang === "java"
     ? body.split("\n").map((l) => (l.trim() ? JAVA_INDENT + l : l)).join("\n")
     : body;
-  return `${parts.prefix}${c} ${OPEN}\n${placed}\n${c} ${CLOSE}${parts.suffix}`;
+  return `${parts.prefix}${c} ${OPEN}\n${placed}\n${c} ${CLOSE}${adapter}${parts.suffix}`;
 }
 
 /** The user's part of a program built by composeProgram (e.g. an earlier submission); null when it has no markers. */

@@ -53,3 +53,20 @@ test("error line numbers are shifted to the user's code", () => {
   assert.equal(shiftErrorLines("error at line 2", parts), "error at line 2"); // inside the hidden part: left alone
   assert.equal(shiftErrorLines("Main.java:9: error", parts), "Main.java:5: error");
 });
+
+test("LeetCode-style `class Solution` code gets a forwarding solve in C++, Java and Python", () => {
+  const two = problems.find((p) => p.slug === "two-sum")!;
+  const cpp = composeProgram(splitTemplate(two.starterCode.cpp, "cpp")!,
+    "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        return {0, 1};\n    }\n};\n");
+  assert.match(cpp, /vector<int> solve\(vector<int> nums, int target\) \{ return Solution\(\)\.twoSum\(nums, target\); \}/);
+  const java = composeProgram(splitTemplate(two.starterCode.java, "java")!,
+    "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        return new int[0];\n    }\n}\n");
+  assert.match(java, /static class Solution/);
+  assert.match(java, /static int\[\] solve\(int\[\] nums, int target\) \{ return new Solution\(\)\.twoSum\(nums, target\); \}/);
+  const py = composeProgram(splitTemplate(two.starterCode.python, "python")!,
+    "class Solution:\n    def twoSum(self, nums, target):\n        return [0, 1]\n");
+  assert.match(py, /def solve\(\*args\):\n    return Solution\(\)\.twoSum\(\*args\)/);
+  // Code that already defines solve is left alone.
+  const plain = splitTemplate(two.starterCode.cpp, "cpp")!;
+  assert.ok(!composeProgram(plain, plain.stub).includes("Solution()"));
+});
