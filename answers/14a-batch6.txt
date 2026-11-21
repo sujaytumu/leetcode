@@ -499,29 +499,28 @@ static int[][] solve(int[][] board) {
 --- py
 def solve(board):
     m, n = len(board), len(board[0])
-    res = [[0] * n for _ in range(m)]
-    stack = []
-    for i in range(m):
-        for j in range(n):
-            if (i == 0 or j == 0 or i == m - 1 or j == n - 1) and board[i][j] == 1 and not res[i][j]:
-                res[i][j] = 1
-                stack.append((i, j))
+    stack = [(i, j) for i in range(m) for j in range(n)
+             if (i == 0 or j == 0 or i == m - 1 or j == n - 1) and board[i][j] == 1]
+    for i, j in stack:
+        board[i][j] = 2
     while stack:
         i, j = stack.pop()
         for a, b in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
-            if 0 <= a < m and 0 <= b < n and board[a][b] == 1 and not res[a][b]:
-                res[a][b] = 1
+            if 0 <= a < m and 0 <= b < n and board[a][b] == 1:
+                board[a][b] = 2
                 stack.append((a, b))
-    return res
+    for i in range(m):
+        for j in range(n):
+            board[i][j] = 1 if board[i][j] == 2 else 0
+    return board
 --- js
 function solve(board) {
   const m = board.length, n = board[0].length;
-  const res = Array.from({ length: m }, () => new Array(n).fill(0));
   const stack = [];
   for (let i = 0; i < m; i++) {
     for (let j = 0; j < n; j++) {
-      if ((i === 0 || j === 0 || i === m - 1 || j === n - 1) && board[i][j] === 1 && !res[i][j]) {
-        res[i][j] = 1;
+      if ((i === 0 || j === 0 || i === m - 1 || j === n - 1) && board[i][j] === 1) {
+        board[i][j] = 2;
         stack.push([i, j]);
       }
     }
@@ -531,23 +530,23 @@ function solve(board) {
     const [i, j] = stack.pop();
     for (const [di, dj] of dirs) {
       const a = i + di, b = j + dj;
-      if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] === 1 && !res[a][b]) {
-        res[a][b] = 1;
+      if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] === 1) {
+        board[a][b] = 2;
         stack.push([a, b]);
       }
     }
   }
-  return res;
+  for (let i = 0; i < m; i++) for (let j = 0; j < n; j++) board[i][j] = board[i][j] === 2 ? 1 : 0;
+  return board;
 }
 --- cpp
 vector<vector<int>> solve(vector<vector<int>> board) {
     int m = board.size(), n = board[0].size();
-    vector<vector<int>> res(m, vector<int>(n, 0));
     vector<pair<int, int>> st;
     for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
-            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1 && !res[i][j]) {
-                res[i][j] = 1;
+            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1) {
+                board[i][j] = 2;
                 st.push_back({i, j});
             }
     int dx[4] = {1, -1, 0, 0}, dy[4] = {0, 0, 1, -1};
@@ -556,23 +555,25 @@ vector<vector<int>> solve(vector<vector<int>> board) {
         st.pop_back();
         for (int d = 0; d < 4; d++) {
             int a = i + dx[d], b = j + dy[d];
-            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1 && !res[a][b]) {
-                res[a][b] = 1;
+            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1) {
+                board[a][b] = 2;
                 st.push_back({a, b});
             }
         }
     }
-    return res;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            board[i][j] = board[i][j] == 2 ? 1 : 0;
+    return board;
 }
 --- java
 static int[][] solve(int[][] board) {
     int m = board.length, n = board[0].length;
-    int[][] res = new int[m][n];
     java.util.ArrayDeque<int[]> st = new java.util.ArrayDeque<>();
     for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
-            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1 && res[i][j] == 0) {
-                res[i][j] = 1;
+            if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) && board[i][j] == 1) {
+                board[i][j] = 2;
                 st.push(new int[]{i, j});
             }
     int[] dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1};
@@ -580,11 +581,14 @@ static int[][] solve(int[][] board) {
         int[] cur = st.pop();
         for (int d = 0; d < 4; d++) {
             int a = cur[0] + dx[d], b = cur[1] + dy[d];
-            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1 && res[a][b] == 0) {
-                res[a][b] = 1;
+            if (a >= 0 && a < m && b >= 0 && b < n && board[a][b] == 1) {
+                board[a][b] = 2;
                 st.push(new int[]{a, b});
             }
         }
     }
-    return res;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            board[i][j] = board[i][j] == 2 ? 1 : 0;
+    return board;
 }
