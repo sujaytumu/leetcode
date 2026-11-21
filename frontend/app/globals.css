@@ -1117,3 +1117,19 @@ main:has(.workspace) { padding:0 8px 8px; }
 .solved { color:var(--mute) !important; font-size:16px; }
 .pmeta .pill { padding:3px 12px; }
 @media (min-width:901px) { .workspace { height:calc(100dvh - var(--lctop-h) - 8px); } }
+
+/* ---- Account menu: round avatar that opens a LeetCode-style dropdown ---- */
+.acctmenu { position:relative; display:flex; align-items:center; }
+.acct-btn { padding:0; border:0; background:none; border-radius:50%; display:grid; place-items:center; }
+.acct-btn:hover:not(:disabled) { background:none; }
+.acct-av { width:30px; height:30px; border-radius:50%; object-fit:cover; display:grid; place-items:center; font-size:12px; font-weight:700; color:#fff; background:linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, #6366f1)); box-shadow:0 0 0 2px transparent; transition:box-shadow .15s; }
+.acct-btn:hover .acct-av, .acct-btn.active .acct-av, .acct-btn[aria-expanded="true"] .acct-av { box-shadow:0 0 0 2px var(--accent); }
+.acct-av.lg { width:44px; height:44px; font-size:16px; flex:none; }
+.acct-pop { position:absolute; right:0; top:calc(100% + 10px); z-index:80; min-width:230px; padding:8px; display:flex; flex-direction:column; gap:2px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.45); }
+.acct-pop a, .acct-pop > button { display:block; text-align:left; padding:8px 12px; border:0; border-radius:8px; background:none; color:var(--text); text-decoration:none; font-size:14px; }
+.acct-pop a:hover, .acct-pop > button:hover:not(:disabled) { background:var(--hover); }
+.acct-pop .acct-head { display:flex; align-items:center; gap:12px; padding:10px 12px 12px; }
+.acct-pop .acct-head > span:last-child { display:flex; flex-direction:column; min-width:0; }
+.acct-pop .acct-head b { font-size:15px; overflow-wrap:anywhere; }
+.acct-pop .acct-head .mute { font-size:13px; }
+.acct-pop hr { border:0; border-top:1px solid var(--line); margin:6px 0; width:100%; }
