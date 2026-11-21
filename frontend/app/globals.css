@@ -1118,7 +1118,7 @@ main:has(.workspace) { padding:0 8px 8px; }
 .pmeta .pill { padding:3px 12px; }
 @media (min-width:901px) { .workspace { height:calc(100dvh - var(--lctop-h) - 8px); } }
 /* ===== Phone layout (<= 700px). Everything below is inside the media query, so laptops are unchanged. ===== */
-.mtabs, .msheet-backdrop, .mtoggle, .msort { display:none; }
+.mtabs, .msheet-backdrop { display:none; }
 @media (max-width: 700px) {
   html { -webkit-text-size-adjust:100%; }
   body { overflow-x:hidden; }
@@ -1148,44 +1148,6 @@ main:has(.workspace) { padding:0 8px 8px; }
   .msheet-grid a.on { outline:2px solid var(--accent); }
   @keyframes msheet-up { from { transform:translateY(40px); opacity:0 } to { transform:none; opacity:1 } }
   .install-toast { bottom:calc(76px + env(safe-area-inset-bottom)); }
-
-  /* problem list */
-  .home { display:flex; flex-direction:column; gap:12px; width:100%; max-width:100%; }
-  .home > *, .home-main, .home-side { min-width:0; width:100%; max-width:100%; flex:none; }
-  .home-side { order:-1; display:flex; flex-direction:column; gap:10px; margin-top:0; position:static; }
-  .home-side > :first-child, .home-side .solvedcard, .home-side .activity { display:none; }   /* full stats are on Profile */
-  .chips.lcchips { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin:0 -12px 10px; padding:0 12px; }
-  .chips.lcchips::-webkit-scrollbar { display:none; }
-  .chips.lcchips button { flex:0 0 auto; white-space:nowrap; min-height:34px; }
-  .chips.lcchips .chipmore { display:none; }
-  .filters { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; }
-  .filters > input.grow { grid-column:1 / 2; }
-  .filters .mtoggle { display:inline-flex; align-items:center; gap:6px; justify-content:center; padding:0 14px; }
-  .filters .mbadge { background:var(--accent); color:#111; border-radius:99px; font-size:11px; font-weight:700; padding:0 6px; }
-  .filters .msort { display:block; grid-column:1 / -1; }
-  .filters > select:not(.msort), .filters > label.bar, .filters > button:not(.mtoggle) { display:none; }
-  .filters.fopen > select:not(.msort) { display:block; grid-column:1 / -1; }
-  .filters.fopen > label.bar { display:flex; grid-column:1 / -1; min-height:40px; }
-  .filters > input.grow { order:0; } .filters > .mtoggle { order:1; } .filters > select.msort { order:2; }
-  .filters.fopen > :nth-child(4) { order:4; } .filters.fopen > :nth-child(5) { order:5; } .filters.fopen > :nth-child(6) { order:6; }
-  .filters.fopen > :nth-child(7) { order:7; } .filters.fopen > :nth-child(8) { order:8; }
-  .filters.fopen > button:not(.mtoggle) { display:block; grid-column:1 / -1; }
-
-  .home table, .home tbody { display:block; width:100%; }
-  .home thead { display:none; }
-  .home tbody tr { position:relative; display:grid; grid-template-columns:20px 1fr auto; align-items:center; gap:2px 8px; padding:12px 10px;
-    border-bottom:1px solid var(--line); background:var(--panel); }
-  .home tbody tr:nth-child(odd) td, .home tbody tr:hover td { background:transparent; }
-  .home tbody td { display:block; padding:0; border:0; }
-  .home tbody td:nth-child(1) { font-size:18px; text-align:center; }
-  .home tbody td:nth-child(2) a { font-size:15px; line-height:1.35; white-space:normal; font-weight:500; }
-  .home tbody td:nth-child(2) a::after { content:""; position:absolute; inset:0; }       /* whole row is tappable */
-  .home tbody td:nth-child(5) { font-size:13px; font-weight:600; text-align:right; }
-  .home tbody td.hide-sm, .home tbody td.col-acc { display:none; }
-  .home tbody td .show-sm { display:flex; flex-wrap:wrap; gap:4px 6px; margin-top:4px; align-items:center; }
-  .home .tag { font-size:11px; }
-  .pager { display:flex; justify-content:space-between; gap:8px; }
-  .pager button { min-height:44px; flex:1; }
 
   /* wide tables elsewhere scroll sideways instead of squeezing */
   .subtable { display:block; overflow-x:auto; white-space:nowrap; }
