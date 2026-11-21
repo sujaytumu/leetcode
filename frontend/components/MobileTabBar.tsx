@@ -13,7 +13,7 @@ const MORE = [
   { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/practice", label: "Practice" },
   { href: "/review", label: "Review" }, { href: "/notes", label: "Notes" }, { href: "/lists", label: "Lists" },
   { href: "/mock", label: "Mock interview" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" },
-  { href: "/stats", label: "My stats" }, { href: "/profile", label: "Profile" }, { href: "/account", label: "Account" },
+  { href: "/stats", label: "My stats" }, { href: "/profile", label: "Profile" }, { href: "/account", label: "Account" }, { href: "/settings/profile", label: "Settings" },
 ];
 
 const active = (path: string, href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));

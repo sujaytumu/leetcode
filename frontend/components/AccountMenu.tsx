@@ -70,6 +70,7 @@ export default function AccountMenu() {
           <Link href="/submissions" role="menuitem">Submissions</Link>
           <Link href="/notes" role="menuitem">Notes</Link>
           <Link href="/lists" role="menuitem">My Lists</Link>
+          <Link href="/settings/profile" role="menuitem">Profile Settings</Link>
           <Link href="/account" role="menuitem">Account Settings</Link>
           <hr />
           <button type="button" role="menuitem" onClick={() => { clearSession(); window.location.href = "/"; }}>Log out</button>
