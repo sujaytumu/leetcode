@@ -93,30 +93,17 @@ public class SubmissionService {
         List<Object[]> rows = submissions.findMeasurements(
                 mine.getProblemId(), mine.getLanguage(), Verdict.ACCEPTED,
                 org.springframework.data.domain.PageRequest.of(0, STATS_SAMPLE));
-        List<Integer> times = new ArrayList<>();
-        List<Integer> memories = new ArrayList<>();
-        boolean included = false;
+        // One measurement per user (their best), so the percentages describe people rather than re-submissions.
+        java.util.Set<UUID> users = new java.util.HashSet<>();
+        users.add(mine.getClientId());
         for (Object[] row : rows) {
-            included |= ((Number) row[0]).longValue() == mine.getId();
-            if (row[1] != null) {
-                times.add(((Number) row[1]).intValue());
-            }
-            if (row[2] != null) {
-                memories.add(((Number) row[2]).intValue());
-            }
+            users.add((UUID) row[3]);
         }
-        int sample = rows.size();
-        if (!included) { // an older submission can fall outside the newest-STATS_SAMPLE window
-            sample++;
-            if (mine.getRuntimeMs() != null) {
-                times.add(mine.getRuntimeMs());
-            }
-            if (mine.getMemoryKb() != null) {
-                memories.add(mine.getMemoryKb());
-            }
-        }
-        Distribution runtime = mine.getRuntimeMs() == null ? null : StatsMath.distribution(times, mine.getRuntimeMs());
-        Distribution memory = mine.getMemoryKb() == null ? null : StatsMath.distribution(memories, mine.getMemoryKb());
+        int sample = users.size();
+        Distribution runtime = mine.getRuntimeMs() == null ? null
+                : StatsMath.distribution(StatsMath.oneBestPerUser(rows, 1, mine.getClientId(), mine.getRuntimeMs()), mine.getRuntimeMs());
+        Distribution memory = mine.getMemoryKb() == null ? null
+                : StatsMath.distribution(StatsMath.oneBestPerUser(rows, 2, mine.getClientId(), mine.getMemoryKb()), mine.getMemoryKb());
         return new SubmissionStats(mine.getId(), mine.getLanguage(), sample, runtime, memory);
     }
 

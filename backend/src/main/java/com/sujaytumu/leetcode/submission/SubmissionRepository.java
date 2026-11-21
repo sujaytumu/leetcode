@@ -37,9 +37,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             """)
     List<Object[]> acceptanceStats(@Param("ids") Collection<Long> ids, @Param("accepted") Verdict accepted);
 
-    /** Rows of [id, runtimeMs, memoryKb] (newest first) of accepted submissions for a problem in one language (all clients). */
+    /** Rows of [id, runtimeMs, memoryKb, clientId] (newest first) of accepted submissions for a problem in one language (all clients). */
     @Query("""
-            select s.id, s.runtimeMs, s.memoryKb
+            select s.id, s.runtimeMs, s.memoryKb, s.clientId
             from Submission s
             where s.problemId = :problemId and s.language = :language and s.verdict = :verdict
             order by s.id desc
@@ -49,6 +49,10 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             @Param("language") com.sujaytumu.leetcode.judge.Language language,
             @Param("verdict") Verdict verdict,
             Pageable pageable);
+
+    /** How many different people (registered or anonymous) have ever submitted something. */
+    @Query("select count(distinct s.clientId) from Submission s")
+    long countDistinctClients();
 
     /** Timestamps of every submission by a client since the given instant (for the activity calendar). */
     @Query("select s.createdAt from Submission s where s.clientId = :clientId and s.createdAt >= :since")

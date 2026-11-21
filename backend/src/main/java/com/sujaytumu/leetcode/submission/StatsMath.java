@@ -3,7 +3,10 @@ package com.sujaytumu.leetcode.submission;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.Bin;
 import com.sujaytumu.leetcode.submission.SubmissionDtos.Distribution;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /** Histogram and "beats X%" maths for runtime and memory, kept free of Spring so it can be unit-tested. */
 final class StatsMath {
@@ -43,6 +46,29 @@ final class StatsMath {
             out.add(new Bin(from, to, counts[i]));
         }
         return new Distribution(mine, beats, binOf(mine, min, width, bins), out);
+    }
+
+    /**
+     * The measurements to compare a submission with: the best (smallest) value of every <em>other</em> user, plus the
+     * submission itself. One value per user keeps "beats X%" about people, so a user re-submitting the same
+     * solution never beats their own earlier tries.
+     *
+     * @param rows   [id, runtimeMs, memoryKb, clientId] of accepted submissions
+     * @param column 1 for runtime, 2 for memory
+     * @param me     the client who owns the submission
+     * @param mine   the submission's own value
+     */
+    static List<Integer> oneBestPerUser(List<Object[]> rows, int column, UUID me, int mine) {
+        Map<UUID, Integer> best = new HashMap<>();
+        for (Object[] row : rows) {
+            if (row[column] == null || me.equals(row[3])) {
+                continue;
+            }
+            best.merge((UUID) row[3], ((Number) row[column]).intValue(), Math::min);
+        }
+        List<Integer> all = new ArrayList<>(best.values());
+        all.add(mine);
+        return all;
     }
 
     private static int binOf(int value, int min, double width, int bins) {
