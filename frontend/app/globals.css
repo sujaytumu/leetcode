@@ -1479,3 +1479,21 @@ tbody tr:hover td { background:var(--hover); }
   .home tbody td.th-num { font-size:14px; }
   .home tbody tr td:nth-child(2) a:hover { color:var(--accent); }
 }
+
+/* ---- Premium finish (colours/effects only; layouts untouched) ---- */
+.modal-back { backdrop-filter:blur(6px) saturate(1.1); -webkit-backdrop-filter:blur(6px) saturate(1.1); background:rgba(8,9,12,.6); }
+.modal { border-radius:16px; box-shadow:0 24px 70px rgba(0,0,0,.45); animation:lcpop .18s ease-out; }
+@keyframes lcpop { from { opacity:0; transform:translateY(6px) scale(.98); } to { opacity:1; transform:none; } }
+@media (min-width:901px) {
+  header.nav { backdrop-filter:blur(10px); border-bottom-color:color-mix(in srgb, var(--line) 70%, transparent); }
+  header.nav nav a.active { position:relative; }
+  header.nav nav a.active::after { content:""; position:absolute; left:0; right:0; bottom:14px; height:2px; border-radius:2px; background:linear-gradient(90deg, var(--accent), var(--brand2)); }
+  .lcside a.on, .lcside .lcside-item.on, .lcside a[aria-current="page"] { background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, var(--cell)), var(--cell)); box-shadow:inset 3px 0 0 var(--accent); }
+}
+.card, .plan { transition:transform .15s, box-shadow .2s, border-color .2s; }
+a.card:hover, .plan:hover { transform:translateY(-1px); border-color:color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.lctabs button.on, .ptab-bar button.on { text-shadow:0 0 18px var(--ring); }
+.EASY { color:var(--easy); } .MEDIUM { color:var(--med); } .HARD { color:var(--hard); }
+.pane { border-radius:12px; border-color:color-mix(in srgb, var(--line) 80%, transparent); }
+textarea, input[type="text"], input[type="search"], select { background:color-mix(in srgb, var(--cell) 70%, var(--panel)); }
+@media (prefers-reduced-motion:reduce) { .modal { animation:none; } .card, .plan { transition:none; } }
