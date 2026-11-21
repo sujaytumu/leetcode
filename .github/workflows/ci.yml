@@ -74,6 +74,8 @@ jobs:
           distribution: temurin
           java-version: "21"
       - run: node scripts/verify-answers.js
+      - name: Solutions tab code passes when pasted into the editor (C++)
+        run: node scripts/verify-paste.mjs --lang cpp
       - name: solutions.json is up to date
         run: |
           node scripts/build-solutions.js

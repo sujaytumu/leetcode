@@ -32,7 +32,12 @@ const { loadAnswers } = require("./answers-lib");
 const study = JSON.parse(fs.readFileSync(path.join(root, "backend/src/main/resources/seed/study.json"), "utf8"));
 const ORDER = ["cpp", "java", "python", "javascript"];
 for (const [slug, byLang] of Object.entries(loadAnswers())) {
-  if (out[slug]) continue; // the verified problems/ pipeline wins
+  if (out[slug]) {
+    // problems/ holds LeetCode-style `class Solution` files that cannot be pasted into this app's editor (its hidden
+    // shell expects `solve`). Show the verified, paste-ready answer instead and keep the problem's own editorial.
+    out[slug].solutions = Object.fromEntries(ORDER.filter((l) => byLang[l]).map((l) => [l, byLang[l]]));
+    continue;
+  }
   const st = study[slug];
   out[slug] = {
     editorial: st ? `## Approach\n\n${st.approach}\n\n**Complexity:** ${st.time} time, ${st.space} space.` : null,

@@ -1,0 +1,510 @@
+=== two-sum
+--- py
+def solve(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+    return []
+--- js
+function solve(nums, target) {
+  const seen = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+    if (seen.has(need)) return [seen.get(need), i];
+    seen.set(nums[i], i);
+  }
+  return [];
+}
+--- cpp
+vector<int> solve(vector<int> nums, int target) {
+    unordered_map<long long, int> seen;
+    for (int i = 0; i < (int)nums.size(); i++) {
+        auto it = seen.find((long long)target - nums[i]);
+        if (it != seen.end()) return {it->second, i};
+        seen[nums[i]] = i;
+    }
+    return {};
+}
+--- java
+static int[] solve(int[] nums, int target) {
+    Map<Long, Integer> seen = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        Integer j = seen.get((long) target - nums[i]);
+        if (j != null) return new int[]{j, i};
+        seen.put((long) nums[i], i);
+    }
+    return new int[0];
+}
+
+=== move-zeroes
+--- py
+def solve(nums):
+    nums = list(nums)
+    write = 0
+    for read in range(len(nums)):
+        if nums[read] != 0:
+            nums[write], nums[read] = nums[read], nums[write]
+            write += 1
+    return nums
+--- js
+function solve(nums) {
+  nums = nums.slice();
+  let write = 0;
+  for (let read = 0; read < nums.length; read++) {
+    if (nums[read] !== 0) {
+      [nums[write], nums[read]] = [nums[read], nums[write]];
+      write++;
+    }
+  }
+  return nums;
+}
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int write = 0;
+    for (int read = 0; read < (int)nums.size(); read++) {
+        if (nums[read] != 0) swap(nums[write++], nums[read]);
+    }
+    return nums;
+}
+--- java
+static int[] solve(int[] nums) {
+    int[] a = nums.clone();
+    int write = 0;
+    for (int read = 0; read < a.length; read++) {
+        if (a[read] != 0) {
+            int t = a[write]; a[write] = a[read]; a[read] = t;
+            write++;
+        }
+    }
+    return a;
+}
+
+=== valid-parentheses
+--- py
+def solve(s):
+    pairs = {')': '(', ']': '[', '}': '{'}
+    stack = []
+    for c in s:
+        if c in pairs:
+            if not stack or stack.pop() != pairs[c]:
+                return False
+        else:
+            stack.append(c)
+    return not stack
+--- js
+function solve(s) {
+  const pairs = { ")": "(", "]": "[", "}": "{" };
+  const stack = [];
+  for (const c of s) {
+    if (c in pairs) {
+      if (stack.length === 0 || stack.pop() !== pairs[c]) return false;
+    } else {
+      stack.push(c);
+    }
+  }
+  return stack.length === 0;
+}
+--- cpp
+bool solve(string s) {
+    string stack;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') {
+            stack.push_back(c);
+        } else {
+            if (stack.empty()) return false;
+            char open = stack.back();
+            stack.pop_back();
+            if ((c == ')' && open != '(') || (c == ']' && open != '[') || (c == '}' && open != '{')) return false;
+        }
+    }
+    return stack.empty();
+}
+--- java
+static boolean solve(String s) {
+    Deque<Character> stack = new ArrayDeque<>();
+    for (char c : s.toCharArray()) {
+        if (c == '(' || c == '[' || c == '{') {
+            stack.push(c);
+        } else {
+            if (stack.isEmpty()) return false;
+            char open = stack.pop();
+            if ((c == ')' && open != '(') || (c == ']' && open != '[') || (c == '}' && open != '{')) return false;
+        }
+    }
+    return stack.isEmpty();
+}
+
+=== reverse-linked-list
+--- py
+def solve(head):
+    prev = None
+    while head:
+        nxt = head.next
+        head.next = prev
+        prev = head
+        head = nxt
+    return prev
+--- js
+function solve(head) {
+  let prev = null;
+  while (head) {
+    const next = head.next;
+    head.next = prev;
+    prev = head;
+    head = next;
+  }
+  return prev;
+}
+--- cpp
+ListNode * solve(ListNode * head) {
+    ListNode *prev = nullptr;
+    while (head) {
+        ListNode *next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+--- java
+static ListNode solve(ListNode head) {
+    ListNode prev = null;
+    while (head != null) {
+        ListNode next = head.next;
+        head.next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+
+=== add-two-numbers
+--- py
+def solve(l1, l2):
+    dummy = tail = ListNode(0)
+    carry = 0
+    while l1 or l2 or carry:
+        total = carry
+        if l1:
+            total += l1.val
+            l1 = l1.next
+        if l2:
+            total += l2.val
+            l2 = l2.next
+        carry, digit = divmod(total, 10)
+        tail.next = ListNode(digit)
+        tail = tail.next
+    return dummy.next
+--- js
+function solve(l1, l2) {
+  const dummy = new ListNode(0);
+  let tail = dummy, carry = 0;
+  while (l1 || l2 || carry) {
+    let total = carry;
+    if (l1) { total += l1.val; l1 = l1.next; }
+    if (l2) { total += l2.val; l2 = l2.next; }
+    carry = Math.floor(total / 10);
+    tail.next = new ListNode(total % 10);
+    tail = tail.next;
+  }
+  return dummy.next;
+}
+--- cpp
+ListNode * solve(ListNode * l1, ListNode * l2) {
+    ListNode dummy(0);
+    ListNode *tail = &dummy;
+    int carry = 0;
+    while (l1 || l2 || carry) {
+        int total = carry;
+        if (l1) { total += l1->val; l1 = l1->next; }
+        if (l2) { total += l2->val; l2 = l2->next; }
+        carry = total / 10;
+        tail->next = new ListNode(total % 10);
+        tail = tail->next;
+    }
+    return dummy.next;
+}
+--- java
+static ListNode solve(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0), tail = dummy;
+    int carry = 0;
+    while (l1 != null || l2 != null || carry != 0) {
+        int total = carry;
+        if (l1 != null) { total += l1.val; l1 = l1.next; }
+        if (l2 != null) { total += l2.val; l2 = l2.next; }
+        carry = total / 10;
+        tail.next = new ListNode(total % 10);
+        tail = tail.next;
+    }
+    return dummy.next;
+}
+
+=== maximum-depth-of-binary-tree
+--- py
+def solve(root):
+    if root is None:
+        return 0
+    return 1 + max(solve(root.left), solve(root.right))
+--- js
+function solve(root) {
+  if (root === null) return 0;
+  return 1 + Math.max(solve(root.left), solve(root.right));
+}
+--- cpp
+int solve(TreeNode * root) {
+    if (!root) return 0;
+    return 1 + max(solve(root->left), solve(root->right));
+}
+--- java
+static int solve(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(solve(root.left), solve(root.right));
+}
+
+=== number-of-islands
+--- py
+def solve(grid):
+    grid = [list(row) for row in grid]
+    rows = len(grid)
+    cols = len(grid[0]) if rows else 0
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != '1':
+                continue
+            count += 1
+            grid[r][c] = '0'
+            stack = [(r, c)]
+            while stack:
+                y, x = stack.pop()
+                for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+                    if 0 <= ny < rows and 0 <= nx < cols and grid[ny][nx] == '1':
+                        grid[ny][nx] = '0'
+                        stack.append((ny, nx))
+    return count
+--- js
+function solve(grid) {
+  const g = grid.map((row) => row.split(""));
+  const rows = g.length, cols = rows ? g[0].length : 0;
+  let count = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (g[r][c] !== "1") continue;
+      count++;
+      g[r][c] = "0";
+      const stack = [[r, c]];
+      while (stack.length) {
+        const [y, x] = stack.pop();
+        for (const [ny, nx] of [[y + 1, x], [y - 1, x], [y, x + 1], [y, x - 1]]) {
+          if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && g[ny][nx] === "1") {
+            g[ny][nx] = "0";
+            stack.push([ny, nx]);
+          }
+        }
+      }
+    }
+  }
+  return count;
+}
+--- cpp
+int solve(vector<string> grid) {
+    int rows = grid.size(), cols = rows ? grid[0].size() : 0, count = 0;
+    int dy[4] = {1, -1, 0, 0}, dx[4] = {0, 0, 1, -1};
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            if (grid[r][c] != '1') continue;
+            count++;
+            grid[r][c] = '0';
+            vector<pair<int, int>> stack = {{r, c}};
+            while (!stack.empty()) {
+                auto [y, x] = stack.back();
+                stack.pop_back();
+                for (int k = 0; k < 4; k++) {
+                    int ny = y + dy[k], nx = x + dx[k];
+                    if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && grid[ny][nx] == '1') {
+                        grid[ny][nx] = '0';
+                        stack.push_back({ny, nx});
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
+--- java
+static int solve(String[] grid) {
+    int rows = grid.length, cols = rows > 0 ? grid[0].length() : 0, count = 0;
+    char[][] g = new char[rows][];
+    for (int i = 0; i < rows; i++) g[i] = grid[i].toCharArray();
+    int[] dy = {1, -1, 0, 0}, dx = {0, 0, 1, -1};
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            if (g[r][c] != '1') continue;
+            count++;
+            g[r][c] = '0';
+            Deque<int[]> stack = new ArrayDeque<>();
+            stack.push(new int[]{r, c});
+            while (!stack.isEmpty()) {
+                int[] cur = stack.pop();
+                for (int k = 0; k < 4; k++) {
+                    int ny = cur[0] + dy[k], nx = cur[1] + dx[k];
+                    if (ny >= 0 && ny < rows && nx >= 0 && nx < cols && g[ny][nx] == '1') {
+                        g[ny][nx] = '0';
+                        stack.push(new int[]{ny, nx});
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
+
+=== best-time-to-buy-and-sell-stock
+--- py
+def solve(prices):
+    best = 0
+    lowest = float('inf')
+    for p in prices:
+        lowest = min(lowest, p)
+        best = max(best, p - lowest)
+    return best
+--- js
+function solve(prices) {
+  let best = 0, lowest = Infinity;
+  for (const p of prices) {
+    lowest = Math.min(lowest, p);
+    best = Math.max(best, p - lowest);
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> prices) {
+    int best = 0, lowest = INT_MAX;
+    for (int p : prices) {
+        lowest = min(lowest, p);
+        best = max(best, p - lowest);
+    }
+    return best;
+}
+--- java
+static int solve(int[] prices) {
+    int best = 0, lowest = Integer.MAX_VALUE;
+    for (int p : prices) {
+        lowest = Math.min(lowest, p);
+        best = Math.max(best, p - lowest);
+    }
+    return best;
+}
+
+=== climbing-stairs
+--- py
+def solve(n):
+    a, b = 1, 1
+    for _ in range(n - 1):
+        a, b = b, a + b
+    return b
+--- js
+function solve(n) {
+  let a = 1, b = 1;
+  for (let i = 1; i < n; i++) [a, b] = [b, a + b];
+  return b;
+}
+--- cpp
+int solve(int n) {
+    int a = 1, b = 1;
+    for (int i = 1; i < n; i++) {
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+    return b;
+}
+--- java
+static int solve(int n) {
+    int a = 1, b = 1;
+    for (int i = 1; i < n; i++) {
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+    return b;
+}
+
+=== maximum-subarray
+--- py
+def solve(nums):
+    best = cur = nums[0]
+    for x in nums[1:]:
+        cur = max(x, cur + x)
+        best = max(best, cur)
+    return best
+--- js
+function solve(nums) {
+  let best = nums[0], cur = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    cur = Math.max(nums[i], cur + nums[i]);
+    best = Math.max(best, cur);
+  }
+  return best;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int best = nums[0], cur = nums[0];
+    for (size_t i = 1; i < nums.size(); i++) {
+        cur = max(nums[i], cur + nums[i]);
+        best = max(best, cur);
+    }
+    return best;
+}
+--- java
+static int solve(int[] nums) {
+    int best = nums[0], cur = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        cur = Math.max(nums[i], cur + nums[i]);
+        best = Math.max(best, cur);
+    }
+    return best;
+}
+
+=== palindrome-number
+--- py
+def solve(x):
+    if x < 0 or (x % 10 == 0 and x != 0):
+        return False
+    rev = 0
+    while x > rev:
+        rev = rev * 10 + x % 10
+        x //= 10
+    return x == rev or x == rev // 10
+--- js
+function solve(x) {
+  if (x < 0 || (x % 10 === 0 && x !== 0)) return false;
+  let rev = 0;
+  while (x > rev) {
+    rev = rev * 10 + (x % 10);
+    x = Math.floor(x / 10);
+  }
+  return x === rev || x === Math.floor(rev / 10);
+}
+--- cpp
+bool solve(int x) {
+    if (x < 0 || (x % 10 == 0 && x != 0)) return false;
+    int rev = 0;
+    while (x > rev) {
+        rev = rev * 10 + x % 10;
+        x /= 10;
+    }
+    return x == rev || x == rev / 10;
+}
+--- java
+static boolean solve(int x) {
+    if (x < 0 || (x % 10 == 0 && x != 0)) return false;
+    int rev = 0;
+    while (x > rev) {
+        rev = rev * 10 + x % 10;
+        x /= 10;
+    }
+    return x == rev || x == rev / 10;
+}
