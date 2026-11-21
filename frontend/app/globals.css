@@ -1513,3 +1513,15 @@ a, button, .chip, .card, .solrow, .lcside a { transition:background-color .15s e
 .verdict-ac, .accepted, .Accepted { color:var(--ok); }
 .verdict-wa, .wrong, .rejected { color:var(--bad); }
 ::selection { background:color-mix(in srgb, var(--accent) 35%, transparent); }
+
+/* Polish pass 2: empty states, buttons, inputs, tables across every page */
+td.mute[colspan] { text-align:center; padding:28px 12px; font-size:14px; }
+button:not(:disabled), [role="button"], select { cursor:pointer; }
+button:disabled { cursor:not-allowed; opacity:.6; }
+button:active:not(:disabled) { transform:translateY(1px); }
+input, textarea, select { transition:border-color .15s ease, box-shadow .15s ease; }
+input:focus, textarea:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); outline:none; }
+tbody tr { transition:background-color .12s ease; }
+img, svg { max-width:100%; }
+html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+.modal, .drawer, .acct-pop { box-shadow:0 12px 40px rgba(0,0,0,.35); }
