@@ -209,3 +209,16 @@ export const LC_METHODS: Record<string, string> = {
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */
 export const LC_VOID = new Set(["move-zeroes", "merge-sorted-array", "rotate-array", "sort-colors", "next-permutation", "reorder-list", "rotate-image", "set-matrix-zeroes", "game-of-life", "surrounded-regions"]);
+
+/** Grid problems whose judge input is rows of digits/letters; LeetCode types them as char[][] or int[][]. */
+export const LC_GRID: Record<string, "char" | "int"> = {
+  "number-of-islands": "char",
+  "maximal-square": "char",
+  "word-search": "char",
+  "rotting-oranges": "int",
+  "shortest-path-in-binary-matrix": "int",
+  "unique-paths-ii": "int",
+  "minimum-path-sum": "int",
+  "island-perimeter": "int",
+  "max-area-of-island": "int",
+};

@@ -65,7 +65,7 @@ test("LeetCode-style `class Solution` code gets a forwarding solve in C++, Java 
   assert.match(java, /static int\[\] solve\(int\[\] nums, int target\) \{ return new Solution\(\)\.twoSum\(nums, target\); \}/);
   const py = composeProgram(splitTemplate(two.starterCode.python, "python")!,
     "class Solution:\n    def twoSum(self, nums, target):\n        return [0, 1]\n");
-  assert.match(py, /def solve\(\*args\):\n    r = Solution\(\)\.twoSum\(\*args\)\n    return args\[0\] if r is None else r/);
+  assert.match(py, /def solve\(\*args\):\n    r = Solution\(\)\.twoSum\(\*args\)\n    return r\n/);
   // Code that already defines solve is left alone.
   const plain = splitTemplate(two.starterCode.cpp, "cpp")!;
   assert.ok(!composeProgram(plain, plain.stub).includes("Solution()"));

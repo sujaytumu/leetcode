@@ -3,9 +3,9 @@
  * The editor should only show the part the user writes, like LeetCode's function stub. This module splits a
  * starter template around its `solve` function and puts the hidden parts back before running or submitting.
  */
-import { LC_METHODS, LC_VOID } from "./lcnames.ts";
+import { LC_GRID, LC_METHODS, LC_VOID } from "./lcnames.ts";
 
-export interface Parts { prefix: string; stub: string; suffix: string; lang: string; /** the original `solve` signature line */ sig?: string }
+export interface Parts { prefix: string; stub: string; suffix: string; lang: string; /** the original `solve` signature line */ sig?: string; /** LeetCode solves this one in place (`void`) */ inPlace?: boolean; /** parameter positions holding string rows that LeetCode types as a char/int grid */ grid?: { kind: "char" | "int"; idx: number[] } }
 /** Extra context so the editor can show a LeetCode `class Solution` stub instead of the bare `solve` function. */
 export interface StubContext { slug: string; java?: string }
 
@@ -55,8 +55,11 @@ export function splitTemplate(template: string, lang: string, ctx?: StubContext)
     .map((l) => (lang === "java" && l.startsWith(JAVA_INDENT) ? l.slice(JAVA_INDENT.length) : l))
     .join("\n");
   const lc = ctx ? leetCodeStub(body, lang, ctx) : null;
+  const gridKind = ctx ? LC_GRID[ctx.slug] : undefined;
+  const jsig = ctx ? javaSignature(ctx.java) : null;
+  const gridIdx = gridKind && jsig ? jsig.params.flatMap((p, i) => (p.type === "String[]" ? [i] : [])) : [];
   const fullPrefix = lang === "python" && !/from typing import/.test(prefix) ? "from typing import List, Optional\n" + prefix : prefix;
-  return { prefix: fullPrefix, stub: nodeHint(prefix, lang) + (lc ?? body), suffix, lang, sig: body.split("\n")[0] };
+  return { prefix: fullPrefix, stub: nodeHint(prefix, lang) + (lc ?? body), suffix, lang, sig: body.split("\n")[0], inPlace: ctx ? LC_VOID.has(ctx.slug) : false, grid: gridKind && gridIdx.length ? { kind: gridKind, idx: gridIdx } : undefined };
 }
 
 const PY_TYPES: Record<string, string> = { int: "int", long: "int", boolean: "bool", String: "str", double: "float", ListNode: "Optional[ListNode]", TreeNode: "Optional[TreeNode]" };
@@ -89,23 +92,29 @@ function leetCodeStub(body: string, lang: string, ctx: StubContext): string | nu
     const m = first.match(/^(.*?)\bsolve\((.*)\)\s*\{\s*$/);
     if (!m) return null;
     const ptr = (t: string) => t.replace(/\s*\*\s*/g, "* ").trim();
-    const params = splitParams(m[2]).map((p) => ptr(p.replace(/^(vector<.*>)\s+(\w+)$/, "$1& $2"))).join(", ");
+    const gk = LC_GRID[ctx.slug];
+    const gridT = gk === "char" ? "vector<vector<char>>" : "vector<vector<int>>";
+    const params = splitParams(m[2]).map((p) => ptr((gk ? p.replace(/^vector<string>\s+(\w+)$/, `${gridT} $1`) : p).replace(/^(vector<.*>)\s+(\w+)$/, "$1& $2"))).join(", ");
     return `class Solution {\npublic:\n    ${isVoid ? "void" : ptr(m[1])} ${name}(${params}) {\n        \n    }\n};`;
   }
   if (lang === "java") {
     const m = first.match(/^static\s+(.*?)\s+solve\((.*)\)\s*\{\s*$/);
     if (!m) return null;
-    return `class Solution {\n    public ${isVoid ? "void" : m[1].trim()} ${name}(${m[2]}) {\n        \n    }\n}`;
+    const gk = LC_GRID[ctx.slug];
+    const jparams = gk ? m[2].replace(/String\[\]\s+(\w+)/g, `${gk === "char" ? "char" : "int"}[][] $1`) : m[2];
+    return `class Solution {\n    public ${isVoid ? "void" : m[1].trim()} ${name}(${jparams}) {\n        \n    }\n}`;
   }
   const sig = javaSignature(ctx.java);
   if (!sig) return null;
   if (lang === "python") {
-    const ps = sig.params.map((p) => `${p.name}: ${mapType(p.type, PY_TYPES, (i) => `List[${i}]`)}`).join(", ");
+    const gk = LC_GRID[ctx.slug];
+    const ps = sig.params.map((p) => `${p.name}: ${gk && p.type === "String[]" ? (gk === "char" ? "List[List[str]]" : "List[List[int]]") : mapType(p.type, PY_TYPES, (i) => `List[${i}]`)}`).join(", ");
     const ret = isVoid ? "None" : mapType(sig.ret, PY_TYPES, (i) => `List[${i}]`);
     return `class Solution:\n    def ${name}(self${ps ? ", " + ps : ""}) -> ${ret}:\n        `;
   }
   if (lang === "javascript") {
-    const doc = sig.params.map((p) => ` * @param {${mapType(p.type, JS_TYPES, (i) => `${i}[]`)}} ${p.name}`).join("\n");
+    const gk = LC_GRID[ctx.slug];
+    const doc = sig.params.map((p) => ` * @param {${gk && p.type === "String[]" ? (gk === "char" ? "character[][]" : "number[][]") : mapType(p.type, JS_TYPES, (i) => `${i}[]`)}} ${p.name}`).join("\n");
     const ret = isVoid ? "void} Do not return anything, modify the input in-place instead." : `${mapType(sig.ret, JS_TYPES, (i) => `${i}[]`)}}`;
     return `/**\n${doc}\n * @return {${ret}\n */\nvar ${name} = function(${sig.params.map((p) => p.name).join(", ")}) {\n    \n};`;
   }
@@ -137,14 +146,22 @@ function leetCodeAdapter(parts: Parts, user: string): string {
   const lang = parts.lang;
   if (/^[^\s}].*\bsolve\s*\(/m.test(user)) return "";
   if (lang === "javascript") {
-    const m = [...user.matchAll(/(?:var|let|const)\s+(\w+)\s*=\s*(?:function|\()|function\s+(\w+)\s*\(/g)].map((x) => x[1] ?? x[2]).find((n) => n && n !== "solve");
-    return m ? `\nfunction solve(...args) { const r = ${m}(...args); return r === undefined ? args[0] : r; }\n` : "";
+    const ret = parts.inPlace ? "args[0]" : "r";
+    const conv = parts.grid ? parts.grid.idx.map((i) => `args[${i}] = args[${i}].map((row) => ${parts.grid!.kind === "char" ? 'row.split("")' : 'row.split("").map(Number)'});`).join(" ") : "";
+    const vars = [...user.matchAll(/^(?:var|let|const)\s+(\w+)\s*=\s*function\b/gm)].map((x) => x[1]);
+    if (vars.includes("solve")) {
+      // LeetCode's own name for this problem is `solve`; wrap it so in-place answers are returned.
+      return `\nsolve = ((__lc) => (...args) => { ${conv} const r = __lc(...args); return ${ret}; })(solve);\n`;
+    }
+    const m = vars.length ? vars[vars.length - 1] : [...user.matchAll(/function\s+(\w+)\s*\(/g)].map((x) => x[1]).find((n) => n !== "solve");
+    return m ? `\nfunction solve(...args) { ${conv} const r = ${m}(...args); return ${ret}; }\n` : "";
   }
   if (!/\bclass\s+Solution\b/.test(user)) return "";
   const afterClass = user.slice(user.search(/\bclass\s+Solution\b/));
   if (lang === "python") {
     const method = [...afterClass.matchAll(/def\s+(\w+)\s*\(\s*self/g)].map((x) => x[1]).find((n) => !n.startsWith("__"));
-    return method ? `\ndef solve(*args):\n    r = Solution().${method}(*args)\n    return args[0] if r is None else r\n` : "";
+    const pconv = parts.grid ? `    args = list(args)\n` + parts.grid.idx.map((i) => `    args[${i}] = [${parts.grid!.kind === "char" ? "list(row)" : "[int(c) for c in row]"} for row in args[${i}]]\n`).join("") : "";
+    return method ? `\ndef solve(*args):\n${pconv}    r = Solution().${method}(*args)\n    return ${parts.inPlace ? "args[0]" : "r"}\n` : "";
   }
   if (lang !== "cpp" && lang !== "java") return "";
   const sig = parts.sig ?? parts.stub.split("\n").find((l) => /\bsolve\s*\(/.test(l));
@@ -152,14 +169,34 @@ function leetCodeAdapter(parts: Parts, user: string): string {
   if (!m) return "";
   const head = m[1];
   const rawParams = m[2];
-  const method = [...afterClass.matchAll(/(\w+)\s*\([^;{)]*\)\s*(?:const\s*)?\{/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n));
+  // LeetCode's entry point is the first public method; helpers (private/static) may be declared above it.
+  const publicMethod = lang === "java"
+    ? [...afterClass.matchAll(/\bpublic\s+(?:static\s+)?[\w<>\[\],.?\s]+?\s+(\w+)\s*\(/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n))
+    : undefined;
+  const method = publicMethod ?? [...afterClass.matchAll(/(\w+)\s*\([^;{)]*\)\s*(?:const\s*)?\{/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n));
   if (!method) return "";
   const names = splitParams(rawParams).map((p) => p.match(/(\w+)\s*(?:\[\s*\])*\s*$/)?.[1] ?? "").filter(Boolean);
   const userVoid = new RegExp(`\\bvoid\\s+${method}\\s*\\(`).test(afterClass);
   const ctor = lang === "java" ? "new Solution()" : "Solution()";
-  const call = `${ctor}.${method}(${names.join(", ")})`;
+  const argExprs = names.slice();
+  let pre = "";
+  for (const i of parts.grid?.idx ?? []) {
+    const n = names[i];
+    const kind = parts.grid!.kind;
+    if (lang === "cpp") {
+      pre += kind === "char"
+        ? `vector<vector<char>> ${n}_g; for (auto &row : ${n}) ${n}_g.emplace_back(row.begin(), row.end()); `
+        : `vector<vector<int>> ${n}_g; for (auto &row : ${n}) { vector<int> r2; for (char ch : row) r2.push_back(ch - '0'); ${n}_g.push_back(r2); } `;
+    } else {
+      pre += kind === "char"
+        ? `char[][] ${n}_g = new char[${n}.length][]; for (int i = 0; i < ${n}.length; i++) ${n}_g[i] = ${n}[i].toCharArray(); `
+        : `int[][] ${n}_g = new int[${n}.length][]; for (int i = 0; i < ${n}.length; i++) { ${n}_g[i] = new int[${n}[i].length()]; for (int j = 0; j < ${n}[i].length(); j++) ${n}_g[i][j] = ${n}[i].charAt(j) - '0'; } `;
+    }
+    argExprs[i] = `${n}_g`;
+  }
+  const call = `${ctor}.${method}(${argExprs.join(", ")})`;
   const stubVoid = /\bvoid\s*$/.test(head.trim());
-  const bodyText = userVoid && !stubVoid ? `${call}; return ${names[0]};` : stubVoid ? `${call};` : `return ${call};`;
+  const bodyText = pre + (userVoid && !stubVoid ? `${call}; return ${names[0]};` : stubVoid ? `${call};` : `return ${call};`);
   const fn = `${head}solve(${rawParams}) { ${bodyText} }`;
   return lang === "java" ? `\n${JAVA_INDENT}${fn}\n` : `\n${fn}\n`;
 }

@@ -45,6 +45,12 @@ for (const [slug, byLang] of Object.entries(loadAnswers())) {
   };
 }
 
+// Show the reference solutions the way LeetCode does (class Solution + the real method name).
+const { toLeetCodeStyle } = require("./lc-style");
+for (const [slug, a] of Object.entries(out)) {
+  for (const [lang, code] of Object.entries(a.solutions)) a.solutions[lang] = toLeetCodeStyle(slug, lang, code);
+}
+
 const dest = path.join(root, "backend/src/main/resources/seed/solutions.json");
 fs.writeFileSync(dest, JSON.stringify(out, null, 1) + "\n");
 console.log(`wrote ${Object.keys(out).length} problems with answers -> ${path.relative(root, dest)}`);
