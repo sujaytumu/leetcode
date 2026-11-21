@@ -42,7 +42,8 @@ app:
   auth:
     # Set AUTH_SECRET (32+ random chars) in production so tokens survive restarts.
     secret: ${AUTH_SECRET:}
-    token-days: 30
+    # Logins last until you log out: effectively no expiry (10 years). Lower AUTH_TOKEN_DAYS to force periodic sign-in.
+    token-days: ${AUTH_TOKEN_DAYS:3650}
   mail:
     # Set RESEND_API_KEY to send password-reset and daily-problem emails; without it nothing is sent.
     api-key: ${RESEND_API_KEY:}

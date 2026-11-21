@@ -128,7 +128,8 @@ async function request<T>(path: string, init: RequestInit, timeoutMs: number): P
     clearTimeout(timer);
   }
   if (!res.ok) {
-    if (res.status === 401 && authToken()) expireSession();
+    // Stay signed in until an explicit log out: only drop the login when the server itself confirms the token is rejected.
+    if (res.status === 401 && authToken() && await tokenRejected()) expireSession();
     let msg = "";
     try { const j = await res.json(); msg = j.detail || j.message || j.title || ""; } catch {}
     const transient = res.status === 502 || res.status === 503 || res.status === 504;
@@ -177,3 +178,11 @@ export function localZone(): string {
 export interface PublicProfile { info: ProfileInfo; profile: Profile; rank: number | null; youFollow: boolean; you: boolean }
 export const publicProfilePath = (username: string) => `/api/users/${encodeURIComponent(username)}?zone=${encodeURIComponent(localZone())}`;
 export const profilePath = () => `/api/profile?zone=${encodeURIComponent(localZone())}`;
+
+/** True only if /api/auth/me also answers 401 for the saved token; a network error or a one-off 401 keeps the login. */
+async function tokenRejected(): Promise<boolean> {
+  try {
+    const r = await fetch(`${API}/api/auth/me`, { headers: { "X-Client-Id": clientId(), ...authHeaders() } });
+    return r.status === 401;
+  } catch { return false; }
+}
