@@ -28,7 +28,7 @@ export default function ProfileCard({ social }: { social?: { followers: number; 
   const share = async () => {
     if (!info.username) { setEditing(true); return; }
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/u/${encodeURIComponent(info.username)}`);
+      await navigator.clipboard.writeText(`${window.location.origin}/${encodeURIComponent(info.username)}`);
       setCopied(true); setTimeout(() => setCopied(false), 1800);
     } catch { /* clipboard blocked */ }
   };
@@ -49,7 +49,7 @@ export default function ProfileCard({ social }: { social?: { followers: number; 
             </button>
           </div>}
         footer={info.username
-          ? <Link className="pc-public" href={`/u/${encodeURIComponent(info.username)}`}>View your public profile →</Link>
+          ? <Link className="pc-public" href={`/${encodeURIComponent(info.username)}`}>View your public profile →</Link>
           : <p className="mute pc-public">Set a username to get a public profile page.</p>}
       />
       {editing && (
@@ -84,7 +84,7 @@ function EditDialog({ initial, onClose, onSaved }:
         <h3 style={{ marginTop: 0 }}>Edit profile</h3>
         {field("Name", "displayName", "Your name", 40)}
         {field("Username", "username", "letters, digits . _ -", 30)}
-        <p className="mute" style={{ margin: "-4px 0 8px", fontSize: 12 }}>A username makes your profile public at /u/username. It must be unique.</p>
+        <p className="mute" style={{ margin: "-4px 0 8px", fontSize: 12 }}>A username makes your profile public at /username. It must be unique.</p>
         {field("Headline", "headline", "e.g. SDE Intern | Full Stack Dev", 120)}
         {field("Company", "company")}
         {field("Location", "location")}

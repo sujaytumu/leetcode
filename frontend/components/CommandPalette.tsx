@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, Page, ProblemSummary } from "@/lib/api";
 
 const PAGES = [
-  { label: "Problems", hint: "Browse all problems", href: "/" },
+  { label: "Problems", hint: "Browse all problems", href: "/problemset" },
   { label: "Topics", hint: "Problems grouped by topic", href: "/topics" },
   { label: "For you", hint: "What to solve next and what to revisit", href: "/for-you" },
   { label: "Daily challenge calendar", hint: "Every day's problem this month", href: "/daily" },

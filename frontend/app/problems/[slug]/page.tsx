@@ -30,6 +30,7 @@ import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
+import CaseEditor from "@/components/CaseEditor";
 import { composeProgram, extractUser, type Parts, shiftErrorLines, splitTemplate } from "@/lib/harness";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 import { rememberProblem } from "@/components/ContinueCard";
@@ -123,7 +124,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   // The editor shows only the user's part; the judge gets the full program (hidden shell + user code).
   const parts = useMemo(
-    () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang) : null), [problem, lang]);
+    () => (problem && lang ? splitTemplate(problem.starterCode[lang] ?? "", lang, { slug: problem.slug, java: problem.starterCode.java }) : null), [problem, lang]);
   const draftKey = (l: Lang) => `lc-draft2:${slug}:${l}`;
   // Notes and code drafts are mirrored to the server so they follow the device sync code.
   const langRef = useRef(lang); langRef.current = lang;
@@ -672,15 +673,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <button onClick={() => persistCases([...savedCases, customInput])} title="Keep this input for next time">＋ Save case</button>
                     )}
                   </div>
-                  <div className="iolabel">Input</div>
-                  <textarea className="consoletext" spellCheck={false} value={customInput}
-                    onChange={(e) => setCustomInput(e.target.value)} aria-label="Test case input" />
-                  {sampleIdx >= 0 && problem.samples[sampleIdx] && (
-                    <>
-                      <div className="iolabel">Expected output</div>
-                      <pre>{problem.samples[sampleIdx].expectedOutput}</pre>
-                    </>
-                  )}
+                  <CaseEditor python={problem.starterCode.python ?? ""} value={customInput} onChange={setCustomInput} />
                   <div className="hint-line">
                     Run checks the sample cases. Edit the input to run your own test: custom runs print your output without a pass/fail check.
                   </div>

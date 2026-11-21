@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import ProfileHeader from "@/components/ProfileHeader";
+import OwnProfile from "@/app/profile/page";
 import ProfileLayout from "@/components/ProfileLayout";
 import Skeleton from "@/components/Skeleton";
 import { api, PublicProfile, publicProfilePath } from "@/lib/api";
@@ -40,6 +41,7 @@ export default function PublicProfilePage() {
     );
   }
   if (!data) return <Skeleton lines={10} />;
+  if (data.you) return <OwnProfile />;
 
   const action = data.you
     ? <Link className="pc-edit pc-link" href="/profile">Edit Profile</Link>

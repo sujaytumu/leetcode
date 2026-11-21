@@ -101,3 +101,53 @@ export function formatOutput(python: string, expected: string): string | null {
   }
   return null;
 }
+
+/** The inverse of formatInputParts: named LeetCode values back to the judge's stdin text; null when a value does not parse. */
+export function buildInput(python: string, parts: { name: string; value: string }[]): string | null {
+  const spec = parseInputSpec(python);
+  if (!spec) return null;
+  const byName = new Map(parts.map((p) => [p.name, p.value] as const));
+  const parse = (name: string): unknown => {
+    const raw = byName.get(name);
+    if (raw === undefined) throw new Error("missing");
+    return JSON.parse(raw.trim());
+  };
+  const cell = (v: unknown): string => (v === null ? "null" : String(v));
+  try {
+    const lines: string[] = [];
+    for (let i = 0; i < spec.length; i++) {
+      const s = spec[i];
+      if (s.kind === "count" || s.kind === "rowcount") {
+        const next = spec[i + 1];
+        if (!next || !("name" in next)) return null;
+        const v = parse(next.name);
+        if (!Array.isArray(v)) return null;
+        lines.push(String(v.length));
+        continue;
+      }
+      const v = parse(s.name);
+      switch (s.kind) {
+        case "ints": case "list": case "tree":
+          if (!Array.isArray(v)) return null;
+          lines.push(v.map(cell).join(" ")); break;
+        case "int":
+          if (typeof v !== "number") return null;
+          lines.push(String(v)); break;
+        case "str":
+          if (typeof v !== "string") return null;
+          lines.push(v); break;
+        case "strs":
+          if (!Array.isArray(v)) return null;
+          for (const x of v) lines.push(String(x));
+          break;
+        case "matrix":
+          if (!Array.isArray(v)) return null;
+          for (const row of v) { if (!Array.isArray(row)) return null; lines.push(row.map(cell).join(" ")); }
+          break;
+      }
+    }
+    return lines.join("\n") + "\n";
+  } catch {
+    return null;
+  }
+}

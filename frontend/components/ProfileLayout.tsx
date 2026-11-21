@@ -32,6 +32,7 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
   { p: Profile; header: ReactNode; ratingPath?: string; own?: boolean; extras?: ReactNode }) {
   const meta = useMeta();
   const [year, setYear] = useState<number | "current">("current");
+  const [badgesOpen, setBadgesOpen] = useState(false);
   const years = [...new Set(p.calendar.map((c) => Number(c.date.slice(0, 4))))].sort((a, b) => b - a);
   return (
     <>
@@ -68,6 +69,9 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
                     <div className="bd-label">Badges</div>
                     <div className="bd-count">{earned.length}</div>
                   </div>
+                  <button type="button" className="bd-arrow" aria-label={badgesOpen ? "Hide all badges" : "Show all badges"} onClick={() => setBadgesOpen((v) => !v)}>
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg>
+                  </button>
                   <div className="bd-medals" aria-hidden="true">
                     {[...earned.slice(-3).reverse(), ...p.badges.filter((b) => !b.earned)].slice(0, 3).map((b) => (
                       <span key={b.id} className={`bd-hex cat-${b.category}${b.earned ? "" : " locked"}`} title={b.earned ? b.title : `${b.title} (locked)`}>{BADGE_ICON[b.category] ?? "🏅"}</span>
@@ -81,7 +85,7 @@ export default function ProfileLayout({ p, header, ratingPath = "/api/profile/ra
               </>
             );
           })()}
-          <details className="bd-all">
+          <details className="bd-all" open={badgesOpen} onToggle={(e) => setBadgesOpen((e.currentTarget as HTMLDetailsElement).open)}>
             <summary>All badges ({p.badges.filter((b) => b.earned).length} / {p.badges.length})</summary>
             <div className="badges">
               {[...p.badges].sort((a, b) => Number(b.earned) - Number(a.earned)).map((b) => (

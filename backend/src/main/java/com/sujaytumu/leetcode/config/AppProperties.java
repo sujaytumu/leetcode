@@ -17,7 +17,7 @@ public record AppProperties(
     /** secret signs login tokens; set AUTH_SECRET in production or tokens reset on every restart. */
     public record Auth(
             @DefaultValue("") String secret,
-            @DefaultValue("30") int tokenDays,
+            @DefaultValue("3650") int tokenDays,
             @DefaultValue("8") int maxFailedLogins) {}
 
     public record Seed(@DefaultValue("true") boolean enabled) {}

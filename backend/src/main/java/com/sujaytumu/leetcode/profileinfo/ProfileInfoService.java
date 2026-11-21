@@ -17,6 +17,12 @@ public class ProfileInfoService {
             String school, String website, String github, String linkedin, List<String> tags) {}
 
     static final int MAX_TAGS = 8;
+    /** Profiles live at /username, so a name can't be one of the app's own pages. */
+    private static final java.util.Set<String> RESERVED = java.util.Set.of(
+            "problems", "problemset", "login", "register", "contest", "leaderboard", "playground", "profile", "topics",
+            "plans", "practice", "review", "notes", "lists", "mock", "daily", "stats", "submissions", "account",
+            "api", "u", "forgot-password", "reset-password", "unsubscribe", "for-you", "catalog", "actuator", "admin",
+            "settings", "explore", "discuss", "interview", "store", "premium", "assets", "static");
     private static final Pattern HANDLE = Pattern.compile("[A-Za-z0-9_.-]*");
 
     private final ProfileInfoRepository repository;
@@ -34,6 +40,9 @@ public class ProfileInfoService {
     public ProfileInfoView update(UUID clientId, ProfileInfoView request) {
         ProfileInfo info = repository.findById(clientId).orElseGet(() -> new ProfileInfo(clientId));
         String username = handle("Username", request.username(), 30);
+        if (RESERVED.contains(username.toLowerCase(java.util.Locale.ROOT))) {
+            throw new IllegalArgumentException("That username is reserved");
+        }
         if (!username.isEmpty() && repository.existsByUsernameIgnoreCaseAndClientIdNot(username, clientId)) {
             throw new IllegalArgumentException("That username is taken");
         }
