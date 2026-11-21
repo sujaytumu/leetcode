@@ -1251,3 +1251,58 @@ main:has(.workspace) { padding:0 8px 8px; }
 
 /* Problem list page has no sidebar any more: one full-width column */
 .home.home-solo { grid-template-columns:minmax(0,1fr); }
+
+/* ===== Problem set, laid out like LeetCode's: library sidebar, plain topic row, search toolbar, spaced rows ===== */
+.lcset { display:block; }
+@media (min-width:901px) {
+  .lcset { display:grid; grid-template-columns:300px minmax(0,1fr); gap:0; margin:-8px -28px 0; min-height:calc(100vh - 66px); }
+  .lcside { position:sticky; top:66px; align-self:start; height:calc(100vh - 66px); overflow:auto; padding:28px 18px; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:2px; }
+  .lcside nav { display:flex; flex-direction:column; gap:4px; }
+  .lcside a, .lcside .lcside-item { display:flex; align-items:center; gap:12px; height:46px; padding:0 8px; border-radius:8px; color:var(--text); text-decoration:none; font-size:17px; font-weight:500; background:none; border:0; text-align:left; width:100%; }
+  .lcside a:hover, .lcside .lcside-item:hover:not(:disabled) { background:var(--cell); }
+  .lcside a.on { background:var(--cell); }
+  .lcside-ico { flex:none; width:24px; height:24px; display:grid; place-items:center; }
+  .lcside hr { border:0; border-top:1px solid var(--line); margin:18px 0 14px; width:100%; }
+  .lcside-h { display:flex; align-items:center; justify-content:space-between; padding:6px 8px 10px; font-size:19px; font-weight:500; color:var(--mute); }
+  .lcside-h a { width:auto; height:auto; padding:0 6px; font-size:24px; font-weight:400; color:var(--text); background:none; }
+  .lcside .lcside-item { font-size:17px; }
+  .lcside-ico.fav { background:#f59e0b; color:#fff; border-radius:6px; width:24px; height:24px; font-size:15px; }
+  .lcside-ico.lst { background:var(--cell); color:var(--text); border-radius:6px; font-size:16px; }
+  .lcset > .home { padding:26px 28px 40px 28px; max-width:1160px; }
+
+  /* topics: plain text + count badge, no box (the earlier panel box is dropped) */
+  .topicpanel { background:none; border:0; border-radius:0; padding:0; margin:0 0 22px; }
+  .topichead { margin-bottom:14px; }
+  .topichead > b { display:none; }
+  .topicpanel .chips.lcchips { gap:10px 26px; margin:0 0 6px; align-items:center; }
+  .topicpanel .chips.lcchips button { background:none; border:0; border-radius:0; padding:0; font-size:20px; font-weight:400; color:var(--text); display:inline-flex; align-items:center; }
+  .topicpanel .chips.lcchips button:hover:not(:disabled) { background:none; color:var(--accent); }
+  .topicpanel .chips.lcchips button.on { color:var(--accent); }
+  .topicpanel .chips.lcchips button:first-child { background:#fff; color:#111; border-radius:999px; padding:9px 20px; font-size:17px; }
+  .topicpanel .chips.lcchips button:first-child:not(.on) { background:var(--cell); color:var(--text); }
+  .lcchips .chipn { margin-left:10px; padding:1px 8px; font-size:13px; border-radius:12px; background:var(--cell); color:var(--mute); }
+  .topichead .chipmore { border:0; background:none; font-size:16px; color:var(--text); }
+
+  /* toolbar */
+  .filters { display:flex; align-items:center; gap:10px; margin:0 0 18px; padding:16px 0 0; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .filters input.grow { flex:0 1 250px; min-width:180px; height:40px; border:0; border-radius:20px; background:var(--cell); padding:0 18px; font-size:15px; }
+  .filters select { height:40px; border:0; border-radius:20px; background:var(--cell); padding:0 14px; font-size:14px; }
+  .filters label.bar { font-size:14px; color:var(--mute); }
+  .solvedcount { margin-left:auto; display:inline-flex; align-items:center; gap:8px; font-size:20px; color:var(--mute); white-space:nowrap; }
+  .sc-ring { width:20px; height:20px; border-radius:50%; border:2.5px solid var(--cell); border-top-color:var(--easy); }
+  .shufflebtn { border:0; background:none; color:var(--mute); padding:6px; border-radius:8px; }
+  .shufflebtn:hover:not(:disabled) { background:var(--cell); color:var(--text); }
+
+  /* rows: tall, striped, rounded, like the real list */
+  .home table { border:0; background:none; border-radius:0; }
+  .home thead th { background:none; border:0; font-size:13px; color:var(--mute); padding:6px 12px; }
+  .home tbody td { height:68px; padding:0 14px; border:0; font-size:15px; }
+  .home tbody tr td:nth-child(2) a { font-size:20px; font-weight:500; color:var(--text); }
+  .home tbody tr:nth-child(odd) td { background:var(--panel); }
+  .home tbody tr:nth-child(even) td { background:transparent; }
+  .home tbody tr td:first-child { border-radius:10px 0 0 10px; width:48px; }
+  .home tbody tr td:last-child { border-radius:0 10px 10px 0; font-size:20px; font-weight:400; }
+  .home tbody tr:hover td { background:var(--hover); }
+  .home tbody td.th-num { font-size:16px; }
+}
+@media (max-width:900px) { .lcside { display:none; } }

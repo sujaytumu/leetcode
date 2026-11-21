@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { tagLabel, fetchAllProblems, Page, ProblemSummary } from "@/lib/api";
+import { tagLabel, fetchAllProblems, Page, ProblemSummary, Progress } from "@/lib/api";
 import { swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
 import { useMeta } from "@/lib/meta";
@@ -13,6 +13,10 @@ const ICON = {
   ATTEMPTED: <span className="st-att" title="Attempted" aria-label="Attempted" />,
   TODO: null,
 } as const;
+
+const Ico = ({ d }: { d: string }) => (
+  <svg className="lcside-ico" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+);
 
 export default function ProblemsPage() {
   const [sort, setSort] = useState("");
@@ -30,6 +34,7 @@ export default function ProblemsPage() {
   const [topicSort, setTopicSort] = useState<"count" | "az">("count");
   const [sheet, setSheet] = useState(false); // phone filter bottom sheet
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
+  const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
@@ -39,7 +44,7 @@ export default function ProblemsPage() {
   const meta = useMeta();
   const [cursor, setCursor] = useState(-1);
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
-  // Come back to the filters and sort you left; a /problems?tag= link from the Topics page still wins for the topic.
+  // Come back to the filters and sort you left; a /problemset?tag= link from the Topics page still wins for the topic.
   const [filtersReady, setFiltersReady] = useState(false);
   useEffect(() => {
     try {
@@ -60,13 +65,14 @@ export default function ProblemsPage() {
   }, [filtersReady, difficulty, tag, status, sort, dir, bookmarked]);
   const anyFilter = !!(q || difficulty || tag || status || sort || bookmarked);
   const clearFilters = () => { setQ(""); setDifficulty(""); setTag(""); setStatus(""); setSort(""); setDir("asc"); setBookmarked(false); setPage(0); };
-  // /problems?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
+  // /problemset?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("tag");
     if (t) setTag(t);
   }, []);
 
   useEffect(() => {
+    swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
     swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
     swr<{ tag: string; total: number }[]>("/api/topics", (t) => setCounts(new Map(t.map((x) => [x.tag, x.total]))), () => {}).catch(() => {});
   }, [reload]);
@@ -148,6 +154,22 @@ export default function ProblemsPage() {
 
   return (
     <>
+      <div className="lcset">
+      <aside className="lcside" aria-label="Library">
+        <nav>
+          <Link href="/problemset" className="on"><Ico d="M4 4h4v16H4zM10 4h4v16h-4zM16 6l4-1 3 14-4 1z" />Library</Link>
+          <Link href="/plans"><Ico d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5" />Study Plan</Link>
+          <Link href="/daily"><Ico d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" />Daily Challenge</Link>
+          <Link href="/practice"><Ico d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />Practice</Link>
+          <Link href="/review"><Ico d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />Review</Link>
+          <Link href="/notes"><Ico d="M6 3h9l4 4v14H6zM9 12h7M9 16h7" />Notes</Link>
+          <Link href="/mock"><Ico d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2" />Mock Interview</Link>
+        </nav>
+        <hr />
+        <div className="lcside-h"><span>My Lists</span><Link href="/lists" aria-label="Manage my lists" title="Manage my lists">＋</Link></div>
+        <button type="button" className="lcside-item" onClick={() => { setBookmarked(true); setPage(0); }}><span className="lcside-ico fav">★</span>Favorite</button>
+        <Link href="/lists" className="lcside-item"><span className="lcside-ico lst">≡</span>All my lists</Link>
+      </aside>
       <div className="home home-solo">
         <div className="home-main">
           <section className="topicpanel" aria-label="Topics">
@@ -201,6 +223,10 @@ export default function ProblemsPage() {
                 onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
               {anyFilter && <button type="button" onClick={clearFilters} title="Reset every filter and the sort order">Clear filters</button>}
             </div>
+            {progress && <span className="solvedcount"><span className="sc-ring" aria-hidden="true" />{progress.solved}/{progress.total} Solved</span>}
+            <button type="button" className="shufflebtn" onClick={pickRandom} disabled={picking} title="Pick one" aria-label="Pick one at random">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 7h3c5 0 7 10 12 10h3M3 17h3c1.5 0 2.700-.6 3.700-1.600M14 8.400C15 7.500 16.300 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3" /></svg>
+            </button>
           </div>
           <table>
             <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm" style={{ width: 90, textAlign: "center" }}>Solution</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
@@ -240,6 +266,7 @@ export default function ProblemsPage() {
           )}
         </div>
 
+      </div>
       </div>
     </>
   );

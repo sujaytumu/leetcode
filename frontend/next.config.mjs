@@ -8,6 +8,12 @@ const BACKEND = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").rep
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      { source: "/u/:username", destination: "/:username", permanent: true },
+      { source: "/problems", destination: "/problemset", permanent: true },
+    ];
+  },
   async rewrites() {
     return [
       { source: "/api/:path*", destination: `${BACKEND}/api/:path*` },

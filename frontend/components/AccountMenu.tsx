@@ -48,6 +48,7 @@ export default function AccountMenu() {
 
   const name = info?.displayName || user;
   const handle = info?.username || user;
+  const home = info?.username ? `/${encodeURIComponent(info.username)}` : "/";
   const avatar = (cls: string) => info?.github && photoOk
     // eslint-disable-next-line @next/next/no-img-element
     ? <img className={cls} src={`https://github.com/${info.github}.png?size=96`} alt="" onError={() => setPhotoOk(false)} />
@@ -55,17 +56,17 @@ export default function AccountMenu() {
 
   return (
     <div className="acctmenu" ref={box}>
-      <button type="button" className={`acct-btn${(path === "/" || path.startsWith("/profile")) ? " active" : ""}`} aria-label="Account menu" aria-haspopup="menu" aria-expanded={open}
+      <button type="button" className={`acct-btn${(path === "/" || path === home || path.startsWith("/profile")) ? " active" : ""}`} aria-label="Account menu" aria-haspopup="menu" aria-expanded={open}
         onClick={() => setOpen((v) => !v)}>
         {avatar("acct-av")}
       </button>
       {open && (
         <div className="acct-pop" role="menu">
-          <Link href="/" className="acct-head" role="menuitem">
+          <Link href={home} className="acct-head" role="menuitem">
             {avatar("acct-av lg")}
             <span><b>{name}</b><span className="mute">{handle}</span></span>
           </Link>
-          <Link href="/" role="menuitem">Profile</Link>
+          <Link href={home} role="menuitem">Profile</Link>
           <Link href="/submissions" role="menuitem">Submissions</Link>
           <Link href="/notes" role="menuitem">Notes</Link>
           <Link href="/lists" role="menuitem">My Lists</Link>
