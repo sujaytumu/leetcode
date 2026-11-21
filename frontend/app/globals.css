@@ -1536,3 +1536,4 @@ html[data-theme="light"] .ratingdist .bar.me { background:#ffa116; }
   .daygrid .daytitle { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .daygrid .daycell { min-height:82px; }
 }
+input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
