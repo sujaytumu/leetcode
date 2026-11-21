@@ -1501,3 +1501,15 @@ textarea, input[type="text"], input[type="search"], select { background:color-mi
   html[data-theme="light"] .lcside a.on, html[data-theme="light"] .lcside .lcside-item.on, html[data-theme="light"] .lcside a[aria-current="page"] { background:color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 }
 .approach-sep { width:1px; height:18px; background:var(--line); margin:0 6px; align-self:center; }
+
+/* Polish pass: slim scrollbars, steady numerals, soft transitions, consistent green/red */
+* { scrollbar-width:thin; scrollbar-color:color-mix(in srgb, var(--mute) 45%, transparent) transparent; }
+*::-webkit-scrollbar { width:8px; height:8px; }
+*::-webkit-scrollbar-thumb { background:color-mix(in srgb, var(--mute) 45%, transparent); border-radius:8px; }
+*::-webkit-scrollbar-track { background:transparent; }
+table, .ratingbig, .ratingrank, .solvedcount, .acc, .mockclock { font-variant-numeric:tabular-nums; }
+a, button, .chip, .card, .solrow, .lcside a { transition:background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease; }
+.card:hover { box-shadow:0 2px 14px rgba(0,0,0,.12); }
+.verdict-ac, .accepted, .Accepted { color:var(--ok); }
+.verdict-wa, .wrong, .rejected { color:var(--bad); }
+::selection { background:color-mix(in srgb, var(--accent) 35%, transparent); }
