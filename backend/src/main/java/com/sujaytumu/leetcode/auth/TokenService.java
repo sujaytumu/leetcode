@@ -31,15 +31,38 @@ public class TokenService {
 
     public TokenService(AppProperties properties) {
         String secret = properties.auth().secret();
-        if (secret == null || secret.length() < 32) {
-            byte[] random = new byte[32];
-            new SecureRandom().nextBytes(random);
-            this.key = random;
-            log.warn("AUTH_SECRET is not set (or shorter than 32 chars): login tokens will be invalid after a restart.");
-        } else {
+        if (secret != null && secret.length() >= 32) {
             this.key = secret.getBytes(StandardCharsets.UTF_8);
+        } else {
+            byte[] stable = stableFallbackKey();
+            if (stable != null) {
+                this.key = stable;
+                log.warn("AUTH_SECRET is not set: signing logins with a key derived from the database settings so they survive restarts. Set AUTH_SECRET (32+ random chars) for a dedicated key.");
+            } else {
+                byte[] random = new byte[32];
+                new SecureRandom().nextBytes(random);
+                this.key = random;
+                log.warn("AUTH_SECRET is not set (or shorter than 32 chars): login tokens will be invalid after a restart.");
+            }
         }
         this.ttlSeconds = Math.max(1, properties.auth().tokenDays()) * 86_400L;
+    }
+
+    /**
+     * A key that stays the same across restarts without any extra setup: a hash of the database connection settings
+     * (the password is a secret only the deployment knows). Null on a local setup with no DB_PASSWORD.
+     */
+    private static byte[] stableFallbackKey() {
+        String password = System.getenv("DB_PASSWORD");
+        if (password == null || password.isBlank()) {
+            return null;
+        }
+        String material = "lc-auth-v1|" + System.getenv("DB_URL") + "|" + System.getenv("DB_USER") + "|" + password;
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(material.getBytes(StandardCharsets.UTF_8));
+        } catch (java.security.NoSuchAlgorithmException e) {
+            return null;
+        }
     }
 
     public String issue(Account account) {
