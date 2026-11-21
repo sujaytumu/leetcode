@@ -44,7 +44,7 @@ export default function TopicsPage() {
         {shown?.map((t) => {
           const pct = t.total ? Math.round((t.solved / t.total) * 100) : 0;
           return (
-            <Link key={t.tag} href={`/?tag=${encodeURIComponent(t.tag)}`} className="card topic">
+            <Link key={t.tag} href={`/problems?tag=${encodeURIComponent(t.tag)}`} className="card topic">
               <div className="bar"><b>{tagLabel(t.tag)}</b><span className="grow" /><span className="mute">{t.solved}/{t.total}</span></div>
               <div className="progress"><div style={{ width: `${pct}%` }} /></div>
               <div className="topic-diff">

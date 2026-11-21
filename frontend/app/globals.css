@@ -1248,3 +1248,6 @@ main:has(.workspace) { padding:0 8px 8px; }
   .verdict { font-size:20px; font-weight:500; }
   .vstats { font-size:13px; }
 }
+
+/* Problem list page has no sidebar any more: one full-width column */
+.home.home-solo { grid-template-columns:minmax(0,1fr); }

@@ -55,17 +55,17 @@ export default function AccountMenu() {
 
   return (
     <div className="acctmenu" ref={box}>
-      <button type="button" className={`acct-btn${path.startsWith("/profile") ? " active" : ""}`} aria-label="Account menu" aria-haspopup="menu" aria-expanded={open}
+      <button type="button" className={`acct-btn${(path === "/" || path.startsWith("/profile")) ? " active" : ""}`} aria-label="Account menu" aria-haspopup="menu" aria-expanded={open}
         onClick={() => setOpen((v) => !v)}>
         {avatar("acct-av")}
       </button>
       {open && (
         <div className="acct-pop" role="menu">
-          <Link href="/profile" className="acct-head" role="menuitem">
+          <Link href="/" className="acct-head" role="menuitem">
             {avatar("acct-av lg")}
             <span><b>{name}</b><span className="mute">{handle}</span></span>
           </Link>
-          <Link href="/profile" role="menuitem">Profile</Link>
+          <Link href="/" role="menuitem">Profile</Link>
           <Link href="/submissions" role="menuitem">Submissions</Link>
           <Link href="/notes" role="menuitem">Notes</Link>
           <Link href="/lists" role="menuitem">My Lists</Link>
