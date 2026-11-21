@@ -1201,3 +1201,22 @@ main:has(.workspace) { padding:0 8px 8px; }
   .bd-recent b { font-size:18px; font-weight:500; }
   .bd-all { margin-top:12px; padding-top:8px; }
 }
+
+/* ===== Top bar: LeetCode proportions (laptop). Brand on the left, links right after it, search pill + icons on the right ===== */
+@media (min-width:901px) {
+  header.nav { height:66px; padding:0 24px 0 40px; gap:0; background:var(--panel); border-bottom:0; backdrop-filter:none; }
+  header.nav .brand { font-size:21px; font-weight:500; letter-spacing:0; gap:8px; margin-right:38px; }
+  header.nav nav { margin-left:0; gap:28px; flex:1; overflow:visible; }
+  header.nav nav a { padding:0; border-radius:0; background:none; font-size:16px; font-weight:400; color:var(--mute); line-height:66px; }
+  header.nav nav a:hover { background:none; color:var(--text); }
+  header.nav nav a.active { background:none; color:var(--text); }
+  header.nav .nav-end { gap:22px; margin-left:auto; }
+  header.nav .nav-end .palette-btn { width:188px; height:38px; padding:0 14px; gap:8px; border:0; border-radius:10px; background:var(--cell); color:var(--mute); font-size:14px; justify-content:flex-start; }
+  header.nav .nav-end .palette-btn:hover { background:var(--hover); }
+  header.nav .nav-end .palette-btn kbd { margin-left:auto; font-size:11px; opacity:.7; }
+  header.nav .nav-end .theme-btn { width:38px; height:38px; padding:0; border:0; border-radius:50%; background:none; display:grid; place-items:center; font-size:19px; color:var(--mute); }
+  header.nav .nav-end .theme-btn:hover { background:var(--cell); color:var(--text); }
+  header.nav .theme-label { display:none; }
+  header.nav .acct-av { width:30px; height:30px; }
+  header.nav .nav-end .nav-auth { padding:8px 16px; border-radius:10px; background:var(--cell); color:var(--text); font-size:14px; }
+}
