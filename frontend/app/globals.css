@@ -1133,3 +1133,71 @@ main:has(.workspace) { padding:0 8px 8px; }
 .acct-pop .acct-head b { font-size:15px; overflow-wrap:anywhere; }
 .acct-pop .acct-head .mute { font-size:13px; }
 .acct-pop hr { border:0; border-top:1px solid var(--line); margin:6px 0; width:100%; }
+
+/* ===== Profile: match LeetCode's own profile page (laptop) ===== */
+@media (min-width:901px) {
+  .playout { grid-template-columns:340px minmax(0,1fr); gap:32px; }
+  /* Left column: no boxes, just content separated by thin lines */
+  .pleft .profilecard, .pleft .commstats, .pleft .langskills { background:transparent; border:0; border-radius:0; padding:0; }
+  .pleft { gap:0; }
+  .pleft .commstats, .pleft .langskills { border-top:1px solid var(--line); margin-top:22px; padding-top:22px; }
+  .pc-top { gap:16px; align-items:flex-start; }
+  .pc-top .avatar { width:94px; height:94px; border-radius:4px; font-size:30px; }
+  .pc-id { align-self:stretch; display:flex; flex-direction:column; }
+  .pc-name { font-size:18px; font-weight:600; }
+  .pc-user { font-size:12px; }
+  .pc-rank { margin-top:auto; font-size:17px; }
+  .pc-rank b { font-size:17px; font-weight:600; }
+  .pc-headline { margin:22px 0 0; font-size:22px; line-height:1.3; font-weight:400; }
+  .pc-social { margin-top:20px; font-size:15px; }
+  .pc-social b { font-size:15px; font-weight:500; }
+  .profilecard .pc-actions { margin:22px 0 18px; }
+  .profilecard .pc-actions .pc-edit { height:42px; margin:0; padding:0 12px; border:0; border-radius:6px; font-size:19px; font-weight:500;
+    color:var(--easy); background:color-mix(in srgb, var(--easy) 17%, var(--panel)); }
+  .profilecard .pc-actions .pc-edit:hover { filter:none; background:color-mix(in srgb, var(--easy) 26%, var(--panel)); }
+  .pc-share { width:42px; height:42px; border:0; border-radius:6px; background:var(--cell); color:var(--text); }
+  .profilecard .pc-rows { gap:20px; margin-top:20px; font-size:19px; }
+  .profilecard .pc-rows li { gap:18px; }
+  .pc-pill { padding:3px 9px; font-size:12px; border-radius:6px; }
+  .profilecard .pc-tags { margin-top:22px; }
+  .pleft .sect-h, .pleft .commstats .sect-h { font-size:16px; font-weight:600; margin-bottom:14px; }
+
+  /* One wide contest card, split down the middle; the Top % half sits right of a thin divider */
+  .ratingcol { display:grid; grid-template-columns:1fr 1fr; gap:0; padding:20px 22px; min-height:310px; background:var(--panel); border-radius:8px; }
+  .ratingcol > .card { background:transparent; border:0; border-radius:0; padding:0; display:flex; flex-direction:column; }
+  .ratingcol > .card + .card { border-left:1px solid var(--line); padding-left:22px; }
+  .ratingcol > .card:first-child { padding-right:22px; }
+  .ratinghead { gap:26px; }
+  .ratinghead .mute, .ratingcol > .card > .mute { font-size:13px; font-weight:600; }
+  .ratingbig { font-size:28px; font-weight:400; margin-top:6px; }
+  .ratingrank { margin-top:12px; font-size:13px; font-weight:600; }
+  .ratingrank b, .ratingrank .mute { display:inline; font-size:13px; font-weight:600; }
+  .ratinggraph { margin-top:auto; }
+  .ratingdist { margin-top:auto; justify-content:flex-start; gap:3px; height:170px; }
+  .ratingdist .bar { flex:0 0 24px; max-width:24px; border-radius:3px 3px 0 0; background:#3e3e3e; }
+  .ratingdist .bar.me { background:#ffa116; }
+
+  /* Solved gauge and badges: equal cards, flat, no borders */
+  .pgrid .card { border:0; border-radius:8px; }
+  .solvedcard { padding:24px; gap:20px; justify-content:space-around; }
+  .ring, .ring svg { width:230px; height:230px; }
+  .ring-num b { font-size:44px; font-weight:500; }
+  .ring-num .mute { font-size:17px; }
+  .ring-solved { font-size:16px; }
+  .ring-attempt { bottom:34px; font-size:13px; }
+  .diffboxes { flex:none; width:140px; gap:10px; min-width:0; }
+  .diffbox { border-radius:6px; padding:9px 8px; background:var(--cell); font-size:13px; }
+  .diffbox > div { font-size:13px !important; font-weight:600 !important; }
+
+  .badgescard { position:relative; display:flex; flex-direction:column; padding:20px 22px; min-height:280px; }
+  .bd-top { display:block; }
+  .bd-label { font-size:14px; }
+  .bd-count { font-size:26px; font-weight:500; }
+  .bd-arrow { position:absolute; top:16px; right:18px; background:none; border:0; padding:4px; color:var(--text); cursor:pointer; }
+  .bd-arrow:hover:not(:disabled) { background:none; color:var(--accent); }
+  .bd-medals { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); gap:46px; }
+  .bd-hex { width:88px; height:98px; font-size:38px; }
+  .bd-recent { margin-top:auto; padding-top:130px; font-size:13px; }
+  .bd-recent b { font-size:18px; font-weight:500; }
+  .bd-all { margin-top:12px; padding-top:8px; }
+}

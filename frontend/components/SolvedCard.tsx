@@ -32,8 +32,8 @@ export default function SolvedCard({ progress, attempting, difficulties }:
     const fill = x.total ? Math.min(1, x.solved / x.total) : 0;
     return (
       <g key={d.key}>
-        {len > 0 && <path d={arcPath(R, a0, a1)} fill="none" stroke={color} strokeOpacity="0.25" strokeWidth="6" strokeLinecap="round" />}
-        {len > 0 && fill > 0 && <path d={arcPath(R, a0, a0 + Math.max(1, len * fill))} fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" />}
+        {len > 0 && <path d={arcPath(R, a0, a1)} fill="none" stroke={color} strokeOpacity="0.25" strokeWidth="3.5" strokeLinecap="round" />}
+        {len > 0 && fill > 0 && <path d={arcPath(R, a0, a0 + Math.max(1, len * fill))} fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" />}
       </g>
     );
   });
