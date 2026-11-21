@@ -20,6 +20,9 @@ const ICON = {
   TODO: null,
 } as const;
 
+/** LeetCode abbreviates Medium to "Med." in the problem list. */
+const diffShort = (d: string) => (d === "MEDIUM" ? "Med." : d[0] + d.slice(1).toLowerCase());
+
 export default function Home() {
   const [sort, setSort] = useState("");
   const [dir, setDir] = useState("asc");
@@ -221,14 +224,14 @@ export default function Home() {
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
-                    <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
+                    <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{diffShort(p.difficulty)}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
                   <td className="hide-sm" style={{ textAlign: "center" }}>
                     <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>
                       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
                     </Link>
                   </td>
                   <td className="th-num col-acc mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
-                  <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
+                  <td className={p.difficulty}>{diffShort(p.difficulty)}</td>
                 </tr>
               ))}
               {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
