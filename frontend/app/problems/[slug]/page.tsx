@@ -462,6 +462,14 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <span aria-hidden="true">⌗</span> Topics
                     </button>
                   )}
+                  {study?.hints?.length ? (
+                    <button className="chip" onClick={() => {
+                      const d = document.querySelector<HTMLDetailsElement>(".deschints details");
+                      if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "center" }); }
+                    }}>
+                      <span aria-hidden="true">💡</span> Hint
+                    </button>
+                  ) : null}
                 </div>
                 {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>}
                 <ProblemDescription markdown={problem.description} python={problem.starterCode?.python} />

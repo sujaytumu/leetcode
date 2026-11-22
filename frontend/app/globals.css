@@ -1537,3 +1537,17 @@ html[data-theme="light"] .ratingdist .bar.me { background:#ffa116; }
   .daygrid .daycell { min-height:82px; }
 }
 input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
+
+/* Problem page on laptop: LeetCode's proportions and its joined Run / Submit control */
+@media (min-width:901px) {
+  .titlerow .ptitle { font-size:26px; font-weight:700; letter-spacing:-.01em; }
+  .lcdesc { font-size:16px; line-height:1.7; }
+  .lcdesc .lchead { font-size:17px; font-weight:700; margin:24px 0 8px; }
+  .lcdesc pre.lcbox { font-size:14px; }
+  .runbar { display:inline-flex; gap:2px; background:var(--cell); padding:3px; border-radius:12px; width:max-content; margin-inline:auto; }
+  .runbar button { border:0; background:transparent; height:32px; padding:0 14px; border-radius:9px; box-shadow:none; font-weight:600; }
+  .runbar button:hover:not(:disabled) { background:var(--hover); filter:none; }
+  .runbar button.primary { background:transparent; color:var(--easy); }
+  .runbar button.primary:hover:not(:disabled) { background:color-mix(in srgb, var(--easy) 14%, transparent); }
+  .runbar button.primary:not(:disabled)::before { content:"☁ "; }
+}
