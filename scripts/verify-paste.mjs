@@ -21,6 +21,8 @@ const problems = Object.fromEntries(
 
 const hasJavac = spawnSync("javac", ["-version"]).status === 0;
 const JAVAC = hasJavac ? ["javac"] : ["java", "-m", "jdk.compiler/com.sun.tools.javac.Main"];
+// The editor prints an answer marker (0x1e) after solve returns; the judge treats what precedes it as the user's own prints.
+const answerOf = (s) => s.slice(s.lastIndexOf("\x1e") + 1);
 const norm = (s) => s.replace(/\r/g, "").split("\n").map((l) => l.trimEnd()).join("\n").replace(/\s+$/, "");
 const sh = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: "utf8", maxBuffer: 64 << 20, timeout: 120000, ...opts });
 
@@ -58,8 +60,8 @@ for (const [slug, entry] of Object.entries(solutions)) {
           const t = problem.testCases[i];
           const r = sh(built.run[0], built.run[1], { cwd: dir, input: t.input, timeout: 20000 });
           if (r.status !== 0 || r.error) { status = `test ${i + 1}: runtime error ${r.error ? r.error.code : ""}\n${(r.stderr || "").slice(0, 300)}`; break; }
-          if (norm(r.stdout) !== norm(t.expectedOutput)) {
-            status = `test ${i + 1}: wrong answer\n  expected: ${JSON.stringify(norm(t.expectedOutput).slice(0, 100))}\n  got:      ${JSON.stringify(norm(r.stdout).slice(0, 100))}`;
+          if (norm(answerOf(r.stdout)) !== norm(t.expectedOutput)) {
+            status = `test ${i + 1}: wrong answer\n  expected: ${JSON.stringify(norm(t.expectedOutput).slice(0, 100))}\n  got:      ${JSON.stringify(norm(answerOf(r.stdout)).slice(0, 100))}`;
             break;
           }
         }
