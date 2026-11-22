@@ -1897,3 +1897,15 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
   header.nav .nav-end a.plansbtn { height:30px; padding:0 18px; margin-left:-6px; border-radius:8px; background:color-mix(in srgb, var(--accent) 16%, var(--bg)); color:var(--accent); font-size:16px; font-weight:500; }
   header.nav .nav-end a.plansbtn:hover { background:color-mix(in srgb, var(--accent) 26%, var(--bg)); }
 }
+
+/* Contest rating card like LeetCode: one card, two halves split by a thin vertical line, flat grey bars */
+.ratingwrap { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0; padding:0; }
+.ratingwrap > .ratingcard { background:none; border:0; box-shadow:none; border-radius:0; padding:15px 15px 12px; min-width:0; }
+.ratingwrap > .ratingcard + .ratingcard { border-left:1px solid var(--line); margin:15px 0; padding:0 15px; }
+.ratingwrap .ratingrank b { color:var(--text); }
+.ratingwrap .ratingrank span.mute { font-weight:400; }
+.ratingdist { justify-content:center; gap:3px; height:130px; align-items:flex-end; }
+.ratingdist .bar { flex:1 1 0; max-width:22px; border-radius:2px 2px 0 0; background:#3f3f3f; }
+html[data-theme="light"] .ratingdist .bar { background:#d4d8e0; }
+.ratingdist .bar.me { background:#ffa116; }
+@media (max-width:900px) { .ratingwrap { grid-template-columns:1fr; } .ratingwrap > .ratingcard + .ratingcard { border-left:0; border-top:1px solid var(--line); margin:0 15px; padding:12px 0 0; } }

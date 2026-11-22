@@ -24,8 +24,8 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
     // No rating yet: still show both LeetCode cards (rating + graph, Top %) with placeholders, so the page keeps its shape.
     const ghost = [8, 14, 26, 44, 70, 100, 82, 56, 36, 22, 14, 9, 6, 4];
     return (
-      <>
-        <section className="card ratingcard">
+      <div className="card ratingwrap">
+        <section className="ratingcard">
           <div className="ratinghead">
             <div><div className="mute">Contest Rating</div><div className="ratingbig">–</div></div>
             <div><div className="mute">Global Ranking</div><div className="ratingrank"><b>–</b></div></div>
@@ -38,7 +38,7 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
             {failed ? "Could not load your rating right now." : <>You get a rating after your first weekly contest. <Link href="/contest">Go to Contest</Link></>}
           </p>
         </section>
-        <section className="card ratingcard">
+        <section className="ratingcard">
           <div className="mute">Top</div>
           <div className="ratingbig">–</div>
           <div className="ratingdist ghost" aria-hidden="true">
@@ -51,7 +51,7 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
   const v = view as RatingView & { rating: number };
   return (
     <>
-      <section className="card ratingcard">
+      <section className="ratingcard">
         <div className="ratinghead">
           <div><div className="mute">Contest Rating</div><div className="ratingbig">{fmt(v.rating)}</div></div>
           <div>
@@ -62,12 +62,12 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
         </div>
         <RatingGraph points={v.history} peak={v.peak ?? v.rating} />
       </section>
-      <section className="card ratingcard">
+      <section className="ratingcard">
         <div className="mute">Top</div>
         <div className="ratingbig">{v.topPercent}%</div>
         <Distribution buckets={v.distribution} mine={v.rating} />
       </section>
-    </>
+    </div>
   );
 }
 
