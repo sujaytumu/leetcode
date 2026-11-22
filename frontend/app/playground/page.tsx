@@ -5,7 +5,7 @@ import { type ComponentType, useCallback, useEffect, useRef, useState } from "re
 import type { EditorProps } from "@monaco-editor/react";
 import { api } from "@/lib/api";
 import { useMeta } from "@/lib/meta";
-import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
+import { monacoTheme, registerThemes, useEditorSettings } from "@/lib/editorSettings";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 // Same typing workaround as the problem page: without it next/dynamic infers ComponentType<never>.
@@ -94,7 +94,7 @@ export default function Playground() {
         <button className="primary" disabled={busy} onClick={run} title="Ctrl/⌘ + Enter">{busy ? "Running…" : "▶ Run"}</button>
       </div>
       <div className="pane" style={{ height: "46vh", minHeight: 260 }}>
-        <Editor height="100%" theme={monacoTheme(ed.editorTheme, theme)}
+        <Editor height="100%" beforeMount={registerThemes} theme={monacoTheme(ed.editorTheme, theme)}
           language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"} value={code}
           onChange={(v) => { setCode(v ?? ""); safeSet(`lc-play-code:${lang}`, v ?? ""); }}
           options={{ minimap: { enabled: ed.minimap }, fontSize: ed.fontSize, tabSize: ed.tabSize, insertSpaces: true,

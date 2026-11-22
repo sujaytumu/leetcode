@@ -20,7 +20,7 @@ import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
 import ProblemDescription from "@/components/ProblemDescription";
 import { formatInputParts, formatOutput } from "@/lib/example";
-import { monacoTheme, useEditorSettings } from "@/lib/editorSettings";
+import { monacoTheme, registerThemes, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
@@ -682,7 +682,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               </button>
             </div>
             <div className="codebody">
-              <Editor height="100%" onMount={(ed) => { ed.onDidChangeCursorPosition((e) => setCursor({ ln: e.position.lineNumber, col: e.position.column })); }} theme={monacoTheme(ed.editorTheme, theme)}
+              <Editor height="100%" beforeMount={registerThemes} onMount={(ed) => { ed.onDidChangeCursorPosition((e) => setCursor({ ln: e.position.lineNumber, col: e.position.column })); }} theme={monacoTheme(ed.editorTheme, theme)}
               language={languages.find((l) => l.key === lang)?.editorMode ?? "plaintext"}
               value={code} onChange={onChange}
               options={{

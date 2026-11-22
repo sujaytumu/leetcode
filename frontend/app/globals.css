@@ -1909,3 +1909,31 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
 html[data-theme="light"] .ratingdist .bar { background:#d4d8e0; }
 .ratingdist .bar.me { background:#ffa116; }
 @media (max-width:900px) { .ratingwrap { grid-template-columns:1fr; } .ratingwrap > .ratingcard + .ratingcard { border-left:0; border-top:1px solid var(--line); margin:0 15px; padding:12px 0 0; } }
+
+/* ==== TRUE BLACK theme (dark mode): neutral greys only, no blue tint; every label stays readable ==== */
+:root { --bg:#000000; --panel:#0b0b0c; --line:#242426; --cell:#19191a; --hover:#151516; --code-bg:#070708;
+  --text:#f4f4f5; --mute:#a1a1a6; --shadow:0 0 0 1px rgba(255,255,255,.035) inset, 0 10px 30px rgba(0,0,0,.65);
+  --ring:rgba(255,178,31,.32); --warn-bg:#241d08; --err-bg:#2a1115; }
+html[data-theme="light"] { --bg:#eef0f4; --panel:#ffffff; --line:#e1e4ea; --cell:#e9ecf1; --hover:#f4f6f9; --code-bg:#f5f7fa;
+  --text:#1f2430; --mute:#5b6473; --shadow:0 1px 2px rgba(16,24,40,.06), 0 6px 18px rgba(16,24,40,.07); }
+html:not([data-theme="light"]) body:has(.workspace) { --lc-bg:#000; --lc-pane:#0b0b0c; --lc-strip:#151516; background:#000; }
+html:not([data-theme="light"]):has(.workspace) { background:#000; }
+html:not([data-theme="light"]) .nav { background:linear-gradient(180deg, #0d0d0e, #050506); border-bottom:1px solid #1c1c1e; }
+html:not([data-theme="light"]) .nav { backdrop-filter:none; }
+html:not([data-theme="light"]) .card, html:not([data-theme="light"]) .plan, html:not([data-theme="light"]) .modal, html:not([data-theme="light"]) .daily {
+  border:1px solid #1f1f21; background:linear-gradient(180deg, #0e0e0f, #0a0a0b); }
+html:not([data-theme="light"]) table { background:#0a0a0b; }
+html:not([data-theme="light"]) input, html:not([data-theme="light"]) select, html:not([data-theme="light"]) textarea { background:#0f0f10; border-color:#2a2a2d; }
+html:not([data-theme="light"]) .argbox { background:#151516; }
+html:not([data-theme="light"]) ::selection { background:rgba(255,178,31,.3); }
+html:not([data-theme="light"]) .ratingdist .bar { background:#2c2c2f; }
+html:not([data-theme="light"]) .ratingdist.ghost .bar { background:#232325; }
+
+/* Contest card: stats + graph on the left, Top % histogram on the RIGHT, spanning the whole row */
+.ratingcol:has(> .ratingwrap) { display:block; grid-column:1 / -1; padding:0; min-height:0; background:none; border:0; box-shadow:none; }
+.ratingcol > .card.ratingwrap { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); padding:0; width:100%; flex-direction:initial; }
+.ratingcol > .card.ratingwrap > .ratingcard { display:flex; flex-direction:column; padding:22px 26px; background:none; border:0; }
+.ratingcol > .card.ratingwrap > .ratingcard + .ratingcard { border-left:1px solid var(--line); padding-left:26px; margin:20px 0; padding-top:2px; padding-bottom:2px; }
+.ratingwrap .ratingdist { margin-top:auto; height:150px; }
+.ratingwrap .ratingdist .bar.me { background:linear-gradient(180deg, #ffc247, #ff9d00); box-shadow:0 0 18px rgba(255,170,0,.35); }
+@media (max-width:640px) { .ratingcol > .card.ratingwrap { grid-template-columns:1fr; } .ratingcol > .card.ratingwrap > .ratingcard + .ratingcard { border-left:0; border-top:1px solid var(--line); margin:0 26px; padding:16px 0 0; } }

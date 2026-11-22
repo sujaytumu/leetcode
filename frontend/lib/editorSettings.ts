@@ -48,8 +48,33 @@ export function useEditorSettings(): [EditorSettings, (patch: Partial<EditorSett
 
 /** Monaco theme id for the chosen editor theme; "auto" follows the site theme. */
 export function monacoTheme(editor: EditorTheme, site: "dark" | "light"): string {
-  if (editor === "dark") return "vs-dark";
+  if (editor === "dark") return "lc-black";
   if (editor === "light") return "vs";
   if (editor === "hc") return "hc-black";
-  return site === "light" ? "vs" : "vs-dark";
+  return site === "light" ? "vs" : "lc-black";
+}
+
+/** A true-black Monaco theme that matches the site's dark theme (neutral greys, no blue tint). */
+export function registerThemes(monaco: { editor: { defineTheme: (name: string, data: unknown) => void } }): void {
+  monaco.editor.defineTheme("lc-black", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [],
+    colors: {
+      "editor.background": "#0b0b0c",
+      "editor.foreground": "#ededef",
+      "editorGutter.background": "#0b0b0c",
+      "editor.lineHighlightBackground": "#151516",
+      "editor.lineHighlightBorder": "#00000000",
+      "editorLineNumber.foreground": "#74747a",
+      "editorLineNumber.activeForeground": "#e4e4e7",
+      "editor.selectionBackground": "#33333a",
+      "editor.inactiveSelectionBackground": "#232327",
+      "editorCursor.foreground": "#ffb21f",
+      "editorIndentGuide.background1": "#232326",
+      "editorWidget.background": "#111113",
+      "editorSuggestWidget.background": "#111113",
+      "scrollbarSlider.background": "#ffffff22",
+    },
+  });
 }
