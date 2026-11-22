@@ -1846,3 +1846,15 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
   .lctop-r .theme-btn { padding:0 10px; }
 }
 .lctop button:focus-visible, .lctop .navbtn:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+
+/* Submit like LeetCode: green on a soft green fill, clear when disabled; green check icons on the Testcase / Test Result tabs */
+.lctop-c.runbar button.primary, .runbar button.primary { background:color-mix(in srgb, var(--ok) 16%, transparent) !important; color:var(--ok) !important; font-weight:700; }
+.runbar button.primary:hover:not(:disabled) { background:color-mix(in srgb, var(--ok) 26%, transparent) !important; filter:none; }
+.runbar button.primary:disabled { opacity:.55; }
+.runbar button:not(.primary) { background:transparent !important; }
+.runbar button:not(.primary):hover:not(:disabled) { background:var(--hover) !important; }
+.tabicon.tc-ok, .tabicon.tc-term { color:var(--ok); }
+.lcmaintabs .tabicon.ti-desc { color:#4da3ff; } .lcmaintabs .tabicon.ti-edit { color:var(--accent); }
+.lcmaintabs .tabicon.ti-sol { color:#4da3ff; } .lcmaintabs .tabicon.ti-sub { color:#4da3ff; }
+.lcmaintabs button + button { position:relative; }
+.lcmaintabs button + button::before { content:""; position:absolute; left:-1px; top:14px; bottom:14px; width:1px; background:var(--line); }
