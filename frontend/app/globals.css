@@ -1952,3 +1952,21 @@ html:not([data-theme="light"]) .ratingdist.ghost .bar { background:#232325; }
 .ratingwrap .ratingcard > p.mute a:hover { text-decoration:underline; }
 .ratingwrap .ratingdist { display:flex; align-items:flex-end; gap:4px; border-bottom:1px solid var(--line); padding-bottom:0; }
 .ratingwrap .ratingdist .bar { max-width:26px; border-radius:3px 3px 0 0; }
+
+/* ==== Theme switch: sun / moon pill ==== */
+html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease !important; }
+.theme-btn.theme-switch, header.nav .nav-end .theme-btn.theme-switch, .lctop-r .theme-btn.theme-switch, header.nav .nav-end:has(.acct-btn) .theme-btn.theme-switch {
+  display:inline-flex; align-items:center; width:58px; height:30px; min-width:58px; padding:0; margin:0 2px; border:1px solid var(--line); border-radius:999px;
+  background:var(--cell); font-size:0; cursor:pointer; flex:0 0 auto; position:relative; }
+.theme-switch:hover { border-color:color-mix(in srgb, var(--accent) 55%, var(--line)); background:var(--cell); }
+.theme-switch .ts-track { position:relative; width:100%; height:100%; display:block; }
+.theme-switch .ts-sun, .theme-switch .ts-moon { position:absolute; top:50%; transform:translateY(-50%); transition:opacity .25s ease, color .25s ease; }
+.theme-switch .ts-sun { left:8px; color:#f5a524; }
+.theme-switch .ts-moon { right:8px; color:#9aa0ff; }
+.theme-switch .ts-knob { position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.45); transition:transform .28s cubic-bezier(.4,1.4,.5,1), background-color .25s ease; }
+.theme-switch.is-dark .ts-knob { transform:translateX(28px); background:#1b1b1d; box-shadow:0 0 0 1px #3a3a3e inset, 0 1px 4px rgba(0,0,0,.6); }
+.theme-switch.is-dark .ts-sun { opacity:.55; } .theme-switch.is-dark .ts-moon { opacity:0; }
+.theme-switch.is-light .ts-moon { opacity:.55; } .theme-switch.is-light .ts-sun { opacity:0; }
+html[data-theme="light"] .theme-switch { background:#fff3d6; border-color:#f1d9a0; }
+.theme-switch:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@media (max-width:640px) { .theme-btn.theme-switch, header.nav .nav-end .theme-btn.theme-switch { width:50px; min-width:50px; height:27px; } .theme-switch .ts-knob { width:19px; height:19px; } .theme-switch.is-dark .ts-knob { transform:translateX(23px); } }
