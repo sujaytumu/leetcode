@@ -202,6 +202,27 @@ function leetCodeAdapter(parts: Parts, user: string): string {
 }
 
 /** The full program to send to the judge: the hidden parts around the user's code. */
+/** The marker the judge splits on: user prints come before it, the answer after it (see SubmissionService.ANSWER_MARKER). */
+const MARK: Record<string, string> = {
+  cpp: "cout << '\\x1e';",
+  java: "System.out.print((char) 30);",
+  python: "print('\\x1e', end='')",
+  javascript: "process.stdout.write('\\x1e');",
+};
+
+/**
+ * Prints the answer marker right after the hidden main calls `solve`, so anything the user's code prints (cout, print,
+ * console.log, System.out) lands before it and shows in a separate "Stdout" box instead of breaking the answer.
+ * C++ also stops un-syncing cout from stdio, so printf and cout keep their order.
+ */
+export function markAnswer(suffix: string, lang: string): string {
+  const mark = MARK[lang];
+  if (!mark) return suffix;
+  let out = lang === "cpp" ? suffix.replace(/^\s*ios::sync_with_stdio\(false\);\s*\n/m, "") : suffix;
+  out = out.replace(/^(\s*)(.*\bresult\s*=\s*solve\(.*\);?)[ \t]*$/m, (_m, indent: string, call: string) => `${indent}${call}\n${indent}${mark}`);
+  return out;
+}
+
 export function composeProgram(parts: Parts, user: string): string {
   const c = COMMENT[parts.lang];
   let body = user.replace(/\s+$/, "");
@@ -210,7 +231,7 @@ export function composeProgram(parts: Parts, user: string): string {
   const placed = parts.lang === "java"
     ? body.split("\n").map((l) => (l.trim() ? JAVA_INDENT + l : l)).join("\n")
     : body;
-  return `${parts.prefix}${c} ${OPEN}\n${placed}\n${c} ${CLOSE}${adapter}${parts.suffix}`;
+  return `${parts.prefix}${c} ${OPEN}\n${placed}\n${c} ${CLOSE}${adapter}${markAnswer(parts.suffix, parts.lang)}`;
 }
 
 /** The user's part of a program built by composeProgram (e.g. an earlier submission); null when it has no markers. */
