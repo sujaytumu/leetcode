@@ -1826,3 +1826,9 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
   .workspace .casechips button { font-size:15px; height:32px; padding:0 14px; }
   .workspace .console .tabicon, .workspace .console button { font-size:12px; }
 }
+
+/* Problem page header: the round profile button must not inherit the header's button padding */
+.lctop .acct-btn, .lctop-r .acct-btn { width:32px; height:32px; min-width:32px; padding:0; border-radius:50%; background:none; flex:none; overflow:visible; }
+.lctop .acct-btn:hover { background:none; }
+.lctop .acct-btn .acct-av { width:30px; height:30px; }
+.lctop-r { padding-right:4px; }
