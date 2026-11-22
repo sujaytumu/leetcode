@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, type Difficulty } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
 import CountdownTiles from "@/components/CountdownTiles";
+import VirtualContest from "@/components/VirtualContest";
 
 interface ContestProblem { slug: string; title: string; difficulty: Difficulty; points: number }
 interface ContestView { id: number; title: string; start: string; end: string; state: "UPCOMING" | "RUNNING" | "FINISHED"; problems: ContestProblem[] | null }
@@ -98,6 +99,7 @@ export default function ContestPage() {
               <div><div className="mute">Finish time</div><b>{finish(standings.me.finishSeconds)}</b></div>
             </div>
           )}
+          {c.problems && c.state === "FINISHED" && <VirtualContest key={c.id} contestId={c.id} problems={c.problems} />}
           {c.problems ? (
             <table style={{ marginTop: 12 }}>
               <thead><tr><th style={{ width: 40 }}></th><th>Problem</th><th>Difficulty</th><th className="th-num">Points</th></tr></thead>
