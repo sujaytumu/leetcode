@@ -112,3 +112,10 @@ test("every bundled template gets exactly one marker and C++ keeps cout and prin
     }
   }
 });
+
+test("C++ private helpers written above `public:` do not hide the entry point", () => {
+  const two = problems.find((p) => p.slug === "two-sum")!;
+  const cpp = composeProgram(splitTemplate(two.starterCode.cpp, "cpp")!,
+    "class Solution {\n    int helper(int a) {\n        return a;\n    }\n\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        return {0, 1};\n    }\n};\n");
+  assert.match(cpp, /return Solution\(\)\.twoSum\(nums, target\); \}/);
+});

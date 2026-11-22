@@ -173,7 +173,10 @@ function leetCodeAdapter(parts: Parts, user: string): string {
   const publicMethod = lang === "java"
     ? [...afterClass.matchAll(/\bpublic\s+(?:static\s+)?[\w<>\[\],.?\s]+?\s+(\w+)\s*\(/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n))
     : undefined;
-  const method = publicMethod ?? [...afterClass.matchAll(/(\w+)\s*\([^;{)]*\)\s*(?:const\s*)?\{/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n));
+  // In C++ the entry point is whatever follows `public:`; private helpers are often written above it.
+  const cppPublic = lang === "cpp" ? afterClass.search(/\bpublic\s*:/) : -1;
+  const searchIn = cppPublic >= 0 ? afterClass.slice(cppPublic) : afterClass;
+  const method = publicMethod ?? [...searchIn.matchAll(/(\w+)\s*\([^;{)]*\)\s*(?:const\s*)?\{/g)].map((x) => x[1]).find((n) => !NOT_METHODS.has(n));
   if (!method) return "";
   const names = splitParams(rawParams).map((p) => p.match(/(\w+)\s*(?:\[\s*\])*\s*$/)?.[1] ?? "").filter(Boolean);
   const userVoid = new RegExp(`\\bvoid\\s+${method}\\s*\\(`).test(afterClass);
