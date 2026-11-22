@@ -23,3 +23,12 @@ test("normalizeField enforces limits and required fields", () => {
   assert.ok(normalizeField("username", "a b").error);
   assert.equal(normalizeField("username", "sam_01").value, "sam_01");
 });
+
+import { cleanLinkedin } from "../lib/settingsFields.ts";
+test("cleanLinkedin accepts a pasted profile URL", () => {
+  assert.equal(cleanLinkedin("https://www.linkedin.com/in/tumu-sujay-babu-8633b0274/"), "tumu-sujay-babu-8633b0274");
+  assert.equal(cleanLinkedin("linkedin.com/in/abc"), "abc");
+  assert.equal(cleanLinkedin("@abc"), "abc");
+  assert.equal(cleanLinkedin(""), "");
+  assert.equal(cleanLinkedin("bad name!"), null);
+});

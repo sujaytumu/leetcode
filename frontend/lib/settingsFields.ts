@@ -26,6 +26,16 @@ export function cleanGithub(raw: string): string | null {
   return /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(v) ? v : null;
 }
 
+/** Accepts a handle, `@handle` or a full linkedin.com/in/... URL and returns just the handle ("" when empty). */
+export function cleanLinkedin(raw: string): string | null {
+  let v = raw.trim().replace(/^@/, "");
+  const m = v.match(/^(?:https?:\/\/)?(?:[a-z]{2,3}\.)?linkedin\.com\/(?:in|pub)\/([^/?#\s]+)/i);
+  if (m) v = decodeURIComponent(m[1]);
+  v = v.replace(/\/+$/, "");
+  if (v === "") return "";
+  return /^[A-Za-z0-9._-]{1,100}$/.test(v) ? v : null;
+}
+
 /** Adds https:// when missing; returns null for something that cannot be a web address. */
 export function cleanWebsite(raw: string): string | null {
   const v = raw.trim();
@@ -48,6 +58,7 @@ export function normalizeField(key: FieldKey, raw: string): { value: string; err
   const v = raw.trim();
   if (v.length > f.max) return { value: v, error: `At most ${f.max} characters.` };
   if (key === "github") { const g = cleanGithub(v); return g === null ? { value: v, error: "That is not a valid GitHub username." } : { value: g }; }
+  if (key === "linkedin") { const l = cleanLinkedin(v); return l === null ? { value: v, error: "Enter your LinkedIn profile link or handle." } : { value: l }; }
   if (key === "website") { const w = cleanWebsite(v); return w === null ? { value: v, error: "Enter a full web address, like https://example.com." } : { value: w }; }
   if (key === "username") { const u = cleanUsername(v); return u === null ? { value: v, error: "3-30 letters, digits, _ or -." } : { value: u }; }
   if (key === "tags") return { value: v.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 8).join(", ") };
