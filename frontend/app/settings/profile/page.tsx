@@ -11,10 +11,10 @@ import { ICONS, SIDEBAR_ICONS } from "@/components/SettingsIcons";
 import Skeleton from "@/components/Skeleton";
 
 type Row = FieldKey | "gender" | "birthday";
-const ORDER: Row[] = ["displayName", "gender", "location", "birthday", "website", "github", "linkedin", "company", "school", "headline", "username"];
+const ORDER: Row[] = ["displayName", "gender", "location", "birthday", "website", "github", "linkedin", "company", "school", "headline", "username", "tags"];
 const LABEL: Record<Row, string> = {
   displayName: "Display Name", gender: "Gender", location: "Location", birthday: "Birthday", website: "Websites", github: "Github",
-  linkedin: "LinkedIn", company: "Company", school: "School", headline: "Summary", username: "Username",
+  linkedin: "LinkedIn", company: "Company", school: "School", headline: "Summary", username: "Username", tags: "Skills",
 };
 const SIDE = [
   { href: "/lists", label: "Library", icon: "library" }, { href: "/playground", label: "Project", icon: "project", beta: true },
@@ -62,7 +62,7 @@ export default function ProfileSettingsPage() {
     if (err) { setFieldError(err); return; }
     setBusy(true); setFieldError("");
     try {
-      const next = await api<ProfileInfo>("/api/profile/info", { method: "PUT", body: JSON.stringify({ ...info, [r]: value }) });
+      const next = await api<ProfileInfo>("/api/profile/info", { method: "PUT", body: JSON.stringify({ ...info, [r]: r === "tags" ? value.split(",").map((t) => t.trim()).filter(Boolean) : value }) });
       setInfo(next); setOpen(null); setSaved(r); setPhotoOk(true);
     } catch (e) { setFieldError((e as Error).message); }
     setBusy(false);

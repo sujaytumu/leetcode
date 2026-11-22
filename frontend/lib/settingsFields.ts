@@ -1,6 +1,6 @@
 import type { ProfileInfo } from "./api";
 
-export type FieldKey = "displayName" | "username" | "headline" | "location" | "company" | "school" | "website" | "github" | "linkedin";
+export type FieldKey = "displayName" | "username" | "headline" | "location" | "company" | "school" | "website" | "github" | "linkedin" | "tags";
 export interface Field { key: FieldKey; label: string; placeholder: string; max: number; hint?: string }
 
 /** The rows of LeetCode's Settings > Profile > General list, mapped onto the fields this app stores. */
@@ -14,6 +14,7 @@ export const FIELDS: Field[] = [
   { key: "website", label: "Website", placeholder: "https://example.com", max: 200 },
   { key: "github", label: "GitHub", placeholder: "username or github.com/username", max: 100, hint: "Your GitHub photo is used as your avatar." },
   { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/in/you", max: 100 },
+  { key: "tags", label: "Skills", placeholder: "java, springboot, dsa", max: 200, hint: "Comma separated, up to 8." },
 ];
 
 /** Accepts `sujaytumu`, `@sujaytumu` or a full github.com URL and returns just the username ("" when empty). */
@@ -49,8 +50,10 @@ export function normalizeField(key: FieldKey, raw: string): { value: string; err
   if (key === "github") { const g = cleanGithub(v); return g === null ? { value: v, error: "That is not a valid GitHub username." } : { value: g }; }
   if (key === "website") { const w = cleanWebsite(v); return w === null ? { value: v, error: "Enter a full web address, like https://example.com." } : { value: w }; }
   if (key === "username") { const u = cleanUsername(v); return u === null ? { value: v, error: "3-30 letters, digits, _ or -." } : { value: u }; }
+  if (key === "tags") return { value: v.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 8).join(", ") };
   if (key === "displayName" && v === "") return { value: v, error: "Display name cannot be empty." };
   return { value: v };
 }
 
-export const valueOf = (info: ProfileInfo, key: FieldKey): string => (info[key] as string) ?? "";
+export const valueOf = (info: ProfileInfo, key: FieldKey): string =>
+  key === "tags" ? info.tags.join(", ") : ((info[key] as string) ?? "");
