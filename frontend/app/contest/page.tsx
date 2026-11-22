@@ -90,13 +90,21 @@ export default function ContestPage() {
             {c.state === "FINISHED" && <div className="countdown"><div className="mute">Participants</div><b>{standings.participants}</b></div>}
           </div>
 
+          {c.problems && standings.me && (
+            <div className="card contest-me">
+              <div><div className="mute">Your rank</div><b>#{standings.me.rank}</b><span className="mute"> / {standings.participants}</span></div>
+              <div><div className="mute">Score</div><b>{standings.me.score}</b></div>
+              <div><div className="mute">Solved</div><b>{mine.filter(Boolean).length}</b><span className="mute"> / {c.problems.length}</span></div>
+              <div><div className="mute">Finish time</div><b>{finish(standings.me.finishSeconds)}</b></div>
+            </div>
+          )}
           {c.problems ? (
             <table style={{ marginTop: 12 }}>
               <thead><tr><th style={{ width: 40 }}></th><th>Problem</th><th>Difficulty</th><th className="th-num">Points</th></tr></thead>
               <tbody>
                 {c.problems.map((p, i) => (
                   <tr key={p.slug}>
-                    <td className="EASY">{mine[i] ? "✔" : ""}</td>
+                    <td className="ok-tick">{mine[i] ? "✔" : ""}</td>
                     <td><Link href={`/problems/${p.slug}`}>Q{i + 1}. {p.title}</Link> <span className="mute" style={{ fontSize: 12 }}>({p.points})</span></td>
                     <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                     <td className="th-num">{p.points}</td>
@@ -124,7 +132,7 @@ export default function ContestPage() {
                       <td><b>{r.name}</b>{r.you && <span className="pill MEDIUM" style={{ marginLeft: 6 }}>you</span>}</td>
                       <td className="th-num"><b>{r.score}</b></td>
                       <td className="th-num">{finish(r.finishSeconds)}</td>
-                      {r.solved.map((s, i) => <td key={i} className={`th-num ${s ? "EASY" : "mute"}`}>{s ? "✔" : "–"}</td>)}
+                      {r.solved.map((s, i) => <td key={i} className={`th-num ${s ? "ok-tick" : "mute"}`}>{s ? "✔" : "–"}</td>)}
                     </tr>
                   ))}
                   {standings.rows.length === 0 && (

@@ -27,7 +27,7 @@ class ContestApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.current.title").isString())
                 .andExpect(jsonPath("$.current.state").isString())
-                .andExpect(jsonPath("$.past", hasSize(4)))
+                .andExpect(jsonPath("$.past", hasSize(8)))
                 .andExpect(jsonPath("$.past[0].state").value("FINISHED"))
                 .andExpect(jsonPath("$.past[0].problems", hasSize(4)))
                 .andExpect(jsonPath("$.past[0].problems[0].points").value(3))

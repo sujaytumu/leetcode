@@ -40,7 +40,7 @@ public class ContestService {
     static final long PENALTY_SECONDS = 5 * 60;
     static final int[] POINTS = {3, 4, 5, 6};
     static final int MAX_ROWS = 50;
-    public static final int PAST_SHOWN = 4;
+    public static final int PAST_SHOWN = 8;
 
     public record ContestProblem(String slug, String title, Difficulty difficulty, int points) {}
 
