@@ -1805,3 +1805,24 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
   .hm .cell { width:11px; height:11px; border-radius:2px; }
   .hm-label { font-size:16px; margin-top:6px; }
 }
+
+/* Problem page: LeetCode-sized type (measured at 100% zoom), green ticks / red crosses, Solved with a circled check */
+.solved { display:inline-flex; align-items:center; gap:6px; }
+.solved svg { color:var(--ok); }
+.caseicon.ok { background:var(--ok); color:#fff; }
+.caseicon.bad { background:var(--bad); color:#fff; }
+@media (min-width:901px) {
+  .workspace .ptitle, .titlerow .ptitle { font-size:28px; font-weight:500; letter-spacing:0; }
+  .workspace .solved { font-size:18px; }
+  .workspace .pmeta { gap:8px; margin:14px 0 18px; }
+  .workspace .pmeta .pill, .workspace .pmeta .tag, .workspace .pmeta button { font-size:14px; padding:3px 12px; min-height:26px; line-height:20px; border-radius:999px; }
+  .workspace .left .md, .workspace .left .md p, .workspace .left .md li { font-size:16px; line-height:27px; }
+  .workspace .left .md code { font-size:12px; padding:1px 6px; }
+  .workspace .left .md h3, .workspace .left .md h4, .workspace .left .md strong.eg { font-size:18px; }
+  .workspace .left .md pre { font-size:13px; }
+  .workspace .lcmaintabs button, .workspace .lcmaintabs { font-size:12px; }
+  .workspace .lcmaintabs { min-height:44px; }
+  .workspace .lcmaintabs .tabicon { font-size:13px; }
+  .workspace .casechips button { font-size:15px; height:32px; padding:0 14px; }
+  .workspace .console .tabicon, .workspace .console button { font-size:12px; }
+}
