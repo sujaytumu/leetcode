@@ -1633,3 +1633,12 @@ input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
 .lctop-r .topicon { display:inline-flex; align-items:center; gap:4px; height:34px; padding:0 10px; border-radius:8px; background:transparent; border:0; color:var(--text); font-size:16px; }
 .lctop-r .topicon:hover { background:var(--hover); }
 .lctop-r .topicon.streak span { font-size:13px; color:var(--mute); }
+
+/* Premium finish: refined surfaces, primary actions and badges (appended; last rule wins) */
+button.primary { background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent)); box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent); border-color:transparent; }
+button.primary:hover:not(:disabled) { filter:brightness(1.06); box-shadow:0 1px 0 rgba(255,255,255,.22) inset, 0 4px 14px color-mix(in srgb, var(--accent) 38%, transparent); }
+.card { border-color:color-mix(in srgb, var(--line) 85%, transparent); border-radius:12px; }
+h1, h2 { letter-spacing:-.01em; }
+.diff-easy, .easy, .Easy { color:var(--ok); }
+.diff-hard, .hard, .Hard { color:var(--bad); }
+.acct-pop, .modal { border:1px solid color-mix(in srgb, var(--line) 80%, transparent); border-radius:12px; }
