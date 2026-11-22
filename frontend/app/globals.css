@@ -1711,3 +1711,12 @@ h1, h2 { letter-spacing:-.01em}
 .streakchip svg { color:var(--mute); }
 .streakchip:hover svg { color:var(--accent); }
 @media (max-width:640px) { .streakchip { display:none; } }
+
+/* ---- Delight: accepted confetti, verdict pop, softer page entrance ---- */
+.confetti { position:fixed; left:50%; top:38%; width:0; height:0; z-index:60; pointer-events:none; }
+.confetti i { position:absolute; border-radius:2px; opacity:0; animation:cfly 1.9s cubic-bezier(.15,.7,.3,1) forwards; }
+@keyframes cfly { 0% { opacity:1; transform:translate(0,0) rotate(0); } 70% { opacity:1; } 100% { opacity:0; transform:translate(var(--dx), calc(var(--dy) + 260px)) rotate(var(--rot)); } }
+.resulthead .verdict.ACCEPTED, .subverdict.ACCEPTED { animation:vpop .45s cubic-bezier(.2,1.4,.4,1); text-shadow:0 0 22px color-mix(in srgb, var(--easy) 45%, transparent); }
+@keyframes vpop { from { transform:scale(.85); opacity:0; } to { transform:none; opacity:1; } }
+main { animation:pagein .28s ease-out; }
+@keyframes pagein { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }

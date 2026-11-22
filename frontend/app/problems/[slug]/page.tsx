@@ -25,6 +25,7 @@ import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import Solutions from "@/components/Solutions";
+import Confetti from "@/components/Confetti";
 import Logo from "@/components/Logo";
 import NoteBox from "@/components/NoteBox";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
@@ -106,6 +107,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [copied, setCopied] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [companiesNote, setCompaniesNote] = useState(false);
+  const [burst, setBurst] = useState(0);
   const [streak, setStreak] = useState<number | null>(null);
   useEffect(() => { api<{ currentStreak: number }>("/api/profile").then((p) => setStreak(p.currentStreak ?? 0)).catch(() => {}); }, []);
   const [commentCount, setCommentCount] = useState<number | null>(null);
@@ -242,6 +244,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       const r = await api<RunResponse>(`/api/problems/${slug}/${kind}`,
         { method: "POST", body: JSON.stringify({ language: lang, code: source, ...(custom ? { customInput } : {}) }) }, 120000);
       setResult(r);
+      if (kind === "submit" && r.verdict === "ACCEPTED") setBurst((b) => b + 1);
       const firstFail = r.cases.findIndex((c) => !c.passed);
       setCaseTab(firstFail >= 0 ? firstFail : 0);
       if (kind === "submit") {
@@ -424,6 +427,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       )}
       <div className="lctop">
         <div className="lctop-l">
+          <Confetti burst={burst} />
           <Link href="/" className="lclogo" title="LeetCode Practice home" aria-label="Home"><Logo size={28} /></Link>
           <button className="lclist" onClick={() => setShowList(true)} title="Problem list">☰ <span className="hide-sm">Problem List</span></button>
           {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title} aria-label="Previous problem">‹</Link> : <span className="navbtn off" aria-hidden="true">‹</span>}
