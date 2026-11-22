@@ -1884,3 +1884,16 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
   .plansbtn { display:inline-flex; align-items:center; height:30px; padding:0 14px; border-radius:8px; background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent) !important; font-size:15px; font-weight:600; }
   .plansbtn:hover { background:color-mix(in srgb, var(--accent) 26%, transparent) !important; }
 }
+
+/* Header right side, final: matches LeetCode's proportions. Specificity beats the generic .nav-end a rules. */
+@media (min-width:901px) {
+  header.nav .nav-end { gap:20px; }
+  header.nav .nav-end .palette-btn { width:150px; height:29px; border-radius:15px; padding:0 12px; font-size:13px; font-weight:400; background:rgba(255,255,255,.1); color:#9a9a9a; gap:8px; }
+  html[data-theme="light"] header.nav .nav-end .palette-btn { background:rgba(0,0,0,.06); color:#666; }
+  header.nav .nav-end a.bellbtn { width:24px; height:24px; padding:0; background:none; color:var(--mute); }
+  header.nav .nav-end a.bellbtn svg { width:20px; height:20px; display:block; }
+  header.nav .nav-end a.streakchip { padding:0; gap:4px; background:none; color:var(--mute); font-size:12px; font-weight:600; }
+  header.nav .nav-end a.streakchip svg { width:22px; height:22px; }
+  header.nav .nav-end a.plansbtn { height:30px; padding:0 18px; margin-left:-6px; border-radius:8px; background:color-mix(in srgb, var(--accent) 16%, var(--bg)); color:var(--accent); font-size:16px; font-weight:500; }
+  header.nav .nav-end a.plansbtn:hover { background:color-mix(in srgb, var(--accent) 26%, var(--bg)); }
+}
