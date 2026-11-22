@@ -1705,3 +1705,9 @@ h1, h2 { letter-spacing:-.01em}
 .lcherotext h2, .lcherotext > p:not(.lcavatarnote) { display:none; }
 .lcherotext .lcavatarnote { text-align:center; margin:8px 0 22px; }
 @media (max-width:640px) { .lchero .lcavatar img, .lchero .lcavatar div { width:128px; height:128px; font-size:42px; } }
+
+.streakchip { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border-radius:10px; color:var(--text); font-size:14px; font-weight:600; }
+.streakchip:hover { background:var(--hover); }
+.streakchip svg { color:var(--mute); }
+.streakchip:hover svg { color:var(--accent); }
+@media (max-width:640px) { .streakchip { display:none; } }

@@ -1,3 +1,4 @@
+import StreakChip from "@/components/StreakChip";
 import Logo from "@/components/Logo";
 import "./globals.css";
 import Link from "next/link";
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="brand" aria-label="LeetCode Practice home"><Logo size={30} /><span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /></nav>
           {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
-          <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>
+          <div className="nav-end"><PaletteButton /><StreakChip /><ThemeToggle /><AccountMenu /></div>
         </header>
         <PwaRegister />
         <MockBar />
