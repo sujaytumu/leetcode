@@ -1937,3 +1937,18 @@ html:not([data-theme="light"]) .ratingdist.ghost .bar { background:#232325; }
 .ratingwrap .ratingdist { margin-top:auto; height:150px; }
 .ratingwrap .ratingdist .bar.me { background:linear-gradient(180deg, #ffc247, #ff9d00); box-shadow:0 0 18px rgba(255,170,0,.35); }
 @media (max-width:640px) { .ratingcol > .card.ratingwrap { grid-template-columns:1fr; } .ratingcol > .card.ratingwrap > .ratingcard + .ratingcard { border-left:0; border-top:1px solid var(--line); margin:0 26px; padding:16px 0 0; } }
+
+/* ==== Neat pass: contest card ==== */
+.ratingcol > .card.ratingwrap { align-items:stretch; min-height:300px; border-radius:14px; overflow:hidden; }
+.ratingwrap .ratinghead { display:grid; grid-template-columns:repeat(3, minmax(0, auto)); justify-content:start; column-gap:36px; align-items:start; margin:0 0 6px; }
+.ratingwrap .ratinghead .mute, .ratingwrap .ratingcard > .mute { font-size:12px; font-weight:600; letter-spacing:.02em; text-transform:none; margin:0 0 6px; line-height:1.2; }
+.ratingwrap .ratingbig { font-size:30px; font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--text); }
+.ratingwrap .ratingrank { font-size:20px; font-weight:600; line-height:1.4; display:flex; align-items:baseline; gap:3px; }
+.ratingwrap .ratingrank b { font-size:20px; font-weight:600; }
+.ratingwrap .ratinggraph { flex:1 1 auto; margin-top:12px; min-height:120px; max-height:170px; }
+.ratingwrap .ratinggraph.ghost { align-self:center; }
+.ratingwrap .ratingcard > p.mute { text-align:center; margin:10px 0 0 !important; font-size:13px !important; line-height:1.5; }
+.ratingwrap .ratingcard > p.mute a { color:var(--accent); font-weight:600; }
+.ratingwrap .ratingcard > p.mute a:hover { text-decoration:underline; }
+.ratingwrap .ratingdist { display:flex; align-items:flex-end; gap:4px; border-bottom:1px solid var(--line); padding-bottom:0; }
+.ratingwrap .ratingdist .bar { max-width:26px; border-radius:3px 3px 0 0; }
