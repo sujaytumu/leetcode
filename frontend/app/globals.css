@@ -1618,3 +1618,18 @@ input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
 .contribute { display:block; text-align:center; color:var(--mute); padding:18px 0 6px; font-size:16px; }
 .contribute:hover { color:var(--text); }
 .lockedchip { color:var(--med); }
+
+/* Examples like LeetCode's current problem page */
+.lcexhead { display:flex; justify-content:space-between; align-items:center; margin:22px 0 8px; }
+.lcexhead .lcexample { margin:0 !important; font-size:17px; }
+.lcseg { display:inline-flex; background:var(--cell); border-radius:8px; padding:2px; font-size:12.5px; }
+.lcseg button { border:0; background:transparent; color:var(--mute); padding:3px 10px; border-radius:6px; font-weight:500; height:auto; }
+.lcseg button.on { background:var(--panel); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.3); }
+.lcbox2 { margin:0 0 6px; }
+.lcbox2 .exline { margin:10px 0; font-size:15px; line-height:1.7; }
+.lcbox2 .exline b { font-weight:700; }
+.lcbox2 .exline code { background:var(--cell); border-radius:6px; padding:2px 7px; font-size:14px; }
+
+.lctop-r .topicon { display:inline-flex; align-items:center; gap:4px; height:34px; padding:0 10px; border-radius:8px; background:transparent; border:0; color:var(--text); font-size:16px; }
+.lctop-r .topicon:hover { background:var(--hover); }
+.lctop-r .topicon.streak span { font-size:13px; color:var(--mute); }

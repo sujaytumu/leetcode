@@ -1,5 +1,5 @@
 "use client";
-import { Children, isValidElement, ReactNode } from "react";
+import { Children, isValidElement, ReactNode, useState } from "react";
 import Markdown, { type Components } from "react-markdown";
 import { formatInput, formatOutput } from "@/lib/example";
 
@@ -16,6 +16,18 @@ function boldLabels(code: string): ReactNode {
         {i < lines.length - 1 ? "\n" : ""}
       </span>
     );
+  });
+}
+
+/** Examples as LeetCode's current page shows them: bold label, value in an inline code chip, one line each. */
+function exampleLines(code: string, cpp: boolean): ReactNode {
+  const conv = (v: string) => (cpp ? v.replace(/\[/g, "{").replace(/\]/g, "}") : v);
+  return code.split("\n").map((line, i) => {
+    const m = /^(Input|Output|Explanation):\s*(.*)$/.exec(line);
+    if (!m) return line.trim() ? <div key={i} className="exline">{line}</div> : null;
+    return m[1] === "Explanation"
+      ? <div key={i} className="exline"><b>Explanation:</b> {m[2]}</div>
+      : <div key={i} className="exline"><b>{m[1]}:</b> <code>{conv(m[2])}</code></div>;
   });
 }
 
@@ -56,11 +68,26 @@ export function reorderForLeetCode(md: string): { main: string; ioFormat: string
 
 export default function ProblemDescription({ markdown, python }: { markdown: string; python?: string }) {
   const { main, ioFormat } = reorderForLeetCode(markdown);
+  const [cpp, setCpp] = useState(false);
+  let firstExample = true;
   const components: Components = {
           h3: ({ children }) => <p className="lchead"><b>{children}:</b></p>,
           strong: ({ children }) => {
             const t = textOf(children);
-            return /^Example \d+$/.test(t) ? <b className="lcexample">{children}:</b> : <strong>{children}</strong>;
+            if (!/^Example \d+$/.test(t)) return <strong>{children}</strong>;
+            const head = (
+              <span className="lcexhead">
+                <b className="lcexample">{children}:</b>
+                {firstExample && (
+                  <span className="lcseg" role="group" aria-label="Example notation">
+                    <button type="button" className={cpp ? "" : "on"} onClick={() => setCpp(false)}>Original</button>
+                    <button type="button" className={cpp ? "on" : ""} onClick={() => setCpp(true)}>C++</button>
+                  </span>
+                )}
+              </span>
+            );
+            firstExample = false;
+            return head;
           },
           pre: ({ children }) => {
             const code = textOf(children).replace(/\n$/, "");
@@ -69,7 +96,7 @@ export default function ProblemDescription({ markdown, python }: { markdown: str
             const input = m && python ? formatInput(python, m[1] + "\n") : null;
             const output = m && python ? formatOutput(python, m[2] + "\n") : null;
             if (input !== null && output !== null) {
-              return <pre className="lcbox"><b>Input:</b> {input}{"\n"}<b>Output:</b> {output}</pre>;
+              return <div className="lcbox2">{exampleLines(`Input: ${input}\nOutput: ${output}`, cpp)}</div>;
             }
             return <pre className="lcbox">{boldLabels(code)}</pre>;
           },

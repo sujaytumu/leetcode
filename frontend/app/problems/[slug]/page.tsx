@@ -105,6 +105,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [copied, setCopied] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [companiesNote, setCompaniesNote] = useState(false);
+  const [streak, setStreak] = useState<number | null>(null);
+  useEffect(() => { api<{ currentStreak: number }>("/api/profile").then((p) => setStreak(p.currentStreak ?? 0)).catch(() => {}); }, []);
   const [commentCount, setCommentCount] = useState<number | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
   const [cursor, setCursor] = useState({ ln: 1, col: 1 });
@@ -436,6 +438,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             </button>
         </div>
         <div className="lctop-r">
+          <button className="topicon" onClick={() => setTab(tab === "notes" ? "desc" : "notes")} title="Notes" aria-label="Notes">📝</button>
+          <Link className="topicon streak" href="/daily" title="Daily challenge streak" aria-label="Daily challenge streak">🔥<span>{streak ?? 0}</span></Link>
           <button onClick={() => setTimer((x) => ({ ...x, on: !x.on }))} title="Stopwatch for this attempt">
             ⏱ {clock}{timer.on ? " ⏸" : timer.secs ? " ▶" : ""}
           </button>
