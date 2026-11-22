@@ -45,12 +45,12 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
             {ghost.map((h, i) => <div key={i} className="bar" style={{ height: `${h}%` }} />)}
           </div>
         </section>
-      </>
+      </div>
     );
   }
   const v = view as RatingView & { rating: number };
   return (
-    <>
+    <div className="card ratingwrap">
       <section className="ratingcard">
         <div className="ratinghead">
           <div><div className="mute">Contest Rating</div><div className="ratingbig">{fmt(v.rating)}</div></div>
