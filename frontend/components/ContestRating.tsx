@@ -15,10 +15,12 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 /** LeetCode's "Contest Rating" card (rating, global ranking, rating graph) and the "Top %" distribution card. */
 export default function ContestRating({ path = "/api/profile/rating" }: { path?: string }) {
   const [r, setR] = useState<RatingView | null>(null);
-  useEffect(() => { api<RatingView>(path).then(setR).catch(() => {}); }, [path]);
-  if (!r) return null;
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { api<RatingView>(path).then(setR).catch(() => setFailed(true)); }, [path]);
+  // While loading or if the server is unreachable, keep the cards (and their graphs) in place with placeholders instead of vanishing.
+  const view: RatingView = r ?? { rating: null, attended: 0, globalRank: null, rated: 0, topPercent: null, peak: null, history: [], distribution: [] };
 
-  if (r.rating === null) {
+  if (view.rating === null) {
     // No rating yet: still show both LeetCode cards (rating + graph, Top %) with placeholders, so the page keeps its shape.
     const ghost = [8, 14, 26, 44, 70, 100, 82, 56, 36, 22, 14, 9, 6, 4];
     return (
@@ -27,13 +29,13 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
           <div className="ratinghead">
             <div><div className="mute">Contest Rating</div><div className="ratingbig">–</div></div>
             <div><div className="mute">Global Ranking</div><div className="ratingrank"><b>–</b></div></div>
-            <div><div className="mute">Attended</div><div className="ratingrank"><b>{r.attended}</b></div></div>
+            <div><div className="mute">Attended</div><div className="ratingrank"><b>{view.attended}</b></div></div>
           </div>
           <svg viewBox="0 0 320 130" className="ratinggraph ghost" aria-hidden="true">
             <path d="M14,90 L306,90" stroke="var(--mute)" strokeWidth="1.5" strokeDasharray="4 5" fill="none" />
           </svg>
           <p className="mute" style={{ margin: "4px 0 0", fontSize: 14 }}>
-            You get a rating after your first weekly contest. <Link href="/contest">Go to Contest</Link>
+            {failed ? "Could not load your rating right now." : <>You get a rating after your first weekly contest. <Link href="/contest">Go to Contest</Link></>}
           </p>
         </section>
         <section className="card ratingcard">
@@ -46,23 +48,24 @@ export default function ContestRating({ path = "/api/profile/rating" }: { path?:
       </>
     );
   }
+  const v = view as RatingView & { rating: number };
   return (
     <>
       <section className="card ratingcard">
         <div className="ratinghead">
-          <div><div className="mute">Contest Rating</div><div className="ratingbig">{fmt(r.rating)}</div></div>
+          <div><div className="mute">Contest Rating</div><div className="ratingbig">{fmt(v.rating)}</div></div>
           <div>
             <div className="mute">Global Ranking</div>
-            <div className="ratingrank"><b>{fmt(r.globalRank ?? 0)}</b><span className="mute">/{fmt(r.rated)}</span></div>
+            <div className="ratingrank"><b>{fmt(v.globalRank ?? 0)}</b><span className="mute">/{fmt(v.rated)}</span></div>
           </div>
-          <div><div className="mute">Attended</div><div className="ratingrank"><b>{r.attended}</b></div></div>
+          <div><div className="mute">Attended</div><div className="ratingrank"><b>{v.attended}</b></div></div>
         </div>
-        <RatingGraph points={r.history} peak={r.peak ?? r.rating} />
+        <RatingGraph points={v.history} peak={v.peak ?? v.rating} />
       </section>
       <section className="card ratingcard">
         <div className="mute">Top</div>
-        <div className="ratingbig">{r.topPercent}%</div>
-        <Distribution buckets={r.distribution} mine={r.rating} />
+        <div className="ratingbig">{v.topPercent}%</div>
+        <Distribution buckets={v.distribution} mine={v.rating} />
       </section>
     </>
   );
