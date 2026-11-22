@@ -85,6 +85,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<Submission[]>([]);
   const [openSub, setOpenSub] = useState<Submission | null>(null);
+  const [codeExpanded, setCodeExpanded] = useState(false);
   const [diffWith, setDiffWith] = useState<number | "">("");
   const [exec, setExec] = useState<ExecutionStatus | null>(null);
   const [all, setAll] = useState<ProblemSummary[]>([]);
@@ -554,12 +555,15 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             ) : (
               openSub ? (
                 <div className="subdetail">
-                  <button className="ghost" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All submissions</button>
-                  <h3 className={`verdict ${openSub.verdict}`} style={{ marginTop: 10 }}>{title(openSub.verdict)}</h3>
-                  <div className="vstats">
-                    <b>{openSub.passed} / {openSub.total}</b> testcases passed
+                  <button className="ghost backlink" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All Submissions</button>
+                  <div className="subtop">
+                    <div>
+                      <h3 className={`verdict subverdict ${openSub.verdict}`}>{title(openSub.verdict)}</h3>
+                      <div className="mute subpassed">{openSub.passed} / {openSub.total} testcases passed</div>
+                      <div className="mute subdate">Submitted at {new Date(openSub.createdAt).toLocaleString(undefined, { month: "short", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}</div>
+                    </div>
+                    <button className="solbtn" onClick={() => { setOpenSub(null); setTab("solutions"); }}>✎ Solution</button>
                   </div>
-                  <div className="mute subdate" style={{ marginTop: 2 }}>Submitted {new Date(openSub.createdAt).toLocaleString()}</div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
                   <div className="subcodehead"><b>Code</b><span className="langchip">{languages.find((l) => l.key === openSub.language)?.label ?? LANG_LABEL[openSub.language] ?? openSub.language}</span></div>
                   <div className="bar" style={{ marginBottom: 6 }}>
@@ -583,10 +587,21 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         <div key={i} className={`dl ${r.kind}`}>{r.kind === "add" ? "+ " : r.kind === "del" ? "- " : "  "}{r.text}</div>
                       ))}</pre>
                     </>
-                  ) : <pre className="subcode">{openSub.code}</pre>}
+                  ) : (
+                    <div className={`subcodewrap${codeExpanded ? " open" : ""}`}>
+                      <pre className="subcode lnum">{openSub.code.replace(/\n+$/, "").split("\n").map((ln, i) => (
+                        <div key={i} className="ln"><span className="lno">{i + 1}</span><span>{ln || " "}</span></div>
+                      ))}</pre>
+                      {openSub.code.split("\n").length > 9 && (
+                        <button className="viewmore" onClick={() => setCodeExpanded((v) => !v)}>{codeExpanded ? "︿ View less" : "﹀ View more"}</button>
+                      )}
+                    </div>
+                  )}
                   <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>{" "}
                   <button className="ghost" disabled={openSub.language !== lang} title={openSub.language !== lang ? "Switch the editor to this submission's language to compare" : "Compare with the code in your editor"}
                     onClick={() => setShowDiff((v) => !v)}>{showDiff ? "Hide diff" : "Diff vs editor"}</button>
+                  <textarea className="subnotes" placeholder="Write your notes here" aria-label="Notes for this problem" value={notes}
+                    onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); cloud.saveNotes(e.target.value); }} />
                 </div>
               ) : (
               <table className="subtable">

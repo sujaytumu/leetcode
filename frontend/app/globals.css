@@ -1551,3 +1551,37 @@ input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
   .runbar button.primary:hover:not(:disabled) { background:color-mix(in srgb, var(--easy) 14%, transparent); }
   .runbar button.primary:not(:disabled)::before { content:"☁ "; }
 }
+
+/* ---- Accepted submission detail, laid out like LeetCode ---- */
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.subdetail .backlink { border:0; background:transparent; padding:0 0 8px; color:var(--mute); font-size:14px; }
+.subdetail .backlink:hover { color:var(--text); background:transparent; }
+.subtop { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin:4px 0 14px; }
+.subverdict { font-size:26px !important; font-weight:700; margin:0 0 2px !important; }
+.subverdict.ACCEPTED { color:var(--easy); }
+.subverdict:not(.ACCEPTED) { color:var(--hard); }
+.subpassed, .subtop .subdate { font-size:12.5px; }
+.solbtn { background:var(--easy); color:#07251f; border:0; font-weight:600; border-radius:8px; padding:8px 14px; white-space:nowrap; }
+.solbtn:hover:not(:disabled) { background:color-mix(in srgb, var(--easy) 85%, #fff); }
+.lcstats { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; margin:6px 0 14px; display:grid; gap:10px; }
+.lcmetric { text-align:left; display:grid; gap:4px; background:transparent; border:1px solid transparent; border-radius:10px; padding:10px 12px; width:100%; opacity:.6; }
+.lcmetric.on { background:var(--cell); border-color:transparent; opacity:1; }
+.lcmetric:hover { opacity:1; }
+.lcmetric-name { font-size:14px; }
+.lcmetric-row { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.lcmetric-val { font-size:20px; }
+.lcmetric-beats { font-size:13px; padding-left:10px; border-left:1px solid var(--line); }
+.lcmetric-beats b { font-size:18px; color:var(--text); }
+.lcchart { margin-top:4px; }
+.lcchart-plot { position:relative; }
+.lcchart svg { width:100%; height:auto; display:block; }
+.lctip { position:absolute; transform:translateX(-30%); background:color-mix(in srgb, var(--text) 14%, var(--panel)); color:var(--text); border:1px solid var(--line); padding:8px 12px; border-radius:8px; font-size:13px; pointer-events:none; white-space:nowrap; box-shadow:var(--shadow); }
+.lcmini { margin-top:6px; }
+.subcodewrap { position:relative; margin:4px 0 12px; }
+.subcodewrap .subcode { max-height:230px; overflow:hidden; background:var(--code-bg); border:0; border-radius:10px; padding:12px 8px; margin:0; }
+.subcodewrap.open .subcode { max-height:none; overflow:auto; }
+.subcode.lnum .ln { display:flex; gap:14px; white-space:pre; }
+.subcode.lnum .lno { width:28px; text-align:right; color:var(--easy); opacity:.7; user-select:none; flex:none; }
+.viewmore { position:absolute; left:0; right:0; bottom:0; border:0; border-radius:0 0 10px 10px; background:linear-gradient(transparent, var(--code-bg) 55%); color:var(--mute); font-size:12.5px; padding:22px 0 8px; }
+.subcodewrap.open .viewmore { position:static; background:transparent; padding:6px 0 0; width:100%; }
+.subnotes { width:100%; min-height:130px; margin-top:16px; background:var(--cell); border:1px solid var(--line); border-radius:10px; padding:12px; resize:vertical; font:inherit; color:var(--text); }
