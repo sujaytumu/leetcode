@@ -3,80 +3,126 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, ProfileInfo } from "@/lib/api";
 import { authToken } from "@/lib/auth";
+import type { ListSummary } from "@/lib/lists";
+import { BIRTHDAY_KEY, GENDER_KEY, GENDERS, formatBirthday, readLocal, validBirthday, writeLocal } from "@/lib/localProfile";
 import { FIELDS, FieldKey, normalizeField, valueOf } from "@/lib/settingsFields";
 import { usePageTitle } from "@/lib/usePageTitle";
+import { ICONS, SIDEBAR_ICONS } from "@/components/SettingsIcons";
 import Skeleton from "@/components/Skeleton";
 
+type Row = FieldKey | "gender" | "birthday";
+const ORDER: Row[] = ["displayName", "gender", "location", "birthday", "website", "github", "linkedin", "company", "school", "headline", "username"];
+const LABEL: Record<Row, string> = {
+  displayName: "Display Name", gender: "Gender", location: "Location", birthday: "Birthday", website: "Websites", github: "Github",
+  linkedin: "LinkedIn", company: "Company", school: "School", headline: "Summary", username: "Username",
+};
+const SIDE = [
+  { href: "/lists", label: "Library", icon: "library" }, { href: "/playground", label: "Project", icon: "project", beta: true },
+  { href: "/daily", label: "Quest", icon: "quest" }, { href: "/topics", label: "Explore", icon: "explore" }, { href: "/plans", label: "Study Plan", icon: "plan" },
+];
 const initials = (i: ProfileInfo) => (i.displayName || i.username || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 
-/** Settings > Profile, laid out like leetcode.com/settings/profile: avatar on top, then one row per field that opens inline. */
+/** Settings > Profile, laid out like leetcode.com/settings/profile: sidebar with My Lists, avatar, then icon rows that open inline. */
 export default function ProfileSettingsPage() {
   usePageTitle("Profile settings");
   const [info, setInfo] = useState<ProfileInfo | null>(null);
+  const [lists, setLists] = useState<ListSummary[]>([]);
   const [error, setError] = useState("");
-  const [open, setOpen] = useState<FieldKey | null>(null);
+  const [open, setOpen] = useState<Row | null>(null);
   const [draft, setDraft] = useState("");
   const [fieldError, setFieldError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [saved, setSaved] = useState<FieldKey | null>(null);
+  const [saved, setSaved] = useState<Row | null>(null);
   const [photoOk, setPhotoOk] = useState(true);
+  const [gender, setGender] = useState("");
+  const [birthday, setBirthday] = useState("");
   const signedIn = typeof window !== "undefined" && !!authToken();
 
-  useEffect(() => { api<ProfileInfo>("/api/profile/info").then(setInfo).catch((e: Error) => setError(e.message)); }, []);
+  useEffect(() => {
+    setGender(readLocal(GENDER_KEY)); setBirthday(readLocal(BIRTHDAY_KEY));
+    api<ProfileInfo>("/api/profile/info").then(setInfo).catch((e: Error) => setError(e.message));
+    api<ListSummary[]>("/api/lists").then(setLists).catch(() => setLists([]));
+  }, []);
 
-  function edit(key: FieldKey) {
-    if (!info) return;
-    setOpen(open === key ? null : key); setDraft(valueOf(info, key)); setFieldError(""); setSaved(null);
+  const current = (r: Row): string => r === "gender" ? gender : r === "birthday" ? birthday : info ? valueOf(info, r) : "";
+  const shown = (r: Row): string => r === "birthday" ? formatBirthday(birthday) : current(r);
+
+  function edit(r: Row) {
+    setOpen(open === r ? null : r); setDraft(current(r)); setFieldError(""); setSaved(null);
   }
 
-  async function save(key: FieldKey) {
+  async function save(r: Row) {
     if (!info || busy) return;
-    const { value, error: err } = normalizeField(key, draft);
+    if (r === "gender") { writeLocal(GENDER_KEY, draft); setGender(draft); setOpen(null); setSaved(r); return; }
+    if (r === "birthday") {
+      if (draft && !validBirthday(draft)) { setFieldError("Pick a real date in the past."); return; }
+      writeLocal(BIRTHDAY_KEY, draft); setBirthday(draft); setOpen(null); setSaved(r); return;
+    }
+    const { value, error: err } = normalizeField(r, draft);
     if (err) { setFieldError(err); return; }
     setBusy(true); setFieldError("");
     try {
-      const next = await api<ProfileInfo>("/api/profile/info", { method: "PUT", body: JSON.stringify({ ...info, [key]: value }) });
-      setInfo(next); setOpen(null); setSaved(key); setPhotoOk(true);
+      const next = await api<ProfileInfo>("/api/profile/info", { method: "PUT", body: JSON.stringify({ ...info, [r]: value }) });
+      setInfo(next); setOpen(null); setSaved(r); setPhotoOk(true);
     } catch (e) { setFieldError((e as Error).message); }
     setBusy(false);
   }
 
   if (error) return <div className="banner err">{error}</div>;
   if (!info) return <Skeleton lines={8} />;
+  const field = FIELDS.find((f) => f.key === open);
   return (
-    <div className="settings">
-      <nav className="settingsnav" aria-label="Settings">
-        <Link href="/settings/profile" className="on">Profile</Link>
-        <Link href="/account">Account</Link>
-        <Link href="/profile">Public profile</Link>
-      </nav>
-      <section className="settingsmain">
-        <div className="setavatar">
+    <div className="lcset">
+      <aside className="lcsetside">
+        <nav aria-label="Library">
+          {SIDE.map((s) => (
+            <Link key={s.href} href={s.href} className="lcsetlink">{SIDEBAR_ICONS[s.icon]}<span>{s.label}</span>{s.beta && <em className="lcbeta">Beta</em>}</Link>
+          ))}
+        </nav>
+        <div className="lcsetlists">
+          <div className="lcsetlistshead"><span>My Lists</span><Link href="/lists" aria-label="Create or manage lists">＋ ⌄</Link></div>
+          <Link href="/lists" className="lcsetlist">{SIDEBAR_ICONS.star}<span>Favorite</span><i>{SIDEBAR_ICONS.lock}</i></Link>
+          {lists.filter((l) => l.name.toLowerCase() !== "favorite").map((l) => (
+            <Link key={l.id} href="/lists" className="lcsetlist">{SIDEBAR_ICONS.list}<span>{l.name}</span><i>{SIDEBAR_ICONS.lock}</i></Link>
+          ))}
+        </div>
+      </aside>
+      <section className="lcsetmain">
+        <div className="lcavatar">
           {info.github && photoOk
             // eslint-disable-next-line @next/next/no-img-element
             ? <img src={`https://github.com/${info.github}.png?size=240`} alt="" onError={() => setPhotoOk(false)} />
             : <div aria-hidden="true">{initials(info)}</div>}
         </div>
-        <p className="mute" style={{ textAlign: "center", margin: "6px 0 22px", fontSize: 13 }}>
-          Your avatar comes from your GitHub username. Set it below.
-        </p>
+        <p className="mute lcavatarnote">Your photo comes from your GitHub username.</p>
         {!signedIn && <div className="banner" style={{ marginBottom: 12 }}>You are not logged in, so these details stay on this device only. <Link href="/login">Log in</Link></div>}
-        <h3 style={{ margin: "0 0 2px" }}>General</h3>
-        <p className="mute" style={{ margin: "0 0 10px", fontSize: 13 }}>Manage your basic profile information.</p>
-        <div className="setlist">
-          {FIELDS.map((f) => (
-            <div key={f.key} className={`setrow${open === f.key ? " open" : ""}`}>
-              <button type="button" className="setrowhead" onClick={() => edit(f.key)} aria-expanded={open === f.key}>
-                <b>{f.label}</b>
-                <span className="mute setval">{valueOf(info, f.key) || "Not set"}</span>
-                {saved === f.key && <span className="setsaved">Saved</span>}
-                <span className="setarrow" aria-hidden="true">{open === f.key ? "⌄" : "›"}</span>
+        <h3 className="lcgeneral">General</h3>
+        <p className="mute lcgeneralsub">Manage your basic profile information.</p>
+        <div className="lcrows">
+          {ORDER.map((r) => (
+            <div key={r} className={`lcrow${open === r ? " open" : ""}`}>
+              <button type="button" className="lcrowhead" onClick={() => edit(r)} aria-expanded={open === r}>
+                <span className="lcrowicon">{ICONS[r === "birthday" ? "birthday" : r === "gender" ? "gender" : r]}</span>
+                <b>{LABEL[r]}</b>
+                <span className="lcrowval">{shown(r) || ""}</span>
+                {saved === r && <span className="setsaved">Saved</span>}
+                <span className="lcarrow" aria-hidden="true">→</span>
               </button>
-              {open === f.key && (
-                <form className="setedit" onSubmit={(e) => { e.preventDefault(); void save(f.key); }}>
-                  <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={f.placeholder} maxLength={f.max + 40} autoFocus
-                    autoCapitalize="none" spellCheck={false} aria-label={f.label} />
-                  {f.hint && <span className="mute" style={{ fontSize: 12 }}>{f.hint}</span>}
+              {open === r && (
+                <form className="setedit" onSubmit={(e) => { e.preventDefault(); void save(r); }}>
+                  {r === "gender" ? (
+                    <select value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Gender">
+                      <option value="">Not set</option>
+                      {GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  ) : r === "birthday" ? (
+                    <input type="date" value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Birthday" />
+                  ) : (
+                    <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={field?.placeholder} maxLength={(field?.max ?? 100) + 40}
+                      autoFocus autoCapitalize="none" spellCheck={false} aria-label={LABEL[r]} />
+                  )}
+                  {(r === "gender" || r === "birthday") && <span className="mute" style={{ fontSize: 12 }}>Stays on this device. It is never sent to the server.</span>}
+                  {field?.hint && <span className="mute" style={{ fontSize: 12 }}>{field.hint}</span>}
                   {fieldError && <div className="banner err" role="alert">{fieldError}</div>}
                   <div className="bar">
                     <button className="primary" disabled={busy}>{busy ? "Saving…" : "Save"}</button>
