@@ -1612,3 +1612,9 @@ input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
 .notedots { display:flex; gap:10px; padding:4px 14px 14px; }
 .notedot { width:26px; height:26px; border-radius:50%; padding:0; border:2px solid var(--dot); background:transparent; color:#fff; font-size:13px; line-height:1; display:grid; place-items:center; }
 .notedot.on { background:var(--dot); }
+
+.casechips .addcase { width:30px; height:30px; padding:0; font-size:20px; line-height:1; color:var(--mute); border-radius:8px; }
+.casechips .addcase:hover { color:var(--text); background:var(--cell); }
+.contribute { display:block; text-align:center; color:var(--mute); padding:18px 0 6px; font-size:16px; }
+.contribute:hover { color:var(--text); }
+.lockedchip { color:var(--med); }

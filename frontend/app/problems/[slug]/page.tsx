@@ -104,6 +104,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [focus, setFocus] = useState(false);
   const [copied, setCopied] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
+  const [companiesNote, setCompaniesNote] = useState(false);
   const [commentCount, setCommentCount] = useState<number | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
   const [cursor, setCursor] = useState({ ln: 1, col: 1 });
@@ -464,6 +465,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <span aria-hidden="true">⌗</span> Topics
                     </button>
                   )}
+                  <button className={`chip lockedchip${companiesNote ? " open" : ""}`} onClick={() => setCompaniesNote((v) => !v)} aria-expanded={companiesNote}>
+                    <span aria-hidden="true">🔒</span> Companies
+                  </button>
                   {study?.hints?.length ? (
                     <button className="chip" onClick={() => {
                       const d = document.querySelector<HTMLDetailsElement>(".deschints details");
@@ -473,6 +477,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                     </button>
                   ) : null}
                 </div>
+                {companiesNote && <div className="pmeta mute" style={{ fontSize: 13 }}>Company tags are not available in this practice app.</div>}
                 {topicsOpen && <div className="pmeta">{problem.tags.map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div>}
                 <ProblemDescription markdown={problem.description} python={problem.starterCode?.python} />
                 {study?.hints?.length ? (
@@ -702,6 +707,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                           onClick={() => persistCases(savedCases.filter((_, j) => j !== i))}>×</button>
                       </span>
                     ))}
+                    {savedCases.length < 20 && (
+                      <button className="addcase" aria-label="Add a test case" title="Add a case (starts from the current input)"
+                        onClick={() => { const base = customInput || problem.samples[0]?.input || ""; persistCases([...savedCases, base]); setCustomInput(base); }}>+</button>
+                    )}
                     {custom && <span className="pill MEDIUM">Custom input</span>}
                     {custom && !savedCases.some((c) => norm(c) === norm(customInput)) && savedCases.length < 20 && (
                       <button onClick={() => persistCases([...savedCases, customInput])} title="Keep this input for next time">＋ Save case</button>
@@ -774,6 +783,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         </>
                       ))}
                     </>
+                  )}
+                  {result && !busy && (
+                    <a className="contribute" target="_blank" rel="noreferrer"
+                      href={`https://github.com/sujaytumu/leetcode/issues/new?title=${encodeURIComponent(`Testcase suggestion: ${problem.title}`)}`}>
+                      <span aria-hidden="true">♡</span> Contribute a testcase
+                    </a>
                   )}
                   {!result && !busy && !error && <span className="mute">Run or submit to see results. Shortcuts: Ctrl/⌘+' to run, Ctrl/⌘+Enter to submit.</span>}
                 </>
