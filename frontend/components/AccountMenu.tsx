@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api, ProfileInfo } from "@/lib/api";
 import { AUTH_EVENT, authToken, authUser, clearSession } from "@/lib/auth";
+import { ACCENT_KEY, ACCENTS, accentByKey, saveAccent } from "@/lib/appearance";
+import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
 
@@ -18,6 +20,19 @@ export default function AccountMenu() {
   const [photoOk, setPhotoOk] = useState(true);
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+  const [accent, setAccent] = useState("amber");
+  const [theme, setTheme] = useState<ThemeName>("dark");
+  useEffect(() => {
+    if (!open) return;
+    try { setAccent(accentByKey(localStorage.getItem(ACCENT_KEY))?.key ?? "amber"); } catch { /* storage blocked */ }
+    setTheme(currentTheme());
+  }, [open]);
+  const pickTheme = (t: ThemeName) => {
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem("lc-theme", t); } catch { /* storage blocked */ }
+    window.dispatchEvent(new Event("lc-theme"));
+    setTheme(t);
+  };
 
   useEffect(() => {
     const sync = () => { setUser(authToken() ? authUser() : null); };
@@ -72,6 +87,25 @@ export default function AccountMenu() {
           <Link href="/lists" role="menuitem">My Lists</Link>
           <Link href="/settings/profile" role="menuitem">Profile Settings</Link>
           <Link href="/account" role="menuitem">Account Settings</Link>
+          <hr />
+          <div className="acct-appear" aria-label="Appearance">
+            <div className="acct-row"><span>Theme</span>
+              <span className="acct-seg" role="radiogroup" aria-label="Theme">
+                {(["dark", "light"] as ThemeName[]).map((t) => (
+                  <button key={t} type="button" role="radio" aria-checked={theme === t} className={theme === t ? "on" : ""} onClick={() => pickTheme(t)}>{t === "dark" ? "Dark" : "Light"}</button>
+                ))}
+              </span>
+            </div>
+            <div className="acct-row"><span>Accent</span>
+              <span className="swatches" role="radiogroup" aria-label="Accent colour">
+                {ACCENTS.map((a) => (
+                  <button key={a.key} type="button" role="radio" aria-checked={accent === a.key} aria-label={a.label} title={a.label}
+                    className={`swatch${accent === a.key ? " on" : ""}`} style={{ background: a.dark }}
+                    onClick={() => { setAccent(a.key); saveAccent(a); }} />
+                ))}
+              </span>
+            </div>
+          </div>
           <hr />
           <button type="button" role="menuitem" onClick={() => { clearSession(); window.location.href = "/"; }}>Log out</button>
         </div>
