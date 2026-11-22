@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import "./globals.css";
 import Link from "next/link";
 import type { Metadata, Viewport } from "next";
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a href="#main" className="skip-link">Skip to content</a>
         <header className="nav">
-          <Link href="/" className="brand">&lt;/&gt;<span className="brand-text"> LeetCode Practice</span></Link>
+          <Link href="/" className="brand" aria-label="LeetCode Practice home"><Logo size={30} /><span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /></nav>
           {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
           <div className="nav-end"><PaletteButton /><ThemeToggle /><AccountMenu /></div>

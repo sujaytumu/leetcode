@@ -25,6 +25,7 @@ import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import Solutions from "@/components/Solutions";
+import Logo from "@/components/Logo";
 import NoteBox from "@/components/NoteBox";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import CodeDiff from "@/components/CodeDiff";
@@ -423,7 +424,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       )}
       <div className="lctop">
         <div className="lctop-l">
-          <Link href="/" className="lclogo" title="LeetCode Practice home" aria-label="Home">&lt;/&gt;</Link>
+          <Link href="/" className="lclogo" title="LeetCode Practice home" aria-label="Home"><Logo size={28} /></Link>
           <button className="lclist" onClick={() => setShowList(true)} title="Problem list">☰ <span className="hide-sm">Problem List</span></button>
           {prev ? <Link className="navbtn" href={`/problems/${prev.slug}`} title={prev.title} aria-label="Previous problem">‹</Link> : <span className="navbtn off" aria-hidden="true">‹</span>}
           {next ? <Link className="navbtn" href={`/problems/${next.slug}`} title={next.title} aria-label="Next problem">›</Link> : <span className="navbtn off" aria-hidden="true">›</span>}
