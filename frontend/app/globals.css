@@ -1832,3 +1832,17 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
 .lctop .acct-btn:hover { background:none; }
 .lctop .acct-btn .acct-av { width:30px; height:30px; }
 .lctop-r { padding-right:4px; }
+
+/* Neat buttons: one height, radius, hover and focus treatment across the problem header and toolbars */
+@media (min-width:901px) {
+  .lctop { align-items:center; }
+  .lctop-l, .lctop-c, .lctop-r { gap:8px; }
+  .lctop button, .lctop .navbtn, .lctop-r .topicon { height:34px; min-width:34px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:8px; font-size:14px; line-height:1; white-space:nowrap; }
+  .lctop-c { display:inline-flex; gap:2px; padding:3px; border-radius:10px; background:var(--lc-strip, var(--cell)); }
+  .lctop-c button { height:30px; border-radius:7px; padding:0 14px; font-weight:600; }
+  .lctop-c button.primary { background:var(--ok); color:#fff; }
+  .lctop-c button.primary:hover:not(:disabled) { filter:brightness(1.08); }
+  .lctop .navbtn.off { opacity:.35; pointer-events:none; }
+  .lctop-r .theme-btn { padding:0 10px; }
+}
+.lctop button:focus-visible, .lctop .navbtn:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
