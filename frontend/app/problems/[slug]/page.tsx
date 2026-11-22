@@ -25,6 +25,7 @@ import Skeleton from "@/components/Skeleton";
 import SimilarProblems from "@/components/SimilarProblems";
 import Discuss from "@/components/Discuss";
 import Solutions from "@/components/Solutions";
+import NoteBox from "@/components/NoteBox";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
 import CodeDiff from "@/components/CodeDiff";
 import FreeSpace from "@/components/FreeSpace";
@@ -562,7 +563,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                       <div className="mute subpassed">{openSub.passed} / {openSub.total} testcases passed</div>
                       <div className="mute subdate">Submitted at {new Date(openSub.createdAt).toLocaleString(undefined, { month: "short", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}</div>
                     </div>
-                    <button className="solbtn" onClick={() => { setOpenSub(null); setTab("solutions"); }}>✎ Solution</button>
+                    <span className="subbtns">
+                      <button className="anabtn" onClick={() => { setOpenSub(null); setTab("editorial"); }} title="Approach and complexity analysis">✦ Analysis</button>
+                      <button className="solbtn" onClick={() => { setOpenSub(null); setTab("solutions"); }}>✎ Solution</button>
+                    </span>
                   </div>
                   {openSub.verdict === "ACCEPTED" && <SubmissionStatsPanel id={openSub.id} />}
                   <div className="subcodehead"><b>Code</b><span className="langchip">{languages.find((l) => l.key === openSub.language)?.label ?? LANG_LABEL[openSub.language] ?? openSub.language}</span></div>
@@ -600,8 +604,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>{" "}
                   <button className="ghost" disabled={openSub.language !== lang} title={openSub.language !== lang ? "Switch the editor to this submission's language to compare" : "Compare with the code in your editor"}
                     onClick={() => setShowDiff((v) => !v)}>{showDiff ? "Hide diff" : "Diff vs editor"}</button>
-                  <textarea className="subnotes" placeholder="Write your notes here" aria-label="Notes for this problem" value={notes}
-                    onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); cloud.saveNotes(e.target.value); }} />
+                  <NoteBox slug={slug} value={notes} tags={problem.tags}
+                    onChange={(v) => { setNotes(v); localStorage.setItem(`lc-notes:${slug}`, v); cloud.saveNotes(v); }} />
                 </div>
               ) : (
               <table className="subtable">

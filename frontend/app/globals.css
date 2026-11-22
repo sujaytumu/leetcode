@@ -1600,3 +1600,15 @@ input[type="checkbox"], input[type="radio"] { accent-color:var(--accent); }
 .casechips button { border:0; background:transparent; border-radius:8px; font-weight:600; color:var(--mute); }
 .casechips button.on { background:var(--cell); color:var(--text); box-shadow:none; }
 @media (min-width:901px) { .casechips button { padding:7px 14px; font-size:15px; } }
+
+.subbtns { display:flex; gap:8px; }
+.anabtn { background:color-mix(in srgb, #7c5cff 22%, var(--panel)); color:#b9a6ff; border:0; font-weight:600; border-radius:8px; padding:8px 14px; white-space:nowrap; }
+.anabtn:hover:not(:disabled) { background:color-mix(in srgb, #7c5cff 32%, var(--panel)); }
+.notebox { background:var(--cell); border:1px solid var(--line); border-radius:12px; margin-top:16px; overflow:hidden; }
+.notebox textarea { width:100%; min-height:130px; background:transparent; border:0; padding:12px 14px; resize:vertical; font:inherit; color:var(--text); display:block; box-shadow:none !important; }
+.notefoot { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding:10px 14px; }
+.notetags { background:transparent; border:0; color:var(--mute); padding:0; font-size:15px; text-align:left; }
+.notepick { display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px; }
+.notedots { display:flex; gap:10px; padding:4px 14px 14px; }
+.notedot { width:26px; height:26px; border-radius:50%; padding:0; border:2px solid var(--dot); background:transparent; color:#fff; font-size:13px; line-height:1; display:grid; place-items:center; }
+.notedot.on { background:var(--dot); }
