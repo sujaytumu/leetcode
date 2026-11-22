@@ -4,6 +4,10 @@ const S = { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: "
 const I = (children: ReactNode) => <svg {...S}>{children}</svg>;
 
 export const ICONS: Record<string, ReactNode> = {
+  x: I(<path d="M4 4l16 16M20 4L4 20" />),
+  tags: I(<><path d="M14 6l4 4L8 20H4v-4zM13 7l-2-2 3-3 4 4-3 3" /></>),
+  code: I(<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />),
+  heatmap: I(<><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" stroke="none" /><path d="M8 17v-4M12 17V8M16 17v-6" stroke="var(--panel)" /></>),
   displayName: I(<><circle cx="12" cy="8" r="4" fill="currentColor" stroke="none" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="currentColor" stroke="none" /></>),
   gender: I(<><circle cx="10" cy="14" r="5" /><path d="M14 10l6-6M15 4h5v5M10 19v3M8 21h4" /></>),
   location: I(<><path d="M12 22s7-6.3 7-12a7 7 0 10-14 0c0 5.7 7 12 7 12z" fill="currentColor" stroke="none" /><circle cx="12" cy="10" r="2.5" fill="var(--panel)" stroke="none" /></>),

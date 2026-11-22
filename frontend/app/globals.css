@@ -1677,3 +1677,12 @@ h1, h2 { letter-spacing:-.01em}
   .lcavatar img, .lcavatar div { width:120px; height:120px; font-size:40px; }
   .lcrowhead { min-height:60px; padding:0 14px; font-size:16px; gap:10px; }
 }
+.lcsec { margin-top:34px; }
+.lcchips { display:flex; flex-wrap:wrap; gap:8px; overflow:visible; white-space:normal; }
+.lcchips em { font-style:normal; background:var(--cell); color:var(--text); border-radius:999px; padding:4px 12px; font-size:13px; font-weight:600; }
+.lctoggle { cursor:default; } .lctoggle:hover { background:none; }
+.lcswitch { width:57px; height:30px; border-radius:999px; background:var(--cell); border:0; padding:3px; display:flex; align-items:center; justify-content:flex-start; }
+.lcswitch.on { background:#fff; justify-content:flex-end; }
+.lcswitch i { width:24px; height:24px; border-radius:50%; background:var(--mute); }
+.lcswitch.on i { background:#111; }
+.lcswitchlabel { font-size:14px; font-weight:700; min-width:28px; margin-right:12px; }
