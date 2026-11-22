@@ -1871,3 +1871,16 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
 .acct-btn.active .acct-av { box-shadow:none; }
 .acct-btn:hover .acct-av, .acct-btn[aria-expanded="true"] .acct-av { box-shadow:0 0 0 2px color-mix(in srgb, var(--text) 25%, transparent); }
 .acct-btn:focus-visible .acct-av { box-shadow:0 0 0 2px var(--accent); }
+
+/* Header right side like LeetCode's: plain Search pill, bell, flame count, round avatar, amber button (sun toggle lives in the account menu) */
+@media (min-width:901px) {
+  header.nav .nav-end { gap:14px; }
+  header.nav .nav-end .palette-btn { width:150px; height:30px; padding:0 12px; gap:8px; border-radius:15px; font-size:13px; font-weight:500; background:var(--cell); color:var(--mute); justify-content:flex-start; }
+  header.nav .nav-end .palette-btn svg { color:var(--mute); flex:none; }
+  header.nav .nav-end:has(.acct-btn) .theme-btn { display:none; }
+  .bellbtn { display:inline-grid; place-items:center; width:30px; height:30px; color:var(--mute); border-radius:8px; }
+  .bellbtn:hover { color:var(--text); background:var(--hover); }
+  .streakchip { color:var(--mute); font-size:13px; font-weight:600; }
+  .plansbtn { display:inline-flex; align-items:center; height:30px; padding:0 14px; border-radius:8px; background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent) !important; font-size:15px; font-weight:600; }
+  .plansbtn:hover { background:color-mix(in srgb, var(--accent) 26%, transparent) !important; }
+}

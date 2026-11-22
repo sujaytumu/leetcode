@@ -20,12 +20,10 @@ type Item = { key: string; label: string; hint: string; href: string; difficulty
 
 /** Header button that opens the palette (works with touch too). */
 export function PaletteButton() {
-  const [mac, setMac] = useState(false);
-  useEffect(() => setMac(/Mac|iPhone|iPad/.test(navigator.platform)), []);
   return (
     <button className="palette-btn" onClick={() => window.dispatchEvent(new Event("lc-palette"))} aria-label="Search problems">
-      <span aria-hidden="true">🔍</span><span className="hide-sm"> Search</span>
-      <kbd className="hide-sm">{mac ? "⌘K" : "Ctrl K"}</kbd>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+      <span className="hide-sm">Search</span>
     </button>
   );
 }

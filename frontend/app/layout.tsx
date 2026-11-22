@@ -40,7 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="brand" aria-label="LeetCode Practice home"><Logo size={30} /><span className="brand-text"> LeetCode Practice</span></Link>
           <nav><LoadingIndicator /><NavLinks /></nav>
           {/* Fixed cluster: lives outside the scrolling link list, so Profile never moves. */}
-          <div className="nav-end"><PaletteButton /><StreakChip /><ThemeToggle /><AccountMenu /></div>
+          <div className="nav-end"><PaletteButton />
+            <Link href="/review" className="bellbtn" title="Problems due for review" aria-label="Problems due for review">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0" /></svg>
+            </Link>
+            <StreakChip /><ThemeToggle /><AccountMenu />
+            <Link href="/plans" className="plansbtn">Plans</Link></div>
         </header>
         <PwaRegister />
         <MockBar />
