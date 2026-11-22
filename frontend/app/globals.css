@@ -1686,3 +1686,13 @@ h1, h2 { letter-spacing:-.01em}
 .lcswitch i { width:24px; height:24px; border-radius:50%; background:var(--mute); }
 .lcswitch.on i { background:#111; }
 .lcswitchlabel { font-size:14px; font-weight:700; min-width:28px; margin-right:12px; }
+/* Settings: details on the left, photo on the right, everything aligned to one column */
+.lchero { display:flex; align-items:center; justify-content:space-between; gap:24px; margin:8px 0 28px; }
+.lcherotext { min-width:0; }
+.lcherotext h2 { margin:0 0 4px; font-size:24px; }
+.lcherotext p { margin:0 0 6px; }
+.lcherosum { font-size:15px; }
+.lchero .lcavatar { flex:none; margin:0; }
+.lchero .lcavatar img, .lchero .lcavatar div { width:140px; height:140px; border-radius:12px; }
+@media (max-width:700px) { .lchero { flex-direction:column-reverse; align-items:flex-start; } }
+.lcherotext .lcavatarnote { text-align:left; margin:10px 0 0; }

@@ -137,13 +137,20 @@ export default function ProfileSettingsPage() {
         </div>
       </aside>
       <section className="lcsetmain">
-        <div className="lcavatar">
-          {info.github && photoOk
-            // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={`https://github.com/${info.github}.png?size=240`} alt="" onError={() => setPhotoOk(false)} />
-            : <div aria-hidden="true">{initials(info)}</div>}
+        <div className="lchero">
+          <div className="lcherotext">
+            <h2>{info.displayName || info.username || "Your profile"}</h2>
+            {info.username && <p className="mute">@{info.username}</p>}
+            {info.headline && <p className="lcherosum">{info.headline}</p>}
+            <p className="mute lcavatarnote">Your photo comes from your GitHub username.</p>
+          </div>
+          <div className="lcavatar">
+            {info.github && photoOk
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={`https://github.com/${info.github}.png?size=240`} alt="" onError={() => setPhotoOk(false)} />
+              : <div aria-hidden="true">{initials(info)}</div>}
+          </div>
         </div>
-        <p className="mute lcavatarnote">Your photo comes from your GitHub username.</p>
         {!signedIn && <div className="banner" style={{ marginBottom: 12 }}>You are not logged in, so these details stay on this device only. <Link href="/login">Log in</Link></div>}
         <h3 className="lcgeneral">General</h3>
         <p className="mute lcgeneralsub">Manage your basic profile information.</p>
