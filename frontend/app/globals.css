@@ -1864,3 +1864,10 @@ select:hover, input[type="text"]:hover, input[type="search"]:hover { border-colo
 .contest-me { display:flex; flex-wrap:wrap; gap:12px 40px; margin-top:12px; padding:14px 18px; }
 .contest-me .mute { font-size:12px; }
 .contest-me b { font-size:22px; font-weight:600; }
+
+/* Profile avatar button: plain round photo like before, no permanent orange ring; subtle ring only on hover or when the menu is open */
+.acct-btn { width:32px; height:32px; padding:0; border:0; background:none; border-radius:50%; display:grid; place-items:center; }
+.acct-av { width:30px; height:30px; border:0; box-shadow:none; background-clip:padding-box; }
+.acct-btn.active .acct-av { box-shadow:none; }
+.acct-btn:hover .acct-av, .acct-btn[aria-expanded="true"] .acct-av { box-shadow:0 0 0 2px color-mix(in srgb, var(--text) 25%, transparent); }
+.acct-btn:focus-visible .acct-av { box-shadow:0 0 0 2px var(--accent); }
