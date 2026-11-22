@@ -423,11 +423,11 @@ static int[] solve(int[] nums) {
 --- py
 def solve(nums):
     nums = sorted(nums)
-    n, count = len(nums), 0
-    for i in range(n - 2):
-        if i > 0 and nums[i] == nums[i - 1]:
+    out = []
+    for i in range(len(nums) - 2):
+        if i and nums[i] == nums[i - 1]:
             continue
-        lo, hi = i + 1, n - 1
+        lo, hi = i + 1, len(nums) - 1
         while lo < hi:
             total = nums[i] + nums[lo] + nums[hi]
             if total < 0:
@@ -435,40 +435,38 @@ def solve(nums):
             elif total > 0:
                 hi -= 1
             else:
-                count += 1
+                out.append([nums[i], nums[lo], nums[hi]])
                 lo += 1
                 hi -= 1
                 while lo < hi and nums[lo] == nums[lo - 1]:
                     lo += 1
-                while lo < hi and nums[hi] == nums[hi + 1]:
-                    hi -= 1
-    return count
+    return out
 --- js
 function solve(nums) {
-  const a = [...nums].sort((x, y) => x - y);
-  const n = a.length;
-  let count = 0;
-  for (let i = 0; i < n - 2; i++) {
-    if (i > 0 && a[i] === a[i - 1]) continue;
-    let lo = i + 1, hi = n - 1;
+  nums = [...nums].sort((a, b) => a - b);
+  const out = [];
+  for (let i = 0; i + 2 < nums.length; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue;
+    let lo = i + 1, hi = nums.length - 1;
     while (lo < hi) {
-      const total = a[i] + a[lo] + a[hi];
+      const total = nums[i] + nums[lo] + nums[hi];
       if (total < 0) lo++;
       else if (total > 0) hi--;
       else {
-        count++;
-        lo++; hi--;
-        while (lo < hi && a[lo] === a[lo - 1]) lo++;
-        while (lo < hi && a[hi] === a[hi + 1]) hi--;
+        out.push([nums[i], nums[lo], nums[hi]]);
+        lo++;
+        hi--;
+        while (lo < hi && nums[lo] === nums[lo - 1]) lo++;
       }
     }
   }
-  return count;
+  return out;
 }
 --- cpp
-int solve(vector<int> nums) {
+vector<vector<int>> solve(vector<int> nums) {
     sort(nums.begin(), nums.end());
-    int n = nums.size(), count = 0;
+    vector<vector<int>> out;
+    int n = nums.size();
     for (int i = 0; i + 2 < n; i++) {
         if (i > 0 && nums[i] == nums[i - 1]) continue;
         int lo = i + 1, hi = n - 1;
@@ -477,37 +475,38 @@ int solve(vector<int> nums) {
             if (total < 0) lo++;
             else if (total > 0) hi--;
             else {
-                count++;
-                lo++; hi--;
+                out.push_back({nums[i], nums[lo], nums[hi]});
+                lo++;
+                hi--;
                 while (lo < hi && nums[lo] == nums[lo - 1]) lo++;
-                while (lo < hi && nums[hi] == nums[hi + 1]) hi--;
             }
         }
     }
-    return count;
+    return out;
 }
 --- java
-static int solve(int[] nums) {
-    int[] a = nums.clone();
-    Arrays.sort(a);
-    int n = a.length, count = 0;
-    for (int i = 0; i + 2 < n; i++) {
-        if (i > 0 && a[i] == a[i - 1]) continue;
-        int lo = i + 1, hi = n - 1;
-        while (lo < hi) {
-            long total = (long) a[i] + a[lo] + a[hi];
-            if (total < 0) lo++;
-            else if (total > 0) hi--;
-            else {
-                count++;
-                lo++; hi--;
-                while (lo < hi && a[lo] == a[lo - 1]) lo++;
-                while (lo < hi && a[hi] == a[hi + 1]) hi--;
+    static int[][] solve(int[] nums) {
+        int[] a = nums.clone();
+        Arrays.sort(a);
+        List<int[]> out = new ArrayList<>();
+        int n = a.length;
+        for (int i = 0; i + 2 < n; i++) {
+            if (i > 0 && a[i] == a[i - 1]) continue;
+            int lo = i + 1, hi = n - 1;
+            while (lo < hi) {
+                long total = (long) a[i] + a[lo] + a[hi];
+                if (total < 0) lo++;
+                else if (total > 0) hi--;
+                else {
+                    out.add(new int[] {a[i], a[lo], a[hi]});
+                    lo++;
+                    hi--;
+                    while (lo < hi && a[lo] == a[lo - 1]) lo++;
+                }
             }
         }
+        return out.toArray(new int[0][]);
     }
-    return count;
-}
 === longest-substring-without-repeating-characters
 --- py
 def solve(s):

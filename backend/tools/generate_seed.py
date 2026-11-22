@@ -61,6 +61,15 @@ def fmt_output(ret, val):
         while toks and toks[-1] is None:
             toks.pop()
         return " ".join("null" if v is None else str(v) for v in toks) + "\n"
+    if ret in ("sets", "rows"):
+        # Any order is fine for the solver: the starter code prints the rows sorted, so output order never matters.
+        # `sets` also sorts inside each row (combinations), `rows` keeps the order inside a row (permutations).
+        rows = sorted(sorted(r) for r in val) if ret == "sets" else sorted(list(r) for r in val)
+        return "\n".join(" ".join(map(str, r)) for r in rows) + "\n"
+    if ret == "strs":
+        return "\n".join(sorted(val)) + "\n"
+    if ret == "str":
+        return f"{val}\n"
     raise ValueError(ret)
 
 
@@ -184,14 +193,20 @@ def starter_python(params, ret):
         "int[][]": ["    for row in result:", '        print(" ".join(map(str, row)))'],
         "list": ['    print(" ".join(map(str, list_values(result))))'],
         "tree": ['    print(" ".join(tree_tokens(result)))'],
+        "sets": ["    rows = sorted(sorted(r) for r in result)", "    for row in rows:", '        print(" ".join(map(str, row)))'],
+        "rows": ["    rows = sorted(list(r) for r in result)", "    for row in rows:", '        print(" ".join(map(str, row)))'],
+        "strs": ["    for s in sorted(result):", "        print(s)"],
+        "str": ["    print(result)"],
     }[ret]
     body += ["", "", 'if __name__ == "__main__":', "    main()", ""]
     return "\n".join(body)
 
 
 JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "list": "ListNode", "tree": "TreeNode"}
-JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]", "list": "ListNode", "tree": "TreeNode"}
-JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]", "list": "null", "tree": "null"}
+JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]", "list": "ListNode", "tree": "TreeNode",
+            "sets": "int[][]", "rows": "int[][]", "strs": "String[]", "str": "String"}
+JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]", "list": "null", "tree": "null",
+                "sets": "new int[0][]", "rows": "new int[0][]", "strs": "new String[0]", "str": '""'}
 
 
 def starter_java(params, ret):
@@ -249,6 +264,17 @@ def starter_java(params, ret):
                     '            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(" ")));', "        }"],
         "list": ["        System.out.println(listString(result));"],
         "tree": ["        System.out.println(treeString(result));"],
+        "sets": ["        int[][] sorted = new int[result.length][];",
+                 "        for (int i = 0; i < result.length; i++) {", "            sorted[i] = result[i].clone();",
+                 "            Arrays.sort(sorted[i]);", "        }", "        Arrays.sort(sorted, Arrays::compare);",
+                 "        for (int[] row : sorted) {",
+                 '            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(" ")));', "        }"],
+        "rows": ["        int[][] sorted = result.clone();", "        Arrays.sort(sorted, Arrays::compare);",
+                 "        for (int[] row : sorted) {",
+                 '            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(" ")));', "        }"],
+        "strs": ["        String[] sorted = result.clone();", "        Arrays.sort(sorted);",
+                 "        for (String s : sorted) System.out.println(s);"],
+        "str": ["        System.out.println(result);"],
     }[ret]
     out += ["    }", "}", ""]
     return "\n".join(out)
@@ -280,6 +306,9 @@ def starter_js(params, ret):
         elif t == "tree":
             out += [f"const {n}Len = parseInt(lines[pos++], 10);",
                     f"const {n} = buildTree({n}Len > 0 ? lines[pos].trim().split(/\\s+/) : []);", "pos++;"]
+    if ret in ("sets", "rows"):
+        out += ["function compareRows(a, b) {", "  for (let i = 0; i < Math.min(a.length, b.length); i++) {",
+                "    if (a[i] !== b[i]) return a[i] - b[i];", "  }", "  return a.length - b.length;", "}", ""]
     out += [f"const result = solve({names});"]
     out += {
         "int": ["console.log(String(result));"],
@@ -288,6 +317,12 @@ def starter_js(params, ret):
         "int[][]": ['console.log(result.map((r) => r.join(" ")).join("\\n"));'],
         "list": ["console.log(listString(result));"],
         "tree": ["console.log(treeString(result));"],
+        "sets": ["const rows = result.map((r) => [...r].sort((a, b) => a - b));", "rows.sort(compareRows);",
+                 'console.log(rows.map((r) => r.join(" ")).join("\\n"));'],
+        "rows": ["const rows = result.map((r) => [...r]);", "rows.sort(compareRows);",
+                 'console.log(rows.map((r) => r.join(" ")).join("\\n"));'],
+        "strs": ['console.log([...result].sort().join("\\n"));'],
+        "str": ["console.log(result);"],
     }[ret]
     out += [""]
     return "\n".join(out)
@@ -295,8 +330,10 @@ def starter_js(params, ret):
 
 CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>",
          "list": "ListNode *", "tree": "TreeNode *"}
-CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "list": "ListNode *", "tree": "TreeNode *"}
-CPP_DEFAULT = {"int": "0", "bool": "false", "int[]": "{}", "int[][]": "{}", "list": "nullptr", "tree": "nullptr"}
+CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "list": "ListNode *", "tree": "TreeNode *",
+           "sets": "vector<vector<int>>", "rows": "vector<vector<int>>", "strs": "vector<string>", "str": "string"}
+CPP_DEFAULT = {"int": "0", "bool": "false", "int[]": "{}", "int[][]": "{}", "list": "nullptr", "tree": "nullptr",
+               "sets": "{}", "rows": "{}", "strs": "{}", "str": "{}"}
 
 
 def starter_cpp(params, ret):
@@ -348,6 +385,14 @@ def starter_cpp(params, ret):
                     "            cout << row[j];", "        }", '        cout << "\\n";', "    }"],
         "list": ['    cout << listString(result) << "\\n";'],
         "tree": ['    cout << treeString(result) << "\\n";'],
+        "sets": ["    for (auto &row : result) sort(row.begin(), row.end());", "    sort(result.begin(), result.end());",
+                 "    for (auto &row : result) {", "        for (size_t j = 0; j < row.size(); j++) {", '            if (j) cout << " ";',
+                 "            cout << row[j];", "        }", '        cout << "\\n";', "    }"],
+        "rows": ["    sort(result.begin(), result.end());",
+                 "    for (auto &row : result) {", "        for (size_t j = 0; j < row.size(); j++) {", '            if (j) cout << " ";',
+                 "            cout << row[j];", "        }", '        cout << "\\n";', "    }"],
+        "strs": ["    sort(result.begin(), result.end());", '    for (auto &s : result) cout << s << "\\n";'],
+        "str": ['    cout << result << "\\n";'],
     }[ret]
     out += ["    return 0;", "}", ""]
     return "\n".join(out)
@@ -1469,6 +1514,99 @@ def catalan(n):
     return math.comb(2 * n, n) // (n + 1)
 
 
+def three_sum_all(nums):
+    nums, seen = sorted(nums), set()
+    for i in range(len(nums) - 2):
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            total = nums[i] + nums[lo] + nums[hi]
+            if total == 0:
+                seen.add((nums[i], nums[lo], nums[hi]))
+                lo += 1
+                hi -= 1
+            elif total < 0:
+                lo += 1
+            else:
+                hi -= 1
+    return [list(t) for t in sorted(seen)]
+
+
+def four_sum_all(a, target):
+    a, seen = sorted(a), set()
+    for i in range(len(a)):
+        for j in range(i + 1, len(a)):
+            lo, hi = j + 1, len(a) - 1
+            while lo < hi:
+                total = a[i] + a[j] + a[lo] + a[hi]
+                if total == target:
+                    seen.add((a[i], a[j], a[lo], a[hi]))
+                    lo += 1
+                    hi -= 1
+                elif total < target:
+                    lo += 1
+                else:
+                    hi -= 1
+    return [list(t) for t in sorted(seen)]
+
+
+def permutations_unique_all(nums):
+    import itertools
+    return [list(p) for p in sorted(set(itertools.permutations(nums)))]
+
+
+def combination_sum_all(candidates, target):
+    cands, out = sorted(candidates), []
+
+    def go(start, left, cur):
+        if left == 0:
+            out.append(list(cur))
+            return
+        for j in range(start, len(cands)):
+            if cands[j] > left:
+                break
+            cur.append(cands[j])
+            go(j, left - cands[j], cur)
+            cur.pop()
+
+    go(0, target, [])
+    return out
+
+
+def generate_parentheses_all(n):
+    out = []
+
+    def go(cur, opened, closed):
+        if len(cur) == 2 * n:
+            out.append(cur)
+            return
+        if opened < n:
+            go(cur + "(", opened + 1, closed)
+        if closed < opened:
+            go(cur + ")", opened, closed + 1)
+
+    go("", 0, 0)
+    return out
+
+
+def min_windows(s, t):
+    """Every shortest substring of `s` that contains all characters of `t` (with multiplicity)."""
+    length = b6_min_window_len(s, t)
+    if length == 0:
+        return []
+    need = collections.Counter(t)
+    return [s[i:i + length] for i in range(len(s) - length + 1)
+            if not need - collections.Counter(s[i:i + length])]
+
+
+def min_window_text(s, t):
+    found = min_windows(s, t)
+    return found[0] if found else ""
+
+
+# LeetCode promises a unique answer; keep only test cases that really have one.
+min_window_text.accept = lambda s, t: len(min_windows(s, t)) <= 1
+
+
 def palindrome_partitions(s):
     n = len(s)
     ways = [1] + [0] * n
@@ -1894,12 +2032,14 @@ PROBLEMS += [
        "**1-based** indices, smaller first. Use only constant extra space.",
        "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `target`.", "The two 1-based indices, separated by a space.",
        ["`2 <= n <= 300`", "`-1000 <= numbers[i] <= 1000`", "Exactly one valid pair exists"]),
-    mk("3sum-count", "3Sum (Count Triplets)", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "int",
-       three_sum_count, [[-1, 0, 1, 2, -1, -4], [0, 1, 1], [0, 0, 0], [0, 0, 0, 0], rand_arr(12, -10, 10),
+    mk("3sum-count", "3Sum", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]")], "sets",
+       three_sum_all, [[-1, 0, 1, 2, -1, -4], [0, 1, 1], [0, 0, 0], [0, 0, 0, 0], rand_arr(12, -10, 10),
                          rand_arr(60, -30, 30), rand_arr(200, -50, 50), rand_arr(500, -100, 100), rand_arr(3, -5, 5)],
-       "Count the **distinct** value triplets `[a, b, c]` taken from different indices of `nums` whose sum is `0`. "
-       "Two triplets are the same if they hold the same values, regardless of order.", ARR_IN,
-       "The number of distinct triplets.", ["`3 <= n <= 500`", "`-10^5 <= nums[i] <= 10^5`"]),
+       "Return all the **unique** triplets `[nums[i], nums[j], nums[k]]` such that `i`, `j` and `k` are different indices "
+       "and `nums[i] + nums[j] + nums[k] == 0`. The answer must not contain duplicate triplets; you may return the "
+       "triplets, and the numbers inside each, in any order.", ARR_IN,
+       "One triplet per line, numbers separated by spaces; nothing if there is none. The starter code sorts what you "
+       "return before printing, so the order never matters.", ["`3 <= n <= 500`", "`-10^5 <= nums[i] <= 10^5`"]),
     mk("remove-duplicates-from-sorted-array", "Remove Duplicates from Sorted Array", "EASY", ["array", "two-pointers"],
        [("nums", "int[]")], "int[]", remove_duplicates,
        [[1, 1, 2], [0, 0, 1, 1, 1, 2, 2, 3, 3, 4], [5], [1, 2, 3], sorted(rand_arr(50, 0, 20)),
@@ -1971,15 +2111,17 @@ PROBLEMS += [
        "Count the subsets (chosen by index, so equal values count separately) of `nums` whose elements add up to "
        "exactly `target`.", "Line 1: `n`.\nLine 2: `n` positive integers.\nLine 3: `target`.",
        "The number of subsets.", ["`1 <= n <= 20`", "`1 <= nums[i] <= 50`", "`1 <= target <= 500`"]),
-    mk("distinct-permutations-count", "Distinct Permutations Count", "MEDIUM", ["backtracking", "math"],
-       [("nums", "int[]")], "int", distinct_perms_count,
+    mk("distinct-permutations-count", "Permutations II", "MEDIUM", ["backtracking", "math"],
+       [("nums", "int[]")], "rows", permutations_unique_all,
        [[1, 1, 2], [1, 2, 3], [1, 1, 1], [1, 2], rand_arr(6, 1, 3), rand_arr(7, 1, 4), rand_arr(8, 1, 3),
         rand_arr(8, 1, 8), [5]],
-       "`nums` may contain duplicates. Return how many different arrangements (as value sequences) it has.", ARR_IN,
-       "The number of distinct permutations.", ["`1 <= n <= 8`", "`1 <= nums[i] <= 10`"]),
-    mk("generate-parentheses-count", "Generate Parentheses (Count)", "MEDIUM", ["backtracking", "dynamic-programming", "math"],
-       [("n", "int")], "int", catalan, [3, 1, 2, 4, 5, 8, 10, 12, 15],
-       "Return how many well-formed strings of `n` pairs of parentheses exist.", N_IN, "The count.", ["`1 <= n <= 15`"]),
+       "`nums` may contain duplicates. Return all the **unique** permutations, in any order.", ARR_IN,
+       "One permutation per line, numbers separated by spaces. The starter code sorts the lines before printing, so "
+       "the order never matters.", ["`1 <= n <= 8`", "`1 <= nums[i] <= 10`"]),
+    mk("generate-parentheses-count", "Generate Parentheses", "MEDIUM", ["backtracking", "dynamic-programming", "math"],
+       [("n", "int")], "strs", generate_parentheses_all, [3, 1, 2, 4, 5, 8, 10, 12, 15],
+       "Given `n` pairs of parentheses, return all the combinations of well-formed parentheses, in any order.", N_IN,
+       "One string per line. The starter code sorts the lines before printing, so the order never matters.", ["`1 <= n <= 8`"]),
     mk("palindrome-partitioning-count", "Palindrome Partitioning (Count)", "MEDIUM",
        ["backtracking", "dynamic-programming", "string"], [("s", "str")], "int", palindrome_partitions,
        ["aab", "a", "aaa", "abc", "abba", rand_str(10, "ab"), rand_str(14, "ab"), "a" * 16, rand_str(16, "abc")],
@@ -4522,11 +4664,11 @@ PROBLEMS += [
     mk("minimum-falling-path-sum", "Minimum Falling Path Sum", "MEDIUM", ["matrix", "dynamic-programming"], [("matrix", "int[][]")], "int", b5_falling_path, b5_c_falling(),
        "A falling path starts at any cell in the top row and moves down one row at a time to the cell directly below or diagonally left or right. Return the minimum sum over all falling paths of the `n x n` matrix.",
        MAT_IN, "The minimum falling path sum.", ["`1 <= n <= 60`", "`-100 <= matrix[i][j] <= 100`"]),
-    mk("combination-sum-count", "Combination Sum (Count)", "MEDIUM", ["array", "backtracking", "dynamic-programming"], [("candidates", "int[]"), ("target", "int")], "int",
-       b5_combo_count, b5_c_combo_count(),
-       "Given distinct positive integers `candidates`, count the combinations (order does not matter) that add up to `target`. Each candidate may be used any number of times.",
-       "Line 1: `n`.\nLine 2: `n` distinct integers.\nLine 3: `target`.", "The number of combinations.",
-       ["`1 <= n <= 6`", "`1 <= candidates[i] <= 40`", "`1 <= target <= 300`", "The answer fits in a 32-bit integer"]),
+    mk("combination-sum-count", "Combination Sum", "MEDIUM", ["array", "backtracking", "dynamic-programming"], [("candidates", "int[]"), ("target", "int")], "sets",
+       combination_sum_all, b5_c_combo_count(),
+       "Given distinct positive integers `candidates` and a `target`, return all the **unique** combinations of candidates that add up to `target`, in any order. A candidate may be chosen any number of times; two combinations are different if the count of at least one chosen number differs.",
+       "Line 1: `n`.\nLine 2: `n` distinct integers.\nLine 3: `target`.", "One combination per line, numbers separated by spaces. The starter code sorts the lines before printing, so the order never matters.",
+       ["`1 <= n <= 6`", "`1 <= candidates[i] <= 40`", "`1 <= target <= 300`"]),
     mk("distinct-subsequences", "Distinct Subsequences", "HARD", ["string", "dynamic-programming"], [("s", "str"), ("t", "str")], "int", b5_distinct_subseq, b5_c_distinct_subseq(),
        "Return the number of distinct subsequences of `s` that equal `t`.", "Line 1: `s`.\nLine 2: `t`.", "The count.",
        ["`1 <= s.length, t.length <= 30`", "Lowercase English letters", "The answer fits in a 32-bit integer"]),
@@ -5290,9 +5432,9 @@ PROBLEMS += [
        "One line per level (a blank line for the empty tree).", [LC, "`-20 <= val <= 50`"]),
     mk("count-complete-tree-nodes", "Count Complete Tree Nodes", "EASY", ["tree", "binary-search", "dfs"], [("root", "tree")], "int", b6_count_nodes, b6_c_count_nodes(),
        "Return the number of nodes in the tree. (For a complete tree there is an `O(log^2 n)` solution; any tree is accepted here.)", TREE_IN, "The number of nodes.", [LC, VAL]),
-    mk("minimum-window-substring-length", "Minimum Window Substring (Length)", "HARD", ["string", "sliding-window", "hash-table"], [("s", "str"), ("t", "str")], "int", b6_min_window_len, b6_c_min_window(),
-       "Return the length of the smallest substring of `s` that contains every character of `t` (including duplicates), or `0` if there is none.", "Line 1: `s`.\nLine 2: `t`.",
-       "The length, or `0`.", ["`1 <= s.length <= 300`", "`1 <= t.length <= 300`", "Uppercase English letters"]),
+    mk("minimum-window-substring-length", "Minimum Window Substring", "HARD", ["string", "sliding-window", "hash-table"], [("s", "str"), ("t", "str")], "str", min_window_text, b6_c_min_window(),
+       "Return the minimum window **substring** of `s` such that every character in `t` (including duplicates) is included in the window, or the empty string if there is none. The test data always has a unique answer.", "Line 1: `s`.\nLine 2: `t`.",
+       "The window, or an empty line.", ["`1 <= s.length <= 300`", "`1 <= t.length <= 300`", "Uppercase and lowercase English letters"]),
     mk("valid-palindrome-ii", "Valid Palindrome II", "EASY", ["string", "two-pointers"], [("s", "str")], "bool", b6_palin2, b6_c_palin2(),
        "Return `true` if `s` can become a palindrome after deleting **at most one** character.", "A single line containing `s`.", "`true` or `false`.",
        ["`1 <= s.length <= 100000`", "Lowercase English letters"]),
@@ -5311,9 +5453,9 @@ PROBLEMS += [
     mk("find-the-town-judge", "Find the Town Judge", "EASY", ["graph", "array", "hash-table"], [("n", "int"), ("trust", "int[][]")], "int", b6_town_judge, b6_c_judge(),
        "People are labelled `1..n`. The town judge trusts nobody and is trusted by everybody else. Each row `a b` of `trust` means `a` trusts `b`. Return the judge's label, or `-1`.",
        "Line 1: `n`.\nLine 2: `m`, the number of trust pairs.\nNext `m` lines: `a b`.", "The judge's label, or `-1`.", ["`2 <= n <= 100`", "`1 <= m <= 10^4`", "All pairs are distinct"]),
-    mk("4sum-count", "4Sum (Count Quadruplets)", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]"), ("target", "int")], "int", b6_four_sum_count, b6_c_four_sum(),
-       "Return how many **distinct** value quadruplets `[a, b, c, d]` (from four different indices) in `nums` add up to `target`. Quadruplets with the same four values count once.",
-       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "The number of unique quadruplets.", ["`4 <= n <= 80`", "`-10 <= nums[i], target <= 10`"]),
+    mk("4sum-count", "4Sum", "MEDIUM", ["array", "two-pointers", "sorting"], [("nums", "int[]"), ("target", "int")], "sets", four_sum_all, b6_c_four_sum(),
+       "Return all the **unique** quadruplets `[nums[a], nums[b], nums[c], nums[d]]` with four different indices whose sum is `target`, in any order. The answer must not contain duplicate quadruplets.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "One quadruplet per line, numbers separated by spaces. The starter code sorts the lines before printing, so the order never matters.", ["`4 <= n <= 80`", "`-10 <= nums[i], target <= 10`"]),
     mk("kth-smallest-element-in-a-sorted-matrix", "Kth Smallest Element in a Sorted Matrix", "MEDIUM", ["matrix", "heap", "binary-search"], [("matrix", "int[][]"), ("k", "int")], "int",
        b6_kth_matrix, b6_c_kth_matrix(),
        "Every row and every column of the `n x n` matrix is sorted in non-decreasing order. Return the `k`-th smallest element (counting duplicates, 1-indexed).",
@@ -5332,14 +5474,21 @@ PROBLEMS += [
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
-    for i, case in enumerate(problem["cases"]):
+    accept = getattr(ref, "accept", None)
+    for case in problem["cases"]:
         args = case if isinstance(case, tuple) else (case,)
         if isinstance(case, list) and len(params) == 1:
             args = (case,)
+        answer = ref(*args)
+        # Answers that list every solution must stay readable, and string answers must be unique.
+        if ret in ("sets", "rows", "strs") and len(answer) > 1500:
+            continue
+        if accept is not None and not accept(*args):
+            continue
         tests.append({
             "input": fmt_input(params, args),
-            "expectedOutput": fmt_output(ret, ref(*args)),
-            "sample": i < 2,
+            "expectedOutput": fmt_output(ret, answer),
+            "sample": len(tests) < 2,
         })
     samples = [t for t in tests if t["sample"]]
     examples = ["", "### Examples"]

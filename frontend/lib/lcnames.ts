@@ -106,7 +106,7 @@ export const LC_METHODS: Record<string, string> = {
   "sliding-window-maximum": "maxSlidingWindow",
   "word-search": "exist",
   "count-subsets-with-sum": "countSubsets",
-  "distinct-permutations-count": "countPermutations",
+  "distinct-permutations-count": "permuteUnique",
   "generate-parentheses-count": "generateParenthesis",
   "palindrome-partitioning-count": "partition",
   "combination-sum-count": "combinationSum",

@@ -90,66 +90,155 @@ static boolean solve(String[] board, String word) {
 === distinct-permutations-count
 --- py
 def solve(nums):
-    from collections import Counter
-    from math import factorial
-    total = factorial(len(nums))
-    for count in Counter(nums).values():
-        total //= factorial(count)
-    return total
+    nums = sorted(nums)
+    used = [False] * len(nums)
+    out, cur = [], []
+
+    def go():
+        if len(cur) == len(nums):
+            out.append(list(cur))
+            return
+        for i in range(len(nums)):
+            if used[i] or (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]):
+                continue
+            used[i] = True
+            cur.append(nums[i])
+            go()
+            cur.pop()
+            used[i] = False
+
+    go()
+    return out
 --- js
 function solve(nums) {
-  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
-  const counts = new Map();
-  for (const x of nums) counts.set(x, (counts.get(x) || 0) + 1);
-  let total = fact(nums.length);
-  for (const c of counts.values()) total /= fact(c);
-  return total;
+  nums = [...nums].sort((a, b) => a - b);
+  const used = new Array(nums.length).fill(false);
+  const out = [];
+  const cur = [];
+  function go() {
+    if (cur.length === nums.length) {
+      out.push([...cur]);
+      return;
+    }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i] || (i > 0 && nums[i] === nums[i - 1] && !used[i - 1])) continue;
+      used[i] = true;
+      cur.push(nums[i]);
+      go();
+      cur.pop();
+      used[i] = false;
+    }
+  }
+  go();
+  return out;
 }
 --- cpp
-int solve(vector<int> nums) {
-    auto fact = [](int k) { long long f = 1; for (int i = 2; i <= k; i++) f *= i; return f; };
-    map<int, int> counts;
-    for (int x : nums) counts[x]++;
-    long long total = fact(nums.size());
-    for (auto& [value, c] : counts) total /= fact(c);
-    return (int)total;
+void permuteGo(vector<int> &nums, vector<bool> &used, vector<int> &cur, vector<vector<int>> &out) {
+    if (cur.size() == nums.size()) {
+        out.push_back(cur);
+        return;
+    }
+    for (size_t i = 0; i < nums.size(); i++) {
+        if (used[i] || (i > 0 && nums[i] == nums[i - 1] && !used[i - 1])) continue;
+        used[i] = true;
+        cur.push_back(nums[i]);
+        permuteGo(nums, used, cur, out);
+        cur.pop_back();
+        used[i] = false;
+    }
+}
+
+vector<vector<int>> solve(vector<int> nums) {
+    sort(nums.begin(), nums.end());
+    vector<bool> used(nums.size(), false);
+    vector<int> cur;
+    vector<vector<int>> out;
+    permuteGo(nums, used, cur, out);
+    return out;
 }
 --- java
-static int solve(int[] nums) {
-    long[] fact = new long[10];
-    fact[0] = 1;
-    for (int i = 1; i < 10; i++) fact[i] = fact[i - 1] * i;
-    Map<Integer, Integer> counts = new HashMap<>();
-    for (int x : nums) counts.merge(x, 1, Integer::sum);
-    long total = fact[nums.length];
-    for (int c : counts.values()) total /= fact[c];
-    return (int) total;
-}
+    static void permuteGo(int[] nums, boolean[] used, List<Integer> cur, List<int[]> out) {
+        if (cur.size() == nums.length) {
+            out.add(cur.stream().mapToInt(Integer::intValue).toArray());
+            return;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (used[i] || (i > 0 && nums[i] == nums[i - 1] && !used[i - 1])) continue;
+            used[i] = true;
+            cur.add(nums[i]);
+            permuteGo(nums, used, cur, out);
+            cur.remove(cur.size() - 1);
+            used[i] = false;
+        }
+    }
+
+    static int[][] solve(int[] nums) {
+        int[] a = nums.clone();
+        Arrays.sort(a);
+        List<int[]> out = new ArrayList<>();
+        permuteGo(a, new boolean[a.length], new ArrayList<>(), out);
+        return out.toArray(new int[0][]);
+    }
 === generate-parentheses-count
 --- py
 def solve(n):
-    catalan = 1
-    for k in range(n):
-        catalan = catalan * 2 * (2 * k + 1) // (k + 2)
-    return catalan
+    out = []
+
+    def go(cur, opened, closed):
+        if len(cur) == 2 * n:
+            out.append(cur)
+            return
+        if opened < n:
+            go(cur + "(", opened + 1, closed)
+        if closed < opened:
+            go(cur + ")", opened, closed + 1)
+
+    go("", 0, 0)
+    return out
 --- js
 function solve(n) {
-  let catalan = 1;
-  for (let k = 0; k < n; k++) catalan = (catalan * 2 * (2 * k + 1)) / (k + 2);
-  return catalan;
+  const out = [];
+  function go(cur, opened, closed) {
+    if (cur.length === 2 * n) {
+      out.push(cur);
+      return;
+    }
+    if (opened < n) go(cur + "(", opened + 1, closed);
+    if (closed < opened) go(cur + ")", opened, closed + 1);
+  }
+  go("", 0, 0);
+  return out;
 }
 --- cpp
-int solve(int n) {
-    long long catalan = 1;
-    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);
-    return (int)catalan;
+void parenGo(string cur, int opened, int closed, int n, vector<string> &out) {
+    if ((int)cur.size() == 2 * n) {
+        out.push_back(cur);
+        return;
+    }
+    if (opened < n) parenGo(cur + "(", opened + 1, closed, n, out);
+    if (closed < opened) parenGo(cur + ")", opened, closed + 1, n, out);
+}
+
+vector<string> solve(int n) {
+    vector<string> out;
+    parenGo("", 0, 0, n, out);
+    return out;
 }
 --- java
-static int solve(int n) {
-    long catalan = 1;
-    for (int k = 0; k < n; k++) catalan = catalan * 2 * (2 * k + 1) / (k + 2);
-    return (int) catalan;
-}
+    static void parenGo(String cur, int opened, int closed, int n, List<String> out) {
+        if (cur.length() == 2 * n) {
+            out.add(cur);
+            return;
+        }
+        if (opened < n) parenGo(cur + "(", opened + 1, closed, n, out);
+        if (closed < opened) parenGo(cur + ")", opened, closed + 1, n, out);
+    }
+
+    static String[] solve(int n) {
+        List<String> out = new ArrayList<>();
+        parenGo("", 0, 0, n, out);
+        return out.toArray(new String[0]);
+    }
 === palindrome-partitioning-count
 --- py
 def solve(s):

@@ -92,7 +92,8 @@ export function formatOutput(python: string, expected: string): string | null {
   const tail = body.slice(body.findIndex((l) => l.startsWith("result = solve(")) + 1).join("\n");
   const lines = expected.replace(/\r/g, "").split("\n");
   while (lines.length && lines[lines.length - 1].trim() === "") lines.pop();
-  if (tail.includes("for row in result:")) return arr(lines.map((l) => arr(words(l).map(literal))));
+  if (tail.includes("for row in result:") || tail.includes("for row in rows:")) return arr(lines.map((l) => arr(words(l).map(literal))));
+  if (tail.includes("for s in sorted(result):")) return arr(lines.map((l) => JSON.stringify(l)));
   if (/" "\.join\(map\(str, (list_values\(result\)|result)\)\)|tree_tokens\(result\)/.test(tail)) return arr(words(lines.join(" ")).map(literal));
   if (tail.includes('"true" if result else "false"')) return lines.join("").trim();
   if (/^print\(result\)$/.test(tail.trim())) {

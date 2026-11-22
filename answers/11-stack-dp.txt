@@ -612,37 +612,84 @@ static int solve(int[][] matrix) {
 === combination-sum-count
 --- py
 def solve(candidates, target):
-    dp = [0] * (target + 1)
-    dp[0] = 1
-    for c in candidates:  # coins in the outer loop so order does not matter
-        for t in range(c, target + 1):
-            dp[t] += dp[t - c]
-    return dp[target]
+    cands = sorted(candidates)
+    out, cur = [], []
+
+    def go(start, left):
+        if left == 0:
+            out.append(list(cur))
+            return
+        for j in range(start, len(cands)):
+            if cands[j] > left:
+                break
+            cur.append(cands[j])
+            go(j, left - cands[j])
+            cur.pop()
+
+    go(0, target)
+    return out
 --- js
 function solve(candidates, target) {
-  const dp = new Array(target + 1).fill(0);
-  dp[0] = 1;
-  for (const c of candidates) { // coins in the outer loop so order does not matter
-    for (let t = c; t <= target; t++) dp[t] += dp[t - c];
+  const cands = [...candidates].sort((a, b) => a - b);
+  const out = [];
+  const cur = [];
+  function go(start, left) {
+    if (left === 0) {
+      out.push([...cur]);
+      return;
+    }
+    for (let j = start; j < cands.length; j++) {
+      if (cands[j] > left) break;
+      cur.push(cands[j]);
+      go(j, left - cands[j]);
+      cur.pop();
+    }
   }
-  return dp[target];
+  go(0, target);
+  return out;
 }
 --- cpp
-int solve(vector<int> candidates, int target) {
-    vector<long long> dp(target + 1, 0);
-    dp[0] = 1;
-    for (int c : candidates) // coins in the outer loop so order does not matter
-        for (int t = c; t <= target; t++) dp[t] += dp[t - c];
-    return (int)dp[target];
+void comboGo(vector<int> &cands, size_t start, int left, vector<int> &cur, vector<vector<int>> &out) {
+    if (left == 0) {
+        out.push_back(cur);
+        return;
+    }
+    for (size_t j = start; j < cands.size(); j++) {
+        if (cands[j] > left) break;
+        cur.push_back(cands[j]);
+        comboGo(cands, j, left - cands[j], cur, out);
+        cur.pop_back();
+    }
+}
+
+vector<vector<int>> solve(vector<int> candidates, int target) {
+    sort(candidates.begin(), candidates.end());
+    vector<int> cur;
+    vector<vector<int>> out;
+    comboGo(candidates, 0, target, cur, out);
+    return out;
 }
 --- java
-static int solve(int[] candidates, int target) {
-    long[] dp = new long[target + 1];
-    dp[0] = 1;
-    for (int c : candidates) // coins in the outer loop so order does not matter
-        for (int t = c; t <= target; t++) dp[t] += dp[t - c];
-    return (int) dp[target];
-}
+    static void comboGo(int[] cands, int start, int left, List<Integer> cur, List<int[]> out) {
+        if (left == 0) {
+            out.add(cur.stream().mapToInt(Integer::intValue).toArray());
+            return;
+        }
+        for (int j = start; j < cands.length; j++) {
+            if (cands[j] > left) break;
+            cur.add(cands[j]);
+            comboGo(cands, j, left - cands[j], cur, out);
+            cur.remove(cur.size() - 1);
+        }
+    }
+
+    static int[][] solve(int[] candidates, int target) {
+        int[] cands = candidates.clone();
+        Arrays.sort(cands);
+        List<int[]> out = new ArrayList<>();
+        comboGo(cands, 0, target, new ArrayList<>(), out);
+        return out.toArray(new int[0][]);
+    }
 === distinct-subsequences
 --- py
 def solve(s, t):

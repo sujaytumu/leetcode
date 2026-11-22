@@ -876,31 +876,60 @@ static int solve(String s) {
 === generate-parentheses-count
 --- py
 def solve(n):
-    catalan = [1] + [0] * n
-    for i in range(1, n + 1):
-        catalan[i] = sum(catalan[j] * catalan[i - 1 - j] for j in range(i))
-    return catalan[n]
+    out = []
+
+    def go(cur, opened, closed):
+        if len(cur) == 2 * n:
+            out.append(cur)
+            return
+        if opened < n:
+            go(cur + "(", opened + 1, closed)
+        if closed < opened:
+            go(cur + ")", opened, closed + 1)
+
+    go("", 0, 0)
+    return out
 --- js
 function solve(n) {
-  const catalan = new Array(n + 1).fill(0);
-  catalan[0] = 1;
-  for (let i = 1; i <= n; i++)
-    for (let j = 0; j < i; j++) catalan[i] += catalan[j] * catalan[i - 1 - j];
-  return catalan[n];
+  const out = [];
+  function go(cur, opened, closed) {
+    if (cur.length === 2 * n) {
+      out.push(cur);
+      return;
+    }
+    if (opened < n) go(cur + "(", opened + 1, closed);
+    if (closed < opened) go(cur + ")", opened, closed + 1);
+  }
+  go("", 0, 0);
+  return out;
 }
 --- cpp
-int solve(int n) {
-    vector<long long> catalan(n + 1, 0);
-    catalan[0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j < i; j++) catalan[i] += catalan[j] * catalan[i - 1 - j];
-    return (int)catalan[n];
+void parenGo(string cur, int opened, int closed, int n, vector<string> &out) {
+    if ((int)cur.size() == 2 * n) {
+        out.push_back(cur);
+        return;
+    }
+    if (opened < n) parenGo(cur + "(", opened + 1, closed, n, out);
+    if (closed < opened) parenGo(cur + ")", opened, closed + 1, n, out);
+}
+
+vector<string> solve(int n) {
+    vector<string> out;
+    parenGo("", 0, 0, n, out);
+    return out;
 }
 --- java
-static int solve(int n) {
-    long[] catalan = new long[n + 1];
-    catalan[0] = 1;
-    for (int i = 1; i <= n; i++)
-        for (int j = 0; j < i; j++) catalan[i] += catalan[j] * catalan[i - 1 - j];
-    return (int) catalan[n];
-}
+    static void parenGo(String cur, int opened, int closed, int n, List<String> out) {
+        if (cur.length() == 2 * n) {
+            out.add(cur);
+            return;
+        }
+        if (opened < n) parenGo(cur + "(", opened + 1, closed, n, out);
+        if (closed < opened) parenGo(cur + ")", opened, closed + 1, n, out);
+    }
+
+    static String[] solve(int n) {
+        List<String> out = new ArrayList<>();
+        parenGo("", 0, 0, n, out);
+        return out.toArray(new String[0]);
+    }
