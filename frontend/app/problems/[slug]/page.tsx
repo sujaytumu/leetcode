@@ -719,12 +719,15 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   {error && !busy && <div className="banner err" style={{ margin: 0 }}>{error}</div>}
                   {result && !busy && (
                     <>
-                      <h3 className={`verdict ${result.verdict}`}>{verdictText}</h3>
+                      <div className="resulthead">
+                        <h3 className={`verdict ${result.verdict}`}>{verdictText}</h3>
+                        {result.runtimeMs != null && !customRun && <span className="resultrt">Runtime: {result.runtimeMs} ms</span>}
+                      </div>
                       <div className="vstats">
                         {customRun
                           ? "Custom input"
                           : `${result.passed} / ${result.total} testcases passed${mode === "run" ? " · sample cases only" : ""}`}
-                        {result.runtimeMs != null ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
+                        {result.runtimeMs != null && customRun ? ` · Runtime: ${result.runtimeMs} ms` : ""}{result.memoryKb != null ? ` · Memory: ${fmtMem(result.memoryKb)}` : ""}
                       </div>
                       {mode === "submit" && result.verdict === "ACCEPTED" && result.submissionId != null && <div className="consolestats"><SubmissionStatsPanel id={result.submissionId} /></div>}
                       {mode === "submit" && result.verdict === "ACCEPTED" && solveTime && (
@@ -736,7 +739,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                         <div className="casechips" style={{ marginTop: 8 }}>
                           {result.cases.map((c, i) => (
                             <button key={i} className={caseTab === i ? "on" : ""} onClick={() => setCaseTab(i)}>
-                              <span className={c.passed ? "ACCEPTED" : "WRONG_ANSWER"}>●</span> {c.sample ? `Case ${c.index}` : `Hidden ${c.index}`}
+                              <span className={`caseicon ${c.passed ? "ok" : "bad"}`} aria-label={c.passed ? "passed" : "failed"}>{c.passed ? "✓" : "✕"}</span> {c.sample ? `Case ${c.index}` : `Hidden ${c.index}`}
                             </button>
                           ))}
                         </div>
@@ -751,10 +754,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                             return (
                               <>
                                 {args
-                                  ? args.map((a) => <div key={a.name}><div className="iolabel">{a.name} =</div><pre>{a.value}</pre></div>)
-                                  : <><div className="iolabel">Input</div><pre>{cur.input}</pre></>}
-                                <div className="iolabel">Output</div><pre>{cur.actual ? show(cur.actual) : "(empty)"}</pre>
-                                {cur.expected != null && <><div className="iolabel">Expected</div><pre>{show(cur.expected)}</pre></>}
+                                  ? <><div className="iosec">Input</div>{args.map((a) => <div key={a.name} className="iobox"><div className="iolabel">{a.name} =</div><pre>{a.value}</pre></div>)}</>
+                                  : <><div className="iosec">Input</div><div className="iobox"><pre>{cur.input}</pre></div></>}
+                                <div className="iosec">Output</div><div className="iobox"><pre>{cur.actual ? show(cur.actual) : "(empty)"}</pre></div>
+                                {cur.expected != null && <><div className="iosec">Expected</div><div className="iobox"><pre>{show(cur.expected)}</pre></div></>}
                               </>
                             );
                           })()}
