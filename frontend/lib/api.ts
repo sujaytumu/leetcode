@@ -162,12 +162,11 @@ export async function apiWithWake<T>(
 
 /** Every problem, following pagination (the server caps page size at 100). */
 export async function fetchAllProblems(): Promise<ProblemSummary[]> {
-  const out: ProblemSummary[] = [];
-  for (let page = 0; ; page++) {
-    const d = await api<Page<ProblemSummary>>(`/api/problems?page=${page}&size=100`, {}, 20000);
-    out.push(...d.items);
-    if (page + 1 >= d.totalPages) return out;
-  }
+  const first = await api<Page<ProblemSummary>>(`/api/problems?page=0&size=100`, {}, 20000);
+  // The remaining pages are independent, so fetch them side by side instead of one after another.
+  const rest = await Promise.all(Array.from({ length: Math.max(0, first.totalPages - 1) }, (_, i) =>
+    api<Page<ProblemSummary>>(`/api/problems?page=${i + 1}&size=100`, {}, 20000)));
+  return [...first.items, ...rest.flatMap((d) => d.items)];
 }
 
 /** The browser's own calendar day as YYYY-MM-DD, so the server picks the daily problem for the user's local date. */

@@ -6,7 +6,18 @@ import { api } from "@/lib/api";
 /** LeetCode's flame + number in the top bar: your current daily streak, linking to the daily challenge. */
 export default function StreakChip() {
   const [n, setN] = useState<number | null>(null);
-  useEffect(() => { api<{ currentStreak?: number }>("/api/profile").then((p) => setN(p.currentStreak ?? 0)).catch(() => setN(0)); }, []);
+  useEffect(() => {
+    // The full profile is a heavy request, so reuse a value fetched in the last few minutes instead of asking on every page load.
+    const KEY = "lc-streak";
+    try {
+      const c = JSON.parse(sessionStorage.getItem(KEY) ?? "null") as { n: number; at: number } | null;
+      if (c) { setN(c.n); if (Date.now() - c.at < 5 * 60_000) return; }
+    } catch { /* storage blocked */ }
+    api<{ currentStreak?: number }>("/api/profile").then((p) => {
+      const v = p.currentStreak ?? 0; setN(v);
+      try { sessionStorage.setItem(KEY, JSON.stringify({ n: v, at: Date.now() })); } catch { /* storage blocked */ }
+    }).catch(() => setN((cur) => cur ?? 0));
+  }, []);
   return (
     <Link href="/daily" className="streakchip" title="Daily challenge streak" aria-label={`Daily challenge streak: ${n ?? 0}`}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
