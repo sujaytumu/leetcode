@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api, Page, ProblemSummary } from "@/lib/api";
+import { getRecent, type RecentItem } from "@/lib/recent";
 
 const PAGES = [
   { label: "Problems", hint: "Browse all problems", href: "/problemset" },
@@ -35,6 +36,7 @@ export default function CommandPalette() {
   const [q, setQ] = useState("");
   const [found, setFound] = useState<ProblemSummary[]>([]);
   const [sel, setSel] = useState(0);
+  const [recent, setRecent] = useState<RecentItem[]>([]);
   const input = useRef<HTMLInputElement>(null);
   const seq = useRef(0);
 
@@ -52,7 +54,7 @@ export default function CommandPalette() {
     return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("lc-palette", onOpen); };
   }, []);
 
-  useEffect(() => { if (open) { setQ(""); setFound([]); setSel(0); setTimeout(() => input.current?.focus(), 0); } }, [open]);
+  useEffect(() => { if (open) { setQ(""); setFound([]); setSel(0); setRecent(getRecent()); setTimeout(() => input.current?.focus(), 0); } }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,6 +71,10 @@ export default function CommandPalette() {
 
   const term = q.trim().toLowerCase();
   const items: Item[] = [
+    ...(term ? [] : recent.slice(0, 5).map((r) => ({
+      key: `r-${r.slug}`, label: `${r.number ?? ""}${r.number ? ". " : ""}${r.title}`, hint: "Recently viewed",
+      href: `/problems/${r.slug}`, difficulty: r.difficulty,
+    }))),
     ...found.map((p) => ({
       key: `p-${p.id}`, label: `${p.number ?? p.id}. ${p.title}`, hint: p.tags.slice(0, 3).join(", "),
       href: `/problems/${p.slug}`, difficulty: p.difficulty,
