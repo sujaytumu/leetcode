@@ -1,0 +1,720 @@
+=== binary-tree-inorder-traversal
+--- py
+def solve(root):
+    out, stack, node = [], [], root
+    while node or stack:
+        while node:
+            stack.append(node)
+            node = node.left
+        node = stack.pop()
+        out.append(node.val)
+        node = node.right
+    return out
+--- js
+function solve(root) {
+  const out = [], stack = [];
+  let node = root;
+  while (node || stack.length) {
+    while (node) { stack.push(node); node = node.left; }
+    node = stack.pop();
+    out.push(node.val);
+    node = node.right;
+  }
+  return out;
+}
+--- cpp
+vector<int> solve(TreeNode * root) {
+    vector<int> out;
+    vector<TreeNode *> stack;
+    TreeNode *node = root;
+    while (node || !stack.empty()) {
+        while (node) { stack.push_back(node); node = node->left; }
+        node = stack.back();
+        stack.pop_back();
+        out.push_back(node->val);
+        node = node->right;
+    }
+    return out;
+}
+--- java
+static int[] solve(TreeNode root) {
+    List<Integer> out = new ArrayList<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode node = root;
+    while (node != null || !stack.isEmpty()) {
+        while (node != null) { stack.push(node); node = node.left; }
+        node = stack.pop();
+        out.add(node.val);
+        node = node.right;
+    }
+    return out.stream().mapToInt(Integer::intValue).toArray();
+}
+=== path-sum
+--- py
+sys.setrecursionlimit(10000)
+
+
+def solve(root, targetSum):
+    if not root:
+        return False
+    if not root.left and not root.right:
+        return root.val == targetSum
+    rest = targetSum - root.val
+    return solve(root.left, rest) or solve(root.right, rest)
+--- js
+function solve(root, targetSum) {
+  if (!root) return false;
+  if (!root.left && !root.right) return root.val === targetSum;
+  const rest = targetSum - root.val;
+  return solve(root.left, rest) || solve(root.right, rest);
+}
+--- cpp
+bool solve(TreeNode * root, int targetSum) {
+    if (!root) return false;
+    if (!root->left && !root->right) return root->val == targetSum;
+    int rest = targetSum - root->val;
+    return solve(root->left, rest) || solve(root->right, rest);
+}
+--- java
+static boolean solve(TreeNode root, int targetSum) {
+    if (root == null) return false;
+    if (root.left == null && root.right == null) return root.val == targetSum;
+    int rest = targetSum - root.val;
+    return solve(root.left, rest) || solve(root.right, rest);
+}
+=== balanced-binary-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def height(node):
+    if not node:
+        return 0
+    left = height(node.left)
+    if left < 0:
+        return -1
+    right = height(node.right)
+    if right < 0 or abs(left - right) > 1:
+        return -1
+    return 1 + max(left, right)
+
+
+def solve(root):
+    return height(root) >= 0
+--- js
+function height(node) {
+  if (!node) return 0;
+  const left = height(node.left);
+  if (left < 0) return -1;
+  const right = height(node.right);
+  if (right < 0 || Math.abs(left - right) > 1) return -1;
+  return 1 + Math.max(left, right);
+}
+
+function solve(root) {
+  return height(root) >= 0;
+}
+--- cpp
+int height(TreeNode *node) {
+    if (!node) return 0;
+    int left = height(node->left);
+    if (left < 0) return -1;
+    int right = height(node->right);
+    if (right < 0 || abs(left - right) > 1) return -1;
+    return 1 + max(left, right);
+}
+
+bool solve(TreeNode * root) {
+    return height(root) >= 0;
+}
+--- java
+static int height(TreeNode node) {
+    if (node == null) return 0;
+    int left = height(node.left);
+    if (left < 0) return -1;
+    int right = height(node.right);
+    if (right < 0 || Math.abs(left - right) > 1) return -1;
+    return 1 + Math.max(left, right);
+}
+
+static boolean solve(TreeNode root) {
+    return height(root) >= 0;
+}
+=== binary-tree-right-side-view
+--- py
+from collections import deque
+
+
+def solve(root):
+    if not root:
+        return []
+    out, queue = [], deque([root])
+    while queue:
+        size = len(queue)
+        for i in range(size):
+            node = queue.popleft()
+            if i == size - 1:
+                out.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+    return out
+--- js
+function solve(root) {
+  if (!root) return [];
+  const out = [];
+  let level = [root];
+  while (level.length) {
+    out.push(level[level.length - 1].val);
+    const next = [];
+    for (const node of level) {
+      if (node.left) next.push(node.left);
+      if (node.right) next.push(node.right);
+    }
+    level = next;
+  }
+  return out;
+}
+--- cpp
+vector<int> solve(TreeNode * root) {
+    vector<int> out;
+    if (!root) return out;
+    queue<TreeNode *> q;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode *node = q.front();
+            q.pop();
+            if (i == size - 1) out.push_back(node->val);
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+    }
+    return out;
+}
+--- java
+static int[] solve(TreeNode root) {
+    List<Integer> out = new ArrayList<>();
+    if (root == null) return new int[0];
+    Deque<TreeNode> queue = new ArrayDeque<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode node = queue.poll();
+            if (i == size - 1) out.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+    }
+    return out.stream().mapToInt(Integer::intValue).toArray();
+}
+=== validate-binary-search-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def check(node, low, high):
+    if not node:
+        return True
+    if not (low < node.val < high):
+        return False
+    return check(node.left, low, node.val) and check(node.right, node.val, high)
+
+
+def solve(root):
+    return check(root, float("-inf"), float("inf"))
+--- js
+function check(node, low, high) {
+  if (!node) return true;
+  if (!(low < node.val && node.val < high)) return false;
+  return check(node.left, low, node.val) && check(node.right, node.val, high);
+}
+
+function solve(root) {
+  return check(root, -Infinity, Infinity);
+}
+--- cpp
+bool check(TreeNode *node, long long low, long long high) {
+    if (!node) return true;
+    if (node->val <= low || node->val >= high) return false;
+    return check(node->left, low, node->val) && check(node->right, node->val, high);
+}
+
+bool solve(TreeNode * root) {
+    return check(root, LLONG_MIN, LLONG_MAX);
+}
+--- java
+static boolean check(TreeNode node, long low, long high) {
+    if (node == null) return true;
+    if (node.val <= low || node.val >= high) return false;
+    return check(node.left, low, node.val) && check(node.right, node.val, high);
+}
+
+static boolean solve(TreeNode root) {
+    return check(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+=== kth-smallest-element-in-a-bst
+--- py
+def solve(root, k):
+    stack, node = [], root
+    while node or stack:
+        while node:
+            stack.append(node)
+            node = node.left
+        node = stack.pop()
+        k -= 1
+        if k == 0:
+            return node.val
+        node = node.right
+    return -1
+--- js
+function solve(root, k) {
+  const stack = [];
+  let node = root;
+  while (node || stack.length) {
+    while (node) { stack.push(node); node = node.left; }
+    node = stack.pop();
+    if (--k === 0) return node.val;
+    node = node.right;
+  }
+  return -1;
+}
+--- cpp
+int solve(TreeNode * root, int k) {
+    vector<TreeNode *> stack;
+    TreeNode *node = root;
+    while (node || !stack.empty()) {
+        while (node) { stack.push_back(node); node = node->left; }
+        node = stack.back();
+        stack.pop_back();
+        if (--k == 0) return node->val;
+        node = node->right;
+    }
+    return -1;
+}
+--- java
+static int solve(TreeNode root, int k) {
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode node = root;
+    while (node != null || !stack.isEmpty()) {
+        while (node != null) { stack.push(node); node = node.left; }
+        node = stack.pop();
+        if (--k == 0) return node.val;
+        node = node.right;
+    }
+    return -1;
+}
+=== count-good-nodes-in-binary-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def dfs(node, best):
+    if not node:
+        return 0
+    good = 1 if node.val >= best else 0
+    best = max(best, node.val)
+    return good + dfs(node.left, best) + dfs(node.right, best)
+
+
+def solve(root):
+    return dfs(root, float("-inf"))
+--- js
+function dfs(node, best) {
+  if (!node) return 0;
+  const good = node.val >= best ? 1 : 0;
+  best = Math.max(best, node.val);
+  return good + dfs(node.left, best) + dfs(node.right, best);
+}
+
+function solve(root) {
+  return dfs(root, -Infinity);
+}
+--- cpp
+int dfs(TreeNode *node, int best) {
+    if (!node) return 0;
+    int good = node->val >= best ? 1 : 0;
+    best = max(best, node->val);
+    return good + dfs(node->left, best) + dfs(node->right, best);
+}
+
+int solve(TreeNode * root) {
+    return dfs(root, INT_MIN);
+}
+--- java
+static int dfs(TreeNode node, int best) {
+    if (node == null) return 0;
+    int good = node.val >= best ? 1 : 0;
+    best = Math.max(best, node.val);
+    return good + dfs(node.left, best) + dfs(node.right, best);
+}
+
+static int solve(TreeNode root) {
+    return dfs(root, Integer.MIN_VALUE);
+}
+=== lowest-common-ancestor-of-a-binary-search-tree
+--- py
+def solve(root, p, q):
+    node = root
+    while node:
+        if p < node.val and q < node.val:
+            node = node.left
+        elif p > node.val and q > node.val:
+            node = node.right
+        else:
+            return node.val
+    return -1
+--- js
+function solve(root, p, q) {
+  let node = root;
+  while (node) {
+    if (p < node.val && q < node.val) node = node.left;
+    else if (p > node.val && q > node.val) node = node.right;
+    else return node.val;
+  }
+  return -1;
+}
+--- cpp
+int solve(TreeNode * root, int p, int q) {
+    TreeNode *node = root;
+    while (node) {
+        if (p < node->val && q < node->val) node = node->left;
+        else if (p > node->val && q > node->val) node = node->right;
+        else return node->val;
+    }
+    return -1;
+}
+--- java
+static int solve(TreeNode root, int p, int q) {
+    TreeNode node = root;
+    while (node != null) {
+        if (p < node.val && q < node.val) node = node.left;
+        else if (p > node.val && q > node.val) node = node.right;
+        else return node.val;
+    }
+    return -1;
+}
+=== lowest-common-ancestor-of-a-binary-tree
+--- py
+sys.setrecursionlimit(10000)
+
+
+def lca(node, p, q):
+    if not node or node.val == p or node.val == q:
+        return node
+    left, right = lca(node.left, p, q), lca(node.right, p, q)
+    if left and right:
+        return node
+    return left or right
+
+
+def solve(root, p, q):
+    return lca(root, p, q).val
+--- js
+function lca(node, p, q) {
+  if (!node || node.val === p || node.val === q) return node;
+  const left = lca(node.left, p, q), right = lca(node.right, p, q);
+  if (left && right) return node;
+  return left || right;
+}
+
+function solve(root, p, q) {
+  return lca(root, p, q).val;
+}
+--- cpp
+TreeNode * lca(TreeNode *node, int p, int q) {
+    if (!node || node->val == p || node->val == q) return node;
+    TreeNode *left = lca(node->left, p, q), *right = lca(node->right, p, q);
+    if (left && right) return node;
+    return left ? left : right;
+}
+
+int solve(TreeNode * root, int p, int q) {
+    return lca(root, p, q)->val;
+}
+--- java
+static TreeNode lca(TreeNode node, int p, int q) {
+    if (node == null || node.val == p || node.val == q) return node;
+    TreeNode left = lca(node.left, p, q), right = lca(node.right, p, q);
+    if (left != null && right != null) return node;
+    return left != null ? left : right;
+}
+
+static int solve(TreeNode root, int p, int q) {
+    return lca(root, p, q).val;
+}
+=== binary-tree-maximum-path-sum
+--- py
+sys.setrecursionlimit(10000)
+
+
+def solve(root):
+    best = float("-inf")
+
+    def gain(node):
+        nonlocal best
+        if not node:
+            return 0
+        left, right = max(gain(node.left), 0), max(gain(node.right), 0)
+        best = max(best, node.val + left + right)
+        return node.val + max(left, right)
+
+    gain(root)
+    return best
+--- js
+function solve(root) {
+  let best = -Infinity;
+  const gain = (node) => {
+    if (!node) return 0;
+    const left = Math.max(gain(node.left), 0), right = Math.max(gain(node.right), 0);
+    best = Math.max(best, node.val + left + right);
+    return node.val + Math.max(left, right);
+  };
+  gain(root);
+  return best;
+}
+--- cpp
+long long gain(TreeNode *node, long long &best) {
+    if (!node) return 0;
+    long long left = max(gain(node->left, best), 0LL), right = max(gain(node->right, best), 0LL);
+    best = max(best, node->val + left + right);
+    return node->val + max(left, right);
+}
+
+int solve(TreeNode * root) {
+    long long best = LLONG_MIN;
+    gain(root, best);
+    return (int)best;
+}
+--- java
+static long gain(TreeNode node, long[] best) {
+    if (node == null) return 0;
+    long left = Math.max(gain(node.left, best), 0), right = Math.max(gain(node.right, best), 0);
+    best[0] = Math.max(best[0], node.val + left + right);
+    return node.val + Math.max(left, right);
+}
+
+static int solve(TreeNode root) {
+    long[] best = {Long.MIN_VALUE};
+    gain(root, best);
+    return (int) best[0];
+}
+=== last-stone-weight
+--- py
+import heapq
+
+
+def solve(stones):
+    heap = [-s for s in stones]
+    heapq.heapify(heap)
+    while len(heap) > 1:
+        a, b = -heapq.heappop(heap), -heapq.heappop(heap)
+        if a != b:
+            heapq.heappush(heap, -(a - b))
+    return -heap[0] if heap else 0
+--- js
+function solve(stones) {
+  // JavaScript has no built-in heap, so keep the array sorted instead.
+  const s = [...stones].sort((a, b) => a - b);
+  while (s.length > 1) {
+    const a = s.pop(), b = s.pop();
+    if (a !== b) { s.push(a - b); s.sort((x, y) => x - y); }
+  }
+  return s.length ? s[0] : 0;
+}
+--- cpp
+int solve(vector<int> stones) {
+    priority_queue<int> heap(stones.begin(), stones.end());
+    while (heap.size() > 1) {
+        int a = heap.top(); heap.pop();
+        int b = heap.top(); heap.pop();
+        if (a != b) heap.push(a - b);
+    }
+    return heap.empty() ? 0 : heap.top();
+}
+--- java
+static int solve(int[] stones) {
+    PriorityQueue<Integer> heap = new PriorityQueue<>(Collections.reverseOrder());
+    for (int s : stones) heap.add(s);
+    while (heap.size() > 1) {
+        int a = heap.poll(), b = heap.poll();
+        if (a != b) heap.add(a - b);
+    }
+    return heap.isEmpty() ? 0 : heap.peek();
+}
+=== kth-largest-element-in-an-array
+--- py
+import heapq
+
+
+def solve(nums, k):
+    heap = []  # min-heap holding the k largest values seen so far
+    for x in nums:
+        heapq.heappush(heap, x)
+        if len(heap) > k:
+            heapq.heappop(heap)
+    return heap[0]
+--- js
+function solve(nums, k) {
+  // JavaScript has no built-in heap, so sort descending and take the k-th.
+  return [...nums].sort((a, b) => b - a)[k - 1];
+}
+--- cpp
+int solve(vector<int> nums, int k) {
+    priority_queue<int, vector<int>, greater<int>> heap;  // min-heap of the k largest values
+    for (int x : nums) {
+        heap.push(x);
+        if ((int)heap.size() > k) heap.pop();
+    }
+    return heap.top();
+}
+--- java
+static int solve(int[] nums, int k) {
+    PriorityQueue<Integer> heap = new PriorityQueue<>();  // min-heap of the k largest values
+    for (int x : nums) {
+        heap.add(x);
+        if (heap.size() > k) heap.poll();
+    }
+    return heap.peek();
+}
+=== top-k-frequent-elements
+--- py
+def solve(nums, k):
+    counts = {}
+    for x in nums:
+        counts[x] = counts.get(x, 0) + 1
+    ordered = sorted(counts, key=lambda v: (-counts[v], v))
+    return ordered[:k]
+--- js
+function solve(nums, k) {
+  const counts = new Map();
+  for (const x of nums) counts.set(x, (counts.get(x) || 0) + 1);
+  return [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a) || a - b).slice(0, k);
+}
+--- cpp
+vector<int> solve(vector<int> nums, int k) {
+    unordered_map<int, int> counts;
+    for (int x : nums) counts[x]++;
+    vector<int> keys;
+    for (auto &entry : counts) keys.push_back(entry.first);
+    sort(keys.begin(), keys.end(), [&](int a, int b) {
+        return counts[a] != counts[b] ? counts[a] > counts[b] : a < b;
+    });
+    keys.resize(k);
+    return keys;
+}
+--- java
+static int[] solve(int[] nums, int k) {
+    Map<Integer, Integer> counts = new HashMap<>();
+    for (int x : nums) counts.merge(x, 1, Integer::sum);
+    List<Integer> keys = new ArrayList<>(counts.keySet());
+    keys.sort((a, b) -> counts.get(a).equals(counts.get(b)) ? Integer.compare(a, b) : Integer.compare(counts.get(b), counts.get(a)));
+    int[] out = new int[k];
+    for (int i = 0; i < k; i++) out[i] = keys.get(i);
+    return out;
+}
+=== meeting-rooms-ii
+--- py
+def solve(intervals):
+    starts = sorted(s for s, e in intervals)
+    ends = sorted(e for s, e in intervals)
+    rooms = j = 0
+    for s in starts:
+        if s < ends[j]:
+            rooms += 1  # every room in use: open a new one
+        else:
+            j += 1      # the earliest-ending meeting is over: reuse its room
+    return rooms
+--- js
+function solve(intervals) {
+  const starts = intervals.map((v) => v[0]).sort((a, b) => a - b);
+  const ends = intervals.map((v) => v[1]).sort((a, b) => a - b);
+  let rooms = 0, j = 0;
+  for (const s of starts) {
+    if (s < ends[j]) rooms++;
+    else j++;
+  }
+  return rooms;
+}
+--- cpp
+int solve(vector<vector<int>> intervals) {
+    vector<int> starts, ends;
+    for (auto &v : intervals) { starts.push_back(v[0]); ends.push_back(v[1]); }
+    sort(starts.begin(), starts.end());
+    sort(ends.begin(), ends.end());
+    int rooms = 0, j = 0;
+    for (int s : starts) {
+        if (s < ends[j]) rooms++;
+        else j++;
+    }
+    return rooms;
+}
+--- java
+static int solve(int[][] intervals) {
+    int n = intervals.length;
+    int[] starts = new int[n], ends = new int[n];
+    for (int i = 0; i < n; i++) { starts[i] = intervals[i][0]; ends[i] = intervals[i][1]; }
+    Arrays.sort(starts);
+    Arrays.sort(ends);
+    int rooms = 0, j = 0;
+    for (int s : starts) {
+        if (s < ends[j]) rooms++;
+        else j++;
+    }
+    return rooms;
+}
+=== sliding-window-maximum
+--- py
+from collections import deque
+
+
+def solve(nums, k):
+    window, out = deque(), []  # indices whose values decrease from front to back
+    for i, x in enumerate(nums):
+        while window and nums[window[-1]] <= x:
+            window.pop()
+        window.append(i)
+        if window[0] <= i - k:
+            window.popleft()
+        if i >= k - 1:
+            out.append(nums[window[0]])
+    return out
+--- js
+function solve(nums, k) {
+  const window = [], out = [];  // indices whose values decrease from front to back
+  let head = 0;
+  for (let i = 0; i < nums.length; i++) {
+    while (window.length > head && nums[window[window.length - 1]] <= nums[i]) window.pop();
+    window.push(i);
+    if (window[head] <= i - k) head++;
+    if (i >= k - 1) out.push(nums[window[head]]);
+  }
+  return out;
+}
+--- cpp
+vector<int> solve(vector<int> nums, int k) {
+    deque<int> window;  // indices whose values decrease from front to back
+    vector<int> out;
+    for (int i = 0; i < (int)nums.size(); i++) {
+        while (!window.empty() && nums[window.back()] <= nums[i]) window.pop_back();
+        window.push_back(i);
+        if (window.front() <= i - k) window.pop_front();
+        if (i >= k - 1) out.push_back(nums[window.front()]);
+    }
+    return out;
+}
+--- java
+static int[] solve(int[] nums, int k) {
+    Deque<Integer> window = new ArrayDeque<>();  // indices whose values decrease from front to back
+    int[] out = new int[nums.length - k + 1];
+    for (int i = 0; i < nums.length; i++) {
+        while (!window.isEmpty() && nums[window.peekLast()] <= nums[i]) window.pollLast();
+        window.addLast(i);
+        if (window.peekFirst() <= i - k) window.pollFirst();
+        if (i >= k - 1) out[i - k + 1] = nums[window.peekFirst()];
+    }
+    return out;
+}

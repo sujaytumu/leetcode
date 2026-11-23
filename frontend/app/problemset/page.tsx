@@ -1,0 +1,273 @@
+"use client";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { tagLabel, fetchAllProblems, Page, ProblemSummary, Progress } from "@/lib/api";
+import { prefetchProblem, swr } from "@/lib/local";
+import FreeSpace from "@/components/FreeSpace";
+import { useMeta } from "@/lib/meta";
+import { FILTER_KEY, parseFilters } from "@/lib/listFilters";
+
+const ICON = {
+  SOLVED: <span className="st-done" title="Solved" aria-label="Solved">✔</span>,
+  ATTEMPTED: <span className="st-att" title="Attempted" aria-label="Attempted" />,
+  TODO: null,
+} as const;
+
+const Ico = ({ d }: { d: string }) => (
+  <svg className="lcside-ico" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+);
+
+export default function ProblemsPage() {
+  const [sort, setSort] = useState("");
+  const [dir, setDir] = useState("asc");
+  const [q, setQ] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [tag, setTag] = useState("");
+  const [status, setStatus] = useState("");
+  const [bookmarked, setBookmarked] = useState(false);
+  const [page, setPage] = useState(0);
+  const [tags, setTags] = useState<string[]>([]);
+  const [counts, setCounts] = useState<Map<string, number>>(new Map());
+  const [allTopics, setAllTopics] = useState(false);
+  const [topicQ, setTopicQ] = useState("");
+  const [topicSort, setTopicSort] = useState<"count" | "az">("count");
+  const [sheet, setSheet] = useState(false); // phone filter bottom sheet
+  const [data, setData] = useState<Page<ProblemSummary> | null>(null);
+  const [progress, setProgress] = useState<Progress | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(0);
+  const reqId = useRef(0);
+  const [picking, setPicking] = useState(false);
+  const router = useRouter();
+  const meta = useMeta();
+  const [cursor, setCursor] = useState(-1);
+  const tbodyRef = useRef<HTMLTableSectionElement>(null);
+  // Come back to the filters and sort you left; a /problemset?tag= link from the Topics page still wins for the topic.
+  const [filtersReady, setFiltersReady] = useState(false);
+  useEffect(() => {
+    try {
+      const f = parseFilters(localStorage.getItem(FILTER_KEY));
+      const fromLink = new URLSearchParams(window.location.search).get("tag");
+      if (f.difficulty !== undefined) setDifficulty(f.difficulty);
+      if (f.status !== undefined) setStatus(f.status);
+      if (f.tag !== undefined && !fromLink) setTag(f.tag);
+      if (f.sort !== undefined) setSort(f.sort);
+      if (f.dir !== undefined) setDir(f.dir);
+      if (f.bookmarked !== undefined) setBookmarked(f.bookmarked);
+    } catch { /* storage blocked: start with defaults */ }
+    setFiltersReady(true);
+  }, []);
+  useEffect(() => {
+    if (!filtersReady) return;
+    try { localStorage.setItem(FILTER_KEY, JSON.stringify({ difficulty, tag, status, sort, dir, bookmarked })); } catch { /* storage blocked */ }
+  }, [filtersReady, difficulty, tag, status, sort, dir, bookmarked]);
+  const anyFilter = !!(q || difficulty || tag || status || sort || bookmarked);
+  const clearFilters = () => { setQ(""); setDifficulty(""); setTag(""); setStatus(""); setSort(""); setDir("asc"); setBookmarked(false); setPage(0); };
+  // /problemset?tag=hash-table (from the Topics page) preselects that topic. lc-tag-init
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tag");
+    if (t) setTag(t);
+  }, []);
+
+  useEffect(() => {
+    swr<Progress>("/api/progress", (pr) => setProgress(pr), () => {}).catch(() => {});
+    swr<string[]>("/api/tags", (t) => setTags(t), () => {}).catch(() => {});
+    swr<{ tag: string; total: number }[]>("/api/topics", (t) => setCounts(new Map(t.map((x) => [x.tag, x.total]))), () => {}).catch(() => {});
+  }, [reload]);
+
+  const pickRandom = async () => {
+    setPicking(true);
+    try {
+      const items = await fetchAllProblems();
+      const unsolved = items.filter((p) => p.status !== "SOLVED");
+      const pool = unsolved.length ? unsolved : items;
+      if (pool.length) router.push(`/problems/${pool[Math.floor(Math.random() * pool.length)].slug}`);
+    } catch { /* the nav indicator and list error banner already cover connectivity problems */ }
+    finally { setPicking(false); }
+  };
+
+  const toggleSort = (key: string) => {
+    setPage(0);
+    if (sort !== key) { setSort(key); setDir("asc"); }
+    else if (dir === "asc") setDir("desc");
+    else { setSort(""); setDir("asc"); } // third click returns to the study-path order
+  };
+  const arrow = (key: string) => (sort === key ? (dir === "asc" ? " ▲" : " ▼") : "");
+  const ariaSort = (key: string) => (sort === key ? (dir === "asc" ? "ascending" : "descending") : "none");
+
+  const fetchList = useCallback(() => {
+    const p = new URLSearchParams({ page: String(page) });
+    if (q) p.set("q", q); if (difficulty) p.set("difficulty", difficulty);
+    if (tag) p.set("tag", tag); if (status) p.set("status", status);
+    if (bookmarked) p.set("bookmarked", "true");
+    if (sort) { p.set("sort", sort); p.set("dir", dir); }
+    setLoading(true); setError("");
+    const my = ++reqId.current;
+    swr<Page<ProblemSummary>>(`/api/problems?${p}`, (d) => {
+      if (my === reqId.current) setData(d);
+    }, () => {})
+      .catch((e) => { if (my === reqId.current) setError(e.message); })
+      .finally(() => { if (my === reqId.current) setLoading(false); });
+  }, [q, difficulty, tag, status, bookmarked, page, sort, dir]);
+
+  useEffect(() => {
+    const t = setTimeout(fetchList, 250);
+    return () => clearTimeout(t);
+  }, [fetchList, reload]);
+
+  // Keyboard-first browsing on laptops: j/k move the highlight, Enter opens, r opens a random unsolved problem.
+  const rows = data?.items ?? [];
+  useEffect(() => { setCursor(-1); }, [data]);
+  const kb = useRef({ rows, cursor, pickRandom });
+  kb.current = { rows, cursor, pickRandom };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || t.closest("input, textarea, select, button, a, [role=dialog]"))) return;
+      const { rows: r, cursor: c } = kb.current;
+      const move = (to: number) => {
+        e.preventDefault();
+        setCursor(to);
+        tbodyRef.current?.querySelectorAll("tr")[to]?.scrollIntoView({ block: "nearest" });
+      };
+      if (e.key === "j" && r.length) move(Math.min(r.length - 1, c + 1));
+      else if (e.key === "k" && r.length) move(Math.max(0, c - 1));
+      else if (e.key === "Enter" && c >= 0 && r[c]) { e.preventDefault(); router.push(`/problems/${r[c].slug}`); }
+      else if (e.key === "r") { e.preventDefault(); kb.current.pickRandom(); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [router]);
+
+  const shownTopics = (() => {
+    const byCount = (a: string, b: string) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0);
+    if (!allTopics) return [...tags].sort(byCount).slice(0, 10);
+    const q = topicQ.trim().toLowerCase();
+    const list = tags.filter((t) => !q || tagLabel(t).toLowerCase().includes(q));
+    return topicSort === "az" ? list.sort((a, b) => tagLabel(a).localeCompare(tagLabel(b))) : list.sort(byCount);
+  })();
+
+  const reset = <T,>(set: (v: T) => void) => (v: T) => { setPage(0); set(v); };
+
+  return (
+    <>
+      <div className="lcset">
+      <aside className="lcside" aria-label="Library">
+        <nav>
+          <Link href="/problemset" className="on"><Ico d="M4 4h4v16H4zM10 4h4v16h-4zM16 6l4-1 3 14-4 1z" />Library</Link>
+          <Link href="/plans"><Ico d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5" />Study Plan</Link>
+          <Link href="/daily"><Ico d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" />Daily Challenge</Link>
+          <Link href="/practice"><Ico d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />Practice</Link>
+          <Link href="/review"><Ico d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />Review</Link>
+          <Link href="/notes"><Ico d="M6 3h9l4 4v14H6zM9 12h7M9 16h7" />Notes</Link>
+          <Link href="/mock"><Ico d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2" />Mock Interview</Link>
+        </nav>
+        <hr />
+        <div className="lcside-h"><span>My Lists</span><Link href="/lists" aria-label="Manage my lists" title="Manage my lists">＋</Link></div>
+        <button type="button" className="lcside-item" onClick={() => { setBookmarked(true); setPage(0); }}><span className="lcside-ico fav">★</span>Favorite</button>
+        <Link href="/lists" className="lcside-item"><span className="lcside-ico lst">≡</span>All my lists</Link>
+      </aside>
+      <div className="home home-solo">
+        <div className="home-main">
+          <section className="topicpanel" aria-label="Topics">
+            <div className="topichead">
+              <b>Topics</b>
+              {tag && <span className="topicsel">Selected: {tagLabel(tag)}</span>}
+              <span className="grow" />
+              {allTopics && (
+                <>
+                  <input className="topicsearch" placeholder="Find a topic…" value={topicQ} onChange={(e) => setTopicQ(e.target.value)} aria-label="Find a topic" />
+                  <select className="topicsort" value={topicSort} onChange={(e) => setTopicSort(e.target.value as "count" | "az")} aria-label="Sort topics">
+                    <option value="count">Most problems</option>
+                    <option value="az">A to Z</option>
+                  </select>
+                </>
+              )}
+              {tag && <button type="button" className="topicclear" onClick={() => reset(setTag)("")}>Clear</button>}
+              {tags.length > 10 && <button type="button" className="chipmore" onClick={() => { setAllTopics((v) => !v); setTopicQ(""); }}>{allTopics ? "Show less ▴" : `Show all ${tags.length} ▾`}</button>}
+            </div>
+            <div className="chips lcchips">
+              <button className={tag === "" ? "on" : ""} onClick={() => reset(setTag)("")}>All Topics</button>
+              {shownTopics.map((t) => (
+                <button key={t} className={tag === t ? "on" : ""} onClick={() => reset(setTag)(tag === t ? "" : t)}>
+                  {tagLabel(t)}{counts.has(t) && <span className="chipn">{counts.get(t)}</span>}
+                </button>
+              ))}
+              {allTopics && topicQ && shownTopics.length === 0 && <span className="mute">No topic matches “{topicQ}”.</span>}
+            </div>
+          </section>
+          <div className="filters">
+            <input className="grow" placeholder="Search problems…" value={q} onChange={(e) => reset(setQ)(e.target.value)} />
+            <button type="button" className="ftoggle" onClick={() => setSheet(true)} aria-label="Open filters">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg>
+              {[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length > 0 && <span className="fcount">{[difficulty, tag, status, bookmarked ? "b" : ""].filter(Boolean).length}</span>}
+            </button>
+            {sheet && <div className="fback" onClick={() => setSheet(false)} aria-hidden="true" />}
+            <div className={`fsheet${sheet ? " open" : ""}`} role={sheet ? "dialog" : undefined} aria-label="Filters">
+              <div className="fsheet-head"><b>Filters</b><button type="button" className="fdone" onClick={() => setSheet(false)}>Done</button></div>
+              <select value={difficulty} onChange={(e) => reset(setDifficulty)(e.target.value)}>
+                <option value="">All difficulties</option>
+                {meta?.difficulties.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
+              </select>
+              <select value={tag} onChange={(e) => reset(setTag)(e.target.value)}>
+                <option value="">All topics</option>{tags.map((t) => <option key={t} value={t}>{tagLabel(t)}</option>)}
+              </select>
+              <select value={status} onChange={(e) => reset(setStatus)(e.target.value)}>
+                <option value="">Any status</option>
+                {meta?.statuses.map((x) => <option key={x.key} value={x.key}>{x.label}</option>)}
+              </select>
+              <label className="bar"><input type="checkbox" checked={bookmarked}
+                onChange={(e) => reset(setBookmarked)(e.target.checked)} /> Bookmarked</label>
+              {anyFilter && <button type="button" onClick={clearFilters} title="Reset every filter and the sort order">Clear filters</button>}
+            </div>
+            {progress && <span className="solvedcount"><span className="sc-ring" aria-hidden="true" />{progress.solved}/{progress.total} Solved</span>}
+            <button type="button" className="shufflebtn" onClick={pickRandom} disabled={picking} title="Pick one" aria-label="Pick one at random">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 7h3c5 0 7 10 12 10h3M3 17h3c1.5 0 2.700-.6 3.700-1.600M14 8.400C15 7.500 16.300 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3" /></svg>
+            </button>
+          </div>
+          <table>
+            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm" style={{ width: 90, textAlign: "center" }}>Solution</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
+            <tbody ref={tbodyRef}>
+              {data?.items.map((p, i) => (
+                <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
+                  <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
+                  <td><Link href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+                    <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
+                  <td className="hide-sm" style={{ textAlign: "center" }}>
+                    <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>
+                      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                    </Link>
+                  </td>
+                  <td className="th-num col-acc mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
+                  <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
+                </tr>
+              ))}
+              {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
+            </tbody>
+          </table>
+          {rows.length > 0 && (
+            <p className="mute kbhint hide-sm"><kbd>J</kbd> <kbd>K</kbd> move · <kbd>Enter</kbd> open · <kbd>R</kbd> random · <kbd>/</kbd> search</p>
+          )}
+          {!data && <FreeSpace loading={loading} error={error} onRetry={() => setReload((n) => n + 1)} label="Loading problems…" />}
+          {data && error && (
+            <div className="banner err" style={{ marginTop: 10 }}>
+              {error} <button onClick={() => setReload((n) => n + 1)}>Retry</button>
+            </div>
+          )}
+          {data && data.totalPages > 1 && (
+            <div className="pager">
+              <button disabled={page === 0} onClick={() => setPage(page - 1)}>Prev</button>
+              <span className="mute">Page {data.page + 1} / {data.totalPages}</span>
+              <button disabled={page + 1 >= data.totalPages} onClick={() => setPage(page + 1)}>Next</button>
+            </div>
+          )}
+        </div>
+
+      </div>
+      </div>
+    </>
+  );
+}

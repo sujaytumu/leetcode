@@ -1,0 +1,25 @@
+# Java / Maven
+target/
+*.class
+*.log
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+next-env.d.ts.bak
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

@@ -1,0 +1,71 @@
+{
+  "id": 70,
+  "slug": "climbing-stairs",
+  "title": "Climbing Stairs",
+  "difficulty": "Easy",
+  "tags": [
+    "Math",
+    "Dynamic Programming"
+  ],
+  "statement": "You are climbing a staircase with `n` steps. Each move climbs either `1` or `2` steps. Return the number of distinct ways to reach the top.",
+  "constraints": [
+    "`1 <= n <= 45`"
+  ],
+  "signature": {
+    "name": "climbStairs",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "examples": [
+    {
+      "input": {
+        "n": 2
+      },
+      "output": 2,
+      "explanation": "1+1 or 2."
+    },
+    {
+      "input": {
+        "n": 3
+      },
+      "output": 3,
+      "explanation": "1+1+1, 1+2, 2+1."
+    }
+  ],
+  "hints": [
+    "To stand on step n you came from n-1 or n-2."
+  ],
+  "tests": [
+    {
+      "n": 1
+    },
+    {
+      "n": 2
+    },
+    {
+      "n": 3
+    },
+    {
+      "n": 4
+    },
+    {
+      "n": 10
+    },
+    {
+      "n": 30
+    },
+    {
+      "n": 44
+    },
+    {
+      "n": 45
+    }
+  ],
+  "compare": "exact",
+  "timeLimitMs": 3000
+}

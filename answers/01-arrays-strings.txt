@@ -1,0 +1,557 @@
+=== contains-duplicate
+--- py
+def solve(nums):
+    return len(set(nums)) != len(nums)
+--- js
+function solve(nums) {
+  return new Set(nums).size !== nums.length;
+}
+--- cpp
+bool solve(vector<int> nums) {
+    unordered_set<int> seen;
+    for (int x : nums) if (!seen.insert(x).second) return true;
+    return false;
+}
+--- java
+static boolean solve(int[] nums) {
+    Set<Integer> seen = new HashSet<>();
+    for (int x : nums) if (!seen.add(x)) return true;
+    return false;
+}
+=== majority-element
+--- py
+def solve(nums):
+    candidate, count = None, 0
+    for x in nums:
+        if count == 0:
+            candidate = x
+        count += 1 if x == candidate else -1
+    return candidate
+--- js
+function solve(nums) {
+  let candidate = 0, count = 0;
+  for (const x of nums) {
+    if (count === 0) candidate = x;
+    count += x === candidate ? 1 : -1;
+  }
+  return candidate;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int candidate = 0, count = 0;
+    for (int x : nums) {
+        if (count == 0) candidate = x;
+        count += (x == candidate) ? 1 : -1;
+    }
+    return candidate;
+}
+--- java
+static int solve(int[] nums) {
+    int candidate = 0, count = 0;
+    for (int x : nums) {
+        if (count == 0) candidate = x;
+        count += (x == candidate) ? 1 : -1;
+    }
+    return candidate;
+}
+=== valid-anagram
+--- py
+def solve(s, t):
+    return sorted(s) == sorted(t)
+--- js
+function solve(s, t) {
+  return s.split("").sort().join("") === t.split("").sort().join("");
+}
+--- cpp
+bool solve(string s, string t) {
+    sort(s.begin(), s.end());
+    sort(t.begin(), t.end());
+    return s == t;
+}
+--- java
+static boolean solve(String s, String t) {
+    char[] a = s.toCharArray(), b = t.toCharArray();
+    Arrays.sort(a);
+    Arrays.sort(b);
+    return Arrays.equals(a, b);
+}
+=== length-of-last-word
+--- py
+def solve(s):
+    return len(s.split()[-1])
+--- js
+function solve(s) {
+  return s.trim().split(/\s+/).pop().length;
+}
+--- cpp
+int solve(string s) {
+    int i = (int)s.size() - 1, length = 0;
+    while (i >= 0 && s[i] == ' ') i--;
+    while (i >= 0 && s[i] != ' ') { length++; i--; }
+    return length;
+}
+--- java
+static int solve(String s) {
+    int i = s.length() - 1, length = 0;
+    while (i >= 0 && s.charAt(i) == ' ') i--;
+    while (i >= 0 && s.charAt(i) != ' ') { length++; i--; }
+    return length;
+}
+=== intersection-of-two-arrays-ii
+--- py
+def solve(nums1, nums2):
+    counts = {}
+    for x in nums1:
+        counts[x] = counts.get(x, 0) + 1
+    out = []
+    for x in sorted(nums2):
+        if counts.get(x, 0) > 0:
+            out.append(x)
+            counts[x] -= 1
+    return out
+--- js
+function solve(nums1, nums2) {
+  const counts = new Map();
+  for (const x of nums1) counts.set(x, (counts.get(x) || 0) + 1);
+  const out = [];
+  for (const x of [...nums2].sort((a, b) => a - b)) {
+    if ((counts.get(x) || 0) > 0) {
+      out.push(x);
+      counts.set(x, counts.get(x) - 1);
+    }
+  }
+  return out;
+}
+--- cpp
+vector<int> solve(vector<int> nums1, vector<int> nums2) {
+    unordered_map<int, int> counts;
+    for (int x : nums1) counts[x]++;
+    sort(nums2.begin(), nums2.end());
+    vector<int> out;
+    for (int x : nums2) {
+        auto it = counts.find(x);
+        if (it != counts.end() && it->second > 0) { out.push_back(x); it->second--; }
+    }
+    return out;
+}
+--- java
+static int[] solve(int[] nums1, int[] nums2) {
+    Map<Integer, Integer> counts = new HashMap<>();
+    for (int x : nums1) counts.merge(x, 1, Integer::sum);
+    Arrays.sort(nums2);
+    List<Integer> out = new ArrayList<>();
+    for (int x : nums2) {
+        int c = counts.getOrDefault(x, 0);
+        if (c > 0) { out.add(x); counts.put(x, c - 1); }
+    }
+    return out.stream().mapToInt(Integer::intValue).toArray();
+}
+=== product-of-array-except-self
+--- py
+def solve(nums):
+    n = len(nums)
+    result = [1] * n
+    prefix = 1
+    for i in range(n):
+        result[i] = prefix
+        prefix *= nums[i]
+    suffix = 1
+    for i in range(n - 1, -1, -1):
+        result[i] *= suffix
+        suffix *= nums[i]
+    return result
+--- js
+function solve(nums) {
+  const n = nums.length, result = new Array(n).fill(1);
+  let prefix = 1;
+  for (let i = 0; i < n; i++) { result[i] = prefix; prefix *= nums[i]; }
+  let suffix = 1;
+  for (let i = n - 1; i >= 0; i--) { result[i] *= suffix; suffix *= nums[i]; }
+  return result;
+}
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> result(n, 1);
+    long long prefix = 1;
+    for (int i = 0; i < n; i++) { result[i] = (int)prefix; prefix *= nums[i]; }
+    long long suffix = 1;
+    for (int i = n - 1; i >= 0; i--) { result[i] = (int)(result[i] * suffix); suffix *= nums[i]; }
+    return result;
+}
+--- java
+static int[] solve(int[] nums) {
+    int n = nums.length;
+    int[] result = new int[n];
+    long prefix = 1;
+    for (int i = 0; i < n; i++) { result[i] = (int) prefix; prefix *= nums[i]; }
+    long suffix = 1;
+    for (int i = n - 1; i >= 0; i--) { result[i] = (int) (result[i] * suffix); suffix *= nums[i]; }
+    return result;
+}
+=== merge-intervals
+--- py
+def solve(intervals):
+    merged = []
+    for start, end in sorted(intervals):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+--- js
+function solve(intervals) {
+  const sorted = [...intervals].sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const [start, end] of sorted) {
+    if (merged.length && start <= merged[merged.length - 1][1]) {
+      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end);
+    } else {
+      merged.push([start, end]);
+    }
+  }
+  return merged;
+}
+--- cpp
+vector<vector<int>> solve(vector<vector<int>> intervals) {
+    sort(intervals.begin(), intervals.end());
+    vector<vector<int>> merged;
+    for (auto &v : intervals) {
+        if (!merged.empty() && v[0] <= merged.back()[1]) merged.back()[1] = max(merged.back()[1], v[1]);
+        else merged.push_back(v);
+    }
+    return merged;
+}
+--- java
+static int[][] solve(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+    List<int[]> merged = new ArrayList<>();
+    for (int[] v : intervals) {
+        if (!merged.isEmpty() && v[0] <= merged.get(merged.size() - 1)[1]) {
+            int[] last = merged.get(merged.size() - 1);
+            last[1] = Math.max(last[1], v[1]);
+        } else {
+            merged.add(new int[] {v[0], v[1]});
+        }
+    }
+    return merged.toArray(new int[0][]);
+}
+=== subarray-sum-equals-k
+--- py
+def solve(nums, k):
+    seen = {0: 1}
+    total = count = 0
+    for x in nums:
+        total += x
+        count += seen.get(total - k, 0)
+        seen[total] = seen.get(total, 0) + 1
+    return count
+--- js
+function solve(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let total = 0, count = 0;
+  for (const x of nums) {
+    total += x;
+    count += seen.get(total - k) || 0;
+    seen.set(total, (seen.get(total) || 0) + 1);
+  }
+  return count;
+}
+--- cpp
+int solve(vector<int> nums, int k) {
+    unordered_map<long long, int> seen;
+    seen[0] = 1;
+    long long total = 0;
+    int count = 0;
+    for (int x : nums) {
+        total += x;
+        auto it = seen.find(total - k);
+        if (it != seen.end()) count += it->second;
+        seen[total]++;
+    }
+    return count;
+}
+--- java
+static int solve(int[] nums, int k) {
+    Map<Long, Integer> seen = new HashMap<>();
+    seen.put(0L, 1);
+    long total = 0;
+    int count = 0;
+    for (int x : nums) {
+        total += x;
+        count += seen.getOrDefault(total - k, 0);
+        seen.merge(total, 1, Integer::sum);
+    }
+    return count;
+}
+=== h-index
+--- py
+def solve(citations):
+    ordered = sorted(citations)
+    n = len(ordered)
+    for i, c in enumerate(ordered):
+        if c >= n - i:
+            return n - i
+    return 0
+--- js
+function solve(citations) {
+  const ordered = [...citations].sort((a, b) => a - b);
+  const n = ordered.length;
+  for (let i = 0; i < n; i++) if (ordered[i] >= n - i) return n - i;
+  return 0;
+}
+--- cpp
+int solve(vector<int> citations) {
+    sort(citations.begin(), citations.end());
+    int n = citations.size();
+    for (int i = 0; i < n; i++) if (citations[i] >= n - i) return n - i;
+    return 0;
+}
+--- java
+static int solve(int[] citations) {
+    int[] ordered = citations.clone();
+    Arrays.sort(ordered);
+    int n = ordered.length;
+    for (int i = 0; i < n; i++) if (ordered[i] >= n - i) return n - i;
+    return 0;
+}
+=== first-missing-positive
+--- py
+def solve(nums):
+    n = len(nums)
+    for i in range(n):
+        while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:
+            j = nums[i] - 1
+            nums[i], nums[j] = nums[j], nums[i]
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1
+    return n + 1
+--- js
+function solve(nums) {
+  const n = nums.length;
+  for (let i = 0; i < n; i++) {
+    while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] !== nums[i]) {
+      const j = nums[i] - 1;
+      [nums[i], nums[j]] = [nums[j], nums[i]];
+    }
+  }
+  for (let i = 0; i < n; i++) if (nums[i] !== i + 1) return i + 1;
+  return n + 1;
+}
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size();
+    for (int i = 0; i < n; i++) {
+        while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) swap(nums[i], nums[nums[i] - 1]);
+    }
+    for (int i = 0; i < n; i++) if (nums[i] != i + 1) return i + 1;
+    return n + 1;
+}
+--- java
+static int solve(int[] nums) {
+    int n = nums.length;
+    for (int i = 0; i < n; i++) {
+        while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+            int j = nums[i] - 1, tmp = nums[j];
+            nums[j] = nums[i];
+            nums[i] = tmp;
+        }
+    }
+    for (int i = 0; i < n; i++) if (nums[i] != i + 1) return i + 1;
+    return n + 1;
+}
+=== valid-palindrome
+--- py
+def solve(s):
+    cleaned = [c.lower() for c in s if c.isalnum()]
+    return cleaned == cleaned[::-1]
+--- js
+function solve(s) {
+  const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return cleaned === cleaned.split("").reverse().join("");
+}
+--- cpp
+bool solve(string s) {
+    int i = 0, j = (int)s.size() - 1;
+    while (i < j) {
+        while (i < j && !isalnum((unsigned char)s[i])) i++;
+        while (i < j && !isalnum((unsigned char)s[j])) j--;
+        if (tolower((unsigned char)s[i]) != tolower((unsigned char)s[j])) return false;
+        i++; j--;
+    }
+    return true;
+}
+--- java
+static boolean solve(String s) {
+    int i = 0, j = s.length() - 1;
+    while (i < j) {
+        while (i < j && !Character.isLetterOrDigit(s.charAt(i))) i++;
+        while (i < j && !Character.isLetterOrDigit(s.charAt(j))) j--;
+        if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) return false;
+        i++; j--;
+    }
+    return true;
+}
+=== remove-duplicates-from-sorted-array
+--- py
+def solve(nums):
+    out = []
+    for x in nums:
+        if not out or out[-1] != x:
+            out.append(x)
+    return out
+--- js
+function solve(nums) {
+  const out = [];
+  for (const x of nums) if (!out.length || out[out.length - 1] !== x) out.push(x);
+  return out;
+}
+--- cpp
+vector<int> solve(vector<int> nums) {
+    vector<int> out;
+    for (int x : nums) if (out.empty() || out.back() != x) out.push_back(x);
+    return out;
+}
+--- java
+static int[] solve(int[] nums) {
+    List<Integer> out = new ArrayList<>();
+    for (int x : nums) if (out.isEmpty() || out.get(out.size() - 1) != x) out.add(x);
+    return out.stream().mapToInt(Integer::intValue).toArray();
+}
+=== 3sum-count
+--- py
+def solve(nums):
+    nums = sorted(nums)
+    out = []
+    for i in range(len(nums) - 2):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            total = nums[i] + nums[lo] + nums[hi]
+            if total < 0:
+                lo += 1
+            elif total > 0:
+                hi -= 1
+            else:
+                out.append([nums[i], nums[lo], nums[hi]])
+                lo += 1
+                hi -= 1
+                while lo < hi and nums[lo] == nums[lo - 1]:
+                    lo += 1
+    return out
+--- js
+function solve(nums) {
+  nums = [...nums].sort((a, b) => a - b);
+  const out = [];
+  for (let i = 0; i + 2 < nums.length; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue;
+    let lo = i + 1, hi = nums.length - 1;
+    while (lo < hi) {
+      const total = nums[i] + nums[lo] + nums[hi];
+      if (total < 0) lo++;
+      else if (total > 0) hi--;
+      else {
+        out.push([nums[i], nums[lo], nums[hi]]);
+        lo++;
+        hi--;
+        while (lo < hi && nums[lo] === nums[lo - 1]) lo++;
+      }
+    }
+  }
+  return out;
+}
+--- cpp
+vector<vector<int>> solve(vector<int> nums) {
+    sort(nums.begin(), nums.end());
+    vector<vector<int>> out;
+    int n = nums.size();
+    for (int i = 0; i + 2 < n; i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        int lo = i + 1, hi = n - 1;
+        while (lo < hi) {
+            long long total = (long long)nums[i] + nums[lo] + nums[hi];
+            if (total < 0) lo++;
+            else if (total > 0) hi--;
+            else {
+                out.push_back({nums[i], nums[lo], nums[hi]});
+                lo++;
+                hi--;
+                while (lo < hi && nums[lo] == nums[lo - 1]) lo++;
+            }
+        }
+    }
+    return out;
+}
+--- java
+    static int[][] solve(int[] nums) {
+        int[] a = nums.clone();
+        Arrays.sort(a);
+        List<int[]> out = new ArrayList<>();
+        int n = a.length;
+        for (int i = 0; i + 2 < n; i++) {
+            if (i > 0 && a[i] == a[i - 1]) continue;
+            int lo = i + 1, hi = n - 1;
+            while (lo < hi) {
+                long total = (long) a[i] + a[lo] + a[hi];
+                if (total < 0) lo++;
+                else if (total > 0) hi--;
+                else {
+                    out.add(new int[] {a[i], a[lo], a[hi]});
+                    lo++;
+                    hi--;
+                    while (lo < hi && a[lo] == a[lo - 1]) lo++;
+                }
+            }
+        }
+        return out.toArray(new int[0][]);
+    }
+=== longest-substring-without-repeating-characters
+--- py
+def solve(s):
+    last = {}
+    best = start = 0
+    for i, ch in enumerate(s):
+        if ch in last and last[ch] >= start:
+            start = last[ch] + 1
+        last[ch] = i
+        best = max(best, i - start + 1)
+    return best
+--- js
+function solve(s) {
+  const last = new Map();
+  let best = 0, start = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (last.has(ch) && last.get(ch) >= start) start = last.get(ch) + 1;
+    last.set(ch, i);
+    best = Math.max(best, i - start + 1);
+  }
+  return best;
+}
+--- cpp
+int solve(string s) {
+    vector<int> last(256, -1);
+    int best = 0, start = 0;
+    for (int i = 0; i < (int)s.size(); i++) {
+        unsigned char ch = s[i];
+        if (last[ch] >= start) start = last[ch] + 1;
+        last[ch] = i;
+        best = max(best, i - start + 1);
+    }
+    return best;
+}
+--- java
+static int solve(String s) {
+    int[] last = new int[256];
+    Arrays.fill(last, -1);
+    int best = 0, start = 0;
+    for (int i = 0; i < s.length(); i++) {
+        int ch = s.charAt(i) & 0xFF;
+        if (last[ch] >= start) start = last[ch] + 1;
+        last[ch] = i;
+        best = Math.max(best, i - start + 1);
+    }
+    return best;
+}

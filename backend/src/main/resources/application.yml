@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: leetcode-backend
+  config:
+    # Lets you keep local settings (e.g. Neon credentials) in backend/.env, which is git-ignored.
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:h2:mem:leetcode;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        # Load lazy collections for up to 50 rows in one query instead of one query per row.
+        default_batch_fetch_size: 50
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  # Problem lists and solution payloads are large JSON; gzip cuts them to a fraction on slow phone connections.
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: application/json,text/plain,text/html,text/css,application/javascript
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  seed:
+    enabled: true
+  auth:
+    # Set AUTH_SECRET (32+ random chars) in production so tokens survive restarts.
+    secret: ${AUTH_SECRET:}
+    # Logins last until you log out: effectively no expiry (10 years). Lower AUTH_TOKEN_DAYS to force periodic sign-in.
+    token-days: ${AUTH_TOKEN_DAYS:3650}
+  mail:
+    # Set RESEND_API_KEY to send password-reset and daily-problem emails; without it nothing is sent.
+    api-key: ${RESEND_API_KEY:}
+    # Must be on a domain verified in Resend (the default only delivers to the Resend account owner).
+    from: ${MAIL_FROM:LeetCode Practice <onboarding@resend.dev>}
+    frontend-url: ${FRONTEND_URL:http://localhost:3000}
+    daily-hour: ${DAILY_EMAIL_HOUR:8}
+    zone: ${DAILY_EMAIL_ZONE:Asia/Kolkata}
+  rate-limit:
+    runs-per-minute: ${RUNS_PER_MINUTE:20}
+  judge0:
+    # Leave JUDGE0_URL empty to disable code execution (run/submit return 503).
+    base-url: ${JUDGE0_URL:}
+    auth-token: ${JUDGE0_AUTH_TOKEN:}
+    cpu-time-limit-seconds: 2.0
+    read-timeout-seconds: 20

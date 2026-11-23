@@ -1,0 +1,919 @@
+=== evaluate-reverse-polish-notation
+--- py
+def solve(tokens):
+    st = []
+    for t in tokens.split():
+        if t in "+-*/" and len(t) == 1:
+            b, a = st.pop(), st.pop()
+            if t == "+": st.append(a + b)
+            elif t == "-": st.append(a - b)
+            elif t == "*": st.append(a * b)
+            else: st.append(int(a / b))  # truncate toward zero
+        else:
+            st.append(int(t))
+    return st[0]
+--- js
+function solve(tokens) {
+  const st = [];
+  for (const t of tokens.split(/\s+/).filter(Boolean)) {
+    if (t === "+" || t === "-" || t === "*" || t === "/") {
+      const b = st.pop(), a = st.pop();
+      if (t === "+") st.push(a + b);
+      else if (t === "-") st.push(a - b);
+      else if (t === "*") st.push(a * b);
+      else st.push(Math.trunc(a / b)); // truncate toward zero
+    } else {
+      st.push(parseInt(t, 10));
+    }
+  }
+  return st[0];
+}
+--- cpp
+int solve(string tokens) {
+    vector<int> st;
+    stringstream ss(tokens);
+    string t;
+    while (ss >> t) {
+        if (t.size() == 1 && string("+-*/").find(t[0]) != string::npos) {
+            int b = st.back(); st.pop_back();
+            int a = st.back(); st.pop_back();
+            if (t[0] == '+') st.push_back(a + b);
+            else if (t[0] == '-') st.push_back(a - b);
+            else if (t[0] == '*') st.push_back(a * b);
+            else st.push_back(a / b); // C++ truncates toward zero
+        } else {
+            st.push_back(stoi(t));
+        }
+    }
+    return st[0];
+}
+--- java
+static int solve(String tokens) {
+    java.util.ArrayDeque<Integer> st = new java.util.ArrayDeque<>();
+    for (String t : tokens.trim().split("\\s+")) {
+        if (t.length() == 1 && "+-*/".indexOf(t.charAt(0)) >= 0) {
+            int b = st.pop(), a = st.pop();
+            switch (t.charAt(0)) {
+                case '+': st.push(a + b); break;
+                case '-': st.push(a - b); break;
+                case '*': st.push(a * b); break;
+                default: st.push(a / b); // Java truncates toward zero
+            }
+        } else {
+            st.push(Integer.parseInt(t));
+        }
+    }
+    return st.pop();
+}
+=== next-greater-element-ii
+--- py
+def solve(nums):
+    n = len(nums)
+    res = [-1] * n
+    st = []  # indices still waiting for a greater element
+    for i in range(2 * n):
+        x = nums[i % n]
+        while st and nums[st[-1]] < x:
+            res[st.pop()] = x
+        if i < n:
+            st.append(i)
+    return res
+--- js
+function solve(nums) {
+  const n = nums.length;
+  const res = new Array(n).fill(-1);
+  const st = []; // indices still waiting for a greater element
+  for (let i = 0; i < 2 * n; i++) {
+    const x = nums[i % n];
+    while (st.length && nums[st[st.length - 1]] < x) res[st.pop()] = x;
+    if (i < n) st.push(i);
+  }
+  return res;
+}
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> res(n, -1), st; // st: indices still waiting for a greater element
+    for (int i = 0; i < 2 * n; i++) {
+        int x = nums[i % n];
+        while (!st.empty() && nums[st.back()] < x) {
+            res[st.back()] = x;
+            st.pop_back();
+        }
+        if (i < n) st.push_back(i);
+    }
+    return res;
+}
+--- java
+static int[] solve(int[] nums) {
+    int n = nums.length;
+    int[] res = new int[n];
+    java.util.Arrays.fill(res, -1);
+    int[] st = new int[n];
+    int top = 0; // stack of indices still waiting for a greater element
+    for (int i = 0; i < 2 * n; i++) {
+        int x = nums[i % n];
+        while (top > 0 && nums[st[top - 1]] < x) res[st[--top]] = x;
+        if (i < n) st[top++] = i;
+    }
+    return res;
+}
+=== car-fleet
+--- py
+def solve(target, position, speed):
+    cars = sorted(zip(position, speed), reverse=True)  # closest to target first
+    fleets = 0
+    cd, cs = 0, 1  # distance and speed of the current leading fleet
+    for p, s in cars:
+        d = target - p
+        if d * cs > cd * s:  # arrives later than the fleet ahead -> new fleet
+            fleets += 1
+            cd, cs = d, s
+    return fleets
+--- js
+function solve(target, position, speed) {
+  const idx = position.map((_, i) => i).sort((a, b) => position[b] - position[a]);
+  let fleets = 0, cd = 0, cs = 1; // distance and speed of the leading fleet
+  for (const i of idx) {
+    const d = target - position[i], s = speed[i];
+    if (d * cs > cd * s) { // arrives later than the fleet ahead -> new fleet
+      fleets++;
+      cd = d;
+      cs = s;
+    }
+  }
+  return fleets;
+}
+--- cpp
+int solve(int target, vector<int> position, vector<int> speed) {
+    int n = position.size();
+    vector<int> idx(n);
+    for (int i = 0; i < n; i++) idx[i] = i;
+    sort(idx.begin(), idx.end(), [&](int a, int b) { return position[a] > position[b]; });
+    int fleets = 0;
+    long long cd = 0, cs = 1; // distance and speed of the leading fleet
+    for (int i : idx) {
+        long long d = target - position[i], s = speed[i];
+        if (d * cs > cd * s) { // arrives later than the fleet ahead -> new fleet
+            fleets++;
+            cd = d;
+            cs = s;
+        }
+    }
+    return fleets;
+}
+--- java
+static int solve(int target, int[] position, int[] speed) {
+    int n = position.length;
+    Integer[] idx = new Integer[n];
+    for (int i = 0; i < n; i++) idx[i] = i;
+    java.util.Arrays.sort(idx, (a, b) -> position[b] - position[a]);
+    int fleets = 0;
+    long cd = 0, cs = 1; // distance and speed of the leading fleet
+    for (int i : idx) {
+        long d = target - position[i], s = speed[i];
+        if (d * cs > cd * s) { // arrives later than the fleet ahead -> new fleet
+            fleets++;
+            cd = d;
+            cs = s;
+        }
+    }
+    return fleets;
+}
+=== sum-of-subarray-minimums
+--- py
+def solve(arr):
+    MOD = 10**9 + 7
+    n = len(arr)
+    left = [0] * n   # elements to the left (inclusive) where arr[i] is the strict minimum
+    right = [0] * n  # elements to the right (inclusive) where arr[i] is the minimum (ties go left)
+    st = []
+    for i in range(n):
+        while st and arr[st[-1]] > arr[i]:
+            st.pop()
+        left[i] = i - (st[-1] if st else -1)
+        st.append(i)
+    st = []
+    for i in range(n - 1, -1, -1):
+        while st and arr[st[-1]] >= arr[i]:
+            st.pop()
+        right[i] = (st[-1] if st else n) - i
+        st.append(i)
+    return sum(arr[i] * left[i] * right[i] for i in range(n)) % MOD
+--- js
+function solve(arr) {
+  const MOD = 1000000007n;
+  const n = arr.length;
+  const left = new Array(n), right = new Array(n);
+  let st = [];
+  for (let i = 0; i < n; i++) {
+    while (st.length && arr[st[st.length - 1]] > arr[i]) st.pop();
+    left[i] = i - (st.length ? st[st.length - 1] : -1);
+    st.push(i);
+  }
+  st = [];
+  for (let i = n - 1; i >= 0; i--) {
+    while (st.length && arr[st[st.length - 1]] >= arr[i]) st.pop();
+    right[i] = (st.length ? st[st.length - 1] : n) - i;
+    st.push(i);
+  }
+  let total = 0n; // BigInt: the sum can exceed 2^53
+  for (let i = 0; i < n; i++) total += BigInt(arr[i]) * BigInt(left[i]) * BigInt(right[i]);
+  return Number(total % MOD);
+}
+--- cpp
+int solve(vector<int> arr) {
+    const long long MOD = 1000000007LL;
+    int n = arr.size();
+    vector<int> left(n), right(n), st;
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && arr[st.back()] > arr[i]) st.pop_back();
+        left[i] = i - (st.empty() ? -1 : st.back());
+        st.push_back(i);
+    }
+    st.clear();
+    for (int i = n - 1; i >= 0; i--) {
+        while (!st.empty() && arr[st.back()] >= arr[i]) st.pop_back();
+        right[i] = (st.empty() ? n : st.back()) - i;
+        st.push_back(i);
+    }
+    long long total = 0;
+    for (int i = 0; i < n; i++) total = (total + (long long)arr[i] * left[i] % MOD * right[i]) % MOD;
+    return (int)total;
+}
+--- java
+static int solve(int[] arr) {
+    final long MOD = 1_000_000_007L;
+    int n = arr.length;
+    int[] left = new int[n], right = new int[n], st = new int[n];
+    int top = 0;
+    for (int i = 0; i < n; i++) {
+        while (top > 0 && arr[st[top - 1]] > arr[i]) top--;
+        left[i] = i - (top > 0 ? st[top - 1] : -1);
+        st[top++] = i;
+    }
+    top = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        while (top > 0 && arr[st[top - 1]] >= arr[i]) top--;
+        right[i] = (top > 0 ? st[top - 1] : n) - i;
+        st[top++] = i;
+    }
+    long total = 0;
+    for (int i = 0; i < n; i++) total = (total + (long) arr[i] * left[i] % MOD * right[i]) % MOD;
+    return (int) total;
+}
+=== word-break
+--- py
+def solve(s, wordDict):
+    words = set(wordDict.split())
+    lens = {len(w) for w in words}
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+    for i in range(1, len(s) + 1):
+        for l in lens:
+            if l <= i and dp[i - l] and s[i - l:i] in words:
+                dp[i] = True
+                break
+    return dp[len(s)]
+--- js
+function solve(s, wordDict) {
+  const words = new Set(wordDict.split(/\s+/).filter(Boolean));
+  const lens = new Set([...words].map((w) => w.length));
+  const dp = new Array(s.length + 1).fill(false);
+  dp[0] = true;
+  for (let i = 1; i <= s.length; i++) {
+    for (const l of lens) {
+      if (l <= i && dp[i - l] && words.has(s.substring(i - l, i))) {
+        dp[i] = true;
+        break;
+      }
+    }
+  }
+  return dp[s.length];
+}
+--- cpp
+bool solve(string s, string wordDict) {
+    unordered_set<string> words;
+    set<int> lens;
+    stringstream ss(wordDict);
+    string w;
+    while (ss >> w) {
+        words.insert(w);
+        lens.insert(w.size());
+    }
+    int n = s.size();
+    vector<bool> dp(n + 1, false);
+    dp[0] = true;
+    for (int i = 1; i <= n; i++) {
+        for (int l : lens) {
+            if (l <= i && dp[i - l] && words.count(s.substr(i - l, l))) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    return dp[n];
+}
+--- java
+static boolean solve(String s, String wordDict) {
+    java.util.Set<String> words = new java.util.HashSet<>();
+    java.util.Set<Integer> lens = new java.util.HashSet<>();
+    for (String w : wordDict.trim().split("\\s+")) {
+        if (!w.isEmpty()) {
+            words.add(w);
+            lens.add(w.length());
+        }
+    }
+    int n = s.length();
+    boolean[] dp = new boolean[n + 1];
+    dp[0] = true;
+    for (int i = 1; i <= n; i++) {
+        for (int l : lens) {
+            if (l <= i && dp[i - l] && words.contains(s.substring(i - l, i))) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    return dp[n];
+}
+=== palindromic-substrings
+--- py
+def solve(s):
+    n = len(s)
+    count = 0
+    for c in range(2 * n - 1):  # expand around every center (char or gap)
+        l, r = c // 2, c // 2 + c % 2
+        while l >= 0 and r < n and s[l] == s[r]:
+            count += 1
+            l -= 1
+            r += 1
+    return count
+--- js
+function solve(s) {
+  const n = s.length;
+  let count = 0;
+  for (let c = 0; c < 2 * n - 1; c++) { // expand around every center (char or gap)
+    let l = c >> 1, r = (c >> 1) + (c & 1);
+    while (l >= 0 && r < n && s[l] === s[r]) {
+      count++;
+      l--;
+      r++;
+    }
+  }
+  return count;
+}
+--- cpp
+int solve(string s) {
+    int n = s.size(), count = 0;
+    for (int c = 0; c < 2 * n - 1; c++) { // expand around every center (char or gap)
+        int l = c / 2, r = c / 2 + c % 2;
+        while (l >= 0 && r < n && s[l] == s[r]) {
+            count++;
+            l--;
+            r++;
+        }
+    }
+    return count;
+}
+--- java
+static int solve(String s) {
+    int n = s.length(), count = 0;
+    for (int c = 0; c < 2 * n - 1; c++) { // expand around every center (char or gap)
+        int l = c / 2, r = c / 2 + c % 2;
+        while (l >= 0 && r < n && s.charAt(l) == s.charAt(r)) {
+            count++;
+            l--;
+            r++;
+        }
+    }
+    return count;
+}
+=== target-sum
+--- py
+def solve(nums, target):
+    # P - N = target and P + N = total  =>  P = (total + target) / 2 (subset-sum count)
+    total = sum(nums)
+    if abs(target) > total or (total + target) % 2:
+        return 0
+    need = (total + target) // 2
+    dp = [0] * (need + 1)
+    dp[0] = 1
+    for x in nums:
+        for j in range(need, x - 1, -1):
+            dp[j] += dp[j - x]
+    return dp[need]
+--- js
+function solve(nums, target) {
+  // P - N = target and P + N = total  =>  P = (total + target) / 2 (subset-sum count)
+  const total = nums.reduce((a, b) => a + b, 0);
+  if (Math.abs(target) > total || (total + target) % 2 !== 0) return 0;
+  const need = (total + target) / 2;
+  const dp = new Array(need + 1).fill(0);
+  dp[0] = 1;
+  for (const x of nums) {
+    for (let j = need; j >= x; j--) dp[j] += dp[j - x];
+  }
+  return dp[need];
+}
+--- cpp
+int solve(vector<int> nums, int target) {
+    // P - N = target and P + N = total  =>  P = (total + target) / 2 (subset-sum count)
+    int total = 0;
+    for (int x : nums) total += x;
+    if (abs(target) > total || (total + target) % 2 != 0) return 0;
+    int need = (total + target) / 2;
+    vector<long long> dp(need + 1, 0);
+    dp[0] = 1;
+    for (int x : nums)
+        for (int j = need; j >= x; j--) dp[j] += dp[j - x];
+    return (int)dp[need];
+}
+--- java
+static int solve(int[] nums, int target) {
+    // P - N = target and P + N = total  =>  P = (total + target) / 2 (subset-sum count)
+    int total = 0;
+    for (int x : nums) total += x;
+    if (Math.abs(target) > total || (total + target) % 2 != 0) return 0;
+    int need = (total + target) / 2;
+    long[] dp = new long[need + 1];
+    dp[0] = 1;
+    for (int x : nums)
+        for (int j = need; j >= x; j--) dp[j] += dp[j - x];
+    return (int) dp[need];
+}
+=== delete-and-earn
+--- py
+def solve(nums):
+    points = [0] * (max(nums) + 1)
+    for x in nums:
+        points[x] += x
+    # house robber over the value line
+    take, skip = 0, 0
+    for p in points:
+        take, skip = skip + p, max(take, skip)
+    return max(take, skip)
+--- js
+function solve(nums) {
+  const points = new Array(Math.max(...nums) + 1).fill(0);
+  for (const x of nums) points[x] += x;
+  // house robber over the value line
+  let take = 0, skip = 0;
+  for (const p of points) {
+    const nt = skip + p;
+    skip = Math.max(take, skip);
+    take = nt;
+  }
+  return Math.max(take, skip);
+}
+--- cpp
+int solve(vector<int> nums) {
+    vector<int> points(*max_element(nums.begin(), nums.end()) + 1, 0);
+    for (int x : nums) points[x] += x;
+    // house robber over the value line
+    int take = 0, skip = 0;
+    for (int p : points) {
+        int nt = skip + p;
+        skip = max(take, skip);
+        take = nt;
+    }
+    return max(take, skip);
+}
+--- java
+static int solve(int[] nums) {
+    int mx = 0;
+    for (int x : nums) mx = Math.max(mx, x);
+    int[] points = new int[mx + 1];
+    for (int x : nums) points[x] += x;
+    // house robber over the value line
+    int take = 0, skip = 0;
+    for (int p : points) {
+        int nt = skip + p;
+        skip = Math.max(take, skip);
+        take = nt;
+    }
+    return Math.max(take, skip);
+}
+=== best-time-to-buy-and-sell-stock-with-cooldown
+--- py
+def solve(prices):
+    hold = float("-inf")  # holding a share
+    sold = 0              # just sold today (cooldown tomorrow)
+    rest = 0              # free to buy
+    for p in prices:
+        hold, sold, rest = max(hold, rest - p), hold + p, max(rest, sold)
+    return max(sold, rest)
+--- js
+function solve(prices) {
+  let hold = -Infinity; // holding a share
+  let sold = 0;         // just sold today (cooldown tomorrow)
+  let rest = 0;         // free to buy
+  for (const p of prices) {
+    const nh = Math.max(hold, rest - p);
+    const ns = hold + p;
+    rest = Math.max(rest, sold);
+    hold = nh;
+    sold = ns;
+  }
+  return Math.max(sold, rest);
+}
+--- cpp
+int solve(vector<int> prices) {
+    int hold = INT_MIN / 2; // holding a share
+    int sold = 0;           // just sold today (cooldown tomorrow)
+    int rest = 0;           // free to buy
+    for (int p : prices) {
+        int nh = max(hold, rest - p);
+        int ns = hold + p;
+        rest = max(rest, sold);
+        hold = nh;
+        sold = ns;
+    }
+    return max(sold, rest);
+}
+--- java
+static int solve(int[] prices) {
+    int hold = Integer.MIN_VALUE / 2; // holding a share
+    int sold = 0;                     // just sold today (cooldown tomorrow)
+    int rest = 0;                     // free to buy
+    for (int p : prices) {
+        int nh = Math.max(hold, rest - p);
+        int ns = hold + p;
+        rest = Math.max(rest, sold);
+        hold = nh;
+        sold = ns;
+    }
+    return Math.max(sold, rest);
+}
+=== minimum-falling-path-sum
+--- py
+def solve(matrix):
+    prev = list(matrix[0])
+    n = len(prev)
+    for r in range(1, len(matrix)):
+        cur = []
+        for c in range(n):
+            best = prev[c]
+            if c > 0: best = min(best, prev[c - 1])
+            if c < n - 1: best = min(best, prev[c + 1])
+            cur.append(matrix[r][c] + best)
+        prev = cur
+    return min(prev)
+--- js
+function solve(matrix) {
+  let prev = matrix[0].slice();
+  const n = prev.length;
+  for (let r = 1; r < matrix.length; r++) {
+    const cur = new Array(n);
+    for (let c = 0; c < n; c++) {
+      let best = prev[c];
+      if (c > 0) best = Math.min(best, prev[c - 1]);
+      if (c < n - 1) best = Math.min(best, prev[c + 1]);
+      cur[c] = matrix[r][c] + best;
+    }
+    prev = cur;
+  }
+  return Math.min(...prev);
+}
+--- cpp
+int solve(vector<vector<int>> matrix) {
+    vector<int> prev = matrix[0];
+    int n = prev.size();
+    for (int r = 1; r < (int)matrix.size(); r++) {
+        vector<int> cur(n);
+        for (int c = 0; c < n; c++) {
+            int best = prev[c];
+            if (c > 0) best = min(best, prev[c - 1]);
+            if (c < n - 1) best = min(best, prev[c + 1]);
+            cur[c] = matrix[r][c] + best;
+        }
+        prev = cur;
+    }
+    return *min_element(prev.begin(), prev.end());
+}
+--- java
+static int solve(int[][] matrix) {
+    int[] prev = matrix[0].clone();
+    int n = prev.length;
+    for (int r = 1; r < matrix.length; r++) {
+        int[] cur = new int[n];
+        for (int c = 0; c < n; c++) {
+            int best = prev[c];
+            if (c > 0) best = Math.min(best, prev[c - 1]);
+            if (c < n - 1) best = Math.min(best, prev[c + 1]);
+            cur[c] = matrix[r][c] + best;
+        }
+        prev = cur;
+    }
+    int ans = Integer.MAX_VALUE;
+    for (int v : prev) ans = Math.min(ans, v);
+    return ans;
+}
+=== combination-sum-count
+--- py
+def solve(candidates, target):
+    cands = sorted(candidates)
+    out, cur = [], []
+
+    def go(start, left):
+        if left == 0:
+            out.append(list(cur))
+            return
+        for j in range(start, len(cands)):
+            if cands[j] > left:
+                break
+            cur.append(cands[j])
+            go(j, left - cands[j])
+            cur.pop()
+
+    go(0, target)
+    return out
+--- js
+function solve(candidates, target) {
+  const cands = [...candidates].sort((a, b) => a - b);
+  const out = [];
+  const cur = [];
+  function go(start, left) {
+    if (left === 0) {
+      out.push([...cur]);
+      return;
+    }
+    for (let j = start; j < cands.length; j++) {
+      if (cands[j] > left) break;
+      cur.push(cands[j]);
+      go(j, left - cands[j]);
+      cur.pop();
+    }
+  }
+  go(0, target);
+  return out;
+}
+--- cpp
+void comboGo(vector<int> &cands, size_t start, int left, vector<int> &cur, vector<vector<int>> &out) {
+    if (left == 0) {
+        out.push_back(cur);
+        return;
+    }
+    for (size_t j = start; j < cands.size(); j++) {
+        if (cands[j] > left) break;
+        cur.push_back(cands[j]);
+        comboGo(cands, j, left - cands[j], cur, out);
+        cur.pop_back();
+    }
+}
+
+vector<vector<int>> solve(vector<int> candidates, int target) {
+    sort(candidates.begin(), candidates.end());
+    vector<int> cur;
+    vector<vector<int>> out;
+    comboGo(candidates, 0, target, cur, out);
+    return out;
+}
+--- java
+    static void comboGo(int[] cands, int start, int left, List<Integer> cur, List<int[]> out) {
+        if (left == 0) {
+            out.add(cur.stream().mapToInt(Integer::intValue).toArray());
+            return;
+        }
+        for (int j = start; j < cands.length; j++) {
+            if (cands[j] > left) break;
+            cur.add(cands[j]);
+            comboGo(cands, j, left - cands[j], cur, out);
+            cur.remove(cur.size() - 1);
+        }
+    }
+
+    static int[][] solve(int[] candidates, int target) {
+        int[] cands = candidates.clone();
+        Arrays.sort(cands);
+        List<int[]> out = new ArrayList<>();
+        comboGo(cands, 0, target, new ArrayList<>(), out);
+        return out.toArray(new int[0][]);
+    }
+=== distinct-subsequences
+--- py
+def solve(s, t):
+    m = len(t)
+    dp = [0] * (m + 1)  # dp[j] = ways to form t[:j] from the prefix of s seen so far
+    dp[0] = 1
+    for ch in s:
+        for j in range(m, 0, -1):
+            if t[j - 1] == ch:
+                dp[j] += dp[j - 1]
+    return dp[m]
+--- js
+function solve(s, t) {
+  const m = t.length;
+  const dp = new Array(m + 1).fill(0); // dp[j] = ways to form t[0..j) from the prefix of s seen so far
+  dp[0] = 1;
+  for (const ch of s) {
+    for (let j = m; j >= 1; j--) {
+      if (t[j - 1] === ch) dp[j] += dp[j - 1];
+    }
+  }
+  return dp[m];
+}
+--- cpp
+int solve(string s, string t) {
+    int m = t.size();
+    vector<long long> dp(m + 1, 0); // dp[j] = ways to form t[0..j) from the prefix of s seen so far
+    dp[0] = 1;
+    for (char ch : s)
+        for (int j = m; j >= 1; j--)
+            if (t[j - 1] == ch) dp[j] += dp[j - 1];
+    return (int)dp[m];
+}
+--- java
+static int solve(String s, String t) {
+    int m = t.length();
+    long[] dp = new long[m + 1]; // dp[j] = ways to form t[0..j) from the prefix of s seen so far
+    dp[0] = 1;
+    for (int i = 0; i < s.length(); i++) {
+        char ch = s.charAt(i);
+        for (int j = m; j >= 1; j--)
+            if (t.charAt(j - 1) == ch) dp[j] += dp[j - 1];
+    }
+    return (int) dp[m];
+}
+=== regular-expression-matching
+--- py
+def solve(s, p):
+    m, n = len(s), len(p)
+    # dp[i][j]: s[:i] matches p[:j]
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for i in range(m + 1):
+        for j in range(1, n + 1):
+            if p[j - 1] == "*":
+                dp[i][j] = dp[i][j - 2]  # zero copies
+                if i > 0 and (p[j - 2] == "." or p[j - 2] == s[i - 1]):
+                    dp[i][j] = dp[i][j] or dp[i - 1][j]  # one more copy
+            elif i > 0 and (p[j - 1] == "." or p[j - 1] == s[i - 1]):
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[m][n]
+--- js
+function solve(s, p) {
+  const m = s.length, n = p.length;
+  // dp[i][j]: s[0..i) matches p[0..j)
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(false));
+  dp[0][0] = true;
+  for (let i = 0; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (p[j - 1] === "*") {
+        dp[i][j] = dp[i][j - 2]; // zero copies
+        if (i > 0 && (p[j - 2] === "." || p[j - 2] === s[i - 1])) {
+          dp[i][j] = dp[i][j] || dp[i - 1][j]; // one more copy
+        }
+      } else if (i > 0 && (p[j - 1] === "." || p[j - 1] === s[i - 1])) {
+        dp[i][j] = dp[i - 1][j - 1];
+      }
+    }
+  }
+  return dp[m][n];
+}
+--- cpp
+bool solve(string s, string p) {
+    int m = s.size(), n = p.size();
+    // dp[i][j]: s[0..i) matches p[0..j)
+    vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+    dp[0][0] = true;
+    for (int i = 0; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (p[j - 1] == '*') {
+                dp[i][j] = dp[i][j - 2]; // zero copies
+                if (i > 0 && (p[j - 2] == '.' || p[j - 2] == s[i - 1]))
+                    dp[i][j] = dp[i][j] || dp[i - 1][j]; // one more copy
+            } else if (i > 0 && (p[j - 1] == '.' || p[j - 1] == s[i - 1])) {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+        }
+    }
+    return dp[m][n];
+}
+--- java
+static boolean solve(String s, String p) {
+    int m = s.length(), n = p.length();
+    // dp[i][j]: s[0..i) matches p[0..j)
+    boolean[][] dp = new boolean[m + 1][n + 1];
+    dp[0][0] = true;
+    for (int i = 0; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (p.charAt(j - 1) == '*') {
+                dp[i][j] = dp[i][j - 2]; // zero copies
+                if (i > 0 && (p.charAt(j - 2) == '.' || p.charAt(j - 2) == s.charAt(i - 1)))
+                    dp[i][j] = dp[i][j] || dp[i - 1][j]; // one more copy
+            } else if (i > 0 && (p.charAt(j - 1) == '.' || p.charAt(j - 1) == s.charAt(i - 1))) {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+        }
+    }
+    return dp[m][n];
+}
+=== burst-balloons
+--- py
+def solve(nums):
+    a = [1] + list(nums) + [1]
+    n = len(a)
+    # dp[l][r]: best coins bursting everything strictly between l and r
+    dp = [[0] * n for _ in range(n)]
+    for length in range(2, n):
+        for l in range(n - length):
+            r = l + length
+            for k in range(l + 1, r):  # k is the LAST balloon burst in (l, r)
+                dp[l][r] = max(dp[l][r], dp[l][k] + a[l] * a[k] * a[r] + dp[k][r])
+    return dp[0][n - 1]
+--- js
+function solve(nums) {
+  const a = [1, ...nums, 1];
+  const n = a.length;
+  // dp[l][r]: best coins bursting everything strictly between l and r
+  const dp = Array.from({ length: n }, () => new Array(n).fill(0));
+  for (let len = 2; len < n; len++) {
+    for (let l = 0; l + len < n; l++) {
+      const r = l + len;
+      for (let k = l + 1; k < r; k++) { // k is the LAST balloon burst in (l, r)
+        dp[l][r] = Math.max(dp[l][r], dp[l][k] + a[l] * a[k] * a[r] + dp[k][r]);
+      }
+    }
+  }
+  return dp[0][n - 1];
+}
+--- cpp
+int solve(vector<int> nums) {
+    vector<int> a;
+    a.push_back(1);
+    for (int x : nums) a.push_back(x);
+    a.push_back(1);
+    int n = a.size();
+    // dp[l][r]: best coins bursting everything strictly between l and r
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+    for (int len = 2; len < n; len++) {
+        for (int l = 0; l + len < n; l++) {
+            int r = l + len;
+            for (int k = l + 1; k < r; k++) // k is the LAST balloon burst in (l, r)
+                dp[l][r] = max(dp[l][r], dp[l][k] + a[l] * a[k] * a[r] + dp[k][r]);
+        }
+    }
+    return dp[0][n - 1];
+}
+--- java
+static int solve(int[] nums) {
+    int n = nums.length + 2;
+    int[] a = new int[n];
+    a[0] = a[n - 1] = 1;
+    for (int i = 0; i < nums.length; i++) a[i + 1] = nums[i];
+    // dp[l][r]: best coins bursting everything strictly between l and r
+    int[][] dp = new int[n][n];
+    for (int len = 2; len < n; len++) {
+        for (int l = 0; l + len < n; l++) {
+            int r = l + len;
+            for (int k = l + 1; k < r; k++) // k is the LAST balloon burst in (l, r)
+                dp[l][r] = Math.max(dp[l][r], dp[l][k] + a[l] * a[k] * a[r] + dp[k][r]);
+        }
+    }
+    return dp[0][n - 1];
+}
+=== best-time-to-buy-and-sell-stock-iii
+--- py
+def solve(prices):
+    buy1 = buy2 = float("-inf")
+    sell1 = sell2 = 0
+    for p in prices:
+        buy1 = max(buy1, -p)
+        sell1 = max(sell1, buy1 + p)
+        buy2 = max(buy2, sell1 - p)
+        sell2 = max(sell2, buy2 + p)
+    return sell2
+--- js
+function solve(prices) {
+  let buy1 = -Infinity, buy2 = -Infinity, sell1 = 0, sell2 = 0;
+  for (const p of prices) {
+    buy1 = Math.max(buy1, -p);
+    sell1 = Math.max(sell1, buy1 + p);
+    buy2 = Math.max(buy2, sell1 - p);
+    sell2 = Math.max(sell2, buy2 + p);
+  }
+  return sell2;
+}
+--- cpp
+int solve(vector<int> prices) {
+    int buy1 = INT_MIN / 2, buy2 = INT_MIN / 2, sell1 = 0, sell2 = 0;
+    for (int p : prices) {
+        buy1 = max(buy1, -p);
+        sell1 = max(sell1, buy1 + p);
+        buy2 = max(buy2, sell1 - p);
+        sell2 = max(sell2, buy2 + p);
+    }
+    return sell2;
+}
+--- java
+static int solve(int[] prices) {
+    int buy1 = Integer.MIN_VALUE / 2, buy2 = Integer.MIN_VALUE / 2, sell1 = 0, sell2 = 0;
+    for (int p : prices) {
+        buy1 = Math.max(buy1, -p);
+        sell1 = Math.max(sell1, buy1 + p);
+        buy2 = Math.max(buy2, sell1 - p);
+        sell2 = Math.max(sell2, buy2 + p);
+    }
+    return sell2;
+}

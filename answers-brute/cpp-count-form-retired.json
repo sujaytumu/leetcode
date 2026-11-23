@@ -1,0 +1,32 @@
+{
+ "3sum-count": {
+  "solutions": {
+   "cpp": "// Brute force: time O(n^3 + t log t) for t distinct triplets, space O(t)\nclass Solution {\npublic:\n    int threeSum(vector<int>& nums) {\n        int n = nums.size();\n        set<array<int, 3>> found;\n        for (int i = 0; i < n; i++)\n            for (int j = i + 1; j < n; j++)\n                for (int k = j + 1; k < n; k++)\n                    if ((long long)nums[i] + nums[j] + nums[k] == 0) {\n                        array<int, 3> t = {nums[i], nums[j], nums[k]};\n                        sort(t.begin(), t.end());\n                        found.insert(t);\n                    }\n        return (int)found.size();\n    }\n};\n"
+  }
+ },
+ "generate-parentheses-count": {
+  "solutions": {
+   "cpp": "// Brute force: time O(4^n / sqrt(n)), space O(n)\nclass Solution {\npublic:\n    int generateParenthesis(int n) {\n        return go(n, 0, 0);\n    }\n\nprivate:\n    int go(int n, int open, int close) {\n        if (open == n && close == n) return 1;\n        int total = 0;\n        if (open < n) total += go(n, open + 1, close);\n        if (close < open) total += go(n, open, close + 1);\n        return total;\n    }\n};\n"
+  }
+ },
+ "distinct-permutations-count": {
+  "solutions": {
+   "cpp": "// Brute force: time O(n * n!), space O(1)\nclass Solution {\npublic:\n    int countPermutations(vector<int>& nums) {\n        vector<int> a = nums;\n        sort(a.begin(), a.end());\n        int count = 0;\n        do {\n            count++;\n        } while (next_permutation(a.begin(), a.end()));\n        return count;\n    }\n};\n"
+  }
+ },
+ "combination-sum-count": {
+  "solutions": {
+   "cpp": "// Brute force: time O(exponential), space O(target)\nclass Solution {\npublic:\n    int combinationSum(vector<int>& candidates, int target) {\n        return go(candidates, 0, target);\n    }\nprivate:\n    int go(const vector<int>& c, int i, int remaining) {\n        if (remaining == 0) return 1;\n        if (i == (int)c.size() || remaining < 0) return 0;\n        // use candidate i once more, or move on to the next candidate\n        return go(c, i, remaining - c[i]) + go(c, i + 1, remaining);\n    }\n};\n"
+  }
+ },
+ "minimum-window-substring-length": {
+  "solutions": {
+   "cpp": "// Brute force: time O(n^2 * 256), space O(1)\nclass Solution {\npublic:\n    int minWindow(string s, string t) {\n        int n = s.size(), m = t.size();\n        int need[256] = {};\n        for (unsigned char c : t) need[c]++;\n        // try window lengths from shortest to longest\n        for (int len = m; len <= n; len++) {\n            for (int st = 0; st + len <= n; st++) {\n                int have[256] = {};\n                for (int i = st; i < st + len; i++) have[(unsigned char)s[i]]++;\n                bool ok = true;\n                for (int c = 0; c < 256; c++) if (have[c] < need[c]) { ok = false; break; }\n                if (ok) return len;\n            }\n        }\n        return 0;\n    }\n};\n"
+  }
+ },
+ "4sum-count": {
+  "solutions": {
+   "cpp": "// Brute force: time O(n^4 + u log u), space O(u) for u distinct quadruples\nclass Solution {\npublic:\n    int fourSum(vector<int>& nums, int target) {\n        int n = nums.size();\n        set<vector<int>> found;\n        for (int a = 0; a < n; a++)\n            for (int b = a + 1; b < n; b++)\n                for (int c = b + 1; c < n; c++)\n                    for (int d = c + 1; d < n; d++)\n                        if ((long long)nums[a] + nums[b] + nums[c] + nums[d] == target) {\n                            vector<int> q = {nums[a], nums[b], nums[c], nums[d]};\n                            sort(q.begin(), q.end());\n                            found.insert(q);\n                        }\n        return (int)found.size();\n    }\n};\n"
+  }
+ }
+}
