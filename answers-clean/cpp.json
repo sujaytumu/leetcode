@@ -1,0 +1,1027 @@
+{
+ "01-matrix": {
+  "solutions": {
+   "cpp": "// Approach: Multi-source BFS starting from every zero cell, so each cell is reached by its nearest zero first.\n// Time O(m * n), Space O(m * n)\nclass Solution {\npublic:\n    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {\n        int m = mat.size();\n        int n = mat[0].size();\n        vector<vector<int>> dist(m, vector<int>(n, -1));\n        queue<pair<int, int>> queue;\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (mat[i][j] == 0) {\n                    dist[i][j] = 0;\n                    queue.push({i, j});\n                }\n            }\n        }\n        const int rowStep[4] = {1, -1, 0, 0};\n        const int colStep[4] = {0, 0, 1, -1};\n        while (!queue.empty()) {\n            auto [row, col] = queue.front();\n            queue.pop();\n            for (int d = 0; d < 4; d++) {\n                int nextRow = row + rowStep[d];\n                int nextCol = col + colStep[d];\n                bool inside = nextRow >= 0 && nextRow < m && nextCol >= 0 && nextCol < n;\n                if (inside && dist[nextRow][nextCol] < 0) {\n                    dist[nextRow][nextCol] = dist[row][col] + 1;\n                    queue.push({nextRow, nextCol});\n                }\n            }\n        }\n        return dist;\n    }\n};"
+  }
+ },
+ "4sum-count": {
+  "solutions": {
+   "cpp": "// Approach: Sort, fix the first two numbers, then close in with two pointers while skipping duplicates.\n// Time O(n^3), Space O(1) extra (excluding output)\nclass Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        vector<vector<int>> result;\n        for (int i = 0; i + 3 < n; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            for (int j = i + 1; j + 2 < n; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                int low = j + 1;\n                int high = n - 1;\n                while (low < high) {\n                    long long sum = (long long)nums[i] + nums[j] + nums[low] + nums[high];\n                    if (sum < target) {\n                        low++;\n                    } else if (sum > target) {\n                        high--;\n                    } else {\n                        result.push_back({nums[i], nums[j], nums[low], nums[high]});\n                        low++;\n                        high--;\n                        while (low < high && nums[low] == nums[low - 1]) low++;\n                    }\n                }\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "balanced-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: Post-order DFS returning the subtree height, or -1 as soon as any subtree is unbalanced.\n// Time O(n), Space O(h) where h is the tree height\nint heightOrUnbalanced(TreeNode* node) {\n    if (!node) return 0;\n    int leftHeight = heightOrUnbalanced(node->left);\n    if (leftHeight < 0) return -1;\n    int rightHeight = heightOrUnbalanced(node->right);\n    if (rightHeight < 0 || abs(leftHeight - rightHeight) > 1) return -1;\n    return 1 + max(leftHeight, rightHeight);\n}\n\nclass Solution {\npublic:\n    bool isBalanced(TreeNode* root) {\n        return heightOrUnbalanced(root) >= 0;\n    }\n};"
+  }
+ },
+ "best-time-to-buy-and-sell-stock-iii": {
+  "solutions": {
+   "cpp": "// Approach: Track the best profit after each of the four states: first buy, first sell, second buy, second sell.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int firstBuy = INT_MIN / 2;\n        int secondBuy = INT_MIN / 2;\n        int firstSell = 0;\n        int secondSell = 0;\n        for (int price : prices) {\n            firstBuy = max(firstBuy, -price);\n            firstSell = max(firstSell, firstBuy + price);\n            secondBuy = max(secondBuy, firstSell - price);\n            secondSell = max(secondSell, secondBuy + price);\n        }\n        return secondSell;\n    }\n};"
+  }
+ },
+ "binary-tree-inorder-traversal": {
+  "solutions": {
+   "cpp": "// Approach: Iterative inorder traversal using an explicit stack of the left spine.\n// Time O(n), Space O(h) where h is the tree height\nclass Solution {\npublic:\n    vector<int> inorderTraversal(TreeNode* root) {\n        vector<int> result;\n        vector<TreeNode*> stack;\n        TreeNode* node = root;\n        while (node || !stack.empty()) {\n            while (node) {\n                stack.push_back(node);\n                node = node->left;\n            }\n            node = stack.back();\n            stack.pop_back();\n            result.push_back(node->val);\n            node = node->right;\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "binary-tree-right-side-view": {
+  "solutions": {
+   "cpp": "// Approach: Level-order BFS, keeping the last node of each level.\n// Time O(n), Space O(w) where w is the maximum level width\nclass Solution {\npublic:\n    vector<int> rightSideView(TreeNode* root) {\n        vector<int> result;\n        if (!root) return result;\n        queue<TreeNode*> queue;\n        queue.push(root);\n        while (!queue.empty()) {\n            int levelSize = queue.size();\n            for (int i = 0; i < levelSize; i++) {\n                TreeNode* node = queue.front();\n                queue.pop();\n                if (i == levelSize - 1) result.push_back(node->val);\n                if (node->left) queue.push(node->left);\n                if (node->right) queue.push(node->right);\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "burst-balloons": {
+  "solutions": {
+   "cpp": "// Approach: Interval DP choosing the last balloon to burst in each open interval, with 1s as sentinels.\n// Time O(n^3), Space O(n^2)\nclass Solution {\npublic:\n    int maxCoins(vector<int>& nums) {\n        vector<int> balloons;\n        balloons.push_back(1);\n        for (int value : nums) balloons.push_back(value);\n        balloons.push_back(1);\n        int n = balloons.size();\n        // dp[left][right]: best coins from bursting everything strictly between left and right\n        vector<vector<int>> dp(n, vector<int>(n, 0));\n        for (int length = 2; length < n; length++) {\n            for (int left = 0; left + length < n; left++) {\n                int right = left + length;\n                for (int last = left + 1; last < right; last++) {\n                    int coins = balloons[left] * balloons[last] * balloons[right];\n                    int total = dp[left][last] + coins + dp[last][right];\n                    dp[left][right] = max(dp[left][right], total);\n                }\n            }\n        }\n        return dp[0][n - 1];\n    }\n};"
+  }
+ },
+ "capacity-to-ship-packages": {
+  "solutions": {
+   "cpp": "// Approach: Binary search on the ship capacity, greedily counting the days each capacity needs.\n// Time O(n log(sum of weights)), Space O(1)\nclass Solution {\npublic:\n    int shipWithinDays(vector<int>& weights, int days) {\n        long long low = *max_element(weights.begin(), weights.end());\n        long long high = 0;\n        for (int weight : weights) high += weight;\n        while (low < high) {\n            long long capacity = (low + high) / 2;\n            long long load = 0;\n            int daysNeeded = 1;\n            for (int weight : weights) {\n                if (load + weight > capacity) {\n                    daysNeeded++;\n                    load = 0;\n                }\n                load += weight;\n            }\n            if (daysNeeded <= days) {\n                high = capacity;\n            } else {\n                low = capacity + 1;\n            }\n        }\n        return low;\n    }\n};"
+  }
+ },
+ "climbing-stairs": {
+  "solutions": {
+   "cpp": "// Approach: Fibonacci recurrence, keeping only the ways to reach the previous two steps.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int climbStairs(int n) {\n        int waysTwoBack = 1;\n        int waysOneBack = 1;\n        for (int step = 1; step < n; step++) {\n            int ways = waysOneBack + waysTwoBack;\n            waysTwoBack = waysOneBack;\n            waysOneBack = ways;\n        }\n        return waysOneBack;\n    }\n};"
+  }
+ },
+ "combination-sum-count": {
+  "solutions": {
+   "cpp": "// Approach: Backtracking over sorted candidates, reusing the same index and pruning once a value exceeds the remainder.\n// Time O(N^(target / min candidate)) in the worst case, Space O(target / min candidate) recursion depth\nvoid collectCombinations(const vector<int>& candidates, int start, int remaining,\n                         vector<int>& current, vector<vector<int>>& result) {\n    if (remaining == 0) {\n        result.push_back(current);\n        return;\n    }\n    for (int i = start; i < (int)candidates.size(); i++) {\n        if (candidates[i] > remaining) break;\n        current.push_back(candidates[i]);\n        collectCombinations(candidates, i, remaining - candidates[i], current, result);\n        current.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<int> current;\n        vector<vector<int>> result;\n        collectCombinations(candidates, 0, target, current, result);\n        return result;\n    }\n};"
+  }
+ },
+ "contains-duplicate": {
+  "solutions": {
+   "cpp": "// Approach: Insert into a hash set and stop at the first value that is already present.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    bool containsDuplicate(vector<int>& nums) {\n        unordered_set<int> seen;\n        for (int value : nums) {\n            if (!seen.insert(value).second) return true;\n        }\n        return false;\n    }\n};"
+  }
+ },
+ "count-good-nodes-in-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: DFS carrying the maximum value on the path; a node is good if it is at least that maximum.\n// Time O(n), Space O(h) where h is the tree height\nint countGood(TreeNode* node, int maxOnPath) {\n    if (!node) return 0;\n    int good = node->val >= maxOnPath ? 1 : 0;\n    maxOnPath = max(maxOnPath, node->val);\n    return good + countGood(node->left, maxOnPath) + countGood(node->right, maxOnPath);\n}\n\nclass Solution {\npublic:\n    int goodNodes(TreeNode* root) {\n        return countGood(root, INT_MIN);\n    }\n};"
+  }
+ },
+ "counting-bits": {
+  "solutions": {
+   "cpp": "// Approach: DP where bits(i) = bits(i / 2) plus the lowest bit of i.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> countBits(int n) {\n        vector<int> bits(n + 1, 0);\n        for (int i = 1; i <= n; i++) {\n            bits[i] = bits[i >> 1] + (i & 1);\n        }\n        return bits;\n    }\n};"
+  }
+ },
+ "decode-ways": {
+  "solutions": {
+   "cpp": "// Approach: Rolling DP over prefixes, adding one-digit and valid two-digit decodings.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int numDecodings(string s) {\n        long long waysTwoBack = 0;\n        long long waysOneBack = 1;\n        for (int i = 0; i < (int)s.size(); i++) {\n            long long ways = s[i] != '0' ? waysOneBack : 0;\n            if (i > 0) {\n                int twoDigits = (s[i - 1] - '0') * 10 + (s[i] - '0');\n                if (twoDigits >= 10 && twoDigits <= 26) ways += waysTwoBack;\n            }\n            waysTwoBack = waysOneBack;\n            waysOneBack = ways;\n        }\n        return waysOneBack;\n    }\n};"
+  }
+ },
+ "distinct-permutations-count": {
+  "solutions": {
+   "cpp": "// Approach: Backtracking over a sorted array, skipping a duplicate unless its equal predecessor is in use.\n// Time O(n * n!), Space O(n)\nvoid collectPermutations(const vector<int>& nums, vector<bool>& used, vector<int>& current,\n                         vector<vector<int>>& result) {\n    if (current.size() == nums.size()) {\n        result.push_back(current);\n        return;\n    }\n    for (int i = 0; i < (int)nums.size(); i++) {\n        if (used[i]) continue;\n        // equal values are placed in order, which avoids duplicate permutations\n        if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue;\n        used[i] = true;\n        current.push_back(nums[i]);\n        collectPermutations(nums, used, current, result);\n        current.pop_back();\n        used[i] = false;\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        vector<bool> used(nums.size(), false);\n        vector<int> current;\n        vector<vector<int>> result;\n        collectPermutations(nums, used, current, result);\n        return result;\n    }\n};"
+  }
+ },
+ "evaluate-reverse-polish-notation": {
+  "solutions": {
+   "cpp": "// Approach: Scan tokens with a stack, applying each operator to the top two operands.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int evalRPN(string tokens) {\n        vector<int> stack;\n        stringstream stream(tokens);\n        string token;\n        while (stream >> token) {\n            bool isOperator = token.size() == 1 && string(\"+-*/\").find(token[0]) != string::npos;\n            if (!isOperator) {\n                stack.push_back(stoi(token));\n                continue;\n            }\n            int right = stack.back();\n            stack.pop_back();\n            int left = stack.back();\n            stack.pop_back();\n            if (token[0] == '+') {\n                stack.push_back(left + right);\n            } else if (token[0] == '-') {\n                stack.push_back(left - right);\n            } else if (token[0] == '*') {\n                stack.push_back(left * right);\n            } else {\n                stack.push_back(left / right);  // C++ truncates toward zero\n            }\n        }\n        return stack[0];\n    }\n};"
+  }
+ },
+ "find-all-numbers-disappeared-in-an-array": {
+  "solutions": {
+   "cpp": "// Approach: Mark each seen value v by negating nums[v - 1]; the positive slots are the missing numbers.\n// Time O(n), Space O(1) extra (excluding output)\nclass Solution {\npublic:\n    vector<int> findDisappearedNumbers(vector<int>& nums) {\n        int n = nums.size();\n        for (int i = 0; i < n; i++) {\n            int index = abs(nums[i]) - 1;\n            if (nums[index] > 0) nums[index] = -nums[index];\n        }\n        vector<int> missing;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] > 0) missing.push_back(i + 1);\n        }\n        return missing;\n    }\n};"
+  }
+ },
+ "find-minimum-in-rotated-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Binary search comparing the middle with the right end to find the rotation point.\n// Time O(log n), Space O(1)\nclass Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int low = 0;\n        int high = nums.size() - 1;\n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] > nums[high]) {\n                low = mid + 1;\n            } else {\n                high = mid;\n            }\n        }\n        return nums[low];\n    }\n};"
+  }
+ },
+ "first-missing-positive": {
+  "solutions": {
+   "cpp": "// Approach: Cyclic sort that puts each value v in 1..n at index v - 1, then find the first misplaced slot.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n        int n = nums.size();\n        for (int i = 0; i < n; i++) {\n            while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {\n                swap(nums[i], nums[nums[i] - 1]);\n            }\n        }\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != i + 1) return i + 1;\n        }\n        return n + 1;\n    }\n};"
+  }
+ },
+ "gas-station": {
+  "solutions": {
+   "cpp": "// Approach: Greedy single pass; if the tank goes negative, restart from the next station.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n        int n = gas.size();\n        int totalGain = 0;\n        int tank = 0;\n        int start = 0;\n        for (int i = 0; i < n; i++) {\n            int gain = gas[i] - cost[i];\n            totalGain += gain;\n            tank += gain;\n            if (tank < 0) {\n                start = i + 1;\n                tank = 0;\n            }\n        }\n        return totalGain < 0 ? -1 : start;\n    }\n};"
+  }
+ },
+ "hamming-distance": {
+  "solutions": {
+   "cpp": "// Approach: XOR the numbers and count set bits by repeatedly clearing the lowest one.\n// Time O(number of set bits) which is at most O(32), Space O(1)\nclass Solution {\npublic:\n    int hammingDistance(int x, int y) {\n        unsigned int diff = (unsigned int)x ^ (unsigned int)y;\n        int count = 0;\n        while (diff) {\n            diff &= diff - 1;  // clear the lowest set bit\n            count++;\n        }\n        return count;\n    }\n};"
+  }
+ },
+ "house-robber-ii": {
+  "solutions": {
+   "cpp": "// Approach: Houses are circular, so take the better of robbing without the last or without the first house.\n// Time O(n), Space O(1)\nint robLinear(const vector<int>& nums, int begin, int end) {\n    int robbed = 0;\n    int skipped = 0;\n    for (int i = begin; i < end; i++) {\n        int robbedNow = skipped + nums[i];\n        skipped = max(robbed, skipped);\n        robbed = robbedNow;\n    }\n    return max(robbed, skipped);\n}\n\nclass Solution {\npublic:\n    int rob(vector<int>& nums) {\n        int n = nums.size();\n        if (n == 1) return nums[0];\n        return max(robLinear(nums, 0, n - 1), robLinear(nums, 1, n));\n    }\n};"
+  }
+ },
+ "integer-break": {
+  "solutions": {
+   "cpp": "// Approach: The product is maximised by splitting into as many 3s as possible, using a 4 or 2 for the remainder.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int integerBreak(int n) {\n        if (n <= 3) return n - 1;\n        int threes = n / 3;\n        int remainder = n % 3;\n        if (remainder == 1) threes--;  // 3 + 1 is worse than 2 + 2\n        long long product = 1;\n        for (int i = 0; i < threes; i++) product *= 3;\n        if (remainder == 1) return product * 4;\n        if (remainder == 2) return product * 2;\n        return product;\n    }\n};"
+  }
+ },
+ "invert-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: Recursively invert both subtrees, then swap them.\n// Time O(n), Space O(h) where h is the tree height\nclass Solution {\npublic:\n    TreeNode* invertTree(TreeNode* root) {\n        if (!root) return nullptr;\n        TreeNode* invertedLeft = invertTree(root->left);\n        TreeNode* invertedRight = invertTree(root->right);\n        root->left = invertedRight;\n        root->right = invertedLeft;\n        return root;\n    }\n};"
+  }
+ },
+ "island-perimeter": {
+  "solutions": {
+   "cpp": "// Approach: Each land cell adds 4 edges, minus 2 for every shared edge with the cell above or to the left.\n// Time O(m * n), Space O(1)\nclass Solution {\npublic:\n    int islandPerimeter(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        int perimeter = 0;\n        for (int r = 0; r < rows; r++) {\n            for (int c = 0; c < cols; c++) {\n                if (grid[r][c] != 1) continue;\n                perimeter += 4;\n                if (r > 0 && grid[r - 1][c] == 1) perimeter -= 2;\n                if (c > 0 && grid[r][c - 1] == 1) perimeter -= 2;\n            }\n        }\n        return perimeter;\n    }\n};"
+  }
+ },
+ "jump-game-ii": {
+  "solutions": {
+   "cpp": "// Approach: Greedy BFS by levels; extend the farthest reach and jump when the current range ends.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int jump(vector<int>& nums) {\n        int n = nums.size();\n        int jumps = 0;\n        int currentEnd = 0;\n        int farthest = 0;\n        for (int i = 0; i + 1 < n; i++) {\n            farthest = max(farthest, i + nums[i]);\n            if (i == currentEnd) {\n                jumps++;\n                currentEnd = farthest;\n            }\n        }\n        return jumps;\n    }\n};"
+  }
+ },
+ "kth-smallest-element-in-a-bst": {
+  "solutions": {
+   "cpp": "// Approach: Iterative inorder traversal visits values in sorted order; stop at the k-th.\n// Time O(h + k), Space O(h) where h is the tree height\nclass Solution {\npublic:\n    int kthSmallest(TreeNode* root, int k) {\n        vector<TreeNode*> stack;\n        TreeNode* node = root;\n        while (node || !stack.empty()) {\n            while (node) {\n                stack.push_back(node);\n                node = node->left;\n            }\n            node = stack.back();\n            stack.pop_back();\n            if (--k == 0) return node->val;\n            node = node->right;\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "last-stone-weight": {
+  "solutions": {
+   "cpp": "// Approach: Max-heap; repeatedly smash the two heaviest stones and push back the difference.\n// Time O(n log n), Space O(n)\nclass Solution {\npublic:\n    int lastStoneWeight(vector<int>& stones) {\n        priority_queue<int> heap(stones.begin(), stones.end());\n        while (heap.size() > 1) {\n            int heaviest = heap.top();\n            heap.pop();\n            int second = heap.top();\n            heap.pop();\n            if (heaviest != second) heap.push(heaviest - second);\n        }\n        return heap.empty() ? 0 : heap.top();\n    }\n};"
+  }
+ },
+ "longest-common-subsequence": {
+  "solutions": {
+   "cpp": "// Approach: 2D DP where dp[i][j] is the LCS length of the first i and first j characters.\n// Time O(n * m), Space O(n * m)\nclass Solution {\npublic:\n    int longestCommonSubsequence(string text1, string text2) {\n        int n = text1.size();\n        int m = text2.size();\n        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= m; j++) {\n                if (text1[i - 1] == text2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[n][m];\n    }\n};"
+  }
+ },
+ "longest-palindromic-substring-length": {
+  "solutions": {
+   "cpp": "// Approach: Expand around each of the 2n - 1 centers (characters and gaps) and keep the longest span.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    int longestPalindrome(string s) {\n        int n = s.size();\n        int bestLength = 0;\n        for (int center = 0; center < 2 * n - 1; center++) {\n            int left = center / 2;\n            int right = left + center % 2;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                left--;\n                right++;\n            }\n            bestLength = max(bestLength, right - left - 1);\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "longest-substring-without-repeating-characters": {
+  "solutions": {
+   "cpp": "// Approach: Sliding window storing the last index of each byte; jump the window start past a repeat.\n// Time O(n), Space O(1) (fixed 256-entry table)\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        int n = s.size();\n        vector<int> lastSeenAt(256, -1);\n        int bestLength = 0;\n        int windowStart = 0;\n        for (int i = 0; i < n; i++) {\n            unsigned char ch = s[i];\n            if (lastSeenAt[ch] >= windowStart) windowStart = lastSeenAt[ch] + 1;\n            lastSeenAt[ch] = i;\n            bestLength = max(bestLength, i - windowStart + 1);\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "lowest-common-ancestor-of-a-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: DFS returning the node matching p or q; the first node with matches on both sides is the answer.\n// Time O(n), Space O(h) where h is the tree height\nTreeNode* findLowestCommonAncestor(TreeNode* node, int p, int q) {\n    if (!node || node->val == p || node->val == q) return node;\n    TreeNode* left = findLowestCommonAncestor(node->left, p, q);\n    TreeNode* right = findLowestCommonAncestor(node->right, p, q);\n    if (left && right) return node;\n    return left ? left : right;\n}\n\nclass Solution {\npublic:\n    int lowestCommonAncestor(TreeNode* root, int p, int q) {\n        return findLowestCommonAncestor(root, p, q)->val;\n    }\n};"
+  }
+ },
+ "maximal-rectangle": {
+  "solutions": {
+   "cpp": "// Approach: Build column heights row by row and solve largest-rectangle-in-histogram with a monotonic stack.\n// Time O(rows * cols), Space O(cols)\nclass Solution {\npublic:\n    int maximalRectangle(vector<vector<int>>& matrix) {\n        if (matrix.empty()) return 0;\n        int cols = matrix[0].size();\n        int bestArea = 0;\n        vector<int> heights(cols, 0);\n        for (const auto& row : matrix) {\n            for (int j = 0; j < cols; j++) {\n                heights[j] = row[j] == 1 ? heights[j] + 1 : 0;\n            }\n            vector<int> stack;  // indices with strictly increasing heights\n            for (int j = 0; j <= cols; j++) {\n                int current = j < cols ? heights[j] : 0;\n                while (!stack.empty() && heights[stack.back()] >= current) {\n                    int height = heights[stack.back()];\n                    stack.pop_back();\n                    int leftEdge = stack.empty() ? -1 : stack.back();\n                    bestArea = max(bestArea, height * (j - leftEdge - 1));\n                }\n                stack.push_back(j);\n            }\n        }\n        return bestArea;\n    }\n};"
+  }
+ },
+ "maximum-product-subarray": {
+  "solutions": {
+   "cpp": "// Approach: Track the max and min product ending at each index, since a negative can flip them.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxProduct(vector<int>& nums) {\n        long long best = nums[0];\n        long long maxEnding = nums[0];\n        long long minEnding = nums[0];\n        for (int i = 1; i < (int)nums.size(); i++) {\n            long long value = nums[i];\n            long long candidateA = maxEnding * value;\n            long long candidateB = minEnding * value;\n            maxEnding = max({value, candidateA, candidateB});\n            minEnding = min({value, candidateA, candidateB});\n            best = max(best, maxEnding);\n        }\n        return best;\n    }\n};"
+  }
+ },
+ "maximum-twin-sum-of-a-linked-list": {
+  "solutions": {
+   "cpp": "// Approach: Find the middle with fast/slow pointers, reverse the second half, then sum paired nodes.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int pairSum(ListNode* head) {\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        ListNode* reversed = nullptr;\n        while (slow) {\n            ListNode* next = slow->next;\n            slow->next = reversed;\n            reversed = slow;\n            slow = next;\n        }\n        int bestSum = 0;\n        ListNode* front = head;\n        for (ListNode* back = reversed; back; back = back->next) {\n            bestSum = max(bestSum, front->val + back->val);\n            front = front->next;\n        }\n        return bestSum;\n    }\n};"
+  }
+ },
+ "merge-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Merge from the back with three pointers so nums1 is filled without overwriting unread values.\n// Time O(m + n), Space O(1)\nclass Solution {\npublic:\n    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {\n        int i = m - 1;\n        int j = n - 1;\n        int write = m + n - 1;\n        while (j >= 0) {\n            if (i >= 0 && nums1[i] > nums2[j]) {\n                nums1[write--] = nums1[i--];\n            } else {\n                nums1[write--] = nums2[j--];\n            }\n        }\n    }\n};"
+  }
+ },
+ "min-cost-climbing-stairs": {
+  "solutions": {
+   "cpp": "// Approach: DP keeping the cheapest cost to reach each of the previous two steps.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int minCostClimbingStairs(vector<int>& cost) {\n        int n = cost.size();\n        int costTwoBack = 0;\n        int costOneBack = 0;\n        for (int step = 2; step <= n; step++) {\n            int current = min(costOneBack + cost[step - 1], costTwoBack + cost[step - 2]);\n            costTwoBack = costOneBack;\n            costOneBack = current;\n        }\n        return costOneBack;\n    }\n};"
+  }
+ },
+ "minimum-depth-of-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: Recursive DFS that only counts a path when it ends at a leaf.\n// Time O(n), Space O(h) where h is the tree height\nclass Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (!root) return 0;\n        // a node with one child is not a leaf, so follow only the side that exists\n        if (!root->left) return 1 + minDepth(root->right);\n        if (!root->right) return 1 + minDepth(root->left);\n        return 1 + min(minDepth(root->left), minDepth(root->right));\n    }\n};"
+  }
+ },
+ "minimum-path-sum": {
+  "solutions": {
+   "cpp": "// Approach: DP over a single row where each cell takes the cheaper of the cell above or to the left.\n// Time O(m * n), Space O(n)\nclass Solution {\npublic:\n    int minPathSum(vector<vector<int>>& grid) {\n        int cols = grid[0].size();\n        vector<int> minCost(cols, INT_MAX / 2);\n        minCost[0] = 0;\n        for (const auto& row : grid) {\n            for (int j = 0; j < cols; j++) {\n                if (j > 0) minCost[j] = min(minCost[j], minCost[j - 1]);\n                minCost[j] += row[j];\n            }\n        }\n        return minCost[cols - 1];\n    }\n};"
+  }
+ },
+ "missing-number": {
+  "solutions": {
+   "cpp": "// Approach: XOR all indices and values with n; paired numbers cancel and the missing one remains.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        int n = nums.size();\n        int missing = n;\n        for (int i = 0; i < n; i++) {\n            missing ^= i ^ nums[i];\n        }\n        return missing;\n    }\n};"
+  }
+ },
+ "network-delay-time": {
+  "solutions": {
+   "cpp": "// Approach: Dijkstra from the source with a min-heap; the answer is the largest shortest distance.\n// Time O(E log V), Space O(V + E)\nclass Solution {\npublic:\n    int networkDelayTime(vector<vector<int>>& times, int n, int k) {\n        vector<vector<pair<int, int>>> graph(n + 1);  // node -> (neighbor, weight)\n        for (const auto& edge : times) {\n            graph[edge[0]].push_back({edge[1], edge[2]});\n        }\n        vector<int> dist(n + 1, INT_MAX);\n        dist[k] = 0;\n        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> heap;\n        heap.push({0, k});\n        while (!heap.empty()) {\n            auto [d, node] = heap.top();\n            heap.pop();\n            if (d > dist[node]) continue;\n            for (const auto& [next, weight] : graph[node]) {\n                if (d + weight < dist[next]) {\n                    dist[next] = d + weight;\n                    heap.push({dist[next], next});\n                }\n            }\n        }\n        int longest = 0;\n        for (int node = 1; node <= n; node++) {\n            longest = max(longest, dist[node]);\n        }\n        return longest == INT_MAX ? -1 : longest;\n    }\n};"
+  }
+ },
+ "non-overlapping-intervals": {
+  "solutions": {
+   "cpp": "// Approach: Sort by end time and greedily keep each interval that starts after the last kept one ends.\n// Time O(n log n), Space O(1) extra\nclass Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        sort(intervals.begin(), intervals.end(),\n             [](const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; });\n        int removed = 0;\n        int lastEnd = INT_MIN;\n        for (const auto& interval : intervals) {\n            if (interval[0] >= lastEnd) {\n                lastEnd = interval[1];\n            } else {\n                removed++;\n            }\n        }\n        return removed;\n    }\n};"
+  }
+ },
+ "number-of-islands": {
+  "solutions": {
+   "cpp": "// Approach: Scan the grid and flood-fill each unvisited land cell with an explicit stack, counting fills.\n// Time O(rows * cols), Space O(rows * cols)\nclass Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        int rows = grid.size();\n        int cols = rows ? grid[0].size() : 0;\n        int islands = 0;\n        const int rowStep[4] = {1, -1, 0, 0};\n        const int colStep[4] = {0, 0, 1, -1};\n        for (int r = 0; r < rows; r++) {\n            for (int c = 0; c < cols; c++) {\n                if (grid[r][c] != '1') continue;\n                islands++;\n                grid[r][c] = '0';  // sinking a cell marks it visited\n                vector<pair<int, int>> stack = {{r, c}};\n                while (!stack.empty()) {\n                    auto [row, col] = stack.back();\n                    stack.pop_back();\n                    for (int d = 0; d < 4; d++) {\n                        int nextRow = row + rowStep[d];\n                        int nextCol = col + colStep[d];\n                        bool inside = nextRow >= 0 && nextRow < rows && nextCol >= 0 &&\n                                      nextCol < cols;\n                        if (inside && grid[nextRow][nextCol] == '1') {\n                            grid[nextRow][nextCol] = '0';\n                            stack.push_back({nextRow, nextCol});\n                        }\n                    }\n                }\n            }\n        }\n        return islands;\n    }\n};"
+  }
+ },
+ "palindrome-linked-list": {
+  "solutions": {
+   "cpp": "// Approach: Find the middle, reverse the second half, and compare it with the first half.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    bool isPalindrome(ListNode* head) {\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        ListNode* reversed = nullptr;\n        while (slow) {\n            ListNode* next = slow->next;\n            slow->next = reversed;\n            reversed = slow;\n            slow = next;\n        }\n        ListNode* front = head;\n        for (ListNode* back = reversed; back; back = back->next) {\n            if (front->val != back->val) return false;\n            front = front->next;\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "palindromic-substrings": {
+  "solutions": {
+   "cpp": "// Approach: Expand around each of the 2n - 1 centers (characters and gaps), counting every palindrome found.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        int n = s.size();\n        int count = 0;\n        for (int center = 0; center < 2 * n - 1; center++) {\n            int left = center / 2;\n            int right = left + center % 2;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                count++;\n                left--;\n                right++;\n            }\n        }\n        return count;\n    }\n};"
+  }
+ },
+ "partition-list": {
+  "solutions": {
+   "cpp": "// Approach: Split nodes into a \"less than x\" list and a \"greater or equal\" list, then join them.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* partition(ListNode* head, int x) {\n        ListNode smallHead(0);\n        ListNode largeHead(0);\n        ListNode* smallTail = &smallHead;\n        ListNode* largeTail = &largeHead;\n        for (ListNode* node = head; node; node = node->next) {\n            if (node->val < x) {\n                smallTail->next = node;\n                smallTail = node;\n            } else {\n                largeTail->next = node;\n                largeTail = node;\n            }\n        }\n        largeTail->next = nullptr;\n        smallTail->next = largeHead.next;\n        return smallHead.next;\n    }\n};"
+  }
+ },
+ "path-sum-iii": {
+  "solutions": {
+   "cpp": "// Approach: DFS with prefix sums; count earlier prefixes on the current path equal to sum - target.\n// Time O(n), Space O(n)\nint countPaths(TreeNode* node, long long pathSum, int target,\n               unordered_map<long long, int>& prefixCounts) {\n    if (!node) return 0;\n    pathSum += node->val;\n    int paths = 0;\n    auto it = prefixCounts.find(pathSum - target);\n    if (it != prefixCounts.end()) paths = it->second;\n    prefixCounts[pathSum]++;\n    paths += countPaths(node->left, pathSum, target, prefixCounts);\n    paths += countPaths(node->right, pathSum, target, prefixCounts);\n    prefixCounts[pathSum]--;  // leaving this node: it is no longer on the path\n    return paths;\n}\n\nclass Solution {\npublic:\n    int pathSum(TreeNode* root, int targetSum) {\n        unordered_map<long long, int> prefixCounts;\n        prefixCounts[0] = 1;\n        return countPaths(root, 0, targetSum, prefixCounts);\n    }\n};"
+  }
+ },
+ "permutation-in-string": {
+  "solutions": {
+   "cpp": "// Approach: Slide a window of length |s1| over s2 and compare letter counts with those of s1.\n// Time O(m), Space O(1)\nclass Solution {\npublic:\n    bool checkInclusion(string s1, string s2) {\n        int n = s1.size();\n        int m = s2.size();\n        if (n > m) return false;\n        vector<int> needed(26, 0);\n        vector<int> window(26, 0);\n        for (int i = 0; i < n; i++) {\n            needed[s1[i] - 'a']++;\n            window[s2[i] - 'a']++;\n        }\n        if (needed == window) return true;\n        for (int i = n; i < m; i++) {\n            window[s2[i] - 'a']++;\n            window[s2[i - n] - 'a']--;\n            if (needed == window) return true;\n        }\n        return false;\n    }\n};"
+  }
+ },
+ "product-of-array-except-self": {
+  "solutions": {
+   "cpp": "// Approach: Fill each slot with the product of everything to its left, then multiply by everything to its right.\n// Time O(n), Space O(1) extra (excluding output)\nclass Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, 1);\n        long long prefix = 1;\n        for (int i = 0; i < n; i++) {\n            result[i] = prefix;\n            prefix *= nums[i];\n        }\n        long long suffix = 1;\n        for (int i = n - 1; i >= 0; i--) {\n            result[i] = result[i] * suffix;\n            suffix *= nums[i];\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "remove-duplicates-from-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Since the input is sorted, keep a value only if it differs from the last kept one.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> removeDuplicates(vector<int>& nums) {\n        vector<int> unique;\n        for (int value : nums) {\n            if (unique.empty() || unique.back() != value) unique.push_back(value);\n        }\n        return unique;\n    }\n};"
+  }
+ },
+ "remove-linked-list-elements": {
+  "solutions": {
+   "cpp": "// Approach: Walk the list with a dummy head and unlink every node holding the target value.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* removeElements(ListNode* head, int val) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* current = &dummy;\n        while (current->next) {\n            if (current->next->val == val) {\n                current->next = current->next->next;\n            } else {\n                current = current->next;\n            }\n        }\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "repeated-substring-pattern": {
+  "solutions": {
+   "cpp": "// Approach: s is a repeated pattern exactly when it occurs inside s + s with the first and last characters removed.\n// Time O(n^2) worst case (std::string::find), Space O(n)\nclass Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        string doubled = s + s;\n        return doubled.substr(1, doubled.size() - 2).find(s) != string::npos;\n    }\n};"
+  }
+ },
+ "reverse-linked-list-ii": {
+  "solutions": {
+   "cpp": "// Approach: Walk to the node before the segment, then repeatedly move the next node to the segment front.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* reverseBetween(ListNode* head, int left, int right) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* beforeSegment = &dummy;\n        for (int i = 0; i < left - 1; i++) {\n            beforeSegment = beforeSegment->next;\n        }\n        ListNode* segmentTail = beforeSegment->next;\n        // move the node after segmentTail to the front of the segment, right - left times\n        for (int i = 0; i < right - left; i++) {\n            ListNode* moving = segmentTail->next;\n            segmentTail->next = moving->next;\n            moving->next = beforeSegment->next;\n            beforeSegment->next = moving;\n        }\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "rotate-array": {
+  "solutions": {
+   "cpp": "// Approach: Rotate right by k using three reversals: whole array, first k, then the rest.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    void rotate(vector<int>& nums, int k) {\n        int n = nums.size();\n        if (n == 0) return;\n        k %= n;\n        reverse(nums.begin(), nums.end());\n        reverse(nums.begin(), nums.begin() + k);\n        reverse(nums.begin() + k, nums.end());\n    }\n};"
+  }
+ },
+ "rotting-oranges": {
+  "solutions": {
+   "cpp": "// Approach: Multi-source BFS from all rotten oranges, one level per minute, tracking fresh oranges left.\n// Time O(rows * cols), Space O(rows * cols)\nclass Solution {\npublic:\n    int orangesRotting(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        int fresh = 0;\n        int minutes = 0;\n        queue<pair<int, int>> queue;\n        for (int r = 0; r < rows; r++) {\n            for (int c = 0; c < cols; c++) {\n                if (grid[r][c] == 2) {\n                    queue.push({r, c});\n                } else if (grid[r][c] == 1) {\n                    fresh++;\n                }\n            }\n        }\n        const int rowStep[4] = {1, -1, 0, 0};\n        const int colStep[4] = {0, 0, 1, -1};\n        while (!queue.empty() && fresh > 0) {\n            int levelSize = queue.size();\n            for (int i = 0; i < levelSize; i++) {\n                auto [row, col] = queue.front();\n                queue.pop();\n                for (int d = 0; d < 4; d++) {\n                    int nextRow = row + rowStep[d];\n                    int nextCol = col + colStep[d];\n                    bool inside = nextRow >= 0 && nextRow < rows && nextCol >= 0 && nextCol < cols;\n                    if (inside && grid[nextRow][nextCol] == 1) {\n                        grid[nextRow][nextCol] = 2;\n                        fresh--;\n                        queue.push({nextRow, nextCol});\n                    }\n                }\n            }\n            minutes++;\n        }\n        return fresh == 0 ? minutes : -1;\n    }\n};"
+  }
+ },
+ "search-in-rotated-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Binary search; at each step one half is sorted, so check whether the target lies in it.\n// Time O(log n), Space O(1)\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int low = 0;\n        int high = nums.size() - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) return mid;\n            if (nums[low] <= nums[mid]) {\n                // left half is sorted\n                if (nums[low] <= target && target < nums[mid]) {\n                    high = mid - 1;\n                } else {\n                    low = mid + 1;\n                }\n            } else {\n                // right half is sorted\n                if (nums[mid] < target && target <= nums[high]) {\n                    low = mid + 1;\n                } else {\n                    high = mid - 1;\n                }\n            }\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "shortest-path-in-binary-matrix": {
+  "solutions": {
+   "cpp": "// Approach: BFS over 8-directional moves through zero cells, storing the path length in each visited cell.\n// Time O(n^2), Space O(n^2)\nclass Solution {\npublic:\n    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {\n        int n = grid.size();\n        if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1) return -1;\n        vector<vector<int>> pathLength(n, vector<int>(n, 0));  // 0 means not visited\n        pathLength[0][0] = 1;\n        queue<pair<int, int>> queue;\n        queue.push({0, 0});\n        while (!queue.empty()) {\n            auto [row, col] = queue.front();\n            queue.pop();\n            if (row == n - 1 && col == n - 1) return pathLength[row][col];\n            for (int dRow = -1; dRow <= 1; dRow++) {\n                for (int dCol = -1; dCol <= 1; dCol++) {\n                    int nextRow = row + dRow;\n                    int nextCol = col + dCol;\n                    bool inside = nextRow >= 0 && nextRow < n && nextCol >= 0 && nextCol < n;\n                    bool open = inside && grid[nextRow][nextCol] == 0;\n                    if (open && pathLength[nextRow][nextCol] == 0) {\n                        pathLength[nextRow][nextCol] = pathLength[row][col] + 1;\n                        queue.push({nextRow, nextCol});\n                    }\n                }\n            }\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "sliding-window-maximum": {
+  "solutions": {
+   "cpp": "// Approach: Monotonic deque of indices whose values decrease, so the front is always the window maximum.\n// Time O(n), Space O(k)\nclass Solution {\npublic:\n    vector<int> maxSlidingWindow(vector<int>& nums, int k) {\n        int n = nums.size();\n        deque<int> window;  // indices with decreasing values from front to back\n        vector<int> result;\n        for (int i = 0; i < n; i++) {\n            while (!window.empty() && nums[window.back()] <= nums[i]) window.pop_back();\n            window.push_back(i);\n            if (window.front() <= i - k) window.pop_front();\n            if (i >= k - 1) result.push_back(nums[window.front()]);\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "spiral-matrix": {
+  "solutions": {
+   "cpp": "// Approach: Walk the border layer by layer, shrinking the top, bottom, left and right bounds.\n// Time O(m * n), Space O(1) extra (excluding output)\nclass Solution {\npublic:\n    vector<int> spiralOrder(vector<vector<int>>& matrix) {\n        vector<int> result;\n        if (matrix.empty()) return result;\n        int top = 0;\n        int bottom = matrix.size() - 1;\n        int left = 0;\n        int right = matrix[0].size() - 1;\n        while (top <= bottom && left <= right) {\n            for (int j = left; j <= right; j++) result.push_back(matrix[top][j]);\n            for (int i = top + 1; i <= bottom; i++) result.push_back(matrix[i][right]);\n            // the last two sides only exist when the layer has more than one row and column\n            if (top < bottom && left < right) {\n                for (int j = right - 1; j >= left; j--) result.push_back(matrix[bottom][j]);\n                for (int i = bottom - 1; i > top; i--) result.push_back(matrix[i][left]);\n            }\n            top++;\n            bottom--;\n            left++;\n            right--;\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "squares-of-a-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers from both ends; the larger absolute value gives the largest square, filled from the back.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n);\n        int left = 0;\n        int right = n - 1;\n        for (int i = n - 1; i >= 0; i--) {\n            if (abs(nums[left]) > abs(nums[right])) {\n                result[i] = nums[left] * nums[left];\n                left++;\n            } else {\n                result[i] = nums[right] * nums[right];\n                right--;\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "sum-of-subarray-minimums": {
+  "solutions": {
+   "cpp": "// Approach: Monotonic stacks give how far each element is the minimum on each side; add value * left * right.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int sumSubarrayMins(vector<int>& arr) {\n        const long long MOD = 1000000007LL;\n        int n = arr.size();\n        vector<int> leftSpan(n);\n        vector<int> rightSpan(n);\n        vector<int> stack;\n        for (int i = 0; i < n; i++) {\n            while (!stack.empty() && arr[stack.back()] > arr[i]) stack.pop_back();\n            leftSpan[i] = i - (stack.empty() ? -1 : stack.back());\n            stack.push_back(i);\n        }\n        stack.clear();\n        // strict on the left and non-strict on the right so equal values are counted once\n        for (int i = n - 1; i >= 0; i--) {\n            while (!stack.empty() && arr[stack.back()] >= arr[i]) stack.pop_back();\n            rightSpan[i] = (stack.empty() ? n : stack.back()) - i;\n            stack.push_back(i);\n        }\n        long long total = 0;\n        for (int i = 0; i < n; i++) {\n            long long contribution = (long long)arr[i] * leftSpan[i] % MOD * rightSpan[i];\n            total = (total + contribution) % MOD;\n        }\n        return total;\n    }\n};"
+  }
+ },
+ "surrounded-regions": {
+  "solutions": {
+   "cpp": "// Approach: Mark every 'O' (1) reachable from the border, then flip all unmarked ones to 'X' (0).\n// Time O(m * n), Space O(m * n)\nclass Solution {\npublic:\n    void solve(vector<vector<int>>& board) {\n        const int EMPTY = 0;\n        const int CELL = 1;\n        const int SAFE = 2;  // connected to the border\n        int m = board.size();\n        int n = board[0].size();\n        vector<pair<int, int>> stack;\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                bool onBorder = i == 0 || j == 0 || i == m - 1 || j == n - 1;\n                if (onBorder && board[i][j] == CELL) {\n                    board[i][j] = SAFE;\n                    stack.push_back({i, j});\n                }\n            }\n        }\n        const int rowStep[4] = {1, -1, 0, 0};\n        const int colStep[4] = {0, 0, 1, -1};\n        while (!stack.empty()) {\n            auto [row, col] = stack.back();\n            stack.pop_back();\n            for (int d = 0; d < 4; d++) {\n                int nextRow = row + rowStep[d];\n                int nextCol = col + colStep[d];\n                bool inside = nextRow >= 0 && nextRow < m && nextCol >= 0 && nextCol < n;\n                if (inside && board[nextRow][nextCol] == CELL) {\n                    board[nextRow][nextCol] = SAFE;\n                    stack.push_back({nextRow, nextCol});\n                }\n            }\n        }\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                board[i][j] = board[i][j] == SAFE ? CELL : EMPTY;\n            }\n        }\n    }\n};"
+  }
+ },
+ "symmetric-tree": {
+  "solutions": {
+   "cpp": "// Approach: Recursively check that two subtrees are mirror images of each other.\n// Time O(n), Space O(h) where h is the tree height\nbool isMirror(TreeNode* first, TreeNode* second) {\n    if (!first && !second) return true;\n    if (!first || !second || first->val != second->val) return false;\n    return isMirror(first->left, second->right) && isMirror(first->right, second->left);\n}\n\nclass Solution {\npublic:\n    bool isSymmetric(TreeNode* root) {\n        return isMirror(root, root);\n    }\n};"
+  }
+ },
+ "top-k-frequent-elements": {
+  "solutions": {
+   "cpp": "// Approach: Count frequencies, sort distinct values by count (ties by value), keep the first k.\n// Time O(n + d log d) where d is the number of distinct values, Space O(d)\nclass Solution {\npublic:\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        unordered_map<int, int> frequency;\n        for (int value : nums) frequency[value]++;\n        vector<int> values;\n        for (const auto& entry : frequency) values.push_back(entry.first);\n        sort(values.begin(), values.end(), [&](int a, int b) {\n            if (frequency[a] != frequency[b]) return frequency[a] > frequency[b];\n            return a < b;\n        });\n        values.resize(k);\n        return values;\n    }\n};"
+  }
+ },
+ "two-sum-ii-input-array-is-sorted": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers from both ends of the sorted array, moving the one that brings the sum closer.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& numbers, int target) {\n        int low = 0;\n        int high = numbers.size() - 1;\n        while (low < high) {\n            long long sum = (long long)numbers[low] + numbers[high];\n            if (sum == target) return {low + 1, high + 1};\n            if (sum < target) {\n                low++;\n            } else {\n                high--;\n            }\n        }\n        return {};\n    }\n};"
+  }
+ },
+ "unique-paths-ii": {
+  "solutions": {
+   "cpp": "// Approach: Row-by-row DP where ways[j] adds the paths from the left, and obstacles reset a cell to zero.\n// Time O(m * n), Space O(n)\nclass Solution {\npublic:\n    int uniquePathsWithObstacles(vector<vector<int>>& grid) {\n        int cols = grid[0].size();\n        vector<long long> ways(cols, 0);\n        ways[0] = 1;\n        for (const auto& row : grid) {\n            for (int j = 0; j < cols; j++) {\n                if (row[j] == 1) {\n                    ways[j] = 0;\n                } else if (j > 0) {\n                    ways[j] += ways[j - 1];\n                }\n            }\n        }\n        return ways[cols - 1];\n    }\n};"
+  }
+ },
+ "valid-palindrome-ii": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers inward; on the first mismatch, try skipping either character and check the rest.\n// Time O(n), Space O(1)\nbool isPalindromeRange(const string& s, int left, int right) {\n    while (left < right) {\n        if (s[left] != s[right]) return false;\n        left++;\n        right--;\n    }\n    return true;\n}\n\nclass Solution {\npublic:\n    bool validPalindrome(string s) {\n        int left = 0;\n        int right = s.size() - 1;\n        while (left < right) {\n            if (s[left] != s[right]) {\n                return isPalindromeRange(s, left + 1, right) ||\n                       isPalindromeRange(s, left, right - 1);\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "validate-binary-search-tree": {
+  "solutions": {
+   "cpp": "// Approach: DFS passing down the open interval (low, high) every node value must fall inside.\n// Time O(n), Space O(h) where h is the tree height\nbool isWithinBounds(TreeNode* node, long long low, long long high) {\n    if (!node) return true;\n    if (node->val <= low || node->val >= high) return false;\n    return isWithinBounds(node->left, low, node->val) &&\n           isWithinBounds(node->right, node->val, high);\n}\n\nclass Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        return isWithinBounds(root, LLONG_MIN, LLONG_MAX);\n    }\n};"
+  }
+ },
+ "word-search": {
+  "solutions": {
+   "cpp": "// Approach: DFS backtracking from every cell, marking cells on the current path as visited.\n// Time O(m * n * 3^L) where L is the word length, Space O(L)\nbool matchFrom(vector<vector<char>>& board, vector<vector<bool>>& visited, const string& word,\n               int row, int col, int index) {\n    if (board[row][col] != word[index]) return false;\n    if (index == (int)word.size() - 1) return true;\n    int rows = board.size();\n    int cols = board[0].size();\n    const int rowStep[4] = {1, -1, 0, 0};\n    const int colStep[4] = {0, 0, 1, -1};\n    visited[row][col] = true;\n    bool found = false;\n    for (int d = 0; d < 4 && !found; d++) {\n        int nextRow = row + rowStep[d];\n        int nextCol = col + colStep[d];\n        bool inside = nextRow >= 0 && nextRow < rows && nextCol >= 0 && nextCol < cols;\n        if (inside && !visited[nextRow][nextCol]) {\n            found = matchFrom(board, visited, word, nextRow, nextCol, index + 1);\n        }\n    }\n    visited[row][col] = false;\n    return found;\n}\n\nclass Solution {\npublic:\n    bool exist(vector<vector<char>>& board, string word) {\n        int rows = board.size();\n        int cols = board[0].size();\n        vector<vector<bool>> visited(rows, vector<bool>(cols, false));\n        for (int r = 0; r < rows; r++) {\n            for (int c = 0; c < cols; c++) {\n                if (matchFrom(board, visited, word, r, c, 0)) return true;\n            }\n        }\n        return false;\n    }\n};"
+  }
+ },
+ "3sum-closest": {
+  "solutions": {
+   "cpp": "// Approach: Sort, fix one number and move two pointers inward to home in on the target.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    int threeSumClosest(vector<int>& nums, int target) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        int closest = nums[0] + nums[1] + nums[2];\n        for (int i = 0; i < n - 2; i++) {\n            int left = i + 1;\n            int right = n - 1;\n            while (left < right) {\n                int sum = nums[i] + nums[left] + nums[right];\n                if (abs(sum - target) < abs(closest - target)) {\n                    closest = sum;\n                }\n                if (sum < target) {\n                    left++;\n                } else if (sum > target) {\n                    right--;\n                } else {\n                    return sum;\n                }\n            }\n        }\n        return closest;\n    }\n};"
+  }
+ },
+ "add-two-numbers": {
+  "solutions": {
+   "cpp": "// Approach: Walk both lists digit by digit, carrying overflow into the next node.\n// Time O(max(n, m)), Space O(1) extra besides the output list\nclass Solution {\npublic:\n    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {\n        ListNode dummy(0);\n        ListNode* tail = &dummy;\n        int carry = 0;\n        while (l1 || l2 || carry) {\n            int sum = carry;\n            if (l1) {\n                sum += l1->val;\n                l1 = l1->next;\n            }\n            if (l2) {\n                sum += l2->val;\n                l2 = l2->next;\n            }\n            carry = sum / 10;\n            tail->next = new ListNode(sum % 10);\n            tail = tail->next;\n        }\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "best-time-to-buy-and-sell-stock": {
+  "solutions": {
+   "cpp": "// Approach: Track the lowest price so far and the best profit from selling today.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int bestProfit = 0;\n        int lowestPrice = INT_MAX;\n        for (int price : prices) {\n            lowestPrice = min(lowestPrice, price);\n            bestProfit = max(bestProfit, price - lowestPrice);\n        }\n        return bestProfit;\n    }\n};"
+  }
+ },
+ "best-time-to-buy-and-sell-stock-with-cooldown": {
+  "solutions": {
+   "cpp": "// Approach: State machine DP over holding, just-sold and resting states.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int holding = INT_MIN / 2;\n        int justSold = 0;  // cooldown applies tomorrow\n        int resting = 0;   // free to buy\n        for (int price : prices) {\n            int newHolding = max(holding, resting - price);\n            int newJustSold = holding + price;\n            resting = max(resting, justSold);\n            holding = newHolding;\n            justSold = newJustSold;\n        }\n        return max(justSold, resting);\n    }\n};"
+  }
+ },
+ "binary-tree-level-order-traversal": {
+  "solutions": {
+   "cpp": "// Approach: Breadth-first search, processing the queue one level at a time.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) {\n            return result;\n        }\n        queue<TreeNode*> queue;\n        queue.push(root);\n        while (!queue.empty()) {\n            vector<int> level;\n            for (int remaining = queue.size(); remaining > 0; remaining--) {\n                TreeNode* node = queue.front();\n                queue.pop();\n                level.push_back(node->val);\n                if (node->left) {\n                    queue.push(node->left);\n                }\n                if (node->right) {\n                    queue.push(node->right);\n                }\n            }\n            result.push_back(level);\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "binary-tree-zigzag-level-order-traversal": {
+  "solutions": {
+   "cpp": "// Approach: Level-order traversal, reversing every other level's values.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {\n        vector<vector<int>> result;\n        if (!root) {\n            return result;\n        }\n        vector<TreeNode*> level = {root};\n        bool leftToRight = true;\n        while (!level.empty()) {\n            vector<int> values;\n            vector<TreeNode*> nextLevel;\n            for (TreeNode* node : level) {\n                values.push_back(node->val);\n                if (node->left) {\n                    nextLevel.push_back(node->left);\n                }\n                if (node->right) {\n                    nextLevel.push_back(node->right);\n                }\n            }\n            if (!leftToRight) {\n                reverse(values.begin(), values.end());\n            }\n            result.push_back(values);\n            leftToRight = !leftToRight;\n            level = nextLevel;\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "can-place-flowers": {
+  "solutions": {
+   "cpp": "// Approach: Greedily plant in every empty plot whose neighbours are both empty.\n// Time O(m), Space O(1)\nclass Solution {\npublic:\n    bool canPlaceFlowers(vector<int>& flowerbed, int n) {\n        int planted = 0;\n        int m = flowerbed.size();\n        for (int i = 0; i < m; i++) {\n            if (flowerbed[i] != 0) {\n                continue;\n            }\n            bool leftEmpty = i == 0 || flowerbed[i - 1] == 0;\n            bool rightEmpty = i == m - 1 || flowerbed[i + 1] == 0;\n            if (leftEmpty && rightEmpty) {\n                flowerbed[i] = 1;\n                planted++;\n            }\n        }\n        return planted >= n;\n    }\n};"
+  }
+ },
+ "car-fleet": {
+  "solutions": {
+   "cpp": "// Approach: Sort cars by position from the target backwards; a later arrival starts a new fleet.\n// Time O(n log n), Space O(n)\nclass Solution {\npublic:\n    int carFleet(int target, vector<int>& position, vector<int>& speed) {\n        int n = position.size();\n        vector<int> order(n);\n        iota(order.begin(), order.end(), 0);\n        sort(order.begin(), order.end(), [&](int a, int b) {\n            return position[a] > position[b];\n        });\n\n        int fleets = 0;\n        // Distance and speed of the fleet ahead; times are compared by cross-multiplying.\n        long long aheadDistance = 0;\n        long long aheadSpeed = 1;\n        for (int car : order) {\n            long long distance = target - position[car];\n            long long carSpeed = speed[car];\n            if (distance * aheadSpeed > aheadDistance * carSpeed) {\n                fleets++;\n                aheadDistance = distance;\n                aheadSpeed = carSpeed;\n            }\n        }\n        return fleets;\n    }\n};"
+  }
+ },
+ "coin-change": {
+  "solutions": {
+   "cpp": "// Approach: Bottom-up DP where dp[a] is the fewest coins that make amount a.\n// Time O(amount * k), Space O(amount)\nclass Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        int unreachable = amount + 1;\n        vector<int> dp(amount + 1, unreachable);\n        dp[0] = 0;\n        for (int a = 1; a <= amount; a++) {\n            for (int coin : coins) {\n                if (coin <= a) {\n                    dp[a] = min(dp[a], dp[a - coin] + 1);\n                }\n            }\n        }\n        return dp[amount] == unreachable ? -1 : dp[amount];\n    }\n};"
+  }
+ },
+ "construct-binary-tree-from-preorder-and-inorder-traversal": {
+  "solutions": {
+   "cpp": "// Approach: The next preorder value is the root; its inorder index splits left and right subtrees.\n// Time O(n), Space O(n)\nTreeNode* buildSubtree(const vector<int>& preorder, int& next,\n                       unordered_map<int, int>& inorderIndex, int low, int high) {\n    if (low > high) {\n        return nullptr;\n    }\n    TreeNode* node = new TreeNode(preorder[next++]);\n    int mid = inorderIndex[node->val];\n    node->left = buildSubtree(preorder, next, inorderIndex, low, mid - 1);\n    node->right = buildSubtree(preorder, next, inorderIndex, mid + 1, high);\n    return node;\n}\n\nclass Solution {\npublic:\n    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {\n        int n = inorder.size();\n        unordered_map<int, int> inorderIndex;\n        for (int i = 0; i < n; i++) {\n            inorderIndex[inorder[i]] = i;\n        }\n        int next = 0;\n        return buildSubtree(preorder, next, inorderIndex, 0, n - 1);\n    }\n};"
+  }
+ },
+ "contiguous-array": {
+  "solutions": {
+   "cpp": "// Approach: Treat 0 as -1 and store the first index of each running balance in a hash map.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int findMaxLength(vector<int>& nums) {\n        int n = nums.size();\n        unordered_map<int, int> firstSeenAt;\n        firstSeenAt[0] = -1;\n        int balance = 0;\n        int bestLength = 0;\n        for (int i = 0; i < n; i++) {\n            balance += nums[i] == 1 ? 1 : -1;\n            auto it = firstSeenAt.find(balance);\n            if (it != firstSeenAt.end()) {\n                bestLength = max(bestLength, i - it->second);\n            } else {\n                firstSeenAt[balance] = i;\n            }\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "count-primes": {
+  "solutions": {
+   "cpp": "// Approach: Sieve of Eratosthenes, crossing out multiples starting from i * i.\n// Time O(n log log n), Space O(n)\nclass Solution {\npublic:\n    int countPrimes(int n) {\n        if (n < 3) {\n            return 0;\n        }\n        vector<bool> isComposite(n, false);\n        int primes = 0;\n        for (int i = 2; i < n; i++) {\n            if (isComposite[i]) {\n                continue;\n            }\n            primes++;\n            // long long avoids overflow of i * i\n            for (long long multiple = (long long)i * i; multiple < n; multiple += i) {\n                isComposite[multiple] = true;\n            }\n        }\n        return primes;\n    }\n};"
+  }
+ },
+ "course-schedule": {
+  "solutions": {
+   "cpp": "// Approach: Kahn's topological sort; all courses can be taken if none is left in a cycle.\n// Time O(V + E), Space O(V + E)\nclass Solution {\npublic:\n    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {\n        vector<vector<int>> unlocks(numCourses);\n        vector<int> indegree(numCourses, 0);\n        for (const auto& pair : prerequisites) {\n            unlocks[pair[1]].push_back(pair[0]);\n            indegree[pair[0]]++;\n        }\n        queue<int> queue;\n        for (int course = 0; course < numCourses; course++) {\n            if (indegree[course] == 0) {\n                queue.push(course);\n            }\n        }\n        int taken = 0;\n        while (!queue.empty()) {\n            int course = queue.front();\n            queue.pop();\n            taken++;\n            for (int next : unlocks[course]) {\n                if (--indegree[next] == 0) {\n                    queue.push(next);\n                }\n            }\n        }\n        return taken == numCourses;\n    }\n};"
+  }
+ },
+ "delete-and-earn": {
+  "solutions": {
+   "cpp": "// Approach: Bucket points by value, then solve it like House Robber over the value line.\n// Time O(n + maxValue), Space O(maxValue)\nclass Solution {\npublic:\n    int deleteAndEarn(vector<int>& nums) {\n        vector<int> points(*max_element(nums.begin(), nums.end()) + 1, 0);\n        for (int x : nums) {\n            points[x] += x;\n        }\n        int take = 0;\n        int skip = 0;\n        for (int value : points) {\n            int newTake = skip + value;\n            skip = max(take, skip);\n            take = newTake;\n        }\n        return max(take, skip);\n    }\n};"
+  }
+ },
+ "distinct-subsequences": {
+  "solutions": {
+   "cpp": "// Approach: 1D DP counting ways to form prefixes of t, updated right to left for each char of s.\n// Time O(n * m), Space O(m)\nclass Solution {\npublic:\n    int numDistinct(string s, string t) {\n        int m = t.size();\n        // ways[j] = number of ways to form t[0..j) from the part of s seen so far\n        vector<long long> ways(m + 1, 0);\n        ways[0] = 1;\n        for (char ch : s) {\n            for (int j = m; j >= 1; j--) {\n                if (t[j - 1] == ch) {\n                    ways[j] += ways[j - 1];\n                }\n            }\n        }\n        return ways[m];\n    }\n};"
+  }
+ },
+ "excel-sheet-column-number": {
+  "solutions": {
+   "cpp": "// Approach: Read the title as a base-26 number with digits A=1 .. Z=26.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int titleToNumber(string columnTitle) {\n        long long number = 0;\n        for (char ch : columnTitle) {\n            number = number * 26 + (ch - 'A' + 1);\n        }\n        return number;\n    }\n};"
+  }
+ },
+ "find-first-and-last-position-of-element-in-sorted-array": {
+  "solutions": {
+   "cpp": "// Approach: Two binary searches, lower_bound and upper_bound, give the range edges.\n// Time O(log n), Space O(1)\nclass Solution {\npublic:\n    vector<int> searchRange(vector<int>& nums, int target) {\n        int n = nums.size();\n        int first = lower_bound(nums.begin(), nums.end(), target) - nums.begin();\n        if (first == n || nums[first] != target) {\n            return {-1, -1};\n        }\n        int last = upper_bound(nums.begin(), nums.end(), target) - nums.begin() - 1;\n        return {first, last};\n    }\n};"
+  }
+ },
+ "find-the-duplicate-number": {
+  "solutions": {
+   "cpp": "// Approach: Floyd's cycle detection, treating nums[i] as the next pointer of node i.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int findDuplicate(vector<int>& nums) {\n        int slow = nums[0];\n        int fast = nums[0];\n        do {\n            slow = nums[slow];\n            fast = nums[nums[fast]];\n        } while (slow != fast);\n\n        // The cycle entrance is the duplicated value.\n        slow = nums[0];\n        while (slow != fast) {\n            slow = nums[slow];\n            fast = nums[fast];\n        }\n        return slow;\n    }\n};"
+  }
+ },
+ "first-unique-character-in-a-string": {
+  "solutions": {
+   "cpp": "// Approach: Count each character, then return the first index whose count is one.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int firstUniqChar(string s) {\n        int n = s.size();\n        int counts[256] = {0};\n        for (unsigned char ch : s) {\n            counts[ch]++;\n        }\n        for (int i = 0; i < n; i++) {\n            if (counts[(unsigned char)s[i]] == 1) {\n                return i;\n            }\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "generate-parentheses-count": {
+  "solutions": {
+   "cpp": "// Approach: Backtracking that only adds a close bracket when it has a matching open one.\n// Time O(4^n / sqrt(n)), Space O(n) recursion depth excluding output\nvoid buildParentheses(string current, int opened, int closed, int n, vector<string>& result) {\n    if ((int)current.size() == 2 * n) {\n        result.push_back(current);\n        return;\n    }\n    if (opened < n) {\n        buildParentheses(current + \"(\", opened + 1, closed, n, result);\n    }\n    if (closed < opened) {\n        buildParentheses(current + \")\", opened, closed + 1, n, result);\n    }\n}\n\nclass Solution {\npublic:\n    vector<string> generateParenthesis(int n) {\n        vector<string> result;\n        buildParentheses(\"\", 0, 0, n, result);\n        return result;\n    }\n};"
+  }
+ },
+ "happy-number": {
+  "solutions": {
+   "cpp": "// Approach: Floyd's cycle detection on the sequence of digit-square sums.\n// Time O(log n), Space O(1)\nint digitSquareSum(long long x) {\n    int total = 0;\n    while (x > 0) {\n        int digit = x % 10;\n        total += digit * digit;\n        x /= 10;\n    }\n    return total;\n}\n\nclass Solution {\npublic:\n    bool isHappy(int n) {\n        long long slow = n;\n        long long fast = digitSquareSum(n);\n        while (fast != 1 && slow != fast) {\n            slow = digitSquareSum(slow);\n            fast = digitSquareSum(digitSquareSum(fast));\n        }\n        return fast == 1;\n    }\n};"
+  }
+ },
+ "house-robber-iii": {
+  "solutions": {
+   "cpp": "// Approach: Post-order DP returning the best loot with and without robbing each node.\n// Time O(n), Space O(h) for tree height h\npair<int, int> robSubtree(TreeNode* node) {\n    // returns {best if node is robbed, best if node is skipped}\n    if (!node) {\n        return {0, 0};\n    }\n    auto left = robSubtree(node->left);\n    auto right = robSubtree(node->right);\n    int robbed = node->val + left.second + right.second;\n    int skipped = max(left.first, left.second) + max(right.first, right.second);\n    return {robbed, skipped};\n}\n\nclass Solution {\npublic:\n    int rob(TreeNode* root) {\n        auto best = robSubtree(root);\n        return max(best.first, best.second);\n    }\n};"
+  }
+ },
+ "interleaving-string": {
+  "solutions": {
+   "cpp": "// Approach: DP over prefixes of s1 and s2, compressed to a single row.\n// Time O(m * n), Space O(n)\nclass Solution {\npublic:\n    bool isInterleave(string s1, string s2, string s3) {\n        int m = s1.size();\n        int n = s2.size();\n        if (m + n != (int)s3.size()) {\n            return false;\n        }\n        // canForm[j]: s3[0..i+j) is an interleaving of s1[0..i) and s2[0..j)\n        vector<char> canForm(n + 1, 0);\n        for (int i = 0; i <= m; i++) {\n            for (int j = 0; j <= n; j++) {\n                if (i == 0 && j == 0) {\n                    canForm[j] = 1;\n                    continue;\n                }\n                bool ok = false;\n                if (i > 0 && canForm[j] && s1[i - 1] == s3[i + j - 1]) {\n                    ok = true;\n                }\n                if (j > 0 && canForm[j - 1] && s2[j - 1] == s3[i + j - 1]) {\n                    ok = true;\n                }\n                canForm[j] = ok;\n            }\n        }\n        return canForm[n];\n    }\n};"
+  }
+ },
+ "is-graph-bipartite": {
+  "solutions": {
+   "cpp": "// Approach: Two-colour every component with an iterative DFS and fail on a same-colour edge.\n// Time O(V + E), Space O(V + E)\nclass Solution {\npublic:\n    bool isBipartite(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adjacent(n);\n        for (const auto& edge : edges) {\n            adjacent[edge[0]].push_back(edge[1]);\n            adjacent[edge[1]].push_back(edge[0]);\n        }\n        vector<int> color(n, -1);\n        for (int start = 0; start < n; start++) {\n            if (color[start] != -1) {\n                continue;\n            }\n            color[start] = 0;\n            vector<int> stack = {start};\n            while (!stack.empty()) {\n                int node = stack.back();\n                stack.pop_back();\n                for (int neighbor : adjacent[node]) {\n                    if (color[neighbor] == -1) {\n                        color[neighbor] = 1 - color[node];\n                        stack.push_back(neighbor);\n                    } else if (color[neighbor] == color[node]) {\n                        return false;\n                    }\n                }\n            }\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "isomorphic-strings": {
+  "solutions": {
+   "cpp": "// Approach: Keep a two-way character mapping and reject any conflict.\n// Time O(n), Space O(1) for a fixed alphabet\nclass Solution {\npublic:\n    bool isIsomorphic(string s, string t) {\n        unordered_map<char, char> sToT;\n        unordered_map<char, char> tToS;\n        int n = s.size();\n        for (int i = 0; i < n; i++) {\n            char from = s[i];\n            char to = t[i];\n            if (sToT.count(from) && sToT[from] != to) {\n                return false;\n            }\n            if (tToS.count(to) && tToS[to] != from) {\n                return false;\n            }\n            sToT[from] = to;\n            tToS[to] = from;\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "koko-eating-bananas": {
+  "solutions": {
+   "cpp": "// Approach: Binary search the smallest eating speed that finishes within h hours.\n// Time O(n log maxPile), Space O(1)\nclass Solution {\npublic:\n    int minEatingSpeed(vector<int>& piles, int h) {\n        int low = 1;\n        int high = *max_element(piles.begin(), piles.end());\n        while (low < high) {\n            int speed = low + (high - low) / 2;\n            long long hours = 0;\n            for (int pile : piles) {\n                hours += (pile + speed - 1) / speed;\n            }\n            if (hours <= h) {\n                high = speed;\n            } else {\n                low = speed + 1;\n            }\n        }\n        return low;\n    }\n};"
+  }
+ },
+ "kth-smallest-element-in-a-sorted-matrix": {
+  "solutions": {
+   "cpp": "// Approach: Flatten the matrix, sort it and take the k-th element.\n// Time O(N log N) for N cells, Space O(N)\nclass Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& matrix, int k) {\n        vector<int> values;\n        for (const auto& row : matrix) {\n            for (int value : row) {\n                values.push_back(value);\n            }\n        }\n        sort(values.begin(), values.end());\n        return values[k - 1];\n    }\n};"
+  }
+ },
+ "lemonade-change": {
+  "solutions": {
+   "cpp": "// Approach: Greedy change-making that tracks the count of $5 and $10 bills held.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    bool lemonadeChange(vector<int>& bills) {\n        int fives = 0;\n        int tens = 0;\n        for (int bill : bills) {\n            if (bill == 5) {\n                fives++;\n            } else if (bill == 10) {\n                if (fives == 0) {\n                    return false;\n                }\n                fives--;\n                tens++;\n            } else if (tens > 0 && fives > 0) {\n                // Prefer 10 + 5 so the more flexible 5s are kept.\n                tens--;\n                fives--;\n            } else if (fives >= 3) {\n                fives -= 3;\n            } else {\n                return false;\n            }\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "longest-consecutive-sequence": {
+  "solutions": {
+   "cpp": "// Approach: Hash set; only start counting from numbers that begin a run.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int longestConsecutive(vector<int>& nums) {\n        unordered_set<int> values(nums.begin(), nums.end());\n        int bestLength = 0;\n        for (int start : values) {\n            if (values.count(start - 1)) {\n                continue;\n            }\n            int length = 1;\n            while (values.count(start + length)) {\n                length++;\n            }\n            bestLength = max(bestLength, length);\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "longest-repeating-character-replacement": {
+  "solutions": {
+   "cpp": "// Approach: Sliding window valid while at most k characters differ from the most common one.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        int n = s.size();\n        vector<int> counts(26, 0);\n        int bestLength = 0;\n        int windowStart = 0;\n        int maxCount = 0;\n        for (int windowEnd = 0; windowEnd < n; windowEnd++) {\n            maxCount = max(maxCount, ++counts[s[windowEnd] - 'A']);\n            // maxCount never needs to shrink: a smaller value cannot beat bestLength.\n            while (windowEnd - windowStart + 1 - maxCount > k) {\n                counts[s[windowStart++] - 'A']--;\n            }\n            bestLength = max(bestLength, windowEnd - windowStart + 1);\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "longest-valid-parentheses": {
+  "solutions": {
+   "cpp": "// Approach: Stack of indices, with the last unmatched position at the bottom as a base.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int longestValidParentheses(string s) {\n        int n = s.size();\n        int bestLength = 0;\n        vector<int> stack = {-1};\n        for (int i = 0; i < n; i++) {\n            if (s[i] == '(') {\n                stack.push_back(i);\n                continue;\n            }\n            stack.pop_back();\n            if (stack.empty()) {\n                stack.push_back(i);\n            } else {\n                bestLength = max(bestLength, i - stack.back());\n            }\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "majority-element": {
+  "solutions": {
+   "cpp": "// Approach: Boyer-Moore voting; the majority element survives all pairwise cancellations.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int majorityElement(vector<int>& nums) {\n        int candidate = 0;\n        int votes = 0;\n        for (int x : nums) {\n            if (votes == 0) {\n                candidate = x;\n            }\n            votes += (x == candidate) ? 1 : -1;\n        }\n        return candidate;\n    }\n};"
+  }
+ },
+ "maximal-square": {
+  "solutions": {
+   "cpp": "// Approach: DP where dp[i][j] is the side of the largest square ending at corner (i, j).\n// Time O(rows * cols), Space O(rows * cols)\nclass Solution {\npublic:\n    int maximalSquare(vector<vector<char>>& matrix) {\n        int rows = matrix.size();\n        int cols = matrix[0].size();\n        vector<vector<int>> dp(rows + 1, vector<int>(cols + 1, 0));\n        int bestSide = 0;\n        for (int i = 1; i <= rows; i++) {\n            for (int j = 1; j <= cols; j++) {\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[i][j] = 1 + min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});\n                    bestSide = max(bestSide, dp[i][j]);\n                }\n            }\n        }\n        return bestSide * bestSide;\n    }\n};"
+  }
+ },
+ "maximum-subarray": {
+  "solutions": {
+   "cpp": "// Approach: Kadane's algorithm; extend the current subarray or restart at this element.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int n = nums.size();\n        int bestSum = nums[0];\n        int currentSum = nums[0];\n        for (int i = 1; i < n; i++) {\n            currentSum = max(nums[i], currentSum + nums[i]);\n            bestSum = max(bestSum, currentSum);\n        }\n        return bestSum;\n    }\n};"
+  }
+ },
+ "meeting-rooms-ii": {
+  "solutions": {
+   "cpp": "// Approach: Sort start and end times separately and sweep, reusing a room when one has freed up.\n// Time O(n log n), Space O(n)\nclass Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        vector<int> starts;\n        vector<int> ends;\n        for (const auto& interval : intervals) {\n            starts.push_back(interval[0]);\n            ends.push_back(interval[1]);\n        }\n        sort(starts.begin(), starts.end());\n        sort(ends.begin(), ends.end());\n        int rooms = 0;\n        int nextToEnd = 0;\n        for (int start : starts) {\n            if (start < ends[nextToEnd]) {\n                rooms++;\n            } else {\n                nextToEnd++;\n            }\n        }\n        return rooms;\n    }\n};"
+  }
+ },
+ "merge-two-sorted-lists": {
+  "solutions": {
+   "cpp": "// Approach: Splice the smaller head of the two lists onto a tail pointer repeatedly.\n// Time O(n + m), Space O(1)\nclass Solution {\npublic:\n    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {\n        ListNode dummy(0);\n        ListNode* tail = &dummy;\n        while (list1 && list2) {\n            if (list1->val <= list2->val) {\n                tail->next = list1;\n                list1 = list1->next;\n            } else {\n                tail->next = list2;\n                list2 = list2->next;\n            }\n            tail = tail->next;\n        }\n        tail->next = list1 ? list1 : list2;\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "min-cost-to-connect-all-points": {
+  "solutions": {
+   "cpp": "// Approach: Prim's algorithm on the implicit complete graph with Manhattan distances.\n// Time O(n^2), Space O(n)\nclass Solution {\npublic:\n    int minCostConnectPoints(vector<vector<int>>& points) {\n        int n = points.size();\n        vector<long long> cheapestEdge(n, LLONG_MAX);\n        vector<bool> inTree(n, false);\n        cheapestEdge[0] = 0;\n        long long totalCost = 0;\n        for (int added = 0; added < n; added++) {\n            int closest = -1;\n            for (int i = 0; i < n; i++) {\n                if (!inTree[i] && (closest == -1 || cheapestEdge[i] < cheapestEdge[closest])) {\n                    closest = i;\n                }\n            }\n            inTree[closest] = true;\n            totalCost += cheapestEdge[closest];\n            for (int other = 0; other < n; other++) {\n                if (inTree[other]) {\n                    continue;\n                }\n                long long distance =\n                    llabs((long long)points[closest][0] - points[other][0]) +\n                    llabs((long long)points[closest][1] - points[other][1]);\n                cheapestEdge[other] = min(cheapestEdge[other], distance);\n            }\n        }\n        return totalCost;\n    }\n};"
+  }
+ },
+ "minimum-falling-path-sum": {
+  "solutions": {
+   "cpp": "// Approach: Row-by-row DP; each cell adds the cheapest of the three cells above it.\n// Time O(n^2), Space O(n)\nclass Solution {\npublic:\n    int minFallingPathSum(vector<vector<int>>& matrix) {\n        int n = matrix.size();\n        vector<int> previous = matrix[0];\n        for (int row = 1; row < n; row++) {\n            vector<int> current(n);\n            for (int col = 0; col < n; col++) {\n                int cheapestAbove = previous[col];\n                if (col > 0) {\n                    cheapestAbove = min(cheapestAbove, previous[col - 1]);\n                }\n                if (col < n - 1) {\n                    cheapestAbove = min(cheapestAbove, previous[col + 1]);\n                }\n                current[col] = matrix[row][col] + cheapestAbove;\n            }\n            previous = current;\n        }\n        return *min_element(previous.begin(), previous.end());\n    }\n};"
+  }
+ },
+ "minimum-size-subarray-sum": {
+  "solutions": {
+   "cpp": "// Approach: Sliding window; shrink from the left whenever the sum reaches the target.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int minSubArrayLen(int target, vector<int>& nums) {\n        int n = nums.size();\n        int bestLength = n + 1;\n        int windowStart = 0;\n        long long windowSum = 0;\n        for (int windowEnd = 0; windowEnd < n; windowEnd++) {\n            windowSum += nums[windowEnd];\n            while (windowSum >= target) {\n                bestLength = min(bestLength, windowEnd - windowStart + 1);\n                windowSum -= nums[windowStart++];\n            }\n        }\n        return bestLength == n + 1 ? 0 : bestLength;\n    }\n};"
+  }
+ },
+ "move-zeroes": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers; swap each non-zero element into the next free front slot.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int n = nums.size();\n        int nextSlot = 0;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] != 0) {\n                swap(nums[i], nums[nextSlot++]);\n            }\n        }\n    }\n};"
+  }
+ },
+ "next-greater-element-ii": {
+  "solutions": {
+   "cpp": "// Approach: Monotonic stack over two passes of the array to simulate the circular wrap.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> result(n, -1);\n        vector<int> waiting;  // indices still looking for a greater element\n        for (int i = 0; i < 2 * n; i++) {\n            int value = nums[i % n];\n            while (!waiting.empty() && nums[waiting.back()] < value) {\n                result[waiting.back()] = value;\n                waiting.pop_back();\n            }\n            if (i < n) {\n                waiting.push_back(i);\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "number-of-1-bits": {
+  "solutions": {
+   "cpp": "// Approach: Brian Kernighan's trick; n & (n - 1) clears the lowest set bit.\n// Time O(number of set bits), Space O(1)\nclass Solution {\npublic:\n    int hammingWeight(int n) {\n        int bits = 0;\n        while (n) {\n            n &= n - 1;\n            bits++;\n        }\n        return bits;\n    }\n};"
+  }
+ },
+ "number-of-provinces": {
+  "solutions": {
+   "cpp": "// Approach: Union-Find with path compression; each successful union merges two provinces.\n// Time O(n^2 * alpha(n)), Space O(n)\nclass Solution {\npublic:\n    int findCircleNum(vector<vector<int>>& isConnected) {\n        int n = isConnected.size();\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        auto findRoot = [&](int x) {\n            while (parent[x] != x) {\n                parent[x] = parent[parent[x]];\n                x = parent[x];\n            }\n            return x;\n        };\n\n        int provinces = n;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n && j < (int)isConnected[i].size(); j++) {\n                if (isConnected[i][j] != 1) {\n                    continue;\n                }\n                int rootI = findRoot(i);\n                int rootJ = findRoot(j);\n                if (rootI != rootJ) {\n                    parent[rootI] = rootJ;\n                    provinces--;\n                }\n            }\n        }\n        return provinces;\n    }\n};"
+  }
+ },
+ "palindrome-number": {
+  "solutions": {
+   "cpp": "// Approach: Reverse only the second half of the digits and compare it with the first half.\n// Time O(log x), Space O(1)\nclass Solution {\npublic:\n    bool isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n        int reversedHalf = 0;\n        while (x > reversedHalf) {\n            reversedHalf = reversedHalf * 10 + x % 10;\n            x /= 10;\n        }\n        // For an odd digit count the middle digit is dropped with reversedHalf / 10.\n        return x == reversedHalf || x == reversedHalf / 10;\n    }\n};"
+  }
+ },
+ "partition-equal-subset-sum": {
+  "solutions": {
+   "cpp": "// Approach: 0/1 knapsack boolean DP for a subset summing to half the total.\n// Time O(n * sum), Space O(sum)\nclass Solution {\npublic:\n    bool canPartition(vector<int>& nums) {\n        int total = 0;\n        for (int x : nums) {\n            total += x;\n        }\n        if (total % 2 != 0) {\n            return false;\n        }\n        int half = total / 2;\n        vector<bool> reachable(half + 1, false);\n        reachable[0] = true;\n        for (int x : nums) {\n            // Go downwards so each number is used at most once.\n            for (int sum = half; sum >= x; sum--) {\n                if (reachable[sum - x]) {\n                    reachable[sum] = true;\n                }\n            }\n        }\n        return reachable[half];\n    }\n};"
+  }
+ },
+ "pascals-triangle": {
+  "solutions": {
+   "cpp": "// Approach: Build each row from the previous one; inner cells are the sum of the two above.\n// Time O(numRows^2), Space O(numRows^2)\nclass Solution {\npublic:\n    vector<vector<int>> generate(int numRows) {\n        vector<vector<int>> triangle;\n        for (int i = 0; i < numRows; i++) {\n            vector<int> row(i + 1, 1);\n            for (int j = 1; j < i; j++) {\n                row[j] = triangle[i - 1][j - 1] + triangle[i - 1][j];\n            }\n            triangle.push_back(row);\n        }\n        return triangle;\n    }\n};"
+  }
+ },
+ "path-with-minimum-effort": {
+  "solutions": {
+   "cpp": "// Approach: Dijkstra where a path's cost is the largest height difference along it.\n// Time O(m * n log(m * n)), Space O(m * n)\nclass Solution {\npublic:\n    int minimumEffortPath(vector<vector<int>>& heights) {\n        int m = heights.size();\n        int n = heights[0].size();\n        vector<vector<int>> bestEffort(m, vector<int>(n, INT_MAX));\n        bestEffort[0][0] = 0;\n        using State = tuple<int, int, int>;  // effort, row, col\n        priority_queue<State, vector<State>, greater<>> queue;\n        queue.push({0, 0, 0});\n        const int rowStep[4] = {1, -1, 0, 0};\n        const int colStep[4] = {0, 0, 1, -1};\n        while (!queue.empty()) {\n            auto [effort, row, col] = queue.top();\n            queue.pop();\n            if (effort > bestEffort[row][col]) {\n                continue;\n            }\n            if (row == m - 1 && col == n - 1) {\n                return effort;\n            }\n            for (int d = 0; d < 4; d++) {\n                int nextRow = row + rowStep[d];\n                int nextCol = col + colStep[d];\n                if (nextRow < 0 || nextRow >= m || nextCol < 0 || nextCol >= n) {\n                    continue;\n                }\n                int nextEffort = max(effort, abs(heights[nextRow][nextCol] - heights[row][col]));\n                if (nextEffort < bestEffort[nextRow][nextCol]) {\n                    bestEffort[nextRow][nextCol] = nextEffort;\n                    queue.push({nextEffort, nextRow, nextCol});\n                }\n            }\n        }\n        return 0;\n    }\n};"
+  }
+ },
+ "plus-one": {
+  "solutions": {
+   "cpp": "// Approach: Add one from the last digit, carrying through trailing nines.\n// Time O(n), Space O(1) (O(n) only when every digit is 9)\nclass Solution {\npublic:\n    vector<int> plusOne(vector<int>& digits) {\n        for (int i = (int)digits.size() - 1; i >= 0; i--) {\n            if (digits[i] < 9) {\n                digits[i]++;\n                return digits;\n            }\n            digits[i] = 0;\n        }\n        digits.insert(digits.begin(), 1);\n        return digits;\n    }\n};"
+  }
+ },
+ "redundant-connection": {
+  "solutions": {
+   "cpp": "// Approach: Union-Find; the first edge joining two already-connected nodes closes a cycle.\n// Time O(n * alpha(n)), Space O(n)\nclass Solution {\npublic:\n    vector<int> findRedundantConnection(vector<vector<int>>& edges) {\n        int n = edges.size();\n        vector<int> parent(n + 1);\n        iota(parent.begin(), parent.end(), 0);\n        auto findRoot = [&](int x) {\n            while (parent[x] != x) {\n                parent[x] = parent[parent[x]];\n                x = parent[x];\n            }\n            return x;\n        };\n        for (const auto& edge : edges) {\n            int rootA = findRoot(edge[0]);\n            int rootB = findRoot(edge[1]);\n            if (rootA == rootB) {\n                return {edge[0], edge[1]};\n            }\n            parent[rootA] = rootB;\n        }\n        return {};\n    }\n};"
+  }
+ },
+ "remove-duplicates-from-sorted-list": {
+  "solutions": {
+   "cpp": "// Approach: Single pass that unlinks a node whenever it equals its successor.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* deleteDuplicates(ListNode* head) {\n        ListNode* node = head;\n        while (node && node->next) {\n            if (node->val == node->next->val) {\n                node->next = node->next->next;\n            } else {\n                node = node->next;\n            }\n        }\n        return head;\n    }\n};"
+  }
+ },
+ "remove-nth-node-from-end-of-list": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers n nodes apart; when the lead hits the end, the other precedes the target.\n// Time O(L) for list length L, Space O(1)\nclass Solution {\npublic:\n    ListNode* removeNthFromEnd(ListNode* head, int n) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* lead = &dummy;\n        ListNode* trail = &dummy;\n        for (int i = 0; i < n; i++) {\n            lead = lead->next;\n        }\n        while (lead->next) {\n            lead = lead->next;\n            trail = trail->next;\n        }\n        trail->next = trail->next->next;\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "reverse-integer": {
+  "solutions": {
+   "cpp": "// Approach: Peel off digits into a 64-bit result and return 0 if it leaves the int range.\n// Time O(log x), Space O(1)\nclass Solution {\npublic:\n    int reverse(int x) {\n        long long remaining = x;\n        long long reversed = 0;\n        bool negative = remaining < 0;\n        if (negative) {\n            remaining = -remaining;\n        }\n        while (remaining > 0) {\n            reversed = reversed * 10 + remaining % 10;\n            remaining /= 10;\n        }\n        if (negative) {\n            reversed = -reversed;\n        }\n        return (reversed < INT_MIN || reversed > INT_MAX) ? 0 : reversed;\n    }\n};"
+  }
+ },
+ "reverse-nodes-in-k-group": {
+  "solutions": {
+   "cpp": "// Approach: Find each group's k-th node, reverse the group in place and relink it.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* reverseKGroup(ListNode* head, int k) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* groupPrev = &dummy;\n        while (true) {\n            ListNode* kth = groupPrev;\n            for (int i = 0; i < k; i++) {\n                kth = kth->next;\n                if (!kth) {\n                    return dummy.next;\n                }\n            }\n            ListNode* groupNext = kth->next;\n            ListNode* previous = groupNext;\n            ListNode* node = groupPrev->next;\n            while (node != groupNext) {\n                ListNode* next = node->next;\n                node->next = previous;\n                previous = node;\n                node = next;\n            }\n            ListNode* groupFirst = groupPrev->next;\n            groupPrev->next = kth;\n            groupPrev = groupFirst;\n        }\n    }\n};"
+  }
+ },
+ "rotate-image": {
+  "solutions": {
+   "cpp": "// Approach: Transpose the matrix, then reverse each row to rotate 90 degrees clockwise.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    void rotate(vector<vector<int>>& matrix) {\n        int n = matrix.size();\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                swap(matrix[i][j], matrix[j][i]);\n            }\n        }\n        for (auto& row : matrix) {\n            reverse(row.begin(), row.end());\n        }\n    }\n};"
+  }
+ },
+ "same-tree": {
+  "solutions": {
+   "cpp": "// Approach: Recursively compare both trees node by node.\n// Time O(n), Space O(h) for tree height h\nclass Solution {\npublic:\n    bool isSameTree(TreeNode* p, TreeNode* q) {\n        if (!p && !q) {\n            return true;\n        }\n        if (!p || !q || p->val != q->val) {\n            return false;\n        }\n        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);\n    }\n};"
+  }
+ },
+ "search-insert-position": {
+  "solutions": {
+   "cpp": "// Approach: Binary search for the first index whose value is not less than target.\n// Time O(log n), Space O(1)\nclass Solution {\npublic:\n    int searchInsert(vector<int>& nums, int target) {\n        int low = 0;\n        int high = nums.size();\n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid;\n            }\n        }\n        return low;\n    }\n};"
+  }
+ },
+ "single-number": {
+  "solutions": {
+   "cpp": "// Approach: XOR all numbers; paired values cancel and the single one remains.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int singleNumber(vector<int>& nums) {\n        int result = 0;\n        for (int x : nums) {\n            result ^= x;\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "sort-colors": {
+  "solutions": {
+   "cpp": "// Approach: Dutch national flag; three pointers partition into 0s, 1s and 2s in one pass.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    void sortColors(vector<int>& nums) {\n        int zeroEnd = 0;\n        int i = 0;\n        int twoStart = (int)nums.size() - 1;\n        while (i <= twoStart) {\n            if (nums[i] == 0) {\n                swap(nums[zeroEnd++], nums[i++]);\n            } else if (nums[i] == 2) {\n                swap(nums[i], nums[twoStart--]);\n            } else {\n                i++;\n            }\n        }\n    }\n};"
+  }
+ },
+ "split-array-largest-sum": {
+  "solutions": {
+   "cpp": "// Approach: Binary search the answer; greedily count the subarrays needed for a given max sum.\n// Time O(n log(sum)), Space O(1)\nclass Solution {\npublic:\n    int splitArray(vector<int>& nums, int k) {\n        int low = *max_element(nums.begin(), nums.end());\n        int high = accumulate(nums.begin(), nums.end(), 0);\n        while (low < high) {\n            int maxSum = low + (high - low) / 2;\n            int parts = 1;\n            int currentSum = 0;\n            for (int x : nums) {\n                if (currentSum + x > maxSum) {\n                    parts++;\n                    currentSum = x;\n                } else {\n                    currentSum += x;\n                }\n            }\n            if (parts <= k) {\n                high = maxSum;\n            } else {\n                low = maxSum + 1;\n            }\n        }\n        return low;\n    }\n};"
+  }
+ },
+ "subarray-sum-equals-k": {
+  "solutions": {
+   "cpp": "// Approach: Prefix sums with a hash map counting how often each prefix has occurred.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int subarraySum(vector<int>& nums, int k) {\n        unordered_map<long long, int> prefixCount;\n        prefixCount[0] = 1;\n        long long prefixSum = 0;\n        int subarrays = 0;\n        for (int x : nums) {\n            prefixSum += x;\n            auto it = prefixCount.find(prefixSum - k);\n            if (it != prefixCount.end()) {\n                subarrays += it->second;\n            }\n            prefixCount[prefixSum]++;\n        }\n        return subarrays;\n    }\n};"
+  }
+ },
+ "sum-of-two-integers": {
+  "solutions": {
+   "cpp": "// Approach: Add with bit operations: XOR gives the sum without carry, AND shifted gives the carry.\n// Time O(1), Space O(1)\nclass Solution {\npublic:\n    int getSum(int a, int b) {\n        // Unsigned arithmetic avoids undefined behaviour when the carry shifts out.\n        unsigned sum = a;\n        unsigned carry = b;\n        while (carry) {\n            unsigned nextCarry = (sum & carry) << 1;\n            sum ^= carry;\n            carry = nextCarry;\n        }\n        return sum;\n    }\n};"
+  }
+ },
+ "swap-nodes-in-pairs": {
+  "solutions": {
+   "cpp": "// Approach: Rewire each adjacent pair behind a dummy head.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* swapPairs(ListNode* head) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* previous = &dummy;\n        while (previous->next && previous->next->next) {\n            ListNode* first = previous->next;\n            ListNode* second = first->next;\n            first->next = second->next;\n            second->next = first;\n            previous->next = second;\n            previous = first;\n        }\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "target-sum": {
+  "solutions": {
+   "cpp": "// Approach: Reduce to counting subsets that sum to (total + target) / 2, using 0/1 knapsack.\n// Time O(n * sum), Space O(sum)\nclass Solution {\npublic:\n    int findTargetSumWays(vector<int>& nums, int target) {\n        int total = 0;\n        for (int x : nums) {\n            total += x;\n        }\n        // With positives P and negatives N: P - N = target and P + N = total.\n        if (abs(target) > total || (total + target) % 2 != 0) {\n            return 0;\n        }\n        int subsetSum = (total + target) / 2;\n        vector<long long> ways(subsetSum + 1, 0);\n        ways[0] = 1;\n        for (int x : nums) {\n            for (int sum = subsetSum; sum >= x; sum--) {\n                ways[sum] += ways[sum - x];\n            }\n        }\n        return ways[subsetSum];\n    }\n};"
+  }
+ },
+ "trapping-rain-water": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers; the side with the lower wall is bounded by its own running maximum.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int trap(vector<int>& height) {\n        int left = 0;\n        int right = (int)height.size() - 1;\n        int leftMax = 0;\n        int rightMax = 0;\n        long long water = 0;\n        while (left < right) {\n            if (height[left] < height[right]) {\n                leftMax = max(leftMax, height[left]);\n                water += leftMax - height[left++];\n            } else {\n                rightMax = max(rightMax, height[right]);\n                water += rightMax - height[right--];\n            }\n        }\n        return water;\n    }\n};"
+  }
+ },
+ "ugly-number-ii": {
+  "solutions": {
+   "cpp": "// Approach: Build ugly numbers in order with three pointers for the multiples of 2, 3 and 5.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int nthUglyNumber(int n) {\n        vector<long long> ugly(n, 1);\n        int index2 = 0;\n        int index3 = 0;\n        int index5 = 0;\n        for (int i = 1; i < n; i++) {\n            long long by2 = ugly[index2] * 2;\n            long long by3 = ugly[index3] * 3;\n            long long by5 = ugly[index5] * 5;\n            long long next = min({by2, by3, by5});\n            ugly[i] = next;\n            if (next == by2) {\n                index2++;\n            }\n            if (next == by3) {\n                index3++;\n            }\n            if (next == by5) {\n                index5++;\n            }\n        }\n        return ugly[n - 1];\n    }\n};"
+  }
+ },
+ "valid-anagram": {
+  "solutions": {
+   "cpp": "// Approach: Two strings are anagrams exactly when their sorted forms are equal.\n// Time O(n log n), Space O(1) extra (sorts the copies in place)\nclass Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        sort(s.begin(), s.end());\n        sort(t.begin(), t.end());\n        return s == t;\n    }\n};"
+  }
+ },
+ "valid-parentheses": {
+  "solutions": {
+   "cpp": "// Approach: Stack of open brackets; every closer must match the most recent opener.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    bool isValid(string s) {\n        string openBrackets;\n        for (char ch : s) {\n            if (ch == '(' || ch == '[' || ch == '{') {\n                openBrackets.push_back(ch);\n                continue;\n            }\n            if (openBrackets.empty()) {\n                return false;\n            }\n            char open = openBrackets.back();\n            openBrackets.pop_back();\n            bool matches = (ch == ')' && open == '(') ||\n                           (ch == ']' && open == '[') ||\n                           (ch == '}' && open == '{');\n            if (!matches) {\n                return false;\n            }\n        }\n        return openBrackets.empty();\n    }\n};"
+  }
+ },
+ "wildcard-matching": {
+  "solutions": {
+   "cpp": "// Approach: Greedy two-pointer matching that backtracks to the most recent '*' on a mismatch.\n// Time O(n * m), Space O(1)\nclass Solution {\npublic:\n    bool isMatch(string s, string p) {\n        int n = s.size();\n        int m = p.size();\n        int i = 0;\n        int j = 0;\n        int starIndex = -1;\n        int matchedUpTo = 0;\n        while (i < n) {\n            if (j < m && (p[j] == '?' || p[j] == s[i])) {\n                i++;\n                j++;\n            } else if (j < m && p[j] == '*') {\n                starIndex = j;\n                matchedUpTo = i;\n                j++;\n            } else if (starIndex != -1) {\n                // Let the last '*' absorb one more character of s.\n                j = starIndex + 1;\n                matchedUpTo++;\n                i = matchedUpTo;\n            } else {\n                return false;\n            }\n        }\n        while (j < m && p[j] == '*') {\n            j++;\n        }\n        return j == m;\n    }\n};"
+  }
+ },
+ "3sum-count": {
+  "solutions": {
+   "cpp": "// Approach: Sort, fix the first number, then sweep two pointers inward and skip duplicates.\n// Time O(n^2), Space O(1) extra (excluding output and sort)\nclass Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        vector<vector<int>> result;\n        int n = nums.size();\n        for (int i = 0; i + 2 < n; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            int left = i + 1;\n            int right = n - 1;\n            while (left < right) {\n                long long sum = (long long)nums[i] + nums[left] + nums[right];\n                if (sum < 0) {\n                    left++;\n                } else if (sum > 0) {\n                    right--;\n                } else {\n                    result.push_back({nums[i], nums[left], nums[right]});\n                    left++;\n                    right--;\n                    while (left < right && nums[left] == nums[left - 1]) left++;\n                }\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "assign-cookies": {
+  "solutions": {
+   "cpp": "// Approach: Greedy; give each cookie, smallest first, to the least greedy unsatisfied child.\n// Time O(n log n + m log m), Space O(1) extra\nclass Solution {\npublic:\n    int findContentChildren(vector<int>& g, vector<int>& s) {\n        sort(g.begin(), g.end());\n        sort(s.begin(), s.end());\n        size_t satisfied = 0;\n        for (int cookie : s) {\n            if (satisfied < g.size() && cookie >= g[satisfied]) satisfied++;\n        }\n        return satisfied;\n    }\n};"
+  }
+ },
+ "best-time-to-buy-and-sell-stock-ii": {
+  "solutions": {
+   "cpp": "// Approach: Greedy; collect every positive day-to-day price increase.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int profit = 0;\n        for (size_t i = 1; i < prices.size(); i++) {\n            profit += max(0, prices[i] - prices[i - 1]);\n        }\n        return profit;\n    }\n};"
+  }
+ },
+ "binary-search": {
+  "solutions": {
+   "cpp": "// Approach: Classic binary search that halves the sorted range each step.\n// Time O(log n), Space O(1)\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int low = 0;\n        int high = (int)nums.size() - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) return mid;\n            if (nums[mid] < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "binary-tree-maximum-path-sum": {
+  "solutions": {
+   "cpp": "// Approach: Post-order DFS returning the best downward gain while tracking the best bent path.\n// Time O(n), Space O(h)\nlong long maxDownwardGain(TreeNode* node, long long& bestPath) {\n    if (!node) return 0;\n    long long leftGain = max(maxDownwardGain(node->left, bestPath), 0LL);\n    long long rightGain = max(maxDownwardGain(node->right, bestPath), 0LL);\n    bestPath = max(bestPath, node->val + leftGain + rightGain);\n    return node->val + max(leftGain, rightGain);\n}\n\nclass Solution {\npublic:\n    int maxPathSum(TreeNode* root) {\n        long long bestPath = LLONG_MIN;\n        maxDownwardGain(root, bestPath);\n        return bestPath;\n    }\n};"
+  }
+ },
+ "bitwise-and-of-numbers-range": {
+  "solutions": {
+   "cpp": "// Approach: The AND of a range is the common binary prefix of its two endpoints.\n// Time O(log right), Space O(1)\nclass Solution {\npublic:\n    int rangeBitwiseAnd(int left, int right) {\n        int shift = 0;\n        while (left != right) {\n            left >>= 1;\n            right >>= 1;\n            shift++;\n        }\n        return left << shift;\n    }\n};"
+  }
+ },
+ "candy": {
+  "solutions": {
+   "cpp": "// Approach: Two greedy passes, left-to-right then right-to-left, to satisfy both neighbours.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int candy(vector<int>& ratings) {\n        int n = ratings.size();\n        vector<int> candies(n, 1);\n        for (int i = 1; i < n; i++) {\n            if (ratings[i] > ratings[i - 1]) candies[i] = candies[i - 1] + 1;\n        }\n        for (int i = n - 2; i >= 0; i--) {\n            if (ratings[i] > ratings[i + 1]) {\n                candies[i] = max(candies[i], candies[i + 1] + 1);\n            }\n        }\n        return accumulate(candies.begin(), candies.end(), 0);\n    }\n};"
+  }
+ },
+ "cheapest-flights-within-k-stops": {
+  "solutions": {
+   "cpp": "// Approach: Bellman-Ford limited to k+1 edge relaxations, using a copy per round.\n// Time O(k * E), Space O(n)\nclass Solution {\npublic:\n    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {\n        const long long INF = LLONG_MAX / 4;\n        vector<long long> cost(n, INF);\n        cost[src] = 0;\n        for (int round = 0; round <= k; round++) {\n            vector<long long> next = cost;\n            for (const auto& flight : flights) {\n                int from = flight[0];\n                int to = flight[1];\n                next[to] = min(next[to], cost[from] + flight[2]);\n            }\n            cost = next;\n        }\n        return cost[dst] >= INF ? -1 : cost[dst];\n    }\n};"
+  }
+ },
+ "coin-change-ii": {
+  "solutions": {
+   "cpp": "// Approach: Unbounded knapsack counting combinations, with coins as the outer loop.\n// Time O(amount * coins), Space O(amount)\nclass Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<long long> ways(amount + 1, 0);\n        ways[0] = 1;\n        for (int coin : coins) {\n            for (int total = coin; total <= amount; total++) {\n                ways[total] += ways[total - coin];\n            }\n        }\n        return ways[amount];\n    }\n};"
+  }
+ },
+ "container-with-most-water": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers from both ends, always moving the shorter wall inward.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int left = 0;\n        int right = (int)height.size() - 1;\n        int bestArea = 0;\n        while (left < right) {\n            int area = (right - left) * min(height[left], height[right]);\n            bestArea = max(bestArea, area);\n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return bestArea;\n    }\n};"
+  }
+ },
+ "count-complete-tree-nodes": {
+  "solutions": {
+   "cpp": "// Approach: Recursively count the root plus the nodes of both subtrees.\n// Time O(n), Space O(h)\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (!root) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};"
+  }
+ },
+ "count-subsets-with-sum": {
+  "solutions": {
+   "cpp": "// Approach: 0/1 knapsack counting subsets, iterating sums downward so each item is used once.\n// Time O(n * target), Space O(target)\nclass Solution {\npublic:\n    int countSubsets(vector<int>& nums, int target) {\n        vector<long long> ways(target + 1, 0);\n        ways[0] = 1;\n        for (int num : nums) {\n            for (int sum = target; sum >= num; sum--) {\n                ways[sum] += ways[sum - num];\n            }\n        }\n        return ways[target];\n    }\n};"
+  }
+ },
+ "daily-temperatures": {
+  "solutions": {
+   "cpp": "// Approach: Monotonic stack of indices waiting for a warmer day.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& temperatures) {\n        int n = temperatures.size();\n        vector<int> waitDays(n, 0);\n        vector<int> pending;\n        for (int i = 0; i < n; i++) {\n            while (!pending.empty() && temperatures[pending.back()] < temperatures[i]) {\n                int colderDay = pending.back();\n                pending.pop_back();\n                waitDays[colderDay] = i - colderDay;\n            }\n            pending.push_back(i);\n        }\n        return waitDays;\n    }\n};"
+  }
+ },
+ "diameter-of-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: Post-order DFS computing heights; the diameter is the best left+right height sum.\n// Time O(n), Space O(h)\nint subtreeHeight(TreeNode* node, int& diameter) {\n    if (!node) return 0;\n    int leftHeight = subtreeHeight(node->left, diameter);\n    int rightHeight = subtreeHeight(node->right, diameter);\n    diameter = max(diameter, leftHeight + rightHeight);\n    return 1 + max(leftHeight, rightHeight);\n}\n\nclass Solution {\npublic:\n    int diameterOfBinaryTree(TreeNode* root) {\n        int diameter = 0;\n        subtreeHeight(root, diameter);\n        return diameter;\n    }\n};"
+  }
+ },
+ "edit-distance": {
+  "solutions": {
+   "cpp": "// Approach: DP over prefixes; dp[i][j] is the edit distance between word1[0..i) and word2[0..j).\n// Time O(n * m), Space O(n * m)\nclass Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        int n = word1.size();\n        int m = word2.size();\n        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));\n        for (int i = 0; i <= n; i++) dp[i][0] = i;\n        for (int j = 0; j <= m; j++) dp[0][j] = j;\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= m; j++) {\n                int substitute = dp[i - 1][j - 1] + (word1[i - 1] != word2[j - 1]);\n                int remove = dp[i - 1][j] + 1;\n                int insert = dp[i][j - 1] + 1;\n                dp[i][j] = min({substitute, remove, insert});\n            }\n        }\n        return dp[n][m];\n    }\n};"
+  }
+ },
+ "fast-power-mod": {
+  "solutions": {
+   "cpp": "// Approach: Binary exponentiation, squaring the base and multiplying when the bit is set.\n// Time O(log exp), Space O(1)\nclass Solution {\npublic:\n    int powMod(int base, int exp, int mod) {\n        long long modulus = mod;\n        long long result = 1 % modulus;\n        long long power = base % modulus;\n        long long remaining = exp;\n        while (remaining > 0) {\n            if (remaining & 1) result = result * power % modulus;\n            power = power * power % modulus;\n            remaining >>= 1;\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "find-if-path-exists-in-graph": {
+  "solutions": {
+   "cpp": "// Approach: Union-Find with path halving; connected iff both endpoints share a root.\n// Time O((n + E) * alpha(n)), Space O(n)\nclass Solution {\npublic:\n    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> findRoot = [&](int node) {\n            while (parent[node] != node) {\n                parent[node] = parent[parent[node]];\n                node = parent[node];\n            }\n            return node;\n        };\n        for (const auto& edge : edges) {\n            parent[findRoot(edge[0])] = findRoot(edge[1]);\n        }\n        return findRoot(source) == findRoot(destination);\n    }\n};"
+  }
+ },
+ "find-the-town-judge": {
+  "solutions": {
+   "cpp": "// Approach: Net trust score; the judge is trusted by all n-1 others and trusts nobody.\n// Time O(n + E), Space O(n)\nclass Solution {\npublic:\n    int findJudge(int n, vector<vector<int>>& trust) {\n        vector<int> score(n + 1, 0);\n        for (const auto& pair : trust) {\n            score[pair[0]]--;\n            score[pair[1]]++;\n        }\n        for (int person = 1; person <= n; person++) {\n            if (score[person] == n - 1) return person;\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "game-of-life": {
+  "solutions": {
+   "cpp": "// Approach: In-place update; bit 0 holds the current state and bit 1 the next state.\n// Time O(m * n), Space O(1)\nclass Solution {\npublic:\n    void gameOfLife(vector<vector<int>>& board) {\n        int m = board.size();\n        int n = m ? board[0].size() : 0;\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                int liveNeighbors = 0;\n                for (int di = -1; di <= 1; di++) {\n                    for (int dj = -1; dj <= 1; dj++) {\n                        if (di == 0 && dj == 0) continue;\n                        int ni = i + di;\n                        int nj = j + dj;\n                        if (ni >= 0 && ni < m && nj >= 0 && nj < n) {\n                            liveNeighbors += board[ni][nj] & 1;\n                        }\n                    }\n                }\n                if (liveNeighbors == 3 || (board[i][j] && liveNeighbors == 2)) {\n                    board[i][j] |= 2;\n                }\n            }\n        }\n        for (auto& row : board) {\n            for (int& cell : row) cell >>= 1;\n        }\n    }\n};"
+  }
+ },
+ "h-index": {
+  "solutions": {
+   "cpp": "// Approach: Sort ascending; the first citation count that is at least the papers remaining wins.\n// Time O(n log n), Space O(1) extra\nclass Solution {\npublic:\n    int hIndex(vector<int>& citations) {\n        sort(citations.begin(), citations.end());\n        int n = citations.size();\n        for (int i = 0; i < n; i++) {\n            int papersAtLeast = n - i;\n            if (citations[i] >= papersAtLeast) return papersAtLeast;\n        }\n        return 0;\n    }\n};"
+  }
+ },
+ "house-robber": {
+  "solutions": {
+   "cpp": "// Approach: DP keeping the best total if the previous house was robbed or skipped.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int rob(vector<int>& nums) {\n        int robbed = 0;\n        int skipped = 0;\n        for (int money : nums) {\n            int robbedNow = skipped + money;\n            skipped = max(robbed, skipped);\n            robbed = robbedNow;\n        }\n        return max(robbed, skipped);\n    }\n};"
+  }
+ },
+ "insert-interval": {
+  "solutions": {
+   "cpp": "// Approach: Copy intervals before, merge the overlapping ones with the new one, copy the rest.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {\n        int start = newInterval[0];\n        int end = newInterval[1];\n        vector<vector<int>> result;\n        size_t i = 0;\n        size_t n = intervals.size();\n        while (i < n && intervals[i][1] < start) {\n            result.push_back(intervals[i++]);\n        }\n        while (i < n && intervals[i][0] <= end) {\n            start = min(start, intervals[i][0]);\n            end = max(end, intervals[i][1]);\n            i++;\n        }\n        result.push_back({start, end});\n        while (i < n) {\n            result.push_back(intervals[i++]);\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "intersection-of-two-arrays-ii": {
+  "solutions": {
+   "cpp": "// Approach: Count nums1 in a hash map, then consume matching counts while scanning sorted nums2.\n// Time O(n + m log m), Space O(n)\nclass Solution {\npublic:\n    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {\n        unordered_map<int, int> remaining;\n        for (int num : nums1) remaining[num]++;\n        sort(nums2.begin(), nums2.end());\n        vector<int> result;\n        for (int num : nums2) {\n            auto it = remaining.find(num);\n            if (it != remaining.end() && it->second > 0) {\n                result.push_back(num);\n                it->second--;\n            }\n        }\n        return result;\n    }\n};"
+  }
+ },
+ "is-subsequence": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers; advance in s whenever the current character of t matches.\n// Time O(|t|), Space O(1)\nclass Solution {\npublic:\n    bool isSubsequence(string s, string t) {\n        size_t matched = 0;\n        for (char ch : t) {\n            if (matched < s.size() && s[matched] == ch) matched++;\n        }\n        return matched == s.size();\n    }\n};"
+  }
+ },
+ "jump-game": {
+  "solutions": {
+   "cpp": "// Approach: Greedy; track the farthest reachable index and fail if we fall behind it.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    bool canJump(vector<int>& nums) {\n        int farthest = 0;\n        int n = nums.size();\n        for (int i = 0; i < n; i++) {\n            if (i > farthest) return false;\n            farthest = max(farthest, i + nums[i]);\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "kth-largest-element-in-an-array": {
+  "solutions": {
+   "cpp": "// Approach: Keep a min-heap of size k; its top is the kth largest value.\n// Time O(n log k), Space O(k)\nclass Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        for (int num : nums) {\n            minHeap.push(num);\n            if ((int)minHeap.size() > k) minHeap.pop();\n        }\n        return minHeap.top();\n    }\n};"
+  }
+ },
+ "largest-rectangle-in-histogram": {
+  "solutions": {
+   "cpp": "// Approach: Monotonic stack of (start index, height); popped bars close off rectangles.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        long long bestArea = 0;\n        heights.push_back(0);  // sentinel that flushes the stack\n        vector<pair<int, int>> stack;\n        for (int i = 0; i < (int)heights.size(); i++) {\n            int start = i;\n            while (!stack.empty() && stack.back().second >= heights[i]) {\n                auto [barStart, barHeight] = stack.back();\n                stack.pop_back();\n                bestArea = max(bestArea, (long long)barHeight * (i - barStart));\n                start = barStart;\n            }\n            stack.push_back({start, heights[i]});\n        }\n        return bestArea;\n    }\n};"
+  }
+ },
+ "length-of-last-word": {
+  "solutions": {
+   "cpp": "// Approach: Scan from the end, skip trailing spaces, then count the last word's letters.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int lengthOfLastWord(string s) {\n        int i = (int)s.size() - 1;\n        int length = 0;\n        while (i >= 0 && s[i] == ' ') i--;\n        while (i >= 0 && s[i] != ' ') {\n            length++;\n            i--;\n        }\n        return length;\n    }\n};"
+  }
+ },
+ "longest-increasing-subsequence": {
+  "solutions": {
+   "cpp": "// Approach: Patience sorting; tails[i] is the smallest tail of any increasing run of length i+1.\n// Time O(n log n), Space O(n)\nclass Solution {\npublic:\n    int lengthOfLIS(vector<int>& nums) {\n        vector<int> tails;\n        for (int num : nums) {\n            auto it = lower_bound(tails.begin(), tails.end(), num);\n            if (it == tails.end()) {\n                tails.push_back(num);\n            } else {\n                *it = num;\n            }\n        }\n        return tails.size();\n    }\n};"
+  }
+ },
+ "longest-substring-with-at-most-k-distinct-characters": {
+  "solutions": {
+   "cpp": "// Approach: Sliding window with character counts, shrinking while more than k distinct appear.\n// Time O(n), Space O(k)\nclass Solution {\npublic:\n    int lengthOfLongestSubstringKDistinct(string s, int k) {\n        if (k == 0) return 0;\n        unordered_map<char, int> counts;\n        int windowStart = 0;\n        int bestLength = 0;\n        for (int windowEnd = 0; windowEnd < (int)s.size(); windowEnd++) {\n            counts[s[windowEnd]]++;\n            while ((int)counts.size() > k) {\n                if (--counts[s[windowStart]] == 0) counts.erase(s[windowStart]);\n                windowStart++;\n            }\n            bestLength = max(bestLength, windowEnd - windowStart + 1);\n        }\n        return bestLength;\n    }\n};"
+  }
+ },
+ "lowest-common-ancestor-of-a-binary-search-tree": {
+  "solutions": {
+   "cpp": "// Approach: Walk down the BST until p and q fall on different sides of the current node.\n// Time O(h), Space O(1)\nclass Solution {\npublic:\n    int lowestCommonAncestor(TreeNode* root, int p, int q) {\n        TreeNode* node = root;\n        while (node) {\n            if (p < node->val && q < node->val) {\n                node = node->left;\n            } else if (p > node->val && q > node->val) {\n                node = node->right;\n            } else {\n                return node->val;\n            }\n        }\n        return -1;\n    }\n};"
+  }
+ },
+ "max-area-of-island": {
+  "solutions": {
+   "cpp": "// Approach: Iterative DFS flood fill from every unvisited land cell, tracking the largest area.\n// Time O(rows * cols), Space O(rows * cols)\nclass Solution {\npublic:\n    int maxAreaOfIsland(vector<vector<int>>& grid) {\n        int rows = grid.size();\n        int cols = grid[0].size();\n        int bestArea = 0;\n        vector<vector<bool>> visited(rows, vector<bool>(cols, false));\n        const int dRow[] = {1, -1, 0, 0};\n        const int dCol[] = {0, 0, 1, -1};\n        for (int r = 0; r < rows; r++) {\n            for (int c = 0; c < cols; c++) {\n                if (grid[r][c] != 1 || visited[r][c]) continue;\n                visited[r][c] = true;\n                vector<pair<int, int>> stack = {{r, c}};\n                int area = 0;\n                while (!stack.empty()) {\n                    auto [row, col] = stack.back();\n                    stack.pop_back();\n                    area++;\n                    for (int d = 0; d < 4; d++) {\n                        int nextRow = row + dRow[d];\n                        int nextCol = col + dCol[d];\n                        bool inside = nextRow >= 0 && nextRow < rows &&\n                                      nextCol >= 0 && nextCol < cols;\n                        if (inside && grid[nextRow][nextCol] == 1 && !visited[nextRow][nextCol]) {\n                            visited[nextRow][nextCol] = true;\n                            stack.push_back({nextRow, nextCol});\n                        }\n                    }\n                }\n                bestArea = max(bestArea, area);\n            }\n        }\n        return bestArea;\n    }\n};"
+  }
+ },
+ "maximum-depth-of-binary-tree": {
+  "solutions": {
+   "cpp": "// Approach: Recursion; depth is one plus the deeper of the two subtrees.\n// Time O(n), Space O(h)\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (!root) return 0;\n        return 1 + max(maxDepth(root->left), maxDepth(root->right));\n    }\n};"
+  }
+ },
+ "maximum-sum-circular-subarray": {
+  "solutions": {
+   "cpp": "// Approach: Kadane for max and min subarrays; the circular best is total minus the min subarray.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int maxSubarraySumCircular(vector<int>& nums) {\n        long long total = 0;\n        long long currentMax = 0;\n        long long currentMin = 0;\n        long long bestMax = nums[0];\n        long long bestMin = nums[0];\n        for (int num : nums) {\n            total += num;\n            currentMax = max(currentMax + num, (long long)num);\n            bestMax = max(bestMax, currentMax);\n            currentMin = min(currentMin + num, (long long)num);\n            bestMin = min(bestMin, currentMin);\n        }\n        // All-negative input: the wrapped case would select an empty subarray.\n        if (bestMax < 0) return bestMax;\n        return max(bestMax, total - bestMin);\n    }\n};"
+  }
+ },
+ "merge-intervals": {
+  "solutions": {
+   "cpp": "// Approach: Sort by start, then extend the last merged interval whenever the next one overlaps.\n// Time O(n log n), Space O(n)\nclass Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        sort(intervals.begin(), intervals.end());\n        vector<vector<int>> merged;\n        for (const auto& interval : intervals) {\n            if (!merged.empty() && interval[0] <= merged.back()[1]) {\n                merged.back()[1] = max(merged.back()[1], interval[1]);\n            } else {\n                merged.push_back(interval);\n            }\n        }\n        return merged;\n    }\n};"
+  }
+ },
+ "middle-of-the-linked-list": {
+  "solutions": {
+   "cpp": "// Approach: Slow and fast pointers; when fast reaches the end, slow is at the middle.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* middleNode(ListNode* head) {\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        return slow;\n    }\n};"
+  }
+ },
+ "minimum-add-to-make-parentheses-valid": {
+  "solutions": {
+   "cpp": "// Approach: Scan once, counting unmatched open brackets and closers that have no partner.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int minAddToMakeValid(string s) {\n        int unmatchedOpen = 0;\n        int unmatchedClose = 0;\n        for (char ch : s) {\n            if (ch == '(') {\n                unmatchedOpen++;\n            } else if (unmatchedOpen > 0) {\n                unmatchedOpen--;\n            } else {\n                unmatchedClose++;\n            }\n        }\n        return unmatchedOpen + unmatchedClose;\n    }\n};"
+  }
+ },
+ "minimum-number-of-arrows-to-burst-balloons": {
+  "solutions": {
+   "cpp": "// Approach: Sort by end coordinate and shoot at the end of each balloon not yet burst.\n// Time O(n log n), Space O(1) extra\nclass Solution {\npublic:\n    int findMinArrowShots(vector<vector<int>>& points) {\n        // Compare without subtracting: coordinates can reach +-2^31.\n        sort(points.begin(), points.end(),\n             [](const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; });\n        int arrows = 0;\n        long long lastArrow = LLONG_MIN;\n        for (const auto& balloon : points) {\n            if (arrows == 0 || balloon[0] > lastArrow) {\n                arrows++;\n                lastArrow = balloon[1];\n            }\n        }\n        return arrows;\n    }\n};"
+  }
+ },
+ "minimum-window-substring-length": {
+  "solutions": {
+   "cpp": "// Approach: Sliding window with needed-character counts, shrinking from the left once covered.\n// Time O(n + m), Space O(alphabet)\nclass Solution {\npublic:\n    string minWindow(string s, string t) {\n        unordered_map<char, int> need;\n        for (char ch : t) need[ch]++;\n        int missing = t.size();\n        int n = s.size();\n        int bestLength = n + 1;\n        int bestStart = 0;\n        int left = 0;\n        for (int right = 0; right < n; right++) {\n            if (need[s[right]] > 0) missing--;\n            need[s[right]]--;\n            if (missing == 0) {\n                // Drop characters that the window holds in surplus.\n                while (need[s[left]] < 0) {\n                    need[s[left]]++;\n                    left++;\n                }\n                if (right - left + 1 < bestLength) {\n                    bestLength = right - left + 1;\n                    bestStart = left;\n                }\n                // Release the leftmost needed character to look for the next window.\n                need[s[left]]++;\n                missing++;\n                left++;\n            }\n        }\n        return bestLength > n ? \"\" : s.substr(bestStart, bestLength);\n    }\n};"
+  }
+ },
+ "n-queens-count": {
+  "solutions": {
+   "cpp": "// Approach: Backtracking over rows with bitmasks for used columns and both diagonals.\n// Time O(n!), Space O(n)\nint countPlacements(int fullMask, int columns, int diagonal, int antiDiagonal) {\n    if (columns == fullMask) return 1;\n    int total = 0;\n    int available = fullMask & ~(columns | diagonal | antiDiagonal);\n    while (available) {\n        int bit = available & -available;\n        available -= bit;\n        total += countPlacements(fullMask, columns | bit, ((diagonal | bit) << 1) & fullMask,\n                                 (antiDiagonal | bit) >> 1);\n    }\n    return total;\n}\n\nclass Solution {\npublic:\n    int totalNQueens(int n) {\n        return countPlacements((1 << n) - 1, 0, 0, 0);\n    }\n};"
+  }
+ },
+ "next-permutation": {
+  "solutions": {
+   "cpp": "// Approach: Find the rightmost ascent, swap with the next larger suffix value, reverse the suffix.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    void nextPermutation(vector<int>& nums) {\n        int n = nums.size();\n        int pivot = n - 2;\n        while (pivot >= 0 && nums[pivot] >= nums[pivot + 1]) pivot--;\n        if (pivot >= 0) {\n            int swapIndex = n - 1;\n            while (nums[swapIndex] <= nums[pivot]) swapIndex--;\n            swap(nums[pivot], nums[swapIndex]);\n        }\n        reverse(nums.begin() + pivot + 1, nums.end());\n    }\n};"
+  }
+ },
+ "number-of-connected-components": {
+  "solutions": {
+   "cpp": "// Approach: Union-Find; every successful union merges two components into one.\n// Time O((n + E) * alpha(n)), Space O(n)\nclass Solution {\npublic:\n    int countComponents(int n, vector<vector<int>>& edges) {\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> findRoot = [&](int node) {\n            while (parent[node] != node) {\n                parent[node] = parent[parent[node]];\n                node = parent[node];\n            }\n            return node;\n        };\n        int components = n;\n        for (const auto& edge : edges) {\n            int rootA = findRoot(edge[0]);\n            int rootB = findRoot(edge[1]);\n            if (rootA != rootB) {\n                parent[rootA] = rootB;\n                components--;\n            }\n        }\n        return components;\n    }\n};"
+  }
+ },
+ "odd-even-linked-list": {
+  "solutions": {
+   "cpp": "// Approach: Rewire into separate odd and even chains, then attach the even chain after the odd.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* oddEvenList(ListNode* head) {\n        if (!head || !head->next) return head;\n        ListNode* odd = head;\n        ListNode* even = head->next;\n        ListNode* evenHead = even;\n        while (even && even->next) {\n            odd->next = even->next;\n            odd = odd->next;\n            even->next = odd->next;\n            even = even->next;\n        }\n        odd->next = evenHead;\n        return head;\n    }\n};"
+  }
+ },
+ "palindrome-partitioning-count": {
+  "solutions": {
+   "cpp": "// Approach: Precompute palindromic substrings, then count partitions with a prefix DP.\n// Time O(n^2), Space O(n^2)\nclass Solution {\npublic:\n    int partition(string s) {\n        int n = s.size();\n        vector<vector<bool>> isPalindrome(n, vector<bool>(n, false));\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = i; j < n; j++) {\n                bool innerOk = j - i < 2 || isPalindrome[i + 1][j - 1];\n                isPalindrome[i][j] = s[i] == s[j] && innerOk;\n            }\n        }\n        // ways[i] is the number of partitions of the prefix s[0..i).\n        vector<long long> ways(n + 1, 0);\n        ways[0] = 1;\n        for (int end = 1; end <= n; end++) {\n            for (int start = 0; start < end; start++) {\n                if (isPalindrome[start][end - 1]) ways[end] += ways[start];\n            }\n        }\n        return ways[n];\n    }\n};"
+  }
+ },
+ "partition-labels": {
+  "solutions": {
+   "cpp": "// Approach: Record each letter's last index, then cut whenever the scan reaches the part's end.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    vector<int> partitionLabels(string s) {\n        int n = s.size();\n        int lastIndex[26];\n        for (int i = 0; i < n; i++) {\n            lastIndex[s[i] - 'a'] = i;\n        }\n        vector<int> sizes;\n        int partStart = 0;\n        int partEnd = 0;\n        for (int i = 0; i < n; i++) {\n            partEnd = max(partEnd, lastIndex[s[i] - 'a']);\n            if (i == partEnd) {\n                sizes.push_back(i - partStart + 1);\n                partStart = i + 1;\n            }\n        }\n        return sizes;\n    }\n};"
+  }
+ },
+ "path-sum": {
+  "solutions": {
+   "cpp": "// Approach: DFS subtracting node values; succeed at a leaf whose value equals what remains.\n// Time O(n), Space O(h)\nclass Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int targetSum) {\n        if (!root) return false;\n        if (!root->left && !root->right) return root->val == targetSum;\n        int remaining = targetSum - root->val;\n        return hasPathSum(root->left, remaining) || hasPathSum(root->right, remaining);\n    }\n};"
+  }
+ },
+ "perfect-squares": {
+  "solutions": {
+   "cpp": "// Approach: DP where dp[i] is the fewest squares summing to i, trying every square below i.\n// Time O(n * sqrt(n)), Space O(n)\nclass Solution {\npublic:\n    int numSquares(int n) {\n        vector<int> dp(n + 1, n);\n        dp[0] = 0;\n        for (int i = 1; i <= n; i++) {\n            for (int root = 1; root * root <= i; root++) {\n                dp[i] = min(dp[i], dp[i - root * root] + 1);\n            }\n        }\n        return dp[n];\n    }\n};"
+  }
+ },
+ "power-of-two": {
+  "solutions": {
+   "cpp": "// Approach: A positive power of two has one set bit, so n & (n - 1) clears it to zero.\n// Time O(1), Space O(1)\nclass Solution {\npublic:\n    bool isPowerOfTwo(int n) {\n        return n > 0 && (n & (n - 1)) == 0;\n    }\n};"
+  }
+ },
+ "regular-expression-matching": {
+  "solutions": {
+   "cpp": "// Approach: DP over prefixes; '*' either drops its pair or consumes one more matching character.\n// Time O(m * n), Space O(m * n)\nclass Solution {\npublic:\n    bool isMatch(string s, string p) {\n        int m = s.size();\n        int n = p.size();\n        // dp[i][j] is true when s[0..i) matches p[0..j).\n        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));\n        dp[0][0] = true;\n        for (int i = 0; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                if (p[j - 1] == '*') {\n                    dp[i][j] = dp[i][j - 2];\n                    bool repeatable = i > 0 && (p[j - 2] == '.' || p[j - 2] == s[i - 1]);\n                    if (repeatable) dp[i][j] = dp[i][j] || dp[i - 1][j];\n                } else if (i > 0 && (p[j - 1] == '.' || p[j - 1] == s[i - 1])) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                }\n            }\n        }\n        return dp[m][n];\n    }\n};"
+  }
+ },
+ "remove-duplicates-from-sorted-list-ii": {
+  "solutions": {
+   "cpp": "// Approach: Dummy head and a trailing pointer; skip entire runs of repeated values.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* deleteDuplicates(ListNode* head) {\n        ListNode dummy(0);\n        dummy.next = head;\n        ListNode* prev = &dummy;\n        while (head) {\n            if (head->next && head->next->val == head->val) {\n                int duplicateValue = head->val;\n                while (head && head->val == duplicateValue) head = head->next;\n                prev->next = head;\n            } else {\n                prev = head;\n                head = head->next;\n            }\n        }\n        return dummy.next;\n    }\n};"
+  }
+ },
+ "reorder-list": {
+  "solutions": {
+   "cpp": "// Approach: Split at the middle, reverse the second half, then interleave the two halves.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    void reorderList(ListNode* head) {\n        if (!head || !head->next) return;\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast->next && fast->next->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        ListNode* second = slow->next;\n        ListNode* reversed = nullptr;\n        slow->next = nullptr;\n        while (second) {\n            ListNode* next = second->next;\n            second->next = reversed;\n            reversed = second;\n            second = next;\n        }\n        ListNode* first = head;\n        second = reversed;\n        while (second) {\n            ListNode* firstNext = first->next;\n            ListNode* secondNext = second->next;\n            first->next = second;\n            second->next = firstNext;\n            first = firstNext;\n            second = secondNext;\n        }\n    }\n};"
+  }
+ },
+ "reverse-linked-list": {
+  "solutions": {
+   "cpp": "// Approach: Walk the list once, pointing each node back at its predecessor.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* prev = nullptr;\n        while (head) {\n            ListNode* next = head->next;\n            head->next = prev;\n            prev = head;\n            head = next;\n        }\n        return prev;\n    }\n};"
+  }
+ },
+ "roman-to-integer": {
+  "solutions": {
+   "cpp": "// Approach: Add each symbol's value, subtracting it when a larger symbol follows.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int romanToInt(string s) {\n        auto valueOf = [](char symbol) {\n            switch (symbol) {\n                case 'I': return 1;\n                case 'V': return 5;\n                case 'X': return 10;\n                case 'L': return 50;\n                case 'C': return 100;\n                case 'D': return 500;\n                default: return 1000;\n            }\n        };\n        int total = 0;\n        for (size_t i = 0; i < s.size(); i++) {\n            if (i + 1 < s.size() && valueOf(s[i]) < valueOf(s[i + 1])) {\n                total -= valueOf(s[i]);\n            } else {\n                total += valueOf(s[i]);\n            }\n        }\n        return total;\n    }\n};"
+  }
+ },
+ "rotate-list": {
+  "solutions": {
+   "cpp": "// Approach: Close the list into a ring, then cut it after the (n - k)th node.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    ListNode* rotateRight(ListNode* head, int k) {\n        if (!head || !head->next || k == 0) return head;\n        int length = 1;\n        ListNode* tail = head;\n        while (tail->next) {\n            tail = tail->next;\n            length++;\n        }\n        k %= length;\n        if (k == 0) return head;\n        tail->next = head;\n        ListNode* newTail = head;\n        for (int i = 0; i < length - k - 1; i++) {\n            newTail = newTail->next;\n        }\n        ListNode* newHead = newTail->next;\n        newTail->next = nullptr;\n        return newHead;\n    }\n};"
+  }
+ },
+ "search-a-2d-matrix": {
+  "solutions": {
+   "cpp": "// Approach: Binary search treating the row-major matrix as one sorted array.\n// Time O(log(m * n)), Space O(1)\nclass Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        if (matrix.empty() || matrix[0].empty()) return false;\n        int rows = matrix.size();\n        int cols = matrix[0].size();\n        int low = 0;\n        int high = rows * cols - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            int value = matrix[mid / cols][mid % cols];\n            if (value == target) return true;\n            if (value < target) {\n                low = mid + 1;\n            } else {\n                high = mid - 1;\n            }\n        }\n        return false;\n    }\n};"
+  }
+ },
+ "set-matrix-zeroes": {
+  "solutions": {
+   "cpp": "// Approach: Use the first row and column as zero markers, remembering whether they need clearing.\n// Time O(m * n), Space O(1)\nclass Solution {\npublic:\n    void setZeroes(vector<vector<int>>& matrix) {\n        int m = matrix.size();\n        int n = matrix[0].size();\n        bool firstRowHasZero = false;\n        bool firstColHasZero = false;\n        for (int j = 0; j < n; j++) {\n            if (matrix[0][j] == 0) firstRowHasZero = true;\n        }\n        for (int i = 0; i < m; i++) {\n            if (matrix[i][0] == 0) firstColHasZero = true;\n        }\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                if (matrix[i][j] == 0) matrix[i][0] = matrix[0][j] = 0;\n            }\n        }\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                if (matrix[i][0] == 0 || matrix[0][j] == 0) matrix[i][j] = 0;\n            }\n        }\n        if (firstRowHasZero) {\n            for (int j = 0; j < n; j++) matrix[0][j] = 0;\n        }\n        if (firstColHasZero) {\n            for (int i = 0; i < m; i++) matrix[i][0] = 0;\n        }\n    }\n};"
+  }
+ },
+ "single-number-ii": {
+  "solutions": {
+   "cpp": "// Approach: Track bits seen once and twice with two masks; bits seen three times reset.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int singleNumber(vector<int>& nums) {\n        int seenOnce = 0;\n        int seenTwice = 0;\n        for (int num : nums) {\n            seenOnce = (seenOnce ^ num) & ~seenTwice;\n            seenTwice = (seenTwice ^ num) & ~seenOnce;\n        }\n        return seenOnce;\n    }\n};"
+  }
+ },
+ "sort-list": {
+  "solutions": {
+   "cpp": "// Approach: Top-down merge sort; split at the middle and merge the sorted halves.\n// Time O(n log n), Space O(log n)\nListNode* mergeSorted(ListNode* a, ListNode* b) {\n    ListNode dummy(0);\n    ListNode* tail = &dummy;\n    while (a && b) {\n        if (a->val <= b->val) {\n            tail->next = a;\n            a = a->next;\n        } else {\n            tail->next = b;\n            b = b->next;\n        }\n        tail = tail->next;\n    }\n    tail->next = a ? a : b;\n    return dummy.next;\n}\n\nclass Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head || !head->next) return head;\n        ListNode* slow = head;\n        ListNode* fast = head->next;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        ListNode* second = slow->next;\n        slow->next = nullptr;\n        return mergeSorted(sortList(head), sortList(second));\n    }\n};"
+  }
+ },
+ "sqrt-x": {
+  "solutions": {
+   "cpp": "// Approach: Binary search for the largest integer whose square is at most x.\n// Time O(log x), Space O(1)\nclass Solution {\npublic:\n    int mySqrt(int x) {\n        long long low = 0;\n        long long high = x;\n        while (low < high) {\n            long long mid = (low + high + 1) / 2;\n            if (mid * mid <= x) {\n                low = mid;\n            } else {\n                high = mid - 1;\n            }\n        }\n        return low;\n    }\n};"
+  }
+ },
+ "subtree-of-another-tree": {
+  "solutions": {
+   "cpp": "// Approach: At every node of root, test whether the subtree rooted there equals subRoot.\n// Time O(n * m), Space O(h)\nbool isSameTree(TreeNode* a, TreeNode* b) {\n    if (!a || !b) return a == b;\n    return a->val == b->val && isSameTree(a->left, b->left) && isSameTree(a->right, b->right);\n}\n\nclass Solution {\npublic:\n    bool isSubtree(TreeNode* root, TreeNode* subRoot) {\n        if (!root) return false;\n        return isSameTree(root, subRoot) || isSubtree(root->left, subRoot) ||\n               isSubtree(root->right, subRoot);\n    }\n};"
+  }
+ },
+ "sum-root-to-leaf-numbers": {
+  "solutions": {
+   "cpp": "// Approach: DFS carrying the number formed so far and summing it at each leaf.\n// Time O(n), Space O(h)\nint sumPaths(TreeNode* node, int pathValue) {\n    if (!node) return 0;\n    pathValue = pathValue * 10 + node->val;\n    if (!node->left && !node->right) return pathValue;\n    return sumPaths(node->left, pathValue) + sumPaths(node->right, pathValue);\n}\n\nclass Solution {\npublic:\n    int sumNumbers(TreeNode* root) {\n        return sumPaths(root, 0);\n    }\n};"
+  }
+ },
+ "swim-in-rising-water": {
+  "solutions": {
+   "cpp": "// Approach: Dijkstra-style search on a min-heap, where a path costs its highest cell.\n// Time O(n^2 log n), Space O(n^2)\nclass Solution {\npublic:\n    int swimInWater(vector<vector<int>>& grid) {\n        int n = grid.size();\n        vector<vector<bool>> visited(n, vector<bool>(n, false));\n        // Heap entries are (time needed to reach the cell, row, column).\n        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> heap;\n        heap.push({grid[0][0], 0, 0});\n        visited[0][0] = true;\n        const int dRow[] = {1, -1, 0, 0};\n        const int dCol[] = {0, 0, 1, -1};\n        while (!heap.empty()) {\n            auto [time, row, col] = heap.top();\n            heap.pop();\n            if (row == n - 1 && col == n - 1) return time;\n            for (int d = 0; d < 4; d++) {\n                int nextRow = row + dRow[d];\n                int nextCol = col + dCol[d];\n                bool inside = nextRow >= 0 && nextRow < n && nextCol >= 0 && nextCol < n;\n                if (inside && !visited[nextRow][nextCol]) {\n                    visited[nextRow][nextCol] = true;\n                    heap.push({max(time, grid[nextRow][nextCol]), nextRow, nextCol});\n                }\n            }\n        }\n        return 0;\n    }\n};"
+  }
+ },
+ "task-scheduler": {
+  "solutions": {
+   "cpp": "// Approach: Lay out the most frequent task in frames of n+1 slots; idle time is whatever is left.\n// Time O(T), Space O(1)\nclass Solution {\npublic:\n    int leastInterval(vector<int>& tasks, int n) {\n        vector<int> counts(27, 0);\n        for (int task : tasks) counts[task]++;\n        int maxCount = *max_element(counts.begin(), counts.end());\n        int tasksWithMaxCount = count(counts.begin(), counts.end(), maxCount);\n        // (maxCount - 1) full frames of n + 1 slots plus a last row of the max-count tasks.\n        int slotsNeeded = (maxCount - 1) * (n + 1) + tasksWithMaxCount;\n        return max((int)tasks.size(), slotsNeeded);\n    }\n};"
+  }
+ },
+ "two-sum": {
+  "solutions": {
+   "cpp": "// Approach: One pass with a hash map from value to index, looking up each complement.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<long long, int> seenAt;\n        for (int i = 0; i < (int)nums.size(); i++) {\n            auto it = seenAt.find((long long)target - nums[i]);\n            if (it != seenAt.end()) return {it->second, i};\n            seenAt[nums[i]] = i;\n        }\n        return {};\n    }\n};"
+  }
+ },
+ "unique-paths": {
+  "solutions": {
+   "cpp": "// Approach: Row-by-row DP; each cell's path count is the cell above plus the cell to the left.\n// Time O(m * n), Space O(n)\nclass Solution {\npublic:\n    int uniquePaths(int m, int n) {\n        vector<int> paths(n, 1);\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                paths[j] += paths[j - 1];\n            }\n        }\n        return paths[n - 1];\n    }\n};"
+  }
+ },
+ "valid-palindrome": {
+  "solutions": {
+   "cpp": "// Approach: Two pointers moving inward, skipping non-alphanumerics and ignoring case.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    bool isPalindrome(string s) {\n        int left = 0;\n        int right = (int)s.size() - 1;\n        while (left < right) {\n            while (left < right && !isalnum((unsigned char)s[left])) left++;\n            while (left < right && !isalnum((unsigned char)s[right])) right--;\n            if (tolower((unsigned char)s[left]) != tolower((unsigned char)s[right])) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "valid-sudoku": {
+  "solutions": {
+   "cpp": "// Approach: Single pass with seen-flags per row, column and 3x3 box for each digit.\n// Time O(1) (fixed 9x9 board), Space O(1)\nclass Solution {\npublic:\n    bool isValidSudoku(vector<vector<int>>& board) {\n        bool inRow[9][10] = {};\n        bool inCol[9][10] = {};\n        bool inBox[9][10] = {};\n        for (int r = 0; r < 9; r++) {\n            for (int c = 0; c < 9; c++) {\n                int digit = board[r][c];\n                if (digit == 0) continue;\n                int box = (r / 3) * 3 + c / 3;\n                if (inRow[r][digit] || inCol[c][digit] || inBox[box][digit]) return false;\n                inRow[r][digit] = inCol[c][digit] = inBox[box][digit] = true;\n            }\n        }\n        return true;\n    }\n};"
+  }
+ },
+ "word-break": {
+  "solutions": {
+   "cpp": "// Approach: DP over prefixes; try each distinct word length against a hash set of words.\n// Time O(n * d * L), Space O(n + W)  (d distinct lengths, L max length, W total word size)\nclass Solution {\npublic:\n    bool wordBreak(string s, string wordDict) {\n        unordered_set<string> words;\n        set<int> wordLengths;\n        stringstream stream(wordDict);\n        string word;\n        while (stream >> word) {\n            words.insert(word);\n            wordLengths.insert(word.size());\n        }\n        int n = s.size();\n        // canBreak[i] is true when the prefix s[0..i) can be segmented.\n        vector<bool> canBreak(n + 1, false);\n        canBreak[0] = true;\n        for (int i = 1; i <= n; i++) {\n            for (int length : wordLengths) {\n                if (length <= i && canBreak[i - length] &&\n                    words.count(s.substr(i - length, length))) {\n                    canBreak[i] = true;\n                    break;\n                }\n            }\n        }\n        return canBreak[n];\n    }\n};"
+  }
+ }
+}

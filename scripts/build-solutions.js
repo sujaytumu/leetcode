@@ -60,6 +60,18 @@ require("child_process").execFileSync(process.execPath,
   ["--experimental-strip-types", "--disable-warning=ExperimentalWarning", "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", path.join(__dirname, "lc-style-cpp.mjs")],
   { stdio: "inherit" });
 
+// Hand-polished optimised C++ (clear names, approach + complexity header). Verified with verify-paste.mjs; it replaces the converted version.
+const cleanFile = path.join(__dirname, "..", "answers-clean", "cpp.json");
+if (fs.existsSync(cleanFile)) {
+  const clean = JSON.parse(fs.readFileSync(cleanFile, "utf8"));
+  const outFile = path.join(__dirname, "..", "backend/src/main/resources/seed/solutions.json");
+  const all = JSON.parse(fs.readFileSync(outFile, "utf8"));
+  let n = 0;
+  for (const [slug, v] of Object.entries(clean)) if (all[slug]) { all[slug].solutions.cpp = v.solutions.cpp; n++; }
+  fs.writeFileSync(outFile, JSON.stringify(all, null, 1) + "\n");
+  console.log(`applied polished C++ to ${n} problems`);
+}
+
 // Brute-force versions (verified one by one with scripts/verify-paste.mjs) ride along as `bruteForce`.
 const bruteFile = path.join(__dirname, "..", "answers-brute", "cpp.json");
 if (fs.existsSync(bruteFile)) {
