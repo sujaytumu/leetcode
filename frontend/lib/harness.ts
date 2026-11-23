@@ -4,8 +4,9 @@
  * starter template around its `solve` function and puts the hidden parts back before running or submitting.
  */
 import { LC_GRID, LC_METHODS, LC_VOID } from "./lcnames.ts";
+import { CPP_LC } from "./lccpp.ts";
 
-export interface Parts { prefix: string; stub: string; suffix: string; lang: string; /** the original `solve` signature line */ sig?: string; /** LeetCode solves this one in place (`void`) */ inPlace?: boolean; /** parameter positions holding string rows that LeetCode types as a char/int grid */ grid?: { kind: "char" | "int"; idx: number[] } }
+export interface Parts { prefix: string; stub: string; suffix: string; lang: string; /** the original `solve` signature line */ sig?: string; /** LeetCode solves this one in place (`void`) */ inPlace?: boolean; slug?: string; /** parameter positions holding string rows that LeetCode types as a char/int grid */ grid?: { kind: "char" | "int"; idx: number[] } }
 /** Extra context so the editor can show a LeetCode `class Solution` stub instead of the bare `solve` function. */
 export interface StubContext { slug: string; java?: string }
 
@@ -59,7 +60,7 @@ export function splitTemplate(template: string, lang: string, ctx?: StubContext)
   const jsig = ctx ? javaSignature(ctx.java) : null;
   const gridIdx = gridKind && jsig ? jsig.params.flatMap((p, i) => (p.type === "String[]" ? [i] : [])) : [];
   const fullPrefix = lang === "python" && !/from typing import/.test(prefix) ? "from typing import List, Optional\n" + prefix : prefix;
-  return { prefix: fullPrefix, stub: nodeHint(prefix, lang) + (lc ?? body), suffix, lang, sig: body.split("\n")[0], inPlace: ctx ? LC_VOID.has(ctx.slug) : false, grid: gridKind && gridIdx.length ? { kind: gridKind, idx: gridIdx } : undefined };
+  return { prefix: fullPrefix, stub: nodeHint(prefix, lang) + (lc ?? body), suffix, lang, sig: body.split("\n")[0], inPlace: ctx ? LC_VOID.has(ctx.slug) : false, slug: ctx?.slug, grid: gridKind && gridIdx.length ? { kind: gridKind, idx: gridIdx } : undefined };
 }
 
 const PY_TYPES: Record<string, string> = { int: "int", long: "int", boolean: "bool", String: "str", double: "float", ListNode: "Optional[ListNode]", TreeNode: "Optional[TreeNode]" };
@@ -92,6 +93,8 @@ function leetCodeStub(body: string, lang: string, ctx: StubContext): string | nu
     const m = first.match(/^(.*?)\bsolve\((.*)\)\s*\{\s*$/);
     if (!m) return null;
     const ptr = (t: string) => t.replace(/\s*\*\s*/g, "* ").trim();
+    const special = CPP_LC[ctx.slug];
+    if (special) return `class Solution {\npublic:\n    ${special.ret} ${name}(${special.params}) {\n        \n    }\n};`;
     const gk = LC_GRID[ctx.slug];
     const gridT = gk === "char" ? "vector<vector<char>>" : "vector<vector<int>>";
     const params = splitParams(m[2]).map((p) => ptr((gk ? p.replace(/^vector<string>\s+(\w+)$/, `${gridT} $1`) : p).replace(/^(vector<.*>)\s+(\w+)$/, "$1& $2"))).join(", ");
@@ -197,6 +200,8 @@ function leetCodeAdapter(parts: Parts, user: string): string {
     }
     argExprs[i] = `${n}_g`;
   }
+  const special = lang === "cpp" && parts.slug ? CPP_LC[parts.slug] : undefined;
+  if (special) return `\n${head}solve(${rawParams}) { ${special.forward(method)} }\n`;
   const call = `${ctor}.${method}(${argExprs.join(", ")})`;
   const stubVoid = /\bvoid\s*$/.test(head.trim());
   const bodyText = pre + (userVoid && !stubVoid ? `${call}; return ${names[0]};` : stubVoid ? `${call};` : `return ${call};`);

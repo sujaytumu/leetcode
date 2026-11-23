@@ -119,3 +119,13 @@ test("C++ private helpers written above `public:` do not hide the entry point", 
     "class Solution {\n    int helper(int a) {\n        return a;\n    }\n\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        return {0, 1};\n    }\n};\n");
   assert.match(cpp, /return Solution\(\)\.twoSum\(nums, target\); \}/);
 });
+
+test("C++ LeetCode signatures for re-encoded problems forward to the judge's values", () => {
+  const lca = problems.find((p) => p.slug === "lowest-common-ancestor-of-a-binary-tree")!;
+  const parts = splitTemplate(lca.starterCode.cpp, "cpp", { slug: lca.slug, java: lca.starterCode.java })!;
+  assert.match(parts.stub, /TreeNode\* lowestCommonAncestor\(TreeNode\* root, TreeNode\* p, TreeNode\* q\)/);
+  const prog = composeProgram(parts, "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return root;\n    }\n};\n");
+  assert.match(prog, /int solve\(TreeNode \* root, int p, int q\) \{.*find\(root, p\).*r->val/);
+  const rpn = problems.find((p) => p.slug === "evaluate-reverse-polish-notation")!;
+  assert.match(splitTemplate(rpn.starterCode.cpp, "cpp", { slug: rpn.slug, java: rpn.starterCode.java })!.stub, /int evalRPN\(vector<string>& tokens\)/);
+});
