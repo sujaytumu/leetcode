@@ -78,8 +78,10 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
     try {
       const t = new URLSearchParams(window.location.search).get("tab");
       if (t === "solutions" || t === "editorial" || t === "discuss") setTab(t);
+      else if (t === "submissions" || t === "history") { setTab("history"); setTimeout(() => loadHistoryRef.current?.(), 0); }
     } catch { /* no URL access: stay on Description */ }
   }, [slug]);
+  const loadHistoryRef = useRef<(() => unknown) | null>(null);
   const [consoleTab, setConsoleTab] = useState<"case" | "result">("case");
   const [customInput, setCustomInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -142,6 +144,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   });
   const loadHistory = useCallback(
     () => api<Submission[]>(`/api/problems/${slug}/submissions`).then(setHistory).catch(() => {}), [slug]);
+  useEffect(() => { loadHistoryRef.current = loadHistory; }, [loadHistory]);
   const checkExec = useCallback(
     () => api<ExecutionStatus>("/api/execution/status", {}, 20000).then(setExec)
       .catch((e: ApiError) => setExec({ enabled: true, reachable: false, provider: "unknown", message: e.message })), []);
@@ -491,7 +494,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 <ProblemDescription markdown={problem.description} python={problem.starterCode?.python} />
                 {study?.hints?.length ? (
                   <div className="deschints">
-                    {study.hints.map((h, i) => (
+                    {(study.hints ?? []).map((h, i) => (
                       <details key={i}><summary>💡 Hint {i + 1}</summary><p>{h}</p></details>
                     ))}
                   </div>
@@ -506,12 +509,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 {study ? (
                   <div className="study">
                     <h3>Hints</h3>
-                    {study.hints.slice(0, hintsShown).map((h, i) => (
+                    {(study.hints ?? []).slice(0, hintsShown).map((h, i) => (
                       <div className="hint" key={i}><b>Hint {i + 1}.</b> {h}</div>
                     ))}
-                    {hintsShown < study.hints.length ? (
+                    {hintsShown < (study.hints ?? []).length ? (
                       <button onClick={() => setHintsShown(hintsShown + 1)}>
-                        {hintsShown === 0 ? "Show a hint" : `Show hint ${hintsShown + 1} of ${study.hints.length}`}
+                        {hintsShown === 0 ? "Show a hint" : `Show hint ${hintsShown + 1} of ${(study.hints ?? []).length}`}
                       </button>
                     ) : <span className="mute">No more hints.</span>}
                     <h3>Approach</h3>
