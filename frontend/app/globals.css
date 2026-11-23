@@ -1994,3 +1994,21 @@ html[data-theme="light"] .theme-switch { background:#fff3d6; border-color:#f1d9a
 .lcphotobtn { background:var(--cell); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:6px 14px; font-size:13px; font-weight:600; cursor:pointer; min-height:0; transition:background .15s, border-color .15s; }
 .lcphotobtn:hover { background:var(--hover); border-color:var(--accent); }
 .lcphotobtn.ghost { background:transparent; color:var(--mute); }
+
+/* ---- Splash: a separate full-screen loading page, centred, fades into the app ---- */
+.splash { position:fixed; inset:0; z-index:1000; background:var(--bg); display:grid; place-items:center; transition:opacity .35s ease; }
+.splash.out { opacity:0; pointer-events:none; }
+.splash-box { display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px; text-align:center; }
+.splash-logo { animation:splashpulse 1.8s ease-in-out infinite; }
+.splash-name { font-size:22px; font-weight:600; letter-spacing:-.01em; margin-top:6px; }
+.splash-load { color:var(--mute); font-size:15px; font-weight:500; }
+.splash-dots i { font-style:normal; animation:splashdot 1.2s infinite; opacity:.2; }
+.splash-dots i:nth-child(2) { animation-delay:.2s; } .splash-dots i:nth-child(3) { animation-delay:.4s; }
+.splash-bar { width:180px; height:3px; border-radius:99px; background:var(--cell); overflow:hidden; margin-top:6px; }
+.splash-bar i { display:block; height:100%; width:40%; border-radius:99px; background:var(--accent); animation:splashbar 1.3s ease-in-out infinite; }
+.splash-note { color:var(--mute); font-size:13px; max-width:280px; min-height:18px; margin:6px 0 0; }
+@keyframes splashpulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.07); } }
+@keyframes splashdot { 0%,80%,100% { opacity:.2; } 40% { opacity:1; } }
+@keyframes splashbar { 0% { transform:translateX(-110%); } 100% { transform:translateX(350%); } }
+/* the in-header "Loading…" word is replaced by the splash; the thin progress line stays */
+.nav .loading-word { display:none !important; }

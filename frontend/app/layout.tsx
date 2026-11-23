@@ -12,6 +12,7 @@ import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
 import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
 import CommandPalette from "@/components/CommandPalette";
+import Splash from "@/components/Splash";
 import MobileTabBar from "@/components/MobileTabBar";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `try{fetch(${JSON.stringify((process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") + "/actuator/health")},{mode:'no-cors',keepalive:true})}catch(e){}` }} />
       </head>
       <body>
+        <Splash />
         <a href="#main" className="skip-link">Skip to content</a>
         <header className="nav">
           <Link href="/" className="brand" aria-label="LeetCode Practice home"><Logo size={30} /><span className="brand-text"> LeetCode Practice</span></Link>
