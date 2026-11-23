@@ -13,24 +13,14 @@ import {
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import { useCloudSync } from "@/lib/cloud";
-import ProblemListDrawer from "@/components/ProblemListDrawer";
 import { useMock } from "@/lib/mock";
-import AddToList from "@/components/AddToList";
-import EditorSettingsModal from "@/components/EditorSettingsModal";
 import VoteButtons from "@/components/VoteButtons";
 import ProblemDescription from "@/components/ProblemDescription";
 import { formatInputParts, formatOutput } from "@/lib/example";
 import { monacoTheme, registerThemes, useEditorSettings } from "@/lib/editorSettings";
 import Skeleton from "@/components/Skeleton";
-import SimilarProblems from "@/components/SimilarProblems";
-import Discuss from "@/components/Discuss";
-import Solutions from "@/components/Solutions";
-import Confetti from "@/components/Confetti";
 import Logo from "@/components/Logo";
-import NoteBox from "@/components/NoteBox";
 import SubmissionStatsPanel, { fmtMem } from "@/components/SubmissionStatsPanel";
-import CodeDiff from "@/components/CodeDiff";
-import FreeSpace from "@/components/FreeSpace";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { fmtSecs, recordTime, type TimeRecord } from "@/lib/times";
 import CaseEditor from "@/components/CaseEditor";
@@ -40,6 +30,18 @@ import { rememberProblem } from "@/components/ContinueCard";
 import { lineDiff } from "@/lib/lineDiff";
 
 import type { EditorProps } from "@monaco-editor/react";
+
+// Loaded on demand: they are only needed once their tab or modal opens, which keeps the first paint fast.
+const Solutions = dynamic(() => import("@/components/Solutions"), { ssr: false });
+const Discuss = dynamic(() => import("@/components/Discuss"), { ssr: false });
+const CodeDiff = dynamic(() => import("@/components/CodeDiff"), { ssr: false });
+const SimilarProblems = dynamic(() => import("@/components/SimilarProblems"), { ssr: false });
+const EditorSettingsModal = dynamic(() => import("@/components/EditorSettingsModal"), { ssr: false });
+const Confetti = dynamic(() => import("@/components/Confetti"), { ssr: false });
+const AddToList = dynamic(() => import("@/components/AddToList"), { ssr: false });
+const ProblemListDrawer = dynamic(() => import("@/components/ProblemListDrawer"), { ssr: false });
+const NoteBox = dynamic(() => import("@/components/NoteBox"), { ssr: false });
+const FreeSpace = dynamic(() => import("@/components/FreeSpace"), { ssr: false });
 // Without this, next/dynamic infers ComponentType<never> for Monaco's Editor and the production build fails type-checking.
 const Editor = dynamic<EditorProps>(
   () => import("@monaco-editor/react").then((m) => m.default as unknown as ComponentType<EditorProps>), {

@@ -2012,3 +2012,35 @@ html[data-theme="light"] .theme-switch { background:#fff3d6; border-color:#f1d9a
 @keyframes splashbar { 0% { transform:translateX(-110%); } 100% { transform:translateX(350%); } }
 /* the in-header "Loading…" word is replaced by the splash; the thin progress line stays */
 .nav .loading-word { display:none !important; }
+/* ==== Proper light + dark: native widgets follow the theme, light is bright and crisp, dark is true black ==== */
+:root { color-scheme:dark; }
+html[data-theme="light"] { color-scheme:light; }
+html[data-theme="light"] { --bg:#f6f6f8; --panel:#ffffff; --line:#e4e4e9; --cell:#f0f0f3; --hover:#f5f5f8; --code-bg:#f7f7f9;
+  --text:#101012; --mute:#5b5b64; --shadow:0 1px 2px rgba(15,15,25,.05), 0 8px 24px rgba(15,15,25,.06); --ring:rgba(229,137,10,.28); }
+html[data-theme="light"] body:has(.workspace) { --lc-bg:#f2f2f5; --lc-pane:#ffffff; --lc-strip:#f4f4f7; background:#f2f2f5; }
+html[data-theme="light"]:has(.workspace) { background:#f2f2f5; }
+html[data-theme="light"] .nav { background:rgba(255,255,255,.88); border-bottom:1px solid #e8e8ed; }
+html[data-theme="light"] .card, html[data-theme="light"] .plan, html[data-theme="light"] .modal, html[data-theme="light"] .daily { background:#fff; border:1px solid #ececf0; }
+html[data-theme="light"] table { background:#fff; }
+html[data-theme="light"] input, html[data-theme="light"] select, html[data-theme="light"] textarea { background:#fff; border-color:#dcdce2; }
+html[data-theme="light"] .argbox { background:#f3f3f6; }
+html[data-theme="light"] .ratingdist .bar { background:#dedee4; }
+html[data-theme="light"] .ratingdist.ghost .bar { background:#e9e9ee; }
+html[data-theme="light"] .lctabs, html[data-theme="light"] .codehead { background:#f4f4f7; }
+
+/* ==== Polish: problem list ==== */
+.topicpanel .chips.lcchips { gap:8px 8px; }
+.topicpanel .chips.lcchips button { font-size:14px; padding:6px 14px; border-radius:999px; background:transparent; color:var(--mute); border:1px solid transparent; font-weight:500; }
+.topicpanel .chips.lcchips button:hover { color:var(--text); background:var(--cell); }
+.topicpanel .chips.lcchips button.on { background:var(--text); color:var(--bg); font-weight:600; }
+.filters input.grow { min-width:180px; max-width:260px; flex:0 1 240px; }
+.filters .shuffle, .filters > button:last-child { margin-left:auto; }
+.home tbody tr:nth-child(odd) td { background:color-mix(in srgb, var(--text) 3.5%, var(--panel)); }
+.home tbody tr:hover td { background:color-mix(in srgb, var(--accent) 7%, var(--panel)); }
+.home tbody tr td:first-child { border-radius:10px 0 0 10px; } .home tbody tr td:last-child { border-radius:0 10px 10px 0; }
+
+/* Heatmap in light mode: pale to deep green (the dark palette would look black on white) */
+html[data-theme="light"] .cell { background:#ebedf0; }
+html[data-theme="light"] .cell.l1 { background:#b7e4c7; } html[data-theme="light"] .cell.l2 { background:#74c69d; }
+html[data-theme="light"] .cell.l3 { background:#2da44e; } html[data-theme="light"] .cell.l4 { background:#116329; }
+html[data-theme="light"] .cell.lf { background:transparent; }

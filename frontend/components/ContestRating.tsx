@@ -86,6 +86,12 @@ function RatingGraph({ points, peak }: { points: Point[]; peak: number }) {
   const px = x(Math.max(0, pi)), py = y(top);
   const bw = 58, bx = Math.min(W - bw - 2, Math.max(2, px - bw / 2));
   const year = (iso: string) => new Date(iso).getUTCFullYear();
+/** "2025" when the graph spans several years, otherwise "Oct 12" so the axis says something useful. */
+const axisLabel = (at: string, first: string, last: string): string => {
+  const a = new Date(first), b = new Date(last);
+  if (a.getFullYear() !== b.getFullYear()) return String(new Date(at).getFullYear());
+  return new Date(at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="ratinggraph" role="img" aria-label={`Rating history, highest ${hi}`}>
       <path d={path} fill="none" stroke="#ffa116" strokeWidth="1.8" strokeLinejoin="round" />
@@ -101,8 +107,8 @@ function RatingGraph({ points, peak }: { points: Point[]; peak: number }) {
         <rect x={px - 4} y={py - 10} width="8" height="3" fill="var(--panel)" />
         <text x={bx + bw / 2} y={py - 16} textAnchor="middle" fontSize="12" fill="var(--text)">{fmt(top)}</text>
       </g>
-      <text x={PX} y={H - 6} fontSize="12" fill="var(--mute)">{year(points[0].at)}</text>
-      <text x={W - PX} y={H - 6} fontSize="12" fill="var(--mute)" textAnchor="end">{year(points[points.length - 1].at)}</text>
+      <text x={PX} y={H - 6} fontSize="12" fill="var(--mute)">{axisLabel(points[0].at, points[0].at, points[points.length - 1].at)}</text>
+      <text x={W - PX} y={H - 6} fontSize="12" fill="var(--mute)" textAnchor="end">{axisLabel(points[points.length - 1].at, points[0].at, points[points.length - 1].at)}</text>
     </svg>
   );
 }
