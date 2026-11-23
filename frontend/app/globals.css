@@ -2106,3 +2106,7 @@ html[data-theme="light"] .lctabs, html[data-theme="light"] .codehead { backgroun
 html:not([data-theme="light"]) .topicpanel .chips.lcchips button:not(.on) { background:#ffffff12; }
 html[data-theme="light"] .topicpanel .chips.lcchips button:not(.on) { background:#f0f0f0; }
 @media (min-width:901px) { .solvedcount { font-size:16px; } }
+.statchips { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 16px; }
+.statchips span { background:var(--cell); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:13px; color:var(--mute); }
+.statchips b { color:var(--text); font-weight:700; margin-right:2px; }
+.auth a, form a { transition:color .15s ease; }
