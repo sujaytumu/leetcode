@@ -10,6 +10,7 @@ import {
   Answer, api, ApiError, ExecutionStatus, Lang, ProblemDetail, ProblemSummary, RunResponse,
   Study, Submission, tagLabel,
 } from "@/lib/api";
+import { pushRecent } from "@/lib/recent";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
 import { useCloudSync } from "@/lib/cloud";
@@ -157,6 +158,9 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       .catch((e) => setLoadError(e.message));
   }, [slug]);
 
+  useEffect(() => {
+    if (problem) pushRecent({ slug: problem.slug, title: problem.title, number: problem.number, difficulty: problem.difficulty });
+  }, [problem?.slug]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
   useEffect(() => {
     if (!meta || lang) return;
