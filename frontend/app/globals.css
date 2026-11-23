@@ -2044,3 +2044,65 @@ html[data-theme="light"] .cell { background:#ebedf0; }
 html[data-theme="light"] .cell.l1 { background:#b7e4c7; } html[data-theme="light"] .cell.l2 { background:#74c69d; }
 html[data-theme="light"] .cell.l3 { background:#2da44e; } html[data-theme="light"] .cell.l4 { background:#116329; }
 html[data-theme="light"] .cell.lf { background:transparent; }
+
+/* ==== LeetCode palette pass: dark = #0a0a0a page / #1a1a1a panes / #262626 strips, flat surfaces, LC difficulty colours ==== */
+:root { --bg:#0a0a0a; --panel:#1a1a1a; --line:#333333; --cell:#262626; --hover:#262626; --code-bg:#262626;
+  --text:#e6e8ee; --mute:#9da1aa; --accent:var(--accent-d,#ffa116);
+  --easy:#00b8a3; --med:#ffc01e; --hard:#ff375f;
+  --shadow:none; --ring:rgba(255,161,22,.32); --warn-bg:#2a2108; --err-bg:#2b1519; }
+html:not([data-theme="light"]) body:has(.workspace) { --lc-bg:#0a0a0a; --lc-pane:#1a1a1a; --lc-strip:#262626; background:#0a0a0a; }
+html:not([data-theme="light"]):has(.workspace) { background:#0a0a0a; }
+html:not([data-theme="light"]) .nav { background:#1a1a1a; border-bottom:1px solid #2b2b2b; }
+html:not([data-theme="light"]) .card, html:not([data-theme="light"]) .plan, html:not([data-theme="light"]) .modal, html:not([data-theme="light"]) .daily {
+  border:1px solid #2b2b2b; background:#1a1a1a; }
+html:not([data-theme="light"]) table { background:transparent; border-color:transparent; }
+html:not([data-theme="light"]) input, html:not([data-theme="light"]) select, html:not([data-theme="light"]) textarea { background:#262626; border-color:#262626; }
+html:not([data-theme="light"]) input:focus, html:not([data-theme="light"]) select:focus, html:not([data-theme="light"]) textarea:focus { border-color:#3e3e3e; outline:0; }
+html:not([data-theme="light"]) .argbox { background:#262626; }
+html:not([data-theme="light"]) .ratingdist .bar { background:#3f3f3f; }
+html:not([data-theme="light"]) .ratingdist.ghost .bar { background:#2f2f2f; }
+html:not([data-theme="light"]) .home tbody tr:nth-child(odd) td { background:#1a1a1a; }
+html:not([data-theme="light"]) .home tbody tr:nth-child(even) td { background:transparent; }
+html:not([data-theme="light"]) .home tbody tr:hover td { background:#262626; }
+html:not([data-theme="light"]) .topicpanel .chips.lcchips button.on { background:#e6e8ee; color:#0a0a0a; }
+html:not([data-theme="light"]) .topicpanel .chips.lcchips button:hover { background:#262626; }
+
+/* light: LeetCode's off-white page with white panes and #f5f5f5 strips */
+html[data-theme="light"] { --bg:#f0f0f0; --panel:#ffffff; --line:#e5e5e5; --cell:#f0f0f0; --hover:#f5f5f5; --code-bg:#f2f3f5;
+  --text:#262626; --mute:#707070; --easy:#00af9b; --med:#ffb800; --hard:#ff2d55; --shadow:none; }
+html[data-theme="light"] body:has(.workspace) { --lc-bg:#f0f0f0; --lc-pane:#ffffff; --lc-strip:#f5f5f5; background:#f0f0f0; }
+html[data-theme="light"]:has(.workspace) { background:#f0f0f0; }
+html[data-theme="light"] .nav { background:#ffffff; border-bottom:1px solid #e5e5e5; }
+html[data-theme="light"] .card, html[data-theme="light"] .plan, html[data-theme="light"] .modal, html[data-theme="light"] .daily { border:1px solid #e5e5e5; }
+html[data-theme="light"] input, html[data-theme="light"] select, html[data-theme="light"] textarea { background:#f5f5f5; border-color:#f5f5f5; }
+html[data-theme="light"] .home tbody tr:nth-child(odd) td { background:#f7f8fa; }
+html[data-theme="light"] .home tbody tr:nth-child(even) td { background:#ffffff; }
+html[data-theme="light"] .home tbody tr:hover td { background:#f0f1f3; }
+html[data-theme="light"] .lctabs, html[data-theme="light"] .codehead { background:#f5f5f5; }
+
+/* ==== LeetCode type scale (desktop): 14px body UI, 18px problem title, 12px inline code ==== */
+@media (min-width:901px) {
+  .workspace .ptitle, .titlerow .ptitle { font-size:18px; font-weight:500; line-height:1.4; }
+  .solved, .workspace .solved { font-size:14px; font-weight:500; }
+  .solved svg { width:16px; height:16px; }
+  .lcdesc, .workspace .left .md, .workspace .left .md p, .workspace .left .md li { font-size:14px; line-height:22px; }
+  .lcdesc .lchead, .workspace .left .md h3, .workspace .left .md h4, .workspace .left .md strong.eg { font-size:14px; font-weight:600; margin:18px 0 6px; }
+  .lcexhead .lcexample, .lcdesc .lcexample { font-size:14px; font-weight:600; }
+  .lcdesc pre.lcbox, .workspace .left .md pre { font-size:13px; line-height:1.55; }
+  .lcbox2 .exline { font-size:14px; line-height:1.6; margin:8px 0; }
+  .lcbox2 .exline code, .workspace .left .md code { font-size:12px; padding:1px 6px; }
+  .home tbody td { font-size:14px; }
+  .home tbody tr td:nth-child(2) a { font-size:14px; font-weight:500; }
+  .home tbody tr td:last-child { font-size:14px; font-weight:500; }
+  .home tbody td.th-num { font-size:14px; }
+  .lcside a, .lcside .lcside-item { height:40px; font-size:14px; gap:10px; }
+  .lcside .lcside-item { font-size:14px; }
+  .lcside-h { font-size:14px; }
+  .lcside-h a { font-size:20px; }
+  .topicpanel .chips.lcchips button { font-size:14px; }
+  .topicpanel .chips.lcchips button:first-child { font-size:14px; padding:6px 14px; }
+  .lcchips .chipn { font-size:12px; }
+}
+html:not([data-theme="light"]) .topicpanel .chips.lcchips button:not(.on) { background:#ffffff12; }
+html[data-theme="light"] .topicpanel .chips.lcchips button:not(.on) { background:#f0f0f0; }
+@media (min-width:901px) { .solvedcount { font-size:16px; } }
