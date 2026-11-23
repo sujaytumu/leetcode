@@ -64,6 +64,8 @@ export interface RecentSolve { slug: string; title: string; difficulty: Difficul
 export interface ProfileInfo {
   displayName: string; username: string; headline: string; company: string; location: string;
   school: string; website: string; github: string; linkedin: string; tags: string[];
+  /** Version of the uploaded photo (empty / absent when none). */
+  photo?: string;
 }
 export interface Badge {
   id: string; title: string; description: string; category: string; target: number; progress: number; earned: boolean;

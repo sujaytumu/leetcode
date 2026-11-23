@@ -76,4 +76,35 @@ class ProfileInfoApiTest {
                         .content(body("X", "", "[\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\",\"h\",\"i\"]")))
                 .andExpect(status().isBadRequest());
     }
+
+    private static final String PIXEL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+
+    @Test
+    void photoCanBeUploadedServedAndRemoved() throws Exception {
+        String client = UUID.randomUUID().toString();
+        mvc.perform(put("/api/profile/info/photo").header(CLIENT, client).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"photo\":\"" + PIXEL + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.photo").isNotEmpty());
+        mvc.perform(get("/api/profile/info/avatar/" + client))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().contentType("image/png"));
+        // saving the text fields afterwards must not drop the photo
+        mvc.perform(put("/api/profile/info").header(CLIENT, client).contentType(MediaType.APPLICATION_JSON)
+                        .content(body("Sujay", "", "[]")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.photo").isNotEmpty());
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/profile/info/photo").header(CLIENT, client))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.photo").value(""));
+        mvc.perform(get("/api/profile/info/avatar/" + client)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void photoMustBeASmallImageDataUrl() throws Exception {
+        String client = UUID.randomUUID().toString();
+        mvc.perform(put("/api/profile/info/photo").header(CLIENT, client).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"photo\":\"data:text/html;base64,PGI+\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }

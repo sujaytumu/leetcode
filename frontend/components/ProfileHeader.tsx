@@ -1,4 +1,5 @@
 "use client";
+import { uploadedPhoto } from "@/lib/photo";
 import { ReactNode, useState } from "react";
 import { ProfileInfo } from "@/lib/api";
 
@@ -29,7 +30,10 @@ export default function ProfileHeader({ info, rank, social, action, footer }:
   return (
     <aside className="card profilecard">
       <div className="pc-top">
-        {info.github && photoOk
+        {uploadedPhoto(info)
+          // eslint-disable-next-line @next/next/no-img-element
+          ? <img className="avatar" src={uploadedPhoto(info)!} alt="" />
+          : info.github && photoOk
           // eslint-disable-next-line @next/next/no-img-element
           ? <img className="avatar" src={`https://github.com/${info.github}.png?size=192`} alt="" onError={() => setPhotoOk(false)} />
           : <div className="avatar" aria-hidden="true">{initials(info)}</div>}

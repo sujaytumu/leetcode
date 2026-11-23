@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, ProfileInfo } from "@/lib/api";
 import { AUTH_EVENT, authToken, authUser, clearSession } from "@/lib/auth";
 import { ACCENT_KEY, ACCENTS, accentByKey, saveAccent } from "@/lib/appearance";
+import { uploadedPhoto } from "@/lib/photo";
 import { currentTheme, type ThemeName } from "@/components/ThemeToggle";
 
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
@@ -44,7 +45,10 @@ export default function AccountMenu() {
 
   useEffect(() => {
     if (!user) { setInfo(null); return; }
-    api<ProfileInfo>("/api/profile/info").then(setInfo).catch(() => {});
+    const load = () => api<ProfileInfo>("/api/profile/info").then(setInfo).catch(() => {});
+    load();
+    window.addEventListener("lc-profile-photo", load);
+    return () => window.removeEventListener("lc-profile-photo", load);
   }, [user]);
 
   useEffect(() => { setOpen(false); }, [path]);
@@ -64,7 +68,11 @@ export default function AccountMenu() {
   const name = info?.displayName || user;
   const handle = info?.username || user;
   const home = info?.username ? `/${encodeURIComponent(info.username)}` : "/";
-  const avatar = (cls: string) => info?.github && photoOk
+  const own = uploadedPhoto(info);
+  const avatar = (cls: string) => own
+    // eslint-disable-next-line @next/next/no-img-element
+    ? <img className={cls} src={own} alt="" />
+    : info?.github && photoOk
     // eslint-disable-next-line @next/next/no-img-element
     ? <img className={cls} src={`https://github.com/${info.github}.png?size=96`} alt="" onError={() => setPhotoOk(false)} />
     : <span className={cls} aria-hidden="true">{initials(name)}</span>;

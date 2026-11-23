@@ -47,6 +47,13 @@ public class ProfileInfo {
     @Column(name = "tags", length = 300, nullable = false)
     private String tags = "";
 
+    /** Optional uploaded photo as a data URL (already validated and size-capped); null when none. */
+    @Column(name = "photo", length = 200000)
+    private String photo;
+
+    @Column(name = "photo_at")
+    private Instant photoAt;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
@@ -67,6 +74,15 @@ public class ProfileInfo {
     public String getGithub() { return github; }
     public String getLinkedin() { return linkedin; }
     public String getTags() { return tags; }
+
+    public String getPhoto() { return photo; }
+    public Instant getPhotoAt() { return photoAt; }
+
+    public void setPhoto(String dataUrl) {
+        this.photo = dataUrl;
+        this.photoAt = dataUrl == null ? null : Instant.now();
+        this.updatedAt = Instant.now();
+    }
 
     public void apply(
             String displayName, String username, String headline, String company, String location,

@@ -1,6 +1,7 @@
 "use client";
+import { resizeToDataUrl, uploadedPhoto } from "@/lib/photo";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, ProfileInfo } from "@/lib/api";
 import { authToken } from "@/lib/auth";
 import type { ListSummary } from "@/lib/lists";
@@ -40,6 +41,26 @@ export default function ProfileSettingsPage() {
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<Row | null>(null);
   const [photoOk, setPhotoOk] = useState(true);
+  const [photoMsg, setPhotoMsg] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  async function pickPhoto(file: File | undefined) {
+    if (!file) return;
+    setPhotoMsg("Uploading…");
+    try {
+      const photo = await resizeToDataUrl(file);
+      const next = await api<ProfileInfo>("/api/profile/info/photo", { method: "PUT", body: JSON.stringify({ photo }) });
+      setInfo((cur) => (cur ? { ...cur, photo: next.photo } : next)); setPhotoMsg("Photo updated.");
+      window.dispatchEvent(new Event("lc-profile-photo"));
+    } catch (e) { setPhotoMsg((e as Error).message); }
+    if (fileRef.current) fileRef.current.value = "";
+  }
+  async function removePhoto() {
+    try {
+      await api<ProfileInfo>("/api/profile/info/photo", { method: "DELETE" });
+      setInfo((cur) => (cur ? { ...cur, photo: "" } : cur)); setPhotoMsg("Photo removed.");
+      window.dispatchEvent(new Event("lc-profile-photo"));
+    } catch (e) { setPhotoMsg((e as Error).message); }
+  }
   const [gender, setGender] = useState("");
   const [birthday, setBirthday] = useState("");
   const [xHandle, setXHandle] = useState("");
@@ -142,13 +163,21 @@ export default function ProfileSettingsPage() {
             <h2>{info.displayName || info.username || "Your profile"}</h2>
             {info.username && <p className="mute">@{info.username}</p>}
             {info.headline && <p className="lcherosum">{info.headline}</p>}
-            <p className="mute lcavatarnote">Your photo comes from your GitHub username.</p>
+            <p className="mute lcavatarnote">{photoMsg || "Upload a photo, or add your GitHub username to use its photo."}</p>
           </div>
           <div className="lcavatar">
-            {info.github && photoOk
+            {uploadedPhoto(info)
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={uploadedPhoto(info)!} alt="" />
+              : info.github && photoOk
               // eslint-disable-next-line @next/next/no-img-element
               ? <img src={`https://github.com/${info.github}.png?size=240`} alt="" onError={() => setPhotoOk(false)} />
               : <div aria-hidden="true">{initials(info)}</div>}
+            <span className="lcphotoact">
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => pickPhoto(e.target.files?.[0])} />
+              <button type="button" className="lcphotobtn" onClick={() => fileRef.current?.click()}>{info.photo ? "Change photo" : "Upload photo"}</button>
+              {info.photo ? <button type="button" className="lcphotobtn ghost" onClick={removePhoto}>Remove</button> : null}
+            </span>
           </div>
         </div>
         {!signedIn && <div className="banner" style={{ marginBottom: 12 }}>You are not logged in, so these details stay on this device only. <Link href="/login">Log in</Link></div>}
