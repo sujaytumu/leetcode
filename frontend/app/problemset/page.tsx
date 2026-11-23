@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { tagLabel, fetchAllProblems, Page, ProblemSummary, Progress } from "@/lib/api";
-import { swr } from "@/lib/local";
+import { prefetchProblem, swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
 import { useMeta } from "@/lib/meta";
 import { FILTER_KEY, parseFilters } from "@/lib/listFilters";
@@ -234,7 +234,7 @@ export default function ProblemsPage() {
               {data?.items.map((p, i) => (
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
-                  <td><Link href={`/problems/${p.slug}`}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+                  <td><Link href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                     <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
                   <td className="hide-sm" style={{ textAlign: "center" }}>
                     <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>

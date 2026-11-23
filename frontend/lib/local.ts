@@ -79,3 +79,12 @@ export async function loadAll(onData: (items: ProblemSummary[], fromCache: boole
   done = true;
   onData(items, false);
 }
+
+const warmed = new Set<string>();
+/** Warms the browser cache for a problem page when the pointer is over (or a finger touches) its link, so it opens instantly. */
+export function prefetchProblem(slug: string) {
+  const path = `/api/problems/${slug}`;
+  if (warmed.has(path) || cacheGet(path)) return;
+  warmed.add(path);
+  apiWithWake<unknown>(path, () => {}, 1).then((d) => cacheSet(path, d)).catch(() => warmed.delete(path));
+}

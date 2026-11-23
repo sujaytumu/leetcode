@@ -14,12 +14,19 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        # Load lazy collections for up to 50 rows in one query instead of one query per row.
+        default_batch_fetch_size: 50
         jdbc:
           time_zone: UTC
 
 server:
   port: ${PORT:8080}
   shutdown: graceful
+  # Problem lists and solution payloads are large JSON; gzip cuts them to a fraction on slow phone connections.
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: application/json,text/plain,text/html,text/css,application/javascript
   error:
     include-message: never
     include-stacktrace: never
