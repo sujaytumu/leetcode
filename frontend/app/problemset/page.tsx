@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { warmEditor } from "@/lib/warmEditor";
 import { useRouter } from "next/navigation";
 import { tagLabel, fetchAllProblems, Page, ProblemSummary, Progress } from "@/lib/api";
 import { prefetchProblem, swr } from "@/lib/local";
@@ -46,6 +47,7 @@ export default function ProblemsPage() {
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
   // Come back to the filters and sort you left; a /problemset?tag= link from the Topics page still wins for the topic.
   const [filtersReady, setFiltersReady] = useState(false);
+  useEffect(() => { warmEditor(); }, []);
   useEffect(() => {
     try {
       const f = parseFilters(localStorage.getItem(FILTER_KEY));

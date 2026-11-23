@@ -39,9 +39,11 @@ export default function LeaderboardPage() {
         Ranked by points: Easy 10, Medium 20, Hard 40 for each problem you have solved. Set a username on your profile to show a name.
       </p>
       {community && (
-        <p className="mute" style={{ marginTop: 0 }}>
-          <b>{community.coders}</b> {community.coders === 1 ? "coder has" : "coders have"} submitted code · <b>{community.accounts}</b> registered {community.accounts === 1 ? "account" : "accounts"} · <b>{community.submissions}</b> submissions
-        </p>
+        <div className="statchips" aria-label="Community totals">
+          <span><b>{community.coders}</b> {community.coders === 1 ? "coder" : "coders"}</span>
+          <span><b>{community.accounts}</b> {community.accounts === 1 ? "account" : "accounts"}</span>
+          <span><b>{community.submissions}</b> {community.submissions === 1 ? "submission" : "submissions"}</span>
+        </div>
       )}
       {error && <div className="banner err">{error}</div>}
       {!board && !error && <Skeleton />}
