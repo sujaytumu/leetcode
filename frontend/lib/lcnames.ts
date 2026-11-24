@@ -205,6 +205,22 @@ export const LC_METHODS: Record<string, string> = {
   "set-matrix-zeroes": "setZeroes",
   "valid-sudoku": "isValidSudoku",
   "game-of-life": "gameOfLife",
+  "largest-element-in-array": "largestElement",
+  "second-largest-element": "secondLargest",
+  "check-if-array-is-sorted-and-rotated": "check",
+  "left-rotate-array-by-one": "leftRotateByOne",
+  "linear-search": "linearSearch",
+  "union-of-two-sorted-arrays": "unionArray",
+  "max-consecutive-ones": "findMaxConsecutiveOnes",
+  "rearrange-array-elements-by-sign": "rearrangeArray",
+  "leaders-in-an-array": "leaders",
+  "longest-subarray-with-sum-k": "longestSubarray",
+  "find-the-repeating-and-missing-number": "findRepeatingAndMissing",
+  "count-subarrays-with-given-xor": "subarraysWithXor",
+  "count-inversions": "countInversions",
+  "reverse-pairs": "reversePairs",
+  "majority-element-ii": "majorityElement",
+  "largest-subarray-with-0-sum": "maxLen",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

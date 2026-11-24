@@ -2377,5 +2377,101 @@
   "bruteForce": {
    "cpp": "// Brute force: time O(|b|), space O(1)\nclass Solution {\npublic:\n    int getSum(int a, int b) {\n        // step a one unit at a time, |b| times\n        int step = b > 0 ? 1 : -1;\n        for (int i = 0; i != b; i += step) a += step;\n        return a;\n    }\n};\n"
   }
+ },
+ "largest-element-in-array": {
+  "editorial": "## Approach\n\nScan the array once, keeping the largest value seen so far, and return it.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int largestElement(vector<int>& nums) {\n        int best = nums[0];\n        for (int x : nums) best = max(best, x);\n        return best;\n    }\n};\n"
+  }
+ },
+ "second-largest-element": {
+  "editorial": "## Approach\n\nScan once with two variables. A value bigger than the largest pushes the old largest down to second place; a value strictly between the two replaces the second. Equal values change nothing, so duplicates are ignored. If the second slot was never filled, return -1.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int secondLargest(vector<int>& nums) {\n        long long first = LLONG_MIN, second = LLONG_MIN;\n        for (int x : nums) {\n            if (x > first) {\n                second = first;\n                first = x;\n            } else if (x < first && x > second) {\n                second = x;\n            }\n        }\n        return second == LLONG_MIN ? -1 : (int)second;\n    }\n};\n"
+  }
+ },
+ "check-if-array-is-sorted-and-rotated": {
+  "editorial": "## Approach\n\nCount the positions where an element is larger than the next one, comparing the last element with the first as well. A sorted, rotated array has at most one such drop.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    bool check(vector<int>& nums) {\n        int n = nums.size(), drops = 0;\n        for (int i = 0; i < n; i++)\n            if (nums[i] > nums[(i + 1) % n]) drops++;\n        return drops <= 1;\n    }\n};\n"
+  }
+ },
+ "left-rotate-array-by-one": {
+  "editorial": "## Approach\n\nMove the first element to the back and shift the rest one place left. std::rotate does exactly this in one linear pass without a second array.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    vector<int> leftRotateByOne(vector<int>& nums) {\n        if (nums.size() > 1) rotate(nums.begin(), nums.begin() + 1, nums.end());\n        return nums;\n    }\n};\n"
+  }
+ },
+ "linear-search": {
+  "editorial": "## Approach\n\nWalk the array from the left and return the index of the first element equal to the target, or -1 if the loop finishes without a match.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int linearSearch(vector<int>& nums, int target) {\n        for (int i = 0; i < (int)nums.size(); i++)\n            if (nums[i] == target) return i;\n        return -1;\n    }\n};\n"
+  }
+ },
+ "union-of-two-sorted-arrays": {
+  "editorial": "## Approach\n\nWalk both arrays with two pointers, always taking the smaller current element, like the merge step of merge sort. Append it only when it differs from the last value in the output, which removes duplicates inside and across the arrays.\n\n**Complexity:** O(n + m) time, O(1) beyond the output space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(1) beyond the output space\nclass Solution {\npublic:\n    vector<int> unionArray(vector<int>& a, vector<int>& b) {\n        vector<int> out;\n        size_t i = 0, j = 0;\n        auto add = [&](int x) {\n            if (out.empty() || out.back() != x) out.push_back(x);\n        };\n        while (i < a.size() && j < b.size()) add(a[i] <= b[j] ? a[i++] : b[j++]);\n        while (i < a.size()) add(a[i++]);\n        while (j < b.size()) add(b[j++]);\n        return out;\n    }\n};\n"
+  }
+ },
+ "max-consecutive-ones": {
+  "editorial": "## Approach\n\nScan once with a running count of consecutive ones that resets to zero on a 0, and keep the maximum it reaches.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int findMaxConsecutiveOnes(vector<int>& nums) {\n        int best = 0, run = 0;\n        for (int x : nums) {\n            run = x == 1 ? run + 1 : 0;\n            best = max(best, run);\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "rearrange-array-elements-by-sign": {
+  "editorial": "## Approach\n\nAllocate the output and keep two write positions: 0 for the next positive and 1 for the next negative, each advancing by 2. One pass through the input places every element while preserving relative order.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    vector<int> rearrangeArray(vector<int>& nums) {\n        vector<int> out(nums.size());\n        size_t pos = 0, neg = 1;\n        for (int x : nums) {\n            if (x > 0) {\n                out[pos] = x;\n                pos += 2;\n            } else {\n                out[neg] = x;\n                neg += 2;\n            }\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "leaders-in-an-array": {
+  "editorial": "## Approach\n\nScan from right to left keeping the maximum seen so far. Whenever an element is at least that maximum it is a leader; collect it and update the maximum. Reverse the list at the end to restore left-to-right order.\n\n**Complexity:** O(n) time, O(1) beyond the output space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) beyond the output space\nclass Solution {\npublic:\n    vector<int> leaders(vector<int>& nums) {\n        vector<int> out;\n        int best = INT_MIN;\n        for (int i = (int)nums.size() - 1; i >= 0; i--) {\n            if (nums[i] >= best) {\n                out.push_back(nums[i]);\n                best = nums[i];\n            }\n        }\n        reverse(out.begin(), out.end());\n        return out;\n    }\n};\n"
+  }
+ },
+ "longest-subarray-with-sum-k": {
+  "editorial": "## Approach\n\nKeep a running prefix sum and a hash map from each prefix sum to the first index where it occurred. At index i, if prefix - k was seen at index j, the subarray (j, i] sums to k; keep the longest. Storing only the first occurrence of each sum makes the subarray as long as possible, and it works with negative numbers, unlike a sliding window.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    int longestSubarray(vector<int>& nums, int k) {\n        unordered_map<long long, int> first;\n        first[0] = -1;\n        long long total = 0;\n        int best = 0;\n        for (int i = 0; i < (int)nums.size(); i++) {\n            total += nums[i];\n            auto it = first.find(total - k);\n            if (it != first.end()) best = max(best, i - it->second);\n            first.emplace(total, i);\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "find-the-repeating-and-missing-number": {
+  "editorial": "## Approach\n\nLet x be the repeated and y the missing value. The array sum minus n(n+1)/2 equals x - y, and the sum of squares minus n(n+1)(2n+1)/6 equals x² - y² = (x - y)(x + y). Divide to get x + y, then solve for x and y. Use 64-bit arithmetic.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    vector<int> findRepeatingAndMissing(vector<int>& nums) {\n        long long n = nums.size(), sum = 0, squares = 0;\n        for (int x : nums) {\n            sum += x;\n            squares += 1LL * x * x;\n        }\n        long long diff = sum - n * (n + 1) / 2;                       // repeating - missing\n        long long sumOf = (squares - n * (n + 1) * (2 * n + 1) / 6) / diff;  // repeating + missing\n        long long repeating = (diff + sumOf) / 2;\n        return {(int)repeating, (int)(repeating - diff)};\n    }\n};\n"
+  }
+ },
+ "count-subarrays-with-given-xor": {
+  "editorial": "## Approach\n\nMaintain the running XOR and a map from each prefix XOR to how often it has occurred (start with {0: 1}). A subarray ending here has XOR k exactly when an earlier prefix equals current ^ k, so add that count, then record the current prefix.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    int subarraysWithXor(vector<int>& nums, int k) {\n        unordered_map<int, int> seen;\n        seen[0] = 1;\n        int xr = 0, total = 0;\n        for (int x : nums) {\n            xr ^= x;\n            auto it = seen.find(xr ^ k);\n            if (it != seen.end()) total += it->second;\n            seen[xr]++;\n        }\n        return total;\n    }\n};\n"
+  }
+ },
+ "count-inversions": {
+  "editorial": "## Approach\n\nRun merge sort. While merging two sorted halves, whenever an element of the right half is placed before the remaining elements of the left half, it forms an inversion with each of them: add the number of left-half elements still waiting. Sorting while counting gives O(n log n).\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\nlong long mergeCount(vector<int> &a, vector<int> &tmp, int lo, int hi) {\n    if (hi - lo < 2) return 0;\n    int mid = (lo + hi) / 2;\n    long long count = mergeCount(a, tmp, lo, mid) + mergeCount(a, tmp, mid, hi);\n    int i = lo, j = mid, k = lo;\n    while (i < mid && j < hi) {\n        if (a[i] <= a[j]) {\n            tmp[k++] = a[i++];\n        } else {\n            count += mid - i;\n            tmp[k++] = a[j++];\n        }\n    }\n    while (i < mid) tmp[k++] = a[i++];\n    while (j < hi) tmp[k++] = a[j++];\n    copy(tmp.begin() + lo, tmp.begin() + hi, a.begin() + lo);\n    return count;\n}\n\nclass Solution {\npublic:\n    int countInversions(vector<int>& nums) {\n        vector<int> tmp(nums.size());\n        return (int)mergeCount(nums, tmp, 0, nums.size());\n    }\n};\n"
+  }
+ },
+ "reverse-pairs": {
+  "editorial": "## Approach\n\nUse merge sort. Before merging two sorted halves, for every left element advance a pointer through the right half while left > 2 * right; the pointer's distance is that element's count. Then merge normally. Use 64-bit math for 2 * value.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\nlong long pairsSort(vector<int> &a, vector<int> &tmp, int lo, int hi) {\n    if (hi - lo < 2) return 0;\n    int mid = (lo + hi) / 2;\n    long long count = pairsSort(a, tmp, lo, mid) + pairsSort(a, tmp, mid, hi);\n    int j = mid;\n    for (int i = lo; i < mid; i++) {\n        while (j < hi && (long long)a[i] > 2LL * a[j]) j++;\n        count += j - mid;\n    }\n    merge(a.begin() + lo, a.begin() + mid, a.begin() + mid, a.begin() + hi, tmp.begin() + lo);\n    copy(tmp.begin() + lo, tmp.begin() + hi, a.begin() + lo);\n    return count;\n}\n\nclass Solution {\npublic:\n    int reversePairs(vector<int>& nums) {\n        vector<int> tmp(nums.size());\n        return (int)pairsSort(nums, tmp, 0, nums.size());\n    }\n};\n"
+  }
+ },
+ "majority-element-ii": {
+  "editorial": "## Approach\n\nRun Boyer-Moore with two candidates and two counters to find the only possible values, then count them in a second pass to confirm each really exceeds n/3. Return the survivors in ascending order.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    vector<int> majorityElement(vector<int>& nums) {\n        int c1 = 0, c2 = 0, v1 = 0, v2 = 1;\n        for (int x : nums) {\n            if (x == v1) c1++;\n            else if (x == v2) c2++;\n            else if (c1 == 0) { v1 = x; c1 = 1; }\n            else if (c2 == 0) { v2 = x; c2 = 1; }\n            else { c1--; c2--; }\n        }\n        int n1 = 0, n2 = 0, n = nums.size();\n        for (int x : nums) {\n            if (x == v1) n1++;\n            else if (x == v2) n2++;\n        }\n        vector<int> out;\n        if (n1 > n / 3) out.push_back(v1);\n        if (n2 > n / 3) out.push_back(v2);\n        sort(out.begin(), out.end());\n        return out;\n    }\n};\n"
+  }
+ },
+ "largest-subarray-with-0-sum": {
+  "editorial": "## Approach\n\nTrack the prefix sum and the first index where each sum occurred. If the current sum was seen before at index j, the subarray (j, i] sums to zero; keep the longest. Do not overwrite the first index of a sum.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    int maxLen(vector<int>& nums) {\n        unordered_map<long long, int> first;\n        first[0] = -1;\n        long long total = 0;\n        int best = 0;\n        for (int i = 0; i < (int)nums.size(); i++) {\n            total += nums[i];\n            auto it = first.find(total);\n            if (it != first.end()) best = max(best, i - it->second);\n            else first[total] = i;\n        }\n        return best;\n    }\n};\n"
+  }
  }
 }

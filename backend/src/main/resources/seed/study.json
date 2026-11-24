@@ -1934,5 +1934,148 @@
     "approach": "Repeat: sum = a ^ b; carry = (a & b) << 1; set a = sum, b = carry until the carry is 0. In Java/C++ 32-bit ints handle negatives naturally; in Python mask to 32 bits.",
     "time": "O(1)",
     "space": "O(1)"
+  },
+  "largest-element-in-array": {
+    "hints": [
+      "One pass is enough.",
+      "Keep the best value seen so far."
+    ],
+    "approach": "Scan the array once, keeping the largest value seen so far, and return it.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "second-largest-element": {
+    "hints": [
+      "Track two values while scanning: the largest and the next smaller distinct one.",
+      "What should happen when you see a value equal to the largest?"
+    ],
+    "approach": "Scan once with two variables. A value bigger than the largest pushes the old largest down to second place; a value strictly between the two replaces the second. Equal values change nothing, so duplicates are ignored. If the second slot was never filled, return -1.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "check-if-array-is-sorted-and-rotated": {
+    "hints": [
+      "A sorted array that was rotated has exactly one place where the order drops.",
+      "Treat the array as circular when you compare the last element with the first."
+    ],
+    "approach": "Count the positions where an element is larger than the next one, comparing the last element with the first as well. A sorted, rotated array has at most one such drop.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "left-rotate-array-by-one": {
+    "hints": [
+      "Only the first element has to move to a new end.",
+      "std::rotate can do it in place."
+    ],
+    "approach": "Move the first element to the back and shift the rest one place left. std::rotate does exactly this in one linear pass without a second array.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "linear-search": {
+    "hints": [
+      "Check the elements in order and stop at the first match."
+    ],
+    "approach": "Walk the array from the left and return the index of the first element equal to the target, or -1 if the loop finishes without a match.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "union-of-two-sorted-arrays": {
+    "hints": [
+      "Both arrays are sorted, so a merge-like walk produces the output in order.",
+      "Skip a value if it equals the last one you wrote."
+    ],
+    "approach": "Walk both arrays with two pointers, always taking the smaller current element, like the merge step of merge sort. Append it only when it differs from the last value in the output, which removes duplicates inside and across the arrays.",
+    "time": "O(n + m)",
+    "space": "O(1) beyond the output"
+  },
+  "max-consecutive-ones": {
+    "hints": [
+      "Keep the length of the current run of ones.",
+      "Reset it on every zero."
+    ],
+    "approach": "Scan once with a running count of consecutive ones that resets to zero on a 0, and keep the maximum it reaches.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "rearrange-array-elements-by-sign": {
+    "hints": [
+      "Positives go to even positions, negatives to odd positions.",
+      "Write straight into an output array with two moving indices."
+    ],
+    "approach": "Allocate the output and keep two write positions: 0 for the next positive and 1 for the next negative, each advancing by 2. One pass through the input places every element while preserving relative order.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "leaders-in-an-array": {
+    "hints": [
+      "An element is a leader if nothing to its right is larger.",
+      "Walk from the right and remember the largest value so far."
+    ],
+    "approach": "Scan from right to left keeping the maximum seen so far. Whenever an element is at least that maximum it is a leader; collect it and update the maximum. Reverse the list at the end to restore left-to-right order.",
+    "time": "O(n)",
+    "space": "O(1) beyond the output"
+  },
+  "longest-subarray-with-sum-k": {
+    "hints": [
+      "Use prefix sums: a subarray sums to k when two prefix sums differ by k.",
+      "Store the earliest index of each prefix sum."
+    ],
+    "approach": "Keep a running prefix sum and a hash map from each prefix sum to the first index where it occurred. At index i, if prefix - k was seen at index j, the subarray (j, i] sums to k; keep the longest. Storing only the first occurrence of each sum makes the subarray as long as possible, and it works with negative numbers, unlike a sliding window.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "find-the-repeating-and-missing-number": {
+    "hints": [
+      "The sum and the sum of squares of 1..n are known formulas.",
+      "Compare them with the array's own sums to get two equations."
+    ],
+    "approach": "Let x be the repeated and y the missing value. The array sum minus n(n+1)/2 equals x - y, and the sum of squares minus n(n+1)(2n+1)/6 equals x² - y² = (x - y)(x + y). Divide to get x + y, then solve for x and y. Use 64-bit arithmetic.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "count-subarrays-with-given-xor": {
+    "hints": [
+      "Prefix XOR works like prefix sums: xor of a subarray = prefix[j] ^ prefix[i].",
+      "You need earlier prefixes equal to prefix ^ k."
+    ],
+    "approach": "Maintain the running XOR and a map from each prefix XOR to how often it has occurred (start with {0: 1}). A subarray ending here has XOR k exactly when an earlier prefix equals current ^ k, so add that count, then record the current prefix.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "count-inversions": {
+    "hints": [
+      "Counting pairs one by one is O(n²).",
+      "Merge sort sees pairs when it merges two sorted halves."
+    ],
+    "approach": "Run merge sort. While merging two sorted halves, whenever an element of the right half is placed before the remaining elements of the left half, it forms an inversion with each of them: add the number of left-half elements still waiting. Sorting while counting gives O(n log n).",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "reverse-pairs": {
+    "hints": [
+      "Count the pairs before merging the two sorted halves.",
+      "For each element on the left, the right-half elements it beats form a prefix, so a pointer only moves forward."
+    ],
+    "approach": "Use merge sort. Before merging two sorted halves, for every left element advance a pointer through the right half while left > 2 * right; the pointer's distance is that element's count. Then merge normally. Use 64-bit math for 2 * value.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "majority-element-ii": {
+    "hints": [
+      "At most two values can appear more than n/3 times.",
+      "Boyer-Moore voting extends to two candidates."
+    ],
+    "approach": "Run Boyer-Moore with two candidates and two counters to find the only possible values, then count them in a second pass to confirm each really exceeds n/3. Return the survivors in ascending order.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "largest-subarray-with-0-sum": {
+    "hints": [
+      "A zero-sum subarray means the same prefix sum appears twice.",
+      "Keep the first index of each prefix sum."
+    ],
+    "approach": "Track the prefix sum and the first index where each sum occurred. If the current sum was seen before at index j, the subarray (j, i] sums to zero; keep the longest. Do not overwrite the first index of a sum.",
+    "time": "O(n)",
+    "space": "O(n)"
   }
 }

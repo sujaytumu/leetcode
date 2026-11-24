@@ -8,6 +8,14 @@
     ]
   },
   {
+    "id": "striver-a2z",
+    "title": "Striver's A2Z DSA Sheet",
+    "blurb": "Striver's A2Z sheet, step by step from arrays to DP. Every problem comes with its optimal C++ solution first.",
+    "tags": [
+      "striver-a2z"
+    ]
+  },
+  {
     "id": "warmup",
     "title": "Easy warm-up",
     "blurb": "Every easy problem. Build speed and confidence.",
