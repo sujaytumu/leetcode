@@ -5699,10 +5699,388 @@ A2Z_BATCH_1 = [
 PROBLEMS += A2Z_BATCH_1
 
 
+# ============================================================== Striver A2Z sheet, batch 2 (binary search)
+def sorted_arr(n, lo, hi):
+    return sorted(a2z_arr(n, lo, hi))
+
+
+def bs_lower_bound(nums, x):
+    return bisect.bisect_left(nums, x)
+
+
+def bs_upper_bound(nums, x):
+    return bisect.bisect_right(nums, x)
+
+
+def bs_floor_ceil(nums, x):
+    below = [v for v in nums if v <= x]
+    above = [v for v in nums if v >= x]
+    return [max(below) if below else -1, min(above) if above else -1]
+
+
+def bs_count(nums, x):
+    return bisect.bisect_right(nums, x) - bisect.bisect_left(nums, x)
+
+
+def bs_rotated_contains(nums, x):
+    return x in nums
+
+
+def bs_rotated_min(nums):
+    return min(nums)
+
+
+def bs_rotation_count(nums):
+    return nums.index(min(nums))
+
+
+def bs_single(nums):
+    out = 0
+    for v in nums:
+        out ^= v
+    return out
+
+
+def bs_peak_index(nums):
+    return nums.index(max(nums))
+
+
+def bs_nth_root(n, m):
+    x = round(m ** (1.0 / n))
+    for c in (x - 1, x, x + 1):
+        if c >= 0 and c ** n == m:
+            return c
+    return -1
+
+
+def bs_bouquets(bloom, m, k):
+    if m * k > len(bloom):
+        return -1
+
+    def ok(day):
+        made = run = 0
+        for b in bloom:
+            run = run + 1 if b <= day else 0
+            if run == k:
+                made += 1
+                run = 0
+        return made >= m
+
+    lo, hi = min(bloom), max(bloom)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if ok(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def bs_smallest_divisor(nums, threshold):
+    lo, hi = 1, max(nums)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum(-(-x // mid) for x in nums) <= threshold:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def bs_aggressive_cows(stalls, cows):
+    stalls = sorted(stalls)
+
+    def ok(d):
+        placed, last = 1, stalls[0]
+        for x in stalls[1:]:
+            if x - last >= d:
+                placed += 1
+                last = x
+        return placed >= cows
+
+    lo, hi = 1, stalls[-1] - stalls[0]
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if ok(mid):
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+
+def bs_kth_two(a, b, k):
+    return sorted(a + b)[k - 1]
+
+
+def bs_row_max_ones(mat):
+    counts = [sum(r) for r in mat]
+    return counts.index(max(counts))
+
+
+def bs_matrix_contains(mat, target):
+    return any(target in row for row in mat)
+
+
+def bs_kth_missing(arr, k):
+    missing, cur = 0, 0
+    for v in arr:
+        gap = v - cur - 1
+        if missing + gap >= k:
+            return cur + (k - missing)
+        missing += gap
+        cur = v
+    return cur + (k - missing)
+
+
+def bs_matrix_median(mat):
+    flat = sorted(v for row in mat for v in row)
+    return flat[len(flat) // 2]
+
+
+def a2z_cases_search_x(lo=-40, hi=40):
+    out = []
+    for n in [1, 2, 5, 12, 40, 150, 600]:
+        out.append((sorted_arr(n, lo, hi), a2z_rng.randint(lo - 5, hi + 5)))
+    out += [([1, 2, 8, 10, 11, 12, 19], 9), ([3, 3, 3], 3), ([5], 1), ([1, 4, 4, 4, 9], 4)]
+    return out
+
+
+def a2z_rotate(arr):
+    r = a2z_rng.randrange(len(arr)) if len(arr) > 1 else 0
+    return arr[r:] + arr[:r]
+
+
+def a2z_cases_rotated_dups():
+    out = []
+    for n in [1, 3, 6, 15, 50, 200]:
+        arr = a2z_rotate(sorted_arr(n, -9, 9))
+        out.append((arr, a2z_rng.choice(arr + [100])))
+    out += [([2, 5, 6, 0, 0, 1, 2], 0), ([2, 5, 6, 0, 0, 1, 2], 3), ([1, 1, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 1], 13)]
+    return out
+
+
+def a2z_cases_rotated_dups_min():
+    return [a2z_rotate(sorted_arr(n, -9, 9)) for n in [1, 3, 6, 15, 50, 200]] + [[2, 2, 2, 0, 1], [1, 3, 3], [10, 1, 10, 10, 10]]
+
+
+def a2z_cases_rotated_distinct():
+    out = []
+    for n in [1, 2, 5, 11, 40, 200, 700]:
+        out.append(a2z_rotate(sorted(a2z_rng.sample(range(-900, 900), n))))
+    return out + [[4, 5, 6, 7, 0, 1, 2], [1, 2, 3, 4, 5]]
+
+
+def a2z_cases_single():
+    out = []
+    for pairs in [0, 1, 3, 8, 30, 120, 450]:
+        vals = sorted(a2z_rng.sample(range(-800, 800), pairs + 1))
+        single = vals[a2z_rng.randrange(len(vals))]
+        arr = []
+        for v in vals:
+            arr += [v] if v == single else [v, v]
+        out.append(arr)
+    return out + [[1, 1, 2, 3, 3, 4, 4, 8, 8], [3, 3, 7, 7, 10, 11, 11]]
+
+
+def a2z_cases_peak():
+    out = []
+    for n in [1, 2, 3, 6, 15, 60, 300]:
+        vals = sorted(a2z_rng.sample(range(-900, 900), n))
+        peak = a2z_rng.randrange(n)
+        left = vals[:peak]
+        right = vals[peak + 1:]
+        arr = left + [vals[peak]] + right[::-1] if False else None
+        top = vals[-1]
+        rest = vals[:-1]
+        cut = a2z_rng.randrange(len(rest) + 1)
+        arr = rest[:cut] + [top] + sorted(rest[cut:], reverse=True)
+        out.append(arr)
+    return out
+
+
+def a2z_cases_nth_root():
+    out = []
+    for n, x in [(3, 27), (4, 69), (2, 144), (5, 32), (1, 17), (10, 1024), (3, 1000), (2, 10 ** 9 // 7)]:
+        out.append((n, x if n != 4 else 69))
+    for n in [2, 3, 4, 5, 6, 7]:
+        r = a2z_rng.randint(2, int(1e9 ** (1.0 / n)))
+        out.append((n, r ** n))
+    return out
+
+
+def a2z_cases_bouquets():
+    out = []
+    for n in [3, 7, 15, 40, 150]:
+        bloom = a2z_arr(n, 1, 60)
+        k = a2z_rng.randint(1, max(1, n // 3))
+        out.append((bloom, a2z_rng.randint(1, max(1, n // k)), k))
+    return out + [([1, 10, 3, 10, 2], 3, 1), ([1, 10, 3, 10, 2], 3, 2), ([7, 7, 7, 7, 12, 7, 7], 2, 3), ([5], 1, 1), ([2, 3], 5, 1)]
+
+
+def a2z_cases_divisor():
+    out = []
+    for n in [2, 5, 12, 40, 200, 600]:
+        arr = a2z_arr(n, 1, 500)
+        out.append((arr, a2z_rng.randint(n, sum(arr))))
+    return out + [([1, 2, 5, 9], 6), ([44, 22, 33, 11, 1], 5), ([19], 5)]
+
+
+def a2z_cases_cows():
+    out = []
+    for n in [2, 3, 6, 15, 60, 250]:
+        stalls = a2z_rng.sample(range(1, 2000), n)
+        out.append((stalls, a2z_rng.randint(2, n)))
+    return out + [([0, 3, 4, 7, 10, 9], 4), ([4, 2, 1, 3, 6], 2), ([1, 2], 2)]
+
+
+def a2z_cases_kth_two():
+    out = []
+    for n, m in [(1, 1), (3, 4), (6, 2), (20, 30), (100, 80), (300, 250)]:
+        a, b = sorted_arr(n, -300, 300), sorted_arr(m, -300, 300)
+        out.append((a, b, a2z_rng.randint(1, n + m)))
+    return out + [([2, 3, 6, 7, 9], [1, 4, 8, 10], 5), ([100, 112, 256, 349, 770], [72, 86, 113, 119, 265, 445, 892], 7)]
+
+
+def a2z_cases_row_ones():
+    out = []
+    for r, c in [(1, 1), (2, 3), (4, 4), (8, 6), (20, 15), (60, 30)]:
+        mat = [[0] * (c - k) + [1] * k for k in (a2z_rng.randint(0, c) for _ in range(r))]
+        out.append(mat)
+    return out + [[[0, 0, 0], [0, 0, 0]], [[0, 1, 1, 1], [0, 0, 1, 1], [1, 1, 1, 1], [0, 0, 0, 0]]]
+
+
+def a2z_sorted_matrix(r, c):
+    m = [[0] * c for _ in range(r)]
+    for i in range(r):
+        for j in range(c):
+            up = m[i - 1][j] if i else 0
+            left = m[i][j - 1] if j else 0
+            m[i][j] = max(up, left) + a2z_rng.randint(1, 4)
+    return m
+
+
+def a2z_cases_matrix_ii():
+    out = []
+    for r, c in [(1, 1), (2, 3), (4, 4), (8, 6), (20, 25), (40, 30)]:
+        mat = a2z_sorted_matrix(r, c)
+        flat = [v for row in mat for v in row]
+        out.append((mat, a2z_rng.choice(flat) if a2z_rng.random() < 0.6 else a2z_rng.randint(0, max(flat) + 3)))
+    return out
+
+
+def a2z_cases_kth_missing():
+    out = []
+    for n in [1, 3, 7, 20, 100, 400]:
+        arr = sorted(a2z_rng.sample(range(1, 3 * n + 8), n))
+        out.append((arr, a2z_rng.randint(1, 3 * n)))
+    return out + [([2, 3, 4, 7, 11], 5), ([1, 2, 3, 4], 2)]
+
+
+def a2z_cases_matrix_median():
+    out = []
+    for r, c in [(1, 1), (3, 3), (3, 5), (5, 5), (7, 9), (15, 21), (25, 25)]:
+        out.append([sorted_arr(c, -200, 200) for _ in range(r)])
+    return out
+
+
+A2Z_BATCH_2 = [
+    mk("lower-bound", "Lower Bound", "EASY", ["array", "binary-search"], [("nums", "int[]"), ("x", "int")], "int",
+       bs_lower_bound, a2z_cases_search_x(),
+       "`nums` is sorted in non-decreasing order. Return the index of the first element that is greater than or equal "
+       "to `x`, or `n` if there is none.", "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `x`.", "The index.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i], x <= 10^4`"]),
+    mk("upper-bound", "Upper Bound", "EASY", ["array", "binary-search"], [("nums", "int[]"), ("x", "int")], "int",
+       bs_upper_bound, a2z_cases_search_x(),
+       "`nums` is sorted in non-decreasing order. Return the index of the first element that is strictly greater than "
+       "`x`, or `n` if there is none.", "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `x`.", "The index.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i], x <= 10^4`"]),
+    mk("floor-and-ceil-in-sorted-array", "Floor and Ceil in a Sorted Array", "EASY", ["array", "binary-search"],
+       [("nums", "int[]"), ("x", "int")], "int[]", bs_floor_ceil, a2z_cases_search_x(0, 80),
+       "`nums` is sorted. The floor of `x` is the largest element `<= x` and the ceil is the smallest element `>= x`. "
+       "Return `[floor, ceil]`, using `-1` for a value that does not exist.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `x`.", "Two integers: the floor, then the ceil.",
+       ["`1 <= n <= 1000`", "`0 <= nums[i], x <= 10^4`"]),
+    mk("count-occurrences-in-sorted-array", "Count Occurrences in a Sorted Array", "EASY", ["array", "binary-search"],
+       [("nums", "int[]"), ("x", "int")], "int", bs_count, a2z_cases_search_x(-8, 8),
+       "`nums` is sorted. Return how many times `x` appears, in `O(log n)` time.",
+       "Line 1: `n`.\nLine 2: `n` sorted integers.\nLine 3: `x`.", "The count.", ["`1 <= n <= 1000`", "`-10^4 <= nums[i], x <= 10^4`"]),
+    mk("search-in-rotated-sorted-array-ii", "Search in Rotated Sorted Array II", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]"), ("target", "int")], "bool", bs_rotated_contains, a2z_cases_rotated_dups(),
+       "`nums` was sorted in non-decreasing order and then rotated at an unknown pivot. It may contain **duplicates**. "
+       "Return `true` if `target` is in `nums`.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "`true` or `false`.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i], target <= 10^4`"]),
+    mk("find-minimum-in-rotated-sorted-array-ii", "Find Minimum in Rotated Sorted Array II", "HARD", ["array", "binary-search"],
+       [("nums", "int[]")], "int", bs_rotated_min, a2z_cases_rotated_dups_min(),
+       "`nums` was sorted in non-decreasing order and then rotated. It may contain **duplicates**. Return its minimum "
+       "element.", ARR_IN, "The minimum element.", ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("rotation-count-in-rotated-sorted-array", "How Many Times Is the Array Rotated", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]")], "int", bs_rotation_count, a2z_cases_rotated_distinct(),
+       "`nums` holds distinct values; it was sorted in ascending order and then rotated to the right some number of "
+       "times. Return that number of rotations (the index of the smallest element).", ARR_IN, "The rotation count.",
+       ["`1 <= n <= 1000`", "All values are distinct"]),
+    mk("single-element-in-a-sorted-array", "Single Element in a Sorted Array", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]")], "int", bs_single, a2z_cases_single(),
+       "`nums` is sorted and every element appears exactly twice except one. Return the single element in `O(log n)` "
+       "time.", ARR_IN, "The element that appears once.", ["`1 <= n <= 999`, `n` is odd"]),
+    mk("find-peak-element", "Find Peak Element", "MEDIUM", ["array", "binary-search"], [("nums", "int[]")], "int",
+       bs_peak_index, a2z_cases_peak(),
+       "A peak is an element strictly greater than its neighbours (the ends count as having `-infinity` outside). "
+       "Return the index of a peak in `O(log n)` time. In the test data the array rises and then falls, so exactly "
+       "one peak exists.", ARR_IN, "The index of the peak.", ["`1 <= n <= 1000`", "Adjacent values are different"]),
+    mk("nth-root-of-an-integer", "Nth Root of an Integer", "MEDIUM", ["math", "binary-search"],
+       [("n", "int"), ("m", "int")], "int", bs_nth_root, a2z_cases_nth_root(),
+       "Return the integer `x` with `x^n == m`, or `-1` if `m` is not a perfect `n`-th power.",
+       "Line 1: `n`.\nLine 2: `m`.", "The root, or `-1`.", ["`1 <= n <= 30`", "`1 <= m <= 10^9`"]),
+    mk("minimum-days-to-make-m-bouquets", "Minimum Number of Days to Make m Bouquets", "MEDIUM", ["array", "binary-search"],
+       [("bloomDay", "int[]"), ("m", "int"), ("k", "int")], "int", bs_bouquets, a2z_cases_bouquets(),
+       "`bloomDay[i]` is the day the `i`-th flower blooms. A bouquet needs `k` **adjacent** bloomed flowers. Return the "
+       "minimum number of days to make `m` bouquets, or `-1` if it is impossible.",
+       "Line 1: `n`.\nLine 2: `n` integers (`bloomDay`).\nLine 3: `m`.\nLine 4: `k`.", "The number of days, or `-1`.",
+       ["`1 <= n <= 1000`", "`1 <= bloomDay[i] <= 10^9`", "`1 <= m, k`"]),
+    mk("smallest-divisor-given-a-threshold", "Find the Smallest Divisor Given a Threshold", "MEDIUM", ["array", "binary-search"],
+       [("nums", "int[]"), ("threshold", "int")], "int", bs_smallest_divisor, a2z_cases_divisor(),
+       "Choose a positive divisor `d`; the result is the sum of `ceil(nums[i] / d)`. Return the smallest `d` for which "
+       "that sum is at most `threshold`.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `threshold`.", "The smallest divisor.",
+       ["`1 <= n <= 1000`", "`1 <= nums[i] <= 10^6`", "`n <= threshold <= 10^6`"]),
+    mk("aggressive-cows", "Aggressive Cows", "HARD", ["array", "binary-search", "sorting"], [("stalls", "int[]"), ("cows", "int")], "int",
+       bs_aggressive_cows, a2z_cases_cows(),
+       "Place `cows` cows in the stalls (given by their positions, unsorted) so that the **minimum distance** between any "
+       "two cows is as large as possible. Return that largest minimum distance.",
+       "Line 1: `n`.\nLine 2: `n` stall positions.\nLine 3: `cows`.", "The largest possible minimum distance.",
+       ["`2 <= cows <= n <= 1000`", "`0 <= stalls[i] <= 10^9`, all different"]),
+    mk("kth-element-of-two-sorted-arrays", "K-th Element of Two Sorted Arrays", "HARD", ["array", "binary-search"],
+       [("a", "int[]"), ("b", "int[]"), ("k", "int")], "int", bs_kth_two, a2z_cases_kth_two(),
+       "Both arrays are sorted. Return the `k`-th smallest element (1-indexed) of the merged order, in "
+       "`O(log(min(n, m)))` time.", "Line 1: `n`.\nLine 2: `n` integers (`a`).\nLine 3: `m`.\nLine 4: `m` integers (`b`).\nLine 5: `k`.",
+       "The k-th element.", ["`1 <= n, m <= 1000`", "`1 <= k <= n + m`"]),
+    mk("row-with-maximum-ones", "Row with Maximum Number of 1s", "EASY", ["matrix", "binary-search"],
+       [("matrix", "int[][]")], "int", bs_row_max_ones, a2z_cases_row_ones(),
+       "Every row of the binary matrix is sorted (zeros first, then ones). Return the index of the row with the most 1s "
+       "(the smallest index on ties).", "Line 1: `r`.\nLines 2..: each row, space separated.", "The row index.",
+       ["`1 <= r, c <= 100`", "Every row is sorted in non-decreasing order"]),
+    mk("search-a-2d-matrix-ii", "Search a 2D Matrix II", "MEDIUM", ["matrix", "binary-search"],
+       [("matrix", "int[][]"), ("target", "int")], "bool", bs_matrix_contains, a2z_cases_matrix_ii(),
+       "Every row is sorted left to right and every column is sorted top to bottom. Return `true` if `target` is in the "
+       "matrix, using the staircase walk in `O(r + c)`.", "Line 1: `r`.\nNext `r` lines: the rows.\nLast line: `target`.",
+       "`true` or `false`.", ["`1 <= r, c <= 100`", "Rows and columns are sorted"]),
+    mk("kth-missing-positive-number", "Kth Missing Positive Number", "EASY", ["array", "binary-search"],
+       [("arr", "int[]"), ("k", "int")], "int", bs_kth_missing, a2z_cases_kth_missing(),
+       "`arr` is strictly increasing and holds positive integers. Return the `k`-th positive integer that is missing "
+       "from it.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The k-th missing positive integer.",
+       ["`1 <= n <= 1000`", "`1 <= arr[i] <= 10^4`", "`1 <= k <= 1000`"]),
+    mk("median-in-a-row-wise-sorted-matrix", "Median in a Row-Wise Sorted Matrix", "HARD", ["matrix", "binary-search"],
+       [("matrix", "int[][]")], "int", bs_matrix_median, a2z_cases_matrix_median(),
+       "Every row is sorted in non-decreasing order and `r * c` is odd. Return the median of all the elements without "
+       "flattening and sorting the matrix.", "Line 1: `r`.\nNext `r` lines: the rows.", "The median.",
+       ["`1 <= r, c <= 100`, `r * c` is odd", "`-10^4 <= matrix[i][j] <= 10^4`"]),
+]
+PROBLEMS += A2Z_BATCH_2
+
+
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
 STRIVER_SDE = set(['add-two-numbers', 'balanced-binary-tree', 'best-time-to-buy-and-sell-stock', 'binary-tree-inorder-traversal', 'binary-tree-level-order-traversal', 'binary-tree-maximum-path-sum', 'binary-tree-zigzag-level-order-traversal', 'coin-change', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'course-schedule', 'diameter-of-binary-tree', 'edit-distance', 'find-the-duplicate-number', 'is-graph-bipartite', 'kth-largest-element-in-an-array', 'kth-smallest-element-in-a-bst', 'largest-rectangle-in-histogram', 'longest-common-subsequence', 'longest-consecutive-sequence', 'longest-increasing-subsequence', 'longest-substring-without-repeating-characters', 'lowest-common-ancestor-of-a-binary-search-tree', 'lowest-common-ancestor-of-a-binary-tree', 'majority-element', 'maximal-rectangle', 'maximum-depth-of-binary-tree', 'maximum-product-subarray', 'maximum-subarray', 'merge-intervals', 'merge-sorted-array', 'merge-two-sorted-lists', 'middle-of-the-linked-list', 'min-cost-to-connect-all-points', 'network-delay-time', 'next-permutation', 'number-of-islands', 'palindrome-linked-list', 'partition-equal-subset-sum', 'pascals-triangle', 'redundant-connection', 'remove-duplicates-from-sorted-array', 'remove-nth-node-from-end-of-list', 'reverse-linked-list', 'reverse-nodes-in-k-group', 'roman-to-integer', 'rotate-image', 'rotate-list', 'rotting-oranges', 'same-tree', 'search-a-2d-matrix', 'search-in-rotated-sorted-array', 'set-matrix-zeroes', 'sliding-window-maximum', 'sort-colors', 'symmetric-tree', 'top-k-frequent-elements', 'trapping-rain-water', 'two-sum', 'unique-paths', 'valid-parentheses', 'validate-binary-search-tree', 'word-break'])
-STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum'])
+STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'lower-bound', 'upper-bound', 'floor-and-ceil-in-sorted-array', 'count-occurrences-in-sorted-array', 'search-in-rotated-sorted-array-ii', 'find-minimum-in-rotated-sorted-array-ii', 'rotation-count-in-rotated-sorted-array', 'single-element-in-a-sorted-array', 'find-peak-element', 'nth-root-of-an-integer', 'minimum-days-to-make-m-bouquets', 'smallest-divisor-given-a-threshold', 'aggressive-cows', 'kth-element-of-two-sorted-arrays', 'row-with-maximum-ones', 'search-a-2d-matrix-ii', 'kth-missing-positive-number', 'median-in-a-row-wise-sorted-matrix'])
 SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
 
 

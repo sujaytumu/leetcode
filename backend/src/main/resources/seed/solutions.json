@@ -2473,5 +2473,113 @@
   "solutions": {
    "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    int maxLen(vector<int>& nums) {\n        unordered_map<long long, int> first;\n        first[0] = -1;\n        long long total = 0;\n        int best = 0;\n        for (int i = 0; i < (int)nums.size(); i++) {\n            total += nums[i];\n            auto it = first.find(total);\n            if (it != first.end()) best = max(best, i - it->second);\n            else first[total] = i;\n        }\n        return best;\n    }\n};\n"
   }
+ },
+ "lower-bound": {
+  "editorial": "## Approach\n\nBinary search for the first index whose value is at least x. If nums[mid] >= x the answer is mid or to its left, otherwise it is to the right.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int lowerBound(vector<int>& nums, int x) {\n        int lo = 0, hi = nums.size();\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] >= x) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "upper-bound": {
+  "editorial": "## Approach\n\nBinary search for the first index whose value is strictly greater than x: when nums[mid] > x move left, otherwise move right.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int upperBound(vector<int>& nums, int x) {\n        int lo = 0, hi = nums.size();\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] > x) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "floor-and-ceil-in-sorted-array": {
+  "editorial": "## Approach\n\nFind the first index c with nums[c] >= x. That element is the ceil. The floor is nums[c] when it equals x, otherwise nums[c - 1]. Use -1 when the index falls outside the array.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    vector<int> floorAndCeil(vector<int>& nums, int x) {\n        int n = nums.size();\n        int lo = 0, hi = n;\n        while (lo < hi) {                       // first index with nums[i] >= x\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] >= x) hi = mid;\n            else lo = mid + 1;\n        }\n        int ceilIdx = lo;\n        int floorIdx = (ceilIdx < n && nums[ceilIdx] == x) ? ceilIdx : ceilIdx - 1;\n        return {floorIdx >= 0 ? nums[floorIdx] : -1, ceilIdx < n ? nums[ceilIdx] : -1};\n    }\n};\n"
+  }
+ },
+ "count-occurrences-in-sorted-array": {
+  "editorial": "## Approach\n\nTwo binary searches find the first index with value >= x and the first index with value > x. Their difference is the number of copies of x.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int countOccurrences(vector<int>& nums, int x) {\n        auto bound = [&](bool upper) {\n            int lo = 0, hi = nums.size();\n            while (lo < hi) {\n                int mid = lo + (hi - lo) / 2;\n                if (nums[mid] > x || (!upper && nums[mid] == x)) hi = mid;\n                else lo = mid + 1;\n            }\n            return lo;\n        };\n        return bound(true) - bound(false);\n    }\n};\n"
+  }
+ },
+ "search-in-rotated-sorted-array-ii": {
+  "editorial": "## Approach\n\nBinary search while deciding which half is sorted. When nums[lo], nums[mid] and nums[hi] are all equal the sorted half cannot be identified, so shrink both ends by one. Otherwise check whether the target lies inside the sorted half and discard the other half. The worst case with many duplicates is O(n).\n\n**Complexity:** O(log n) average, O(n) worst case time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) average, O(n) worst case time, O(1) space\nclass Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        int lo = 0, hi = (int)nums.size() - 1;\n        while (lo <= hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] == target) return true;\n            if (nums[lo] == nums[mid] && nums[mid] == nums[hi]) {   // duplicates hide which half is sorted\n                lo++;\n                hi--;\n            } else if (nums[lo] <= nums[mid]) {                     // left half is sorted\n                if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;\n                else lo = mid + 1;\n            } else {                                                // right half is sorted\n                if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;\n                else hi = mid - 1;\n            }\n        }\n        return false;\n    }\n};\n"
+  }
+ },
+ "find-minimum-in-rotated-sorted-array-ii": {
+  "editorial": "## Approach\n\nIf nums[mid] > nums[hi] the minimum is right of mid; if it is smaller the minimum is at mid or left; if equal, drop hi by one because the minimum is still reachable. Worst case with all duplicates is O(n).\n\n**Complexity:** O(log n) average, O(n) worst case time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) average, O(n) worst case time, O(1) space\nclass Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int lo = 0, hi = (int)nums.size() - 1;\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] > nums[hi]) lo = mid + 1;\n            else if (nums[mid] < nums[hi]) hi = mid;\n            else hi--;                                             // equal: the maximum cannot be nums[hi] alone\n        }\n        return nums[lo];\n    }\n};\n"
+  }
+ },
+ "rotation-count-in-rotated-sorted-array": {
+  "editorial": "## Approach\n\nWith distinct values, binary search for the minimum: if nums[mid] > nums[hi] the minimum is right of mid, otherwise at mid or left. The index where the search ends is the rotation count.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int findRotationCount(vector<int>& nums) {\n        int lo = 0, hi = (int)nums.size() - 1;\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] > nums[hi]) lo = mid + 1;\n            else hi = mid;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "single-element-in-a-sorted-array": {
+  "editorial": "## Approach\n\nBinary search on even indexes. If nums[mid] equals nums[mid + 1] the pairs are still aligned, so the single element is to the right; otherwise it is at mid or to the left.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int singleNonDuplicate(vector<int>& nums) {\n        int lo = 0, hi = (int)nums.size() - 1;\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (mid % 2 == 1) mid--;                               // always look at the first of a candidate pair\n            if (nums[mid] == nums[mid + 1]) lo = mid + 2;\n            else hi = mid;\n        }\n        return nums[lo];\n    }\n};\n"
+  }
+ },
+ "find-peak-element": {
+  "editorial": "## Approach\n\nBinary search on the slope: when nums[mid] < nums[mid + 1] a peak lies to the right, otherwise at mid or to the left. The search ends on a peak.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int findPeakElement(vector<int>& nums) {\n        int lo = 0, hi = (int)nums.size() - 1;\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (nums[mid] < nums[mid + 1]) lo = mid + 1;           // climbing: a peak is to the right\n            else hi = mid;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "nth-root-of-an-integer": {
+  "editorial": "## Approach\n\nBinary search the root in [1, m]. Compute mid^n with early exit when the product exceeds m. If it equals m return mid, if it is too big search lower, otherwise higher.\n\n**Complexity:** O(n log m) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log m) time, O(1) space\nclass Solution {\npublic:\n    int nthRoot(int n, int m) {\n        long long lo = 1, hi = m;\n        while (lo <= hi) {\n            long long mid = lo + (hi - lo) / 2, power = 1;\n            bool tooBig = false;\n            for (int i = 0; i < n; i++) {\n                power *= mid;\n                if (power > m) { tooBig = true; break; }\n            }\n            if (!tooBig && power == m) return (int)mid;\n            if (tooBig) hi = mid - 1;\n            else lo = mid + 1;\n        }\n        return -1;\n    }\n};\n"
+  }
+ },
+ "minimum-days-to-make-m-bouquets": {
+  "editorial": "## Approach\n\nThe answer lies between the earliest and latest bloom day and the condition is monotone. For a candidate day scan the flowers counting adjacent bloomed ones; each run of k forms a bouquet. Return -1 up front when m * k exceeds the number of flowers.\n\n**Complexity:** O(n log(max day)) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log(max day)) time, O(1) space\nclass Solution {\npublic:\n    int minDays(vector<int>& bloomDay, int m, int k) {\n        long long n = bloomDay.size();\n        if ((long long)m * k > n) return -1;\n        auto enough = [&](int day) {\n            int made = 0, run = 0;\n            for (int b : bloomDay) {\n                if (b <= day) {\n                    if (++run == k) { made++; run = 0; }\n                } else {\n                    run = 0;\n                }\n            }\n            return made >= m;\n        };\n        int lo = *min_element(bloomDay.begin(), bloomDay.end());\n        int hi = *max_element(bloomDay.begin(), bloomDay.end());\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            if (enough(mid)) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "smallest-divisor-given-a-threshold": {
+  "editorial": "## Approach\n\nThe sum of ceilings decreases as the divisor grows, so binary search between 1 and max(nums), computing the sum in one pass and keeping the smallest divisor that stays within the threshold.\n\n**Complexity:** O(n log(max)) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log(max)) time, O(1) space\nclass Solution {\npublic:\n    int smallestDivisor(vector<int>& nums, int threshold) {\n        int lo = 1, hi = *max_element(nums.begin(), nums.end());\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2;\n            long long total = 0;\n            for (int x : nums) total += (x + mid - 1) / mid;\n            if (total <= threshold) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "aggressive-cows": {
+  "editorial": "## Approach\n\nSort the stalls. Binary search the largest distance d for which a greedy placement (put a cow in the first stall, then in each next stall at least d away) fits all the cows.\n\n**Complexity:** O(n log n + n log(range)) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n + n log(range)) time, O(1) space\nclass Solution {\npublic:\n    int aggressiveCows(vector<int>& stalls, int cows) {\n        sort(stalls.begin(), stalls.end());\n        auto canPlace = [&](int dist) {\n            int placed = 1, last = stalls[0];\n            for (size_t i = 1; i < stalls.size(); i++)\n                if (stalls[i] - last >= dist) { placed++; last = stalls[i]; }\n            return placed >= cows;\n        };\n        int lo = 1, hi = stalls.back() - stalls.front();\n        while (lo < hi) {\n            int mid = lo + (hi - lo + 1) / 2;\n            if (canPlace(mid)) lo = mid;\n            else hi = mid - 1;\n        }\n        return lo;\n    }\n};\n"
+  }
+ },
+ "kth-element-of-two-sorted-arrays": {
+  "editorial": "## Approach\n\nBinary search over how many elements i to take from the shorter array; the rest, k - i, come from the other. A split is correct when the largest taken from each array is at most the smallest not taken from the other. The answer is the larger of the two left maxima.\n\n**Complexity:** O(log(min(n, m))) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log(min(n, m))) time, O(1) space\nclass Solution {\npublic:\n    int kthElement(vector<int>& a, vector<int>& b, int k) {\n        if (a.size() > b.size()) swap(a, b);\n        int n = a.size(), m = b.size();\n        int lo = max(0, k - m), hi = min(k, n);                    // how many elements to take from a\n        while (lo <= hi) {\n            int i = lo + (hi - lo) / 2, j = k - i;\n            int aLeft = i > 0 ? a[i - 1] : INT_MIN, aRight = i < n ? a[i] : INT_MAX;\n            int bLeft = j > 0 ? b[j - 1] : INT_MIN, bRight = j < m ? b[j] : INT_MAX;\n            if (aLeft > bRight) hi = i - 1;\n            else if (bLeft > aRight) lo = i + 1;\n            else return max(aLeft, bLeft);\n        }\n        return -1;\n    }\n};\n"
+  }
+ },
+ "row-with-maximum-ones": {
+  "editorial": "## Approach\n\nFor each row binary search the first index holding a 1; the number of ones is row length minus that index. Keep the row with the most ones, preferring the smaller index on ties.\n\n**Complexity:** O(r log c) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(r log c) time, O(1) space\nclass Solution {\npublic:\n    int rowWithMaxOnes(vector<vector<int>>& matrix) {\n        int best = 0, bestCount = -1;\n        for (int r = 0; r < (int)matrix.size(); r++) {\n            const vector<int>& row = matrix[r];\n            int lo = 0, hi = row.size();                           // first 1 in the sorted row\n            while (lo < hi) {\n                int mid = lo + (hi - lo) / 2;\n                if (row[mid] == 1) hi = mid;\n                else lo = mid + 1;\n            }\n            int ones = (int)row.size() - lo;\n            if (ones > bestCount) { bestCount = ones; best = r; }\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "search-a-2d-matrix-ii": {
+  "editorial": "## Approach\n\nStart at the top-right corner. If the value is larger than the target move left (everything below it is even larger); if it is smaller move down (everything left of it is smaller). Each step discards a row or a column.\n\n**Complexity:** O(r + c) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(r + c) time, O(1) space\nclass Solution {\npublic:\n    bool searchMatrix(vector<vector<int>>& matrix, int target) {\n        int r = 0, c = (int)matrix[0].size() - 1;                  // start at the top-right corner\n        while (r < (int)matrix.size() && c >= 0) {\n            if (matrix[r][c] == target) return true;\n            if (matrix[r][c] > target) c--;\n            else r++;\n        }\n        return false;\n    }\n};\n"
+  }
+ },
+ "kth-missing-positive-number": {
+  "editorial": "## Approach\n\nBinary search for the number of elements that have fewer than k missing positives before them. If that count is lo, the k-th missing number is lo + k.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int findKthPositive(vector<int>& arr, int k) {\n        int lo = 0, hi = arr.size();\n        while (lo < hi) {                                          // count elements with fewer than k numbers missing before them\n            int mid = lo + (hi - lo) / 2;\n            if (arr[mid] - (mid + 1) < k) lo = mid + 1;\n            else hi = mid;\n        }\n        return lo + k;\n    }\n};\n"
+  }
+ },
+ "median-in-a-row-wise-sorted-matrix": {
+  "editorial": "## Approach\n\nBinary search over the value range. For a candidate value count the elements not larger than it with a binary search in each row. The median is the smallest value whose count reaches (r*c)/2 + 1.\n\n**Complexity:** O(r log c log(range)) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(r log c log(range)) time, O(1) space\nclass Solution {\npublic:\n    int findMedian(vector<vector<int>>& matrix) {\n        int rows = matrix.size(), cols = matrix[0].size();\n        int lo = INT_MAX, hi = INT_MIN;\n        for (const auto& row : matrix) {\n            lo = min(lo, row.front());\n            hi = max(hi, row.back());\n        }\n        int need = (rows * cols) / 2 + 1;                          // the median is the smallest value with >= need elements <= it\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2, count = 0;\n            for (const auto& row : matrix)\n                count += upper_bound(row.begin(), row.end(), mid) - row.begin();\n            if (count >= need) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
+  }
  }
 }
