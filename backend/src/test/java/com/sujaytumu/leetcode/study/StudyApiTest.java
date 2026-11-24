@@ -42,10 +42,10 @@ class StudyApiTest {
     void buildsPlansFromTheCatalogue() throws Exception {
         mvc.perform(get("/api/plans"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("warmup"))
-                .andExpect(jsonPath("$[0].total").value(61))
-                .andExpect(jsonPath("$[0].solved").value(0))
-                .andExpect(jsonPath("$[0].problems.length()").value(61))
+                .andExpect(jsonPath("$[0].id").value("striver-sde"))
+                .andExpect(jsonPath("$[0].total").value(62))
+                .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(61)))
+                .andExpect(jsonPath("$[?(@.id=='warmup')].solved").value(hasItem(0)))
                 .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(20)));
     }
 
