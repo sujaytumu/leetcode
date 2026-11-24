@@ -2238,5 +2238,122 @@
     "approach": "Binary search over the value range. For a candidate value count the elements not larger than it with a binary search in each row. The median is the smallest value whose count reaches (r*c)/2 + 1.",
     "time": "O(r log c log(range))",
     "space": "O(1)"
+  },
+  "subsets": {
+    "hints": [
+      "Every element is either in a subset or not.",
+      "That is a binary choice per element: 2^n subsets."
+    ],
+    "approach": "For each element decide to skip or take it, recursing to the next index; when the index reaches n the current choice list is one subset. The recursion tree has 2^n leaves.",
+    "time": "O(n * 2^n)",
+    "space": "O(n) recursion depth (output excluded)"
+  },
+  "subsets-ii": {
+    "hints": [
+      "Sort first so equal values sit together.",
+      "At one depth never start a branch with a value you already tried."
+    ],
+    "approach": "Sort the array and build subsets by choosing the next element from the remaining ones. At each level skip an element equal to the previous one at the same level, which removes duplicate subsets without a set.",
+    "time": "O(n * 2^n)",
+    "space": "O(n)"
+  },
+  "combination-sum-ii": {
+    "hints": [
+      "Sort so duplicates are adjacent and the loop can stop early.",
+      "Use each index at most once and skip equal values at the same depth."
+    ],
+    "approach": "Sort the candidates and backtrack: pick candidate i, recurse from i + 1 with the reduced target, and skip a value equal to the previous one at the same depth. Stop the loop as soon as a candidate exceeds the remaining target.",
+    "time": "O(2^n)",
+    "space": "O(n)"
+  },
+  "combination-sum-iii": {
+    "hints": [
+      "The digits 1..9 are used at most once each.",
+      "Pick them in increasing order to avoid repeats."
+    ],
+    "approach": "Backtrack over digits in increasing order, choosing exactly k of them. Stop when the remaining sum is smaller than the next digit and record the combination when k digits are chosen and the sum is exactly n.",
+    "time": "O(C(9, k) * k)",
+    "space": "O(k)"
+  },
+  "permutations": {
+    "hints": [
+      "Fix one position at a time.",
+      "Swap each remaining element into the current position, recurse, swap back."
+    ],
+    "approach": "Recurse over positions: for position i swap every element from i onwards into place, recurse on i + 1, then swap back to restore the array. Each leaf is a permutation.",
+    "time": "O(n * n!)",
+    "space": "O(n)"
+  },
+  "letter-combinations-of-a-phone-number": {
+    "hints": [
+      "Each digit contributes one letter.",
+      "The recursion depth equals the number of digits."
+    ],
+    "approach": "Map digits to their letters and recurse over positions, appending each possible letter, then removing it again. A string of length equal to the digits is one combination.",
+    "time": "O(4^n * n)",
+    "space": "O(n)"
+  },
+  "subset-sums": {
+    "hints": [
+      "Adding a new element doubles the number of subsets.",
+      "Every earlier sum can appear with and without it."
+    ],
+    "approach": "Start with the single sum 0. For each element append every existing sum plus that element. After all elements the list holds the sum of every subset; sort it.",
+    "time": "O(2^n log 2^n)",
+    "space": "O(2^n)"
+  },
+  "permutation-sequence": {
+    "hints": [
+      "There are (n-1)! permutations for every leading digit.",
+      "Divide k by (n-1)! to pick the first digit."
+    ],
+    "approach": "Use the factorial number system. With k zero-based, k / (n-1)! selects the next digit from the remaining sorted digits; remove it, take k modulo (n-1)! and repeat with (n-2)!, until all digits are used.",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "rat-in-a-maze": {
+    "hints": [
+      "Try the four moves from every cell.",
+      "Mark a cell as visited while it is on the current path and unmark it on the way back."
+    ],
+    "approach": "Depth-first search from the top-left cell: for each of the four moves go to a free, unvisited neighbour, append the move to the path and recurse; unmark the cell when returning. A path is complete at the bottom-right cell.",
+    "time": "O(4^(n*n)) worst case",
+    "space": "O(n*n)"
+  },
+  "m-coloring-problem": {
+    "hints": [
+      "Colour the vertices one at a time.",
+      "A colour is allowed if no already coloured neighbour has it."
+    ],
+    "approach": "Backtrack over vertices: try colours 1..m for the current vertex, skipping any colour used by an adjacent earlier vertex, and recurse. If no colour works undo and return false; reaching the last vertex returns true.",
+    "time": "O(m^n)",
+    "space": "O(n)"
+  },
+  "binary-strings-without-adjacent-ones": {
+    "hints": [
+      "A 1 can only be placed after a 0 or at the start.",
+      "Branch on the next character."
+    ],
+    "approach": "Build the string character by character. Always allow a 0; allow a 1 only when the string is empty or ends in 0. Every string of length n produced this way has no two adjacent ones.",
+    "time": "O(n * F(n)) (Fibonacci many strings)",
+    "space": "O(n)"
+  },
+  "count-subsequences-with-sum-k": {
+    "hints": [
+      "Each element is taken or not.",
+      "ways[s] counts the subsequences so far with sum s."
+    ],
+    "approach": "Dynamic programming over sums: ways[0] = 1; for each element x update ways[s] += ways[s - x] for s from k down to x (backwards so x is used at most once). The answer is ways[k].",
+    "time": "O(n * k)",
+    "space": "O(k)"
+  },
+  "subsequences-with-sum-k": {
+    "hints": [
+      "Pick indices in increasing order to keep the original order.",
+      "Stop exploring when the remaining sum becomes negative."
+    ],
+    "approach": "Backtrack by choosing the next index j > previous, subtracting nums[j] from the remaining target and recursing; record the current subsequence when the remaining sum is exactly zero.",
+    "time": "O(n * 2^n)",
+    "space": "O(n)"
   }
 }

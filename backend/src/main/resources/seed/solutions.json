@@ -2581,5 +2581,83 @@
   "solutions": {
    "cpp": "// Optimised: O(r log c log(range)) time, O(1) space\nclass Solution {\npublic:\n    int findMedian(vector<vector<int>>& matrix) {\n        int rows = matrix.size(), cols = matrix[0].size();\n        int lo = INT_MAX, hi = INT_MIN;\n        for (const auto& row : matrix) {\n            lo = min(lo, row.front());\n            hi = max(hi, row.back());\n        }\n        int need = (rows * cols) / 2 + 1;                          // the median is the smallest value with >= need elements <= it\n        while (lo < hi) {\n            int mid = lo + (hi - lo) / 2, count = 0;\n            for (const auto& row : matrix)\n                count += upper_bound(row.begin(), row.end(), mid) - row.begin();\n            if (count >= need) hi = mid;\n            else lo = mid + 1;\n        }\n        return lo;\n    }\n};\n"
   }
+ },
+ "subsets": {
+  "editorial": "## Approach\n\nFor each element decide to skip or take it, recursing to the next index; when the index reaches n the current choice list is one subset. The recursion tree has 2^n leaves.\n\n**Complexity:** O(n * 2^n) time, O(n) recursion depth (output excluded) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * 2^n) time, O(n) recursion depth (output excluded) space\nvoid subsetsGo(const vector<int> &nums, int i, vector<int> &cur, vector<vector<int>> &out) {\n    if (i == (int)nums.size()) {\n        out.push_back(cur);\n        return;\n    }\n    subsetsGo(nums, i + 1, cur, out);              // skip nums[i]\n    cur.push_back(nums[i]);\n    subsetsGo(nums, i + 1, cur, out);              // take nums[i]\n    cur.pop_back();\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        vector<vector<int>> out;\n        vector<int> cur;\n        subsetsGo(nums, 0, cur, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "subsets-ii": {
+  "editorial": "## Approach\n\nSort the array and build subsets by choosing the next element from the remaining ones. At each level skip an element equal to the previous one at the same level, which removes duplicate subsets without a set.\n\n**Complexity:** O(n * 2^n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * 2^n) time, O(n) space\nvoid subsetsUniqueGo(const vector<int> &nums, int start, vector<int> &cur, vector<vector<int>> &out) {\n    out.push_back(cur);\n    for (int i = start; i < (int)nums.size(); i++) {\n        if (i > start && nums[i] == nums[i - 1]) continue;   // same value at the same depth: skip\n        cur.push_back(nums[i]);\n        subsetsUniqueGo(nums, i + 1, cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> subsetsWithDup(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        vector<vector<int>> out;\n        vector<int> cur;\n        subsetsUniqueGo(nums, 0, cur, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "combination-sum-ii": {
+  "editorial": "## Approach\n\nSort the candidates and backtrack: pick candidate i, recurse from i + 1 with the reduced target, and skip a value equal to the previous one at the same depth. Stop the loop as soon as a candidate exceeds the remaining target.\n\n**Complexity:** O(2^n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(2^n) time, O(n) space\nvoid comboTwoGo(const vector<int> &c, int start, int left, vector<int> &cur, vector<vector<int>> &out) {\n    if (left == 0) {\n        out.push_back(cur);\n        return;\n    }\n    for (int i = start; i < (int)c.size() && c[i] <= left; i++) {\n        if (i > start && c[i] == c[i - 1]) continue;\n        cur.push_back(c[i]);\n        comboTwoGo(c, i + 1, left - c[i], cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<vector<int>> out;\n        vector<int> cur;\n        comboTwoGo(candidates, 0, target, cur, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "combination-sum-iii": {
+  "editorial": "## Approach\n\nBacktrack over digits in increasing order, choosing exactly k of them. Stop when the remaining sum is smaller than the next digit and record the combination when k digits are chosen and the sum is exactly n.\n\n**Complexity:** O(C(9, k) * k) time, O(k) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(C(9, k) * k) time, O(k) space\nvoid comboThreeGo(int next, int k, int left, vector<int> &cur, vector<vector<int>> &out) {\n    if (k == 0) {\n        if (left == 0) out.push_back(cur);\n        return;\n    }\n    for (int d = next; d <= 9 && d <= left; d++) {\n        cur.push_back(d);\n        comboThreeGo(d + 1, k - 1, left - d, cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        vector<vector<int>> out;\n        vector<int> cur;\n        comboThreeGo(1, k, n, cur, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "permutations": {
+  "editorial": "## Approach\n\nRecurse over positions: for position i swap every element from i onwards into place, recurse on i + 1, then swap back to restore the array. Each leaf is a permutation.\n\n**Complexity:** O(n * n!) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * n!) time, O(n) space\nvoid permuteSwap(vector<int> &a, int i, vector<vector<int>> &out) {\n    if (i == (int)a.size()) {\n        out.push_back(a);\n        return;\n    }\n    for (int j = i; j < (int)a.size(); j++) {\n        swap(a[i], a[j]);\n        permuteSwap(a, i + 1, out);\n        swap(a[i], a[j]);\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> permute(vector<int>& nums) {\n        vector<vector<int>> out;\n        permuteSwap(nums, 0, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "letter-combinations-of-a-phone-number": {
+  "editorial": "## Approach\n\nMap digits to their letters and recurse over positions, appending each possible letter, then removing it again. A string of length equal to the digits is one combination.\n\n**Complexity:** O(4^n * n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(4^n * n) time, O(n) space\nvoid phoneGo(const string &digits, int i, string &cur, const vector<string> &letters, vector<string> &out) {\n    if (i == (int)digits.size()) {\n        out.push_back(cur);\n        return;\n    }\n    for (char c : letters[digits[i] - '0']) {\n        cur.push_back(c);\n        phoneGo(digits, i + 1, cur, letters, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<string> letterCombinations(string digits) {\n        vector<string> out;\n        if (digits.empty()) return out;\n        vector<string> letters = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        string cur;\n        phoneGo(digits, 0, cur, letters, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "subset-sums": {
+  "editorial": "## Approach\n\nStart with the single sum 0. For each element append every existing sum plus that element. After all elements the list holds the sum of every subset; sort it.\n\n**Complexity:** O(2^n log 2^n) time, O(2^n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(2^n log 2^n) time, O(2^n) space\nclass Solution {\npublic:\n    vector<int> subsetSums(vector<int>& nums) {\n        vector<int> sums = {0};\n        for (int x : nums) {\n            int size = sums.size();\n            for (int i = 0; i < size; i++) sums.push_back(sums[i] + x);   // every old sum, with and without x\n        }\n        sort(sums.begin(), sums.end());\n        return sums;\n    }\n};\n"
+  }
+ },
+ "permutation-sequence": {
+  "editorial": "## Approach\n\nUse the factorial number system. With k zero-based, k / (n-1)! selects the next digit from the remaining sorted digits; remove it, take k modulo (n-1)! and repeat with (n-2)!, until all digits are used.\n\n**Complexity:** O(n^2) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^2) time, O(n) space\nclass Solution {\npublic:\n    string getPermutation(int n, int k) {\n        vector<int> digits;\n        int fact = 1;\n        for (int i = 1; i < n; i++) {\n            fact *= i;\n            digits.push_back(i);\n        }\n        digits.push_back(n);\n        k--;                                          // zero-based rank\n        string out;\n        while (true) {\n            int idx = k / fact;\n            out += to_string(digits[idx]);\n            digits.erase(digits.begin() + idx);\n            if (digits.empty()) break;\n            k %= fact;\n            fact /= digits.size();\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "rat-in-a-maze": {
+  "editorial": "## Approach\n\nDepth-first search from the top-left cell: for each of the four moves go to a free, unvisited neighbour, append the move to the path and recurse; unmark the cell when returning. A path is complete at the bottom-right cell.\n\n**Complexity:** O(4^(n*n)) worst case time, O(n*n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(4^(n*n)) worst case time, O(n*n) space\nvoid mazeGo(const vector<vector<int>> &maze, int r, int c, string &path, vector<vector<bool>> &seen, vector<string> &out) {\n    int n = maze.size();\n    if (r == n - 1 && c == n - 1) {\n        out.push_back(path);\n        return;\n    }\n    static const int dr[4] = {1, 0, 0, -1}, dc[4] = {0, -1, 1, 0};\n    static const char mv[4] = {'D', 'L', 'R', 'U'};\n    for (int d = 0; d < 4; d++) {\n        int a = r + dr[d], b = c + dc[d];\n        if (a < 0 || b < 0 || a >= n || b >= n || !maze[a][b] || seen[a][b]) continue;\n        seen[a][b] = true;\n        path.push_back(mv[d]);\n        mazeGo(maze, a, b, path, seen, out);\n        path.pop_back();\n        seen[a][b] = false;\n    }\n}\n\nclass Solution {\npublic:\n    vector<string> findPath(vector<vector<int>>& maze) {\n        int n = maze.size();\n        vector<string> out;\n        if (!maze[0][0] || !maze[n - 1][n - 1]) return out;\n        vector<vector<bool>> seen(n, vector<bool>(n, false));\n        seen[0][0] = true;\n        string path;\n        mazeGo(maze, 0, 0, path, seen, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "m-coloring-problem": {
+  "editorial": "## Approach\n\nBacktrack over vertices: try colours 1..m for the current vertex, skipping any colour used by an adjacent earlier vertex, and recurse. If no colour works undo and return false; reaching the last vertex returns true.\n\n**Complexity:** O(m^n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(m^n) time, O(n) space\nbool colorGo(const vector<vector<int>> &g, int v, int m, vector<int> &color) {\n    int n = g.size();\n    if (v == n) return true;\n    for (int c = 1; c <= m; c++) {\n        bool ok = true;\n        for (int u = 0; u < v && ok; u++)\n            if (g[v][u] && color[u] == c) ok = false;\n        if (!ok) continue;\n        color[v] = c;\n        if (colorGo(g, v + 1, m, color)) return true;\n        color[v] = 0;\n    }\n    return false;\n}\n\nclass Solution {\npublic:\n    bool graphColoring(vector<vector<int>>& graph, int m) {\n        vector<int> color(graph.size(), 0);\n        return colorGo(graph, 0, m, color);\n    }\n};\n"
+  }
+ },
+ "binary-strings-without-adjacent-ones": {
+  "editorial": "## Approach\n\nBuild the string character by character. Always allow a 0; allow a 1 only when the string is empty or ends in 0. Every string of length n produced this way has no two adjacent ones.\n\n**Complexity:** O(n * F(n)) (Fibonacci many strings) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * F(n)) (Fibonacci many strings) time, O(n) space\nvoid binaryGo(int n, string &cur, vector<string> &out) {\n    if ((int)cur.size() == n) {\n        out.push_back(cur);\n        return;\n    }\n    cur.push_back('0');\n    binaryGo(n, cur, out);\n    cur.pop_back();\n    if (cur.empty() || cur.back() != '1') {      // a 1 may only follow a 0 (or start the string)\n        cur.push_back('1');\n        binaryGo(n, cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<string> generateBinaryStrings(int n) {\n        vector<string> out;\n        string cur;\n        binaryGo(n, cur, out);\n        return out;\n    }\n};\n"
+  }
+ },
+ "count-subsequences-with-sum-k": {
+  "editorial": "## Approach\n\nDynamic programming over sums: ways[0] = 1; for each element x update ways[s] += ways[s - x] for s from k down to x (backwards so x is used at most once). The answer is ways[k].\n\n**Complexity:** O(n * k) time, O(k) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * k) time, O(k) space\nclass Solution {\npublic:\n    int countSubsequences(vector<int>& nums, int k) {\n        vector<long long> ways(k + 1, 0);              // ways[s] = subsequences seen so far that sum to s\n        ways[0] = 1;\n        for (int x : nums)\n            for (int s = k; s >= x; s--) ways[s] += ways[s - x];\n        return (int)ways[k];\n    }\n};\n"
+  }
+ },
+ "subsequences-with-sum-k": {
+  "editorial": "## Approach\n\nBacktrack by choosing the next index j > previous, subtracting nums[j] from the remaining target and recursing; record the current subsequence when the remaining sum is exactly zero.\n\n**Complexity:** O(n * 2^n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * 2^n) time, O(n) space\nvoid subseqGo(const vector<int> &nums, int i, int left, vector<int> &cur, vector<vector<int>> &out) {\n    if (left == 0 && !cur.empty()) out.push_back(cur);\n    if (left <= 0) return;\n    for (int j = i; j < (int)nums.size(); j++) {\n        if (nums[j] > left) continue;\n        cur.push_back(nums[j]);\n        subseqGo(nums, j + 1, left - nums[j], cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> subsequencesWithSum(vector<int>& nums, int k) {\n        vector<vector<int>> out;\n        vector<int> cur;\n        subseqGo(nums, 0, k, cur, out);\n        return out;\n    }\n};\n"
+  }
  }
 }
