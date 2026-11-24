@@ -1,0 +1,12 @@
+{
+  "name": "leetcode-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Thin Android shell around the LeetCode Practice web app",
+  "scripts": { "sync": "cap sync android" },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
+  }
+}
