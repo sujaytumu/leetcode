@@ -4,19 +4,23 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const TABS = [
-  { href: "/", label: "Problems", icon: "☰" },
+  { href: "/problemset", label: "Problems", icon: "☰" },
   { href: "/plans", label: "Plans", icon: "🗺" },
   { href: "/daily", label: "Daily", icon: "📅" },
   { href: "/contest", label: "Contest", icon: "🏆" },
 ];
 const MORE = [
-  { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/practice", label: "Practice" },
+  { href: "/striver", label: "Striver Sheet" }, { href: "/topics", label: "Topics" }, { href: "/for-you", label: "For you" }, { href: "/practice", label: "Practice" },
   { href: "/review", label: "Review" }, { href: "/notes", label: "Notes" }, { href: "/lists", label: "Lists" },
   { href: "/mock", label: "Mock interview" }, { href: "/leaderboard", label: "Ranking" }, { href: "/playground", label: "Playground" },
   { href: "/stats", label: "My stats" }, { href: "/profile", label: "Profile" }, { href: "/account", label: "Account" }, { href: "/settings/profile", label: "Settings" },
 ];
 
-const active = (path: string, href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
+/** /problems/<slug> belongs to the Problems tab too. */
+const active = (path: string, href: string) =>
+  href === "/" ? path === "/"
+  : href === "/problemset" ? path === href || path.startsWith(`${href}/`) || path.startsWith("/problems")
+  : path === href || path.startsWith(`${href}/`);
 
 /** Phone-only bottom navigation (hidden by CSS above 700px). The problem workspace has its own action bar, so it is hidden there. */
 export default function MobileTabBar() {

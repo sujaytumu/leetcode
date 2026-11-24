@@ -58,7 +58,7 @@ export interface Recommendation { problem: ProblemSummary; reason: string }
 export interface Recommendations { next: Recommendation[]; unfinished: Recommendation[]; revisit: Recommendation[] }
 export interface Topic { tag: string; total: number; solved: number; byDifficulty: Record<string, number> }
 /** "hash-table" -> "Hash Table" */
-const ACRONYMS = new Set(["bfs", "dfs", "bst", "dp", "lru", "api", "sql", "gcd", "lcm", "kmp", "avl", "dag", "mst"]);
+const ACRONYMS = new Set(["bfs", "dfs", "bst", "dp", "lru", "api", "sql", "gcd", "lcm", "kmp", "avl", "dag", "mst", "sde", "a2z"]);
 export const tagLabel = (tag: string): string => tag.split("-").map((w) => (ACRONYMS.has(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1))).join(" ");
 export interface DayCount { date: string; count: number }
 export interface RecentSolve { slug: string; title: string; difficulty: Difficulty; language: string; at: string }
