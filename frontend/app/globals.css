@@ -2110,3 +2110,13 @@ html[data-theme="light"] .topicpanel .chips.lcchips button:not(.on) { background
 .statchips span { background:var(--cell); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:13px; color:var(--mute); }
 .statchips b { color:var(--text); font-weight:700; margin-right:2px; }
 .auth a, form a { transition:color .15s ease; }
+
+/* ---- phones: a single `1fr` grid column can't shrink below its widest child (heat map, tab row, long links),
+   which pushed the whole profile page past the right edge. minmax(0,1fr) lets it shrink and children scroll inside. ---- */
+@media (max-width:900px) {
+  .playout, .pgrid, .pextras .stack, .home, .home-side { grid-template-columns:minmax(0,1fr); }
+  .playout > *, .pgrid > *, .pextras .stack > *, .pleft, .pleft > *, .playout .card { min-width:0; max-width:100%; box-sizing:border-box; }
+  .profilecard, .profilecard * { min-width:0; }
+  .profilecard .pc-rows li, .profilecard .pc-rows li > * { overflow-wrap:anywhere; }
+  main { max-width:100vw; overflow-x:clip; }
+}
