@@ -1,0 +1,263 @@
+=== lower-bound
+--- cpp
+int solve(vector<int> nums, int x) {
+    int lo = 0, hi = nums.size();
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] >= x) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+=== upper-bound
+--- cpp
+int solve(vector<int> nums, int x) {
+    int lo = 0, hi = nums.size();
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] > x) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+=== floor-and-ceil-in-sorted-array
+--- cpp
+vector<int> solve(vector<int> nums, int x) {
+    int n = nums.size();
+    int lo = 0, hi = n;
+    while (lo < hi) {                       // first index with nums[i] >= x
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] >= x) hi = mid;
+        else lo = mid + 1;
+    }
+    int ceilIdx = lo;
+    int floorIdx = (ceilIdx < n && nums[ceilIdx] == x) ? ceilIdx : ceilIdx - 1;
+    return {floorIdx >= 0 ? nums[floorIdx] : -1, ceilIdx < n ? nums[ceilIdx] : -1};
+}
+=== count-occurrences-in-sorted-array
+--- cpp
+int solve(vector<int> nums, int x) {
+    auto bound = [&](bool upper) {
+        int lo = 0, hi = nums.size();
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (nums[mid] > x || (!upper && nums[mid] == x)) hi = mid;
+            else lo = mid + 1;
+        }
+        return lo;
+    };
+    return bound(true) - bound(false);
+}
+=== search-in-rotated-sorted-array-ii
+--- cpp
+bool solve(vector<int> nums, int target) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return true;
+        if (nums[lo] == nums[mid] && nums[mid] == nums[hi]) {   // duplicates hide which half is sorted
+            lo++;
+            hi--;
+        } else if (nums[lo] <= nums[mid]) {                     // left half is sorted
+            if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else {                                                // right half is sorted
+            if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+            else hi = mid - 1;
+        }
+    }
+    return false;
+}
+=== find-minimum-in-rotated-sorted-array-ii
+--- cpp
+int solve(vector<int> nums) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] > nums[hi]) lo = mid + 1;
+        else if (nums[mid] < nums[hi]) hi = mid;
+        else hi--;                                             // equal: the maximum cannot be nums[hi] alone
+    }
+    return nums[lo];
+}
+=== rotation-count-in-rotated-sorted-array
+--- cpp
+int solve(vector<int> nums) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] > nums[hi]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+=== single-element-in-a-sorted-array
+--- cpp
+int solve(vector<int> nums) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (mid % 2 == 1) mid--;                               // always look at the first of a candidate pair
+        if (nums[mid] == nums[mid + 1]) lo = mid + 2;
+        else hi = mid;
+    }
+    return nums[lo];
+}
+=== find-peak-element
+--- cpp
+int solve(vector<int> nums) {
+    int lo = 0, hi = (int)nums.size() - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] < nums[mid + 1]) lo = mid + 1;           // climbing: a peak is to the right
+        else hi = mid;
+    }
+    return lo;
+}
+=== nth-root-of-an-integer
+--- cpp
+int solve(int n, int m) {
+    long long lo = 1, hi = m;
+    while (lo <= hi) {
+        long long mid = lo + (hi - lo) / 2, power = 1;
+        bool tooBig = false;
+        for (int i = 0; i < n; i++) {
+            power *= mid;
+            if (power > m) { tooBig = true; break; }
+        }
+        if (!tooBig && power == m) return (int)mid;
+        if (tooBig) hi = mid - 1;
+        else lo = mid + 1;
+    }
+    return -1;
+}
+=== minimum-days-to-make-m-bouquets
+--- cpp
+int solve(vector<int> bloomDay, int m, int k) {
+    long long n = bloomDay.size();
+    if ((long long)m * k > n) return -1;
+    auto enough = [&](int day) {
+        int made = 0, run = 0;
+        for (int b : bloomDay) {
+            if (b <= day) {
+                if (++run == k) { made++; run = 0; }
+            } else {
+                run = 0;
+            }
+        }
+        return made >= m;
+    };
+    int lo = *min_element(bloomDay.begin(), bloomDay.end());
+    int hi = *max_element(bloomDay.begin(), bloomDay.end());
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (enough(mid)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+=== smallest-divisor-given-a-threshold
+--- cpp
+int solve(vector<int> nums, int threshold) {
+    int lo = 1, hi = *max_element(nums.begin(), nums.end());
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        long long total = 0;
+        for (int x : nums) total += (x + mid - 1) / mid;
+        if (total <= threshold) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+=== aggressive-cows
+--- cpp
+int solve(vector<int> stalls, int cows) {
+    sort(stalls.begin(), stalls.end());
+    auto canPlace = [&](int dist) {
+        int placed = 1, last = stalls[0];
+        for (size_t i = 1; i < stalls.size(); i++)
+            if (stalls[i] - last >= dist) { placed++; last = stalls[i]; }
+        return placed >= cows;
+    };
+    int lo = 1, hi = stalls.back() - stalls.front();
+    while (lo < hi) {
+        int mid = lo + (hi - lo + 1) / 2;
+        if (canPlace(mid)) lo = mid;
+        else hi = mid - 1;
+    }
+    return lo;
+}
+=== kth-element-of-two-sorted-arrays
+--- cpp
+int solve(vector<int> a, vector<int> b, int k) {
+    if (a.size() > b.size()) swap(a, b);
+    int n = a.size(), m = b.size();
+    int lo = max(0, k - m), hi = min(k, n);                    // how many elements to take from a
+    while (lo <= hi) {
+        int i = lo + (hi - lo) / 2, j = k - i;
+        int aLeft = i > 0 ? a[i - 1] : INT_MIN, aRight = i < n ? a[i] : INT_MAX;
+        int bLeft = j > 0 ? b[j - 1] : INT_MIN, bRight = j < m ? b[j] : INT_MAX;
+        if (aLeft > bRight) hi = i - 1;
+        else if (bLeft > aRight) lo = i + 1;
+        else return max(aLeft, bLeft);
+    }
+    return -1;
+}
+=== row-with-maximum-ones
+--- cpp
+int solve(vector<vector<int>> matrix) {
+    int best = 0, bestCount = -1;
+    for (int r = 0; r < (int)matrix.size(); r++) {
+        const vector<int>& row = matrix[r];
+        int lo = 0, hi = row.size();                           // first 1 in the sorted row
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (row[mid] == 1) hi = mid;
+            else lo = mid + 1;
+        }
+        int ones = (int)row.size() - lo;
+        if (ones > bestCount) { bestCount = ones; best = r; }
+    }
+    return best;
+}
+=== search-a-2d-matrix-ii
+--- cpp
+bool solve(vector<vector<int>> matrix, int target) {
+    int r = 0, c = (int)matrix[0].size() - 1;                  // start at the top-right corner
+    while (r < (int)matrix.size() && c >= 0) {
+        if (matrix[r][c] == target) return true;
+        if (matrix[r][c] > target) c--;
+        else r++;
+    }
+    return false;
+}
+=== kth-missing-positive-number
+--- cpp
+int solve(vector<int> arr, int k) {
+    int lo = 0, hi = arr.size();
+    while (lo < hi) {                                          // count elements with fewer than k numbers missing before them
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] - (mid + 1) < k) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo + k;
+}
+=== median-in-a-row-wise-sorted-matrix
+--- cpp
+int solve(vector<vector<int>> matrix) {
+    int rows = matrix.size(), cols = matrix[0].size();
+    int lo = INT_MAX, hi = INT_MIN;
+    for (const auto& row : matrix) {
+        lo = min(lo, row.front());
+        hi = max(hi, row.back());
+    }
+    int need = (rows * cols) / 2 + 1;                          // the median is the smallest value with >= need elements <= it
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2, count = 0;
+        for (const auto& row : matrix)
+            count += upper_bound(row.begin(), row.end(), mid) - row.begin();
+        if (count >= need) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
