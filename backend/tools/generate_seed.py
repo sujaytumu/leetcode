@@ -5471,6 +5471,241 @@ PROBLEMS += [
 ]
 
 
+# ============================================================== Striver A2Z sheet, batch 1 (arrays)
+# New problems use their own seeded generator, so adding them never changes the data of any existing problem.
+a2z_rng = random.Random(20261201)
+
+
+def a2z_arr(n, lo, hi):
+    return [a2z_rng.randint(lo, hi) for _ in range(n)]
+
+
+def largest_element(nums):
+    return max(nums)
+
+
+def second_largest(nums):
+    distinct = sorted(set(nums))
+    return distinct[-2] if len(distinct) >= 2 else -1
+
+
+def sorted_and_rotated(nums):
+    n = len(nums)
+    return sum(1 for i in range(n) if nums[i] > nums[(i + 1) % n]) <= 1
+
+
+def rotate_left_by_one(nums):
+    return nums[1:] + nums[:1]
+
+
+def linear_search(nums, target):
+    return nums.index(target) if target in nums else -1
+
+
+def union_sorted(a, b):
+    return sorted(set(a) | set(b))
+
+
+def max_consecutive_ones(nums):
+    best = run = 0
+    for x in nums:
+        run = run + 1 if x == 1 else 0
+        best = max(best, run)
+    return best
+
+
+def rearrange_by_sign(nums):
+    pos = [x for x in nums if x > 0]
+    neg = [x for x in nums if x < 0]
+    out = []
+    for p, q in zip(pos, neg):
+        out += [p, q]
+    return out
+
+
+def leaders(nums):
+    out, best = [], None
+    for x in reversed(nums):
+        if best is None or x >= best:
+            out.append(x)
+            best = x
+    return out[::-1]
+
+
+def longest_sum_k(nums, k):
+    first, total, best = {0: -1}, 0, 0
+    for i, x in enumerate(nums):
+        total += x
+        if total - k in first:
+            best = max(best, i - first[total - k])
+        first.setdefault(total, i)
+    return best
+
+
+def repeating_and_missing(nums):
+    n = len(nums)
+    seen = set()
+    repeating = 0
+    for x in nums:
+        if x in seen:
+            repeating = x
+        seen.add(x)
+    missing = next(v for v in range(1, n + 1) if v not in seen)
+    return [repeating, missing]
+
+
+def count_xor_k(nums, k):
+    seen, xor, total = {0: 1}, 0, 0
+    for x in nums:
+        xor ^= x
+        total += seen.get(xor ^ k, 0)
+        seen[xor] = seen.get(xor, 0) + 1
+    return total
+
+
+def count_inversions(nums):
+    return sum(1 for i in range(len(nums)) for j in range(i + 1, len(nums)) if nums[i] > nums[j])
+
+
+def reverse_pairs(nums):
+    return sum(1 for i in range(len(nums)) for j in range(i + 1, len(nums)) if nums[i] > 2 * nums[j])
+
+
+def majority_third(nums):
+    c = collections.Counter(nums)
+    return sorted(v for v, f in c.items() if f > len(nums) // 3)
+
+
+def longest_zero_sum(nums):
+    return longest_sum_k(nums, 0)
+
+
+def a2z_cases_rotated():
+    out = []
+    for n in [1, 2, 3, 5, 8, 20, 60, 200]:
+        base = sorted(a2z_arr(n, -50, 50))
+        r = a2z_rng.randrange(n)
+        out.append(base[r:] + base[:r])
+    out += [[3, 4, 5, 1, 2], [2, 1, 3, 4], [1, 1, 1], [6, 10, 6], [1, 2, 3, 4, 5]]
+    return out
+
+
+def a2z_cases_union():
+    out = [([1, 2, 3, 4, 5], [1, 2, 3, 6, 7]), ([2, 2, 3, 4, 5], [1, 1, 2, 3, 4]), ([], [5]), ([1], [])]
+    for n, m in [(5, 7), (20, 25), (80, 60), (200, 150)]:
+        out.append((sorted(a2z_arr(n, -30, 60)), sorted(a2z_arr(m, -30, 60))))
+    return out
+
+
+def a2z_cases_signs():
+    out = []
+    for h in [1, 2, 3, 5, 10, 40, 150]:
+        vals = [a2z_rng.randint(1, 500) for _ in range(h)] + [-a2z_rng.randint(1, 500) for _ in range(h)]
+        a2z_rng.shuffle(vals)
+        out.append(vals)
+    return out
+
+
+def a2z_cases_repeating():
+    out = []
+    for n in [2, 3, 5, 8, 20, 100, 500]:
+        arr = list(range(1, n + 1))
+        a2z_rng.shuffle(arr)
+        i, j = a2z_rng.sample(range(n), 2)
+        arr[i] = arr[j]
+        out.append(arr)
+    return out
+
+
+A2Z_BATCH_1 = [
+    mk("largest-element-in-array", "Largest Element in the Array", "EASY", ["array"], [("nums", "int[]")], "int",
+       largest_element, [a2z_arr(n, -10000, 10000) for n in [1, 2, 5, 17, 100, 600, 1000]] + [[7], [-3, -3, -9]],
+       "Given an array `nums`, return the largest element.", ARR_IN, "The largest element.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("second-largest-element", "Second Largest Element in the Array", "EASY", ["array"], [("nums", "int[]")], "int",
+       second_largest, [a2z_arr(n, -50, 50) for n in [2, 3, 6, 25, 150, 800]] + [[4, 4, 4], [9], [1, 2], [5, 5, 3]],
+       "Return the second largest **distinct** value of `nums`, or `-1` if there is none (for example when every "
+       "element is equal).", ARR_IN, "The second largest distinct element, or `-1`.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("check-if-array-is-sorted-and-rotated", "Check if Array Is Sorted and Rotated", "EASY", ["array"],
+       [("nums", "int[]")], "bool", sorted_and_rotated, a2z_cases_rotated() + [a2z_arr(30, -9, 9), a2z_arr(9, 1, 3)],
+       "Return `true` if `nums` was originally sorted in non-decreasing order and then rotated some number of "
+       "positions (possibly zero). Duplicates are allowed.", ARR_IN, "`true` or `false`.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("left-rotate-array-by-one", "Left Rotate an Array by One Place", "EASY", ["array"], [("nums", "int[]")], "int[]",
+       rotate_left_by_one, [a2z_arr(n, -99, 99) for n in [1, 2, 3, 7, 40, 300]],
+       "Rotate `nums` one position to the left: the first element moves to the end and every other element shifts "
+       "one place towards the front. Return the rotated array.", ARR_IN, "The rotated array.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("linear-search", "Linear Search", "EASY", ["array"], [("nums", "int[]"), ("target", "int")], "int",
+       linear_search, [(a2z_arr(n, -20, 20), a2z_rng.randint(-25, 25)) for n in [1, 4, 9, 30, 120, 700]] + [([1, 2, 3], 3), ([5, 5, 5], 5), ([4], 9)],
+       "Return the index of the first occurrence of `target` in `nums`, or `-1` if it does not appear.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.", "The first index, or `-1`.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i], target <= 10^4`"]),
+    mk("union-of-two-sorted-arrays", "Union of Two Sorted Arrays", "EASY", ["array", "two-pointers"],
+       [("a", "int[]"), ("b", "int[]")], "int[]", union_sorted, a2z_cases_union(),
+       "Both arrays are sorted in non-decreasing order. Return their union as a sorted array without duplicates.",
+       "Line 1: `n`.\nLine 2: `n` integers (array `a`).\nLine 3: `m`.\nLine 4: `m` integers (array `b`).",
+       "The sorted union, each value once.", ["`0 <= n, m <= 1000`", "`-10^4 <= a[i], b[i] <= 10^4`"]),
+    mk("max-consecutive-ones", "Max Consecutive Ones", "EASY", ["array"], [("nums", "int[]")], "int",
+       max_consecutive_ones, [[a2z_rng.randint(0, 1) for _ in range(n)] for n in [1, 3, 8, 20, 90, 500]] + [[1, 1, 1], [0, 0], [1, 1, 0, 1, 1, 1]],
+       "`nums` holds only `0` and `1`. Return the maximum number of consecutive `1`s.", ARR_IN,
+       "The longest run of ones.", ["`1 <= n <= 1000`", "`nums[i]` is `0` or `1`"]),
+    mk("rearrange-array-elements-by-sign", "Rearrange Array Elements by Sign", "MEDIUM", ["array", "two-pointers"],
+       [("nums", "int[]")], "int[]", rearrange_by_sign, a2z_cases_signs(),
+       "`nums` has an equal number of positive and negative integers and no zeros. Rearrange it so that the signs "
+       "alternate, starting with a positive one, keeping the relative order of the positives and of the negatives.",
+       ARR_IN, "The rearranged array.", ["`2 <= n <= 1000`, `n` is even", "`nums[i] != 0`"]),
+    mk("leaders-in-an-array", "Leaders in an Array", "MEDIUM", ["array"], [("nums", "int[]")], "int[]",
+       leaders, [a2z_arr(n, -20, 60) for n in [1, 3, 6, 15, 90, 500]] + [[16, 17, 4, 3, 5, 2], [10, 22, 12, 3, 0, 6]],
+       "An element is a leader if it is greater than or equal to every element to its right (the last element is "
+       "always a leader). Return the leaders in the order they appear in `nums`.", ARR_IN, "The leaders, left to right.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("longest-subarray-with-sum-k", "Longest Subarray with Sum K", "MEDIUM", ["array", "hash-table", "prefix-sum"],
+       [("nums", "int[]"), ("k", "int")], "int", longest_sum_k,
+       [(a2z_arr(n, -9, 9), a2z_rng.randint(-12, 12)) for n in [3, 8, 20, 70, 300, 900]] + [([1, 2, 3, 1, 1, 1, 1, 3, 3], 6), ([2, 3, 5], 5), ([-1, 1, 1], 1)],
+       "Return the length of the longest contiguous subarray of `nums` whose sum equals `k`, or `0` if none exists. "
+       "Values can be negative.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The length, or `0`.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i], k <= 10^4`"]),
+    mk("find-the-repeating-and-missing-number", "Find the Repeating and Missing Number", "MEDIUM", ["array", "math", "hash-table"],
+       [("nums", "int[]")], "int[]", repeating_and_missing, a2z_cases_repeating(),
+       "`nums` should hold every number from `1` to `n` once, but one number appears twice and another is missing. "
+       "Return `[repeating, missing]`.", ARR_IN, "Two integers: the repeating one, then the missing one.",
+       ["`2 <= n <= 1000`", "`1 <= nums[i] <= n`"]),
+    mk("count-subarrays-with-given-xor", "Count Subarrays with Given XOR", "MEDIUM", ["array", "hash-table", "bit-manipulation"],
+       [("nums", "int[]"), ("k", "int")], "int", count_xor_k,
+       [(a2z_arr(n, 0, 31), a2z_rng.randint(0, 31)) for n in [2, 6, 15, 60, 250, 900]] + [([4, 2, 2, 6, 4], 6), ([5, 6, 7, 8, 9], 5)],
+       "Return the number of contiguous subarrays of `nums` whose bitwise XOR equals `k`.",
+       "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The number of subarrays.",
+       ["`1 <= n <= 1000`", "`0 <= nums[i], k <= 10^5`"]),
+    mk("count-inversions", "Count Inversions", "MEDIUM", ["array", "divide-and-conquer", "sorting"],
+       [("nums", "int[]")], "int", count_inversions, [a2z_arr(n, -999, 999) for n in [2, 5, 12, 60, 300, 1000]] + [[5, 3, 2, 4, 1], [1, 2, 3]],
+       "An inversion is a pair of indices `i < j` with `nums[i] > nums[j]`. Return the number of inversions in `nums`. "
+       "A merge-sort based solution runs in `O(n log n)`.", ARR_IN, "The number of inversions.",
+       ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("reverse-pairs", "Reverse Pairs", "HARD", ["array", "divide-and-conquer", "sorting"], [("nums", "int[]")], "int",
+       reverse_pairs, [a2z_arr(n, -999, 999) for n in [2, 5, 12, 60, 300, 1000]] + [[1, 3, 2, 3, 1], [2, 4, 3, 5, 1]],
+       "Return the number of reverse pairs: pairs of indices `i < j` with `nums[i] > 2 * nums[j]`.", ARR_IN,
+       "The number of reverse pairs.", ["`1 <= n <= 1000`", "`-10^5 <= nums[i] <= 10^5`"]),
+    mk("majority-element-ii", "Majority Element II", "MEDIUM", ["array", "hash-table", "sorting"], [("nums", "int[]")], "int[]",
+       majority_third, [[a2z_rng.choice([1, 2, 3, 4]) for _ in range(n)] for n in [3, 8, 20, 60, 300]] + [[3, 2, 3], [1], [1, 2], [2, 2, 9, 3, 9, 3, 9, 3, 9, 3, 9, 3, 9, 9, 9, 2]],
+       "Return every element that appears more than `n / 3` times, in ascending order (at most two exist).", ARR_IN,
+       "The elements in ascending order (an empty line if there are none).", ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("largest-subarray-with-0-sum", "Largest Subarray with 0 Sum", "MEDIUM", ["array", "hash-table", "prefix-sum"],
+       [("nums", "int[]")], "int", longest_zero_sum, [a2z_arr(n, -6, 6) for n in [3, 9, 25, 80, 400, 1000]] + [[15, -2, 2, -8, 1, 7, 10, 23], [1, 2, 3]],
+       "Return the length of the longest contiguous subarray of `nums` whose sum is `0`, or `0` if none exists.", ARR_IN,
+       "The length, or `0`.", ["`1 <= n <= 1000`", "`-10^4 <= nums[i] <= 10^4`"]),
+]
+PROBLEMS += A2Z_BATCH_1
+
+
+# Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
+# regenerating the seed keeps the plans intact (plans.json lists the tag).
+STRIVER_SDE = set(['add-two-numbers', 'balanced-binary-tree', 'best-time-to-buy-and-sell-stock', 'binary-tree-inorder-traversal', 'binary-tree-level-order-traversal', 'binary-tree-maximum-path-sum', 'binary-tree-zigzag-level-order-traversal', 'coin-change', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'course-schedule', 'diameter-of-binary-tree', 'edit-distance', 'find-the-duplicate-number', 'is-graph-bipartite', 'kth-largest-element-in-an-array', 'kth-smallest-element-in-a-bst', 'largest-rectangle-in-histogram', 'longest-common-subsequence', 'longest-consecutive-sequence', 'longest-increasing-subsequence', 'longest-substring-without-repeating-characters', 'lowest-common-ancestor-of-a-binary-search-tree', 'lowest-common-ancestor-of-a-binary-tree', 'majority-element', 'maximal-rectangle', 'maximum-depth-of-binary-tree', 'maximum-product-subarray', 'maximum-subarray', 'merge-intervals', 'merge-sorted-array', 'merge-two-sorted-lists', 'middle-of-the-linked-list', 'min-cost-to-connect-all-points', 'network-delay-time', 'next-permutation', 'number-of-islands', 'palindrome-linked-list', 'partition-equal-subset-sum', 'pascals-triangle', 'redundant-connection', 'remove-duplicates-from-sorted-array', 'remove-nth-node-from-end-of-list', 'reverse-linked-list', 'reverse-nodes-in-k-group', 'roman-to-integer', 'rotate-image', 'rotate-list', 'rotting-oranges', 'same-tree', 'search-a-2d-matrix', 'search-in-rotated-sorted-array', 'set-matrix-zeroes', 'sliding-window-maximum', 'sort-colors', 'symmetric-tree', 'top-k-frequent-elements', 'trapping-rain-water', 'two-sum', 'unique-paths', 'valid-parentheses', 'validate-binary-search-tree', 'word-break'])
+STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum'])
+SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
@@ -5499,7 +5734,7 @@ def to_seed(problem):
         "slug": problem["slug"],
         "title": problem["title"],
         "difficulty": problem["difficulty"],
-        "tags": problem["tags"],
+        "tags": problem["tags"] + [t for t, slugs in SHEET_TAGS if problem["slug"] in slugs and t not in problem["tags"]],
         "description": problem["description"] + "\n" + "\n".join(examples).rstrip() + "\n",
         "starterCode": starters(params, ret),
         "testCases": tests,
