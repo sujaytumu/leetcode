@@ -67,8 +67,10 @@ export default function OfficialSolution({ slug }: { slug: string }) {
             {brute && (
               <>
                 <span className="approach-sep" aria-hidden="true" />
-                <button className={approach === "brute" ? "on" : ""} onClick={() => setApproach("brute")} title="The simple first idea, slower">Brute force</button>
-                <button className={approach !== "brute" ? "on" : ""} onClick={() => setApproach("optimal")} title="The efficient solution">Optimised</button>
+                <span className="approach-seg" role="group" aria-label="Approach">
+                  <button className={approach !== "brute" ? "on" : ""} onClick={() => setApproach("optimal")} title="The efficient solution">Optimised</button>
+                  <button className={approach === "brute" ? "on" : ""} onClick={() => setApproach("brute")} title="The simple first idea, slower">Brute force</button>
+                </span>
               </>
             )}
             <span className="grow" />

@@ -1,0 +1,11 @@
+/* Polish layer: kept in its own file (imported after globals.css) so parallel edits never collide. */
+
+/* Official solution: language tabs on the left, a compact Optimised / Brute force switch, Copy on the right */
+.officialbody .casechips { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+.officialbody .casechips > button { padding:5px 12px; font-size:13px; }
+.officialbody .approach-sep { width:1px; height:18px; background:var(--line); margin:0 6px; }
+.approach-seg { display:inline-flex; background:var(--cell); border:1px solid var(--line); border-radius:999px; padding:2px; gap:2px; }
+.approach-seg button { border:0 !important; background:transparent; border-radius:999px !important; padding:4px 12px !important; font-size:12.5px !important; color:var(--mute); }
+.approach-seg button.on { background:var(--text) !important; color:var(--bg) !important; font-weight:600; }
+.answer-code { border-radius:10px; font-size:13px; line-height:1.55; }
+.answer-code::first-line { color:var(--mute); }
