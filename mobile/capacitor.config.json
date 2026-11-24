@@ -1,0 +1,14 @@
+{
+  "appId": "com.sujaytumu.leetcode",
+  "appName": "LeetCode",
+  "webDir": "www",
+  "backgroundColor": "#1A1A1A",
+  "appendUserAgent": "LeetcodeApp",
+  "server": {
+    "url": "https://leetcode-frontend-gold.vercel.app",
+    "cleartext": false,
+    "allowNavigation": ["*.vercel.app", "*.onrender.com"]
+  },
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false, "backgroundColor": "#1A1A1A" },
+  "plugins": { "SystemBars": { "insetsHandling": "native", "initialViewportFitValueHint": "cover", "style": "DEFAULT" } }
+}
