@@ -49,6 +49,11 @@ for (const [slug, byLang] of Object.entries(loadAnswers())) {
 const { toLeetCodeStyle } = require("./lc-style");
 for (const [slug, a] of Object.entries(out)) {
   for (const [lang, code] of Object.entries(a.solutions)) a.solutions[lang] = toLeetCodeStyle(slug, lang, code);
+  // The optimised C++ solution opens with its cost, like the brute-force versions do.
+  const cost = /\*\*Complexity:\*\*\s*([^\n]*)/.exec(a.editorial || "");
+  if (a.solutions.cpp && cost && !a.solutions.cpp.startsWith("//")) {
+    a.solutions.cpp = `// Optimised: ${cost[1].trim().replace(/\.$/, "")}\n` + a.solutions.cpp;
+  }
 }
 
 const dest = path.join(root, "backend/src/main/resources/seed/solutions.json");
