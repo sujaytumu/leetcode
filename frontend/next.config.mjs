@@ -8,6 +8,8 @@ const BACKEND = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").rep
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Lets the running app tell when a newer deployment exists (see components/UpdateWatcher.tsx).
+  env: { NEXT_PUBLIC_BUILD_ID: process.env.VERCEL_GIT_COMMIT_SHA ?? "dev" },
   async redirects() {
     return [
       { source: "/u/:username", destination: "/:username", permanent: true },
