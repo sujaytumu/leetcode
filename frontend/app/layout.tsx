@@ -12,6 +12,9 @@ import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
 import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
 import CommandPalette from "@/components/CommandPalette";
+import RefreshButton from "@/components/RefreshButton";
+import PullToRefresh from "@/components/PullToRefresh";
+import UpdateWatcher from "@/components/UpdateWatcher";
 import Splash from "@/components/Splash";
 import MobileTabBar from "@/components/MobileTabBar";
 
@@ -47,10 +50,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/review" className="bellbtn" title="Problems due for review" aria-label="Problems due for review">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0" /></svg>
             </Link>
-            <StreakChip /><ThemeToggle /><AccountMenu />
+            <StreakChip /><RefreshButton /><ThemeToggle /><AccountMenu />
             <Link href="/plans" className="plansbtn">Plans</Link></div>
         </header>
         <PwaRegister />
+        <PullToRefresh />
+        <UpdateWatcher />
         <MockBar />
         <main id="main" tabIndex={-1}>{children}</main>
         <MobileTabBar />
