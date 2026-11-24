@@ -252,6 +252,22 @@ export const LC_METHODS: Record<string, string> = {
   "binary-strings-without-adjacent-ones": "generateBinaryStrings",
   "count-subsequences-with-sum-k": "countSubsequences",
   "subsequences-with-sum-k": "subsequencesWithSum",
+  "count-digits": "countDigits",
+  "gcd-of-two-numbers": "gcd",
+  "armstrong-number": "isArmstrong",
+  "divisors-of-a-number": "divisors",
+  "check-prime-number": "isPrime",
+  "sort-an-array": "sortArray",
+  "remove-outermost-parentheses": "removeOuterParentheses",
+  "reverse-words-in-a-string": "reverseWords",
+  "largest-odd-number-in-a-string": "largestOddNumber",
+  "longest-common-prefix": "longestCommonPrefix",
+  "rotate-string": "rotateString",
+  "maximum-nesting-depth-of-the-parentheses": "maxDepth",
+  "string-to-integer-atoi": "myAtoi",
+  "count-and-say": "countAndSay",
+  "find-the-index-of-the-first-occurrence-in-a-string": "strStr",
+  "sum-of-beauty-of-all-substrings": "beautySum",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

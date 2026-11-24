@@ -34,6 +34,9 @@ def fmt_input(params, args):
         elif typ == "grid":
             lines.append(f"{len(val)} {len(val[0])}")
             lines.extend(val)
+        elif typ == "strs":
+            lines.append(str(len(val)))
+            lines.extend(val)
         elif typ == "list":
             lines.append(str(len(val)))
             lines.append(" ".join(map(str, val)))
@@ -176,7 +179,7 @@ def starter_python(params, ret):
         elif t == "int[][]":
             body += [f"    {n}_len = int(lines[pos]); pos += 1",
                      f"    {n} = [list(map(int, lines[pos + i].split())) for i in range({n}_len)]; pos += {n}_len"]
-        elif t == "grid":
+        elif t in ("grid", "strs"):
             body += [f"    {n}_rows = int(lines[pos].split()[0]); pos += 1",
                      f"    {n} = lines[pos:pos + {n}_rows]; pos += {n}_rows"]
         elif t == "list":
@@ -202,7 +205,7 @@ def starter_python(params, ret):
     return "\n".join(body)
 
 
-JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "list": "ListNode", "tree": "TreeNode"}
+JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "strs": "String[]", "list": "ListNode", "tree": "TreeNode"}
 JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]", "list": "ListNode", "tree": "TreeNode",
             "sets": "int[][]", "rows": "int[][]", "strs": "String[]", "str": "String"}
 JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]", "list": "null", "tree": "null",
@@ -240,7 +243,7 @@ def starter_java(params, ret):
                     "            StringTokenizer st = new StringTokenizer(lines.get(pos++));",
                     f"            {n}[i] = new int[st.countTokens()];",
                     f"            for (int j = 0; j < {n}[i].length; j++) {n}[i][j] = Integer.parseInt(st.nextToken());", "        }"]
-        elif t == "grid":
+        elif t in ("grid", "strs"):
             out += [f"        int {n}Rows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());",
                     f"        String[] {n} = new String[{n}Rows];",
                     f"        for (int i = 0; i < {n}Rows; i++) {n}[i] = lines.get(pos++);"]
@@ -297,7 +300,7 @@ def starter_js(params, ret):
         elif t == "int[][]":
             out += [f"const {n}Len = parseInt(lines[pos++], 10);", f"const {n} = [];",
                     f"for (let i = 0; i < {n}Len; i++) {n}.push(lines[pos++].trim().split(/\\s+/).map(Number));"]
-        elif t == "grid":
+        elif t in ("grid", "strs"):
             out += [f"const {n}Rows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);",
                     f"const {n} = lines.slice(pos, pos + {n}Rows);", f"pos += {n}Rows;"]
         elif t == "list":
@@ -328,7 +331,7 @@ def starter_js(params, ret):
     return "\n".join(out)
 
 
-CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>",
+CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>", "strs": "vector<string>",
          "list": "ListNode *", "tree": "TreeNode *"}
 CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "list": "ListNode *", "tree": "TreeNode *",
            "sets": "vector<vector<int>>", "rows": "vector<vector<int>>", "strs": "vector<string>", "str": "string"}
@@ -361,7 +364,7 @@ def starter_cpp(params, ret):
                     f"    vector<vector<int>> {n}({n}Len);",
                     f"    for (int i = 0; i < {n}Len; i++) {{", "        istringstream iss(lines[pos++]);",
                     f"        int v;", f"        while (iss >> v) {n}[i].push_back(v);", "    }"]
-        elif t == "grid":
+        elif t in ("grid", "strs"):
             out += [f"    int {n}Rows = stoi(lines[pos++]);",
                     f"    vector<string> {n}(lines.begin() + pos, lines.begin() + pos + {n}Rows);",
                     f"    pos += {n}Rows;"]
@@ -6293,10 +6296,265 @@ A2Z_BATCH_3 = [
 PROBLEMS += A2Z_BATCH_3
 
 
+# ============================================================== Striver A2Z sheet, batch 4 (maths basics, sorting, strings)
+def m_count_digits(n):
+    return len(str(n))
+
+
+def m_gcd(a, b):
+    return math.gcd(a, b)
+
+
+def m_armstrong(n):
+    d = str(n)
+    return sum(int(c) ** len(d) for c in d) == n
+
+
+def m_divisors(n):
+    return sorted(d for d in range(1, n + 1) if n % d == 0)
+
+
+def m_is_prime(n):
+    if n < 2:
+        return False
+    i = 2
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i += 1
+    return True
+
+
+def m_sort(nums):
+    return sorted(nums)
+
+
+def st_remove_outer(s):
+    out, depth = [], 0
+    for ch in s:
+        if ch == ")":
+            depth -= 1
+        if depth > 0:
+            out.append(ch)
+        if ch == "(":
+            depth += 1
+    return "".join(out)
+
+
+def st_reverse_words(s):
+    return " ".join(reversed(s.split()))
+
+
+def st_largest_odd(s):
+    for i in range(len(s) - 1, -1, -1):
+        if int(s[i]) % 2:
+            return s[:i + 1]
+    return ""
+
+
+def st_common_prefix(strs):
+    prefix = strs[0]
+    for w in strs[1:]:
+        while not w.startswith(prefix):
+            prefix = prefix[:-1]
+    return prefix
+
+
+def st_rotate(s, goal):
+    return len(s) == len(goal) and goal in s + s
+
+
+def st_max_depth(s):
+    best = depth = 0
+    for ch in s:
+        if ch == "(":
+            depth += 1
+            best = max(best, depth)
+        elif ch == ")":
+            depth -= 1
+    return best
+
+
+def st_atoi(s):
+    i, n = 0, len(s)
+    while i < n and s[i] == " ":
+        i += 1
+    sign = 1
+    if i < n and s[i] in "+-":
+        sign = -1 if s[i] == "-" else 1
+        i += 1
+    value = 0
+    while i < n and s[i].isdigit():
+        value = value * 10 + int(s[i])
+        i += 1
+    return max(-2 ** 31, min(2 ** 31 - 1, sign * value))
+
+
+def st_count_and_say(n):
+    s = "1"
+    for _ in range(n - 1):
+        out, i = [], 0
+        while i < len(s):
+            j = i
+            while j < len(s) and s[j] == s[i]:
+                j += 1
+            out.append(str(j - i) + s[i])
+            i = j
+        s = "".join(out)
+    return s
+
+
+def st_strstr(haystack, needle):
+    return haystack.find(needle)
+
+
+def st_beauty(s):
+    total = 0
+    for i in range(len(s)):
+        count = collections.Counter()
+        for j in range(i, len(s)):
+            count[s[j]] += 1
+            total += max(count.values()) - min(count.values())
+    return total
+
+
+def a2z_word(n, alphabet="abcdefghijklmnopqrstuvwxyz"):
+    return "".join(a2z_rng.choice(alphabet) for _ in range(n))
+
+
+def a2z_cases_parens():
+    out = ["(()())(())", "(()())(())(()(()))", "()()", "()"]
+    for n in [3, 8, 20, 60]:
+        s, depth, parts = [], 0, 0
+        while parts < n:
+            if depth == 0 or (a2z_rng.random() < 0.55 and len(s) < 2 * n):
+                s.append("(")
+                depth += 1
+            else:
+                s.append(")")
+                depth -= 1
+                if depth == 0:
+                    parts += 1
+        out.append("".join(s))
+    return out
+
+
+def a2z_cases_words():
+    out = ["the sky is blue", "hello world", "a good   example", "one", "  spaced   out  words here "]
+    for n in [3, 6, 12, 30]:
+        out.append(" ".join(a2z_word(a2z_rng.randint(1, 8)) for _ in range(n)))
+    return out
+
+
+def a2z_cases_odd():
+    out = ["52", "4206", "35427", "2468", "7", "1000", "3000001"]
+    for n in [10, 40, 150]:
+        out.append("".join(str(a2z_rng.randint(0, 9)) for _ in range(n)).lstrip("0") or "0")
+    return out
+
+
+def a2z_cases_prefix():
+    out = [["flower", "flow", "flight"], ["dog", "racecar", "car"], ["a"], ["abc", "abc"], ["ab", "a"]]
+    for n in [3, 6, 15, 40]:
+        base = a2z_word(a2z_rng.randint(0, 6), "ab")
+        out.append([base + a2z_word(a2z_rng.randint(0, 5), "ab") for _ in range(n)])
+    return out
+
+
+def a2z_cases_rotate():
+    out = [("abcde", "cdeab"), ("abcde", "abced"), ("a", "a"), ("ab", "ba"), ("aa", "a")]
+    for n in [4, 9, 25, 80]:
+        s = a2z_word(n, "ab")
+        r = a2z_rng.randrange(n)
+        out.append((s, s[r:] + s[:r]))
+        out.append((s, a2z_word(n, "ab")))
+    return out
+
+
+def a2z_cases_atoi():
+    return ["42", "-42", "4193 with words", "words and 987", "+1", "-91283472332", "91283472332", "0", "00000-42a1234", "2147483647",
+            "-2147483648", "3.14159", "+-12", "12345678901234567890"]
+
+
+def a2z_cases_strstr():
+    out = [("sadbutsad", "sad"), ("leetcode", "leeto"), ("a", "a"), ("aaaaa", "bba"), ("mississippi", "issip"), ("abc", "c")]
+    for n in [20, 80, 300]:
+        h = a2z_word(n, "ab")
+        i = a2z_rng.randrange(n - 3)
+        out.append((h, h[i:i + a2z_rng.randint(1, 3)] if a2z_rng.random() < 0.7 else a2z_word(4, "ab")))
+    return out
+
+
+A2Z_BATCH_4 = [
+    mk("count-digits", "Count Digits", "EASY", ["math"], [("n", "int")], "int", m_count_digits,
+       [1, 7, 10, 99, 100, 12345, 999999999, 1000000000, 4800, 20],
+       "Return the number of digits of the positive integer `n`.", N_IN, "The number of digits.", ["`1 <= n <= 10^9`"]),
+    mk("gcd-of-two-numbers", "GCD of Two Numbers", "EASY", ["math"], [("a", "int"), ("b", "int")], "int", m_gcd,
+       [(12, 18), (7, 13), (100, 75), (1, 1), (48, 36), (1000000000, 250000000), (17, 17), (999999937, 2), (54, 24), (270, 192)],
+       "Return the greatest common divisor of `a` and `b`.", "Line 1: `a`.\nLine 2: `b`.", "The GCD.", ["`1 <= a, b <= 10^9`"]),
+    mk("armstrong-number", "Armstrong Number", "EASY", ["math"], [("n", "int")], "bool", m_armstrong,
+       [153, 371, 9474, 123, 1, 10, 9926315, 548834, 1634, 8208, 100, 407],
+       "An Armstrong number equals the sum of its digits, each raised to the power of the number of digits (153 = 1³ + 5³ + 3³). "
+       "Return `true` if `n` is an Armstrong number.", N_IN, "`true` or `false`.", ["`1 <= n <= 10^9`"]),
+    mk("divisors-of-a-number", "Print All Divisors of a Number", "EASY", ["math"], [("n", "int")], "int[]", m_divisors,
+       [1, 2, 12, 36, 97, 100, 360, 5040, 99991, 1000000, 735134400 // 1000],
+       "Return all positive divisors of `n` in ascending order, checking candidates only up to `sqrt(n)`.", N_IN,
+       "The divisors in ascending order.", ["`1 <= n <= 10^6`"]),
+    mk("check-prime-number", "Check Prime", "EASY", ["math"], [("n", "int")], "bool", m_is_prime,
+       [1, 2, 3, 4, 17, 25, 97, 7919, 1000000007, 999999937, 1000000000, 561],
+       "Return `true` if `n` is a prime number, in `O(sqrt(n))` time.", N_IN, "`true` or `false`.", ["`1 <= n <= 10^9`"]),
+    mk("sort-an-array", "Sort an Array", "MEDIUM", ["array", "sorting", "divide-and-conquer"], [("nums", "int[]")], "int[]", m_sort,
+       [a2z_arr(n, -9999, 9999) for n in [1, 2, 7, 30, 200, 1000, 3000]] + [[5, 2, 3, 1], [5, 1, 1, 2, 0, 0]],
+       "Sort `nums` in ascending order in `O(n log n)` time (for example with merge sort), without a built-in sort.", ARR_IN,
+       "The sorted array.", ["`1 <= n <= 5000`", "`-10^4 <= nums[i] <= 10^4`"]),
+    mk("remove-outermost-parentheses", "Remove Outermost Parentheses", "EASY", ["string", "stack"], [("s", "str")], "str", st_remove_outer,
+       a2z_cases_parens(),
+       "`s` is a valid parentheses string. Split it into primitive valid parts and remove the outermost pair of each part. "
+       "Return the result.", "A line with the string `s`.", "The resulting string (possibly empty).", ["`1 <= s.length <= 100000`", "`s` is a valid parentheses string"]),
+    mk("reverse-words-in-a-string", "Reverse Words in a String", "MEDIUM", ["string", "two-pointers"], [("s", "str")], "str", st_reverse_words,
+       a2z_cases_words(),
+       "Reverse the order of the words in `s`. Words are separated by spaces; the result must have a single space between "
+       "words and no leading or trailing spaces.", "A line with the string `s`.", "The words in reverse order.",
+       ["`1 <= s.length <= 10000`", "`s` contains at least one word"]),
+    mk("largest-odd-number-in-a-string", "Largest Odd Number in String", "EASY", ["string", "math"], [("num", "str")], "str", st_largest_odd,
+       a2z_cases_odd(),
+       "`num` is a string of digits. Return the largest-valued odd number that is a **substring** of `num`, or an empty string if "
+       "there is none.", "A line with the digit string.", "The odd number as a string, or an empty line.", ["`1 <= num.length <= 100000`"]),
+    mk("longest-common-prefix", "Longest Common Prefix", "EASY", ["string"], [("strs", "strs")], "str", st_common_prefix, a2z_cases_prefix(),
+       "Return the longest common prefix of all the strings, or an empty string if there is none.",
+       "Line 1: `n`.\nNext `n` lines: the strings.", "The common prefix (possibly an empty line).",
+       ["`1 <= n <= 200`", "`0 <= strs[i].length <= 200`", "Lowercase letters"]),
+    mk("rotate-string", "Rotate String", "EASY", ["string"], [("s", "str"), ("goal", "str")], "bool", st_rotate, a2z_cases_rotate(),
+       "A shift moves the first character of `s` to the end. Return `true` if `s` can become `goal` after some number of shifts.",
+       "Line 1: `s`.\nLine 2: `goal`.", "`true` or `false`.", ["`1 <= s.length, goal.length <= 100`"]),
+    mk("maximum-nesting-depth-of-the-parentheses", "Maximum Nesting Depth of the Parentheses", "EASY", ["string", "stack"], [("s", "str")], "int",
+       st_max_depth, ["(1+(2*3)+((8)/4))+1", "(1)+((2))+(((3)))", "()(())", "1", "((((()))))", "(a)(b(c)(d(e)))"] + [a2z_cases_parens()[i] for i in (4, 6)],
+       "Return the maximum nesting depth of the parentheses in `s`, where the depth of `(1+(2*3))` is 2.", "A line with the string `s`.",
+       "The maximum depth.", ["`1 <= s.length <= 100`", "`s` has valid parentheses"]),
+    mk("string-to-integer-atoi", "String to Integer (atoi)", "MEDIUM", ["string", "math"], [("s", "str")], "int", st_atoi, a2z_cases_atoi(),
+       "Implement `atoi`: skip leading spaces, read an optional `+` or `-`, then read digits until a non-digit. Clamp the result to the "
+       "32-bit signed range `[-2^31, 2^31 - 1]`. Return `0` if no digits were read.", "A line with the string `s`.", "The integer.",
+       ["`0 <= s.length <= 200`"]),
+    mk("count-and-say", "Count and Say", "MEDIUM", ["string"], [("n", "int")], "str", st_count_and_say, [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20],
+       "`countAndSay(1)` is `\"1\"`; each next term describes the previous one by counting runs of equal digits (`\"3322251\"` is read "
+       "as two 3s, three 2s, one 5, one 1 and says `\"23321511\"`). Return the `n`-th term.", N_IN, "The `n`-th term.", ["`1 <= n <= 30`"]),
+    mk("find-the-index-of-the-first-occurrence-in-a-string", "Find the Index of the First Occurrence in a String", "EASY", ["string", "two-pointers"],
+       [("haystack", "str"), ("needle", "str")], "int", st_strstr, a2z_cases_strstr(),
+       "Return the index of the first occurrence of `needle` in `haystack`, or `-1` if it is not part of it. A linear-time KMP "
+       "solution is the goal.", "Line 1: `haystack`.\nLine 2: `needle`.", "The index or `-1`.", ["`1 <= haystack.length, needle.length <= 1000`"]),
+    mk("sum-of-beauty-of-all-substrings", "Sum of Beauty of All Substrings", "MEDIUM", ["string", "hash-table"], [("s", "str")], "int", st_beauty,
+       [a2z_word(n, "abcde") for n in [3, 6, 15, 40, 120, 300]] + ["aabcb", "aabcbaa"],
+       "The beauty of a string is the difference between the highest and the lowest frequency among the characters that appear in "
+       "it. Return the sum of the beauty of all substrings of `s`.", "A line with the string `s`.", "The sum.",
+       ["`1 <= s.length <= 500`", "Lowercase letters"]),
+]
+PROBLEMS += A2Z_BATCH_4
+
+
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
 STRIVER_SDE = set(['add-two-numbers', 'balanced-binary-tree', 'best-time-to-buy-and-sell-stock', 'binary-tree-inorder-traversal', 'binary-tree-level-order-traversal', 'binary-tree-maximum-path-sum', 'binary-tree-zigzag-level-order-traversal', 'coin-change', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'course-schedule', 'diameter-of-binary-tree', 'edit-distance', 'find-the-duplicate-number', 'is-graph-bipartite', 'kth-largest-element-in-an-array', 'kth-smallest-element-in-a-bst', 'largest-rectangle-in-histogram', 'longest-common-subsequence', 'longest-consecutive-sequence', 'longest-increasing-subsequence', 'longest-substring-without-repeating-characters', 'lowest-common-ancestor-of-a-binary-search-tree', 'lowest-common-ancestor-of-a-binary-tree', 'majority-element', 'maximal-rectangle', 'maximum-depth-of-binary-tree', 'maximum-product-subarray', 'maximum-subarray', 'merge-intervals', 'merge-sorted-array', 'merge-two-sorted-lists', 'middle-of-the-linked-list', 'min-cost-to-connect-all-points', 'network-delay-time', 'next-permutation', 'number-of-islands', 'palindrome-linked-list', 'partition-equal-subset-sum', 'pascals-triangle', 'redundant-connection', 'remove-duplicates-from-sorted-array', 'remove-nth-node-from-end-of-list', 'reverse-linked-list', 'reverse-nodes-in-k-group', 'roman-to-integer', 'rotate-image', 'rotate-list', 'rotting-oranges', 'same-tree', 'search-a-2d-matrix', 'search-in-rotated-sorted-array', 'set-matrix-zeroes', 'sliding-window-maximum', 'sort-colors', 'symmetric-tree', 'top-k-frequent-elements', 'trapping-rain-water', 'two-sum', 'unique-paths', 'valid-parentheses', 'validate-binary-search-tree', 'word-break'])
-STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'lower-bound', 'upper-bound', 'floor-and-ceil-in-sorted-array', 'count-occurrences-in-sorted-array', 'search-in-rotated-sorted-array-ii', 'find-minimum-in-rotated-sorted-array-ii', 'rotation-count-in-rotated-sorted-array', 'single-element-in-a-sorted-array', 'find-peak-element', 'nth-root-of-an-integer', 'minimum-days-to-make-m-bouquets', 'smallest-divisor-given-a-threshold', 'aggressive-cows', 'kth-element-of-two-sorted-arrays', 'row-with-maximum-ones', 'search-a-2d-matrix-ii', 'kth-missing-positive-number', 'median-in-a-row-wise-sorted-matrix', 'subsets', 'subsets-ii', 'combination-sum-ii', 'combination-sum-iii', 'permutations', 'letter-combinations-of-a-phone-number', 'subset-sums', 'permutation-sequence', 'rat-in-a-maze', 'm-coloring-problem', 'binary-strings-without-adjacent-ones', 'count-subsequences-with-sum-k', 'subsequences-with-sum-k'])
+STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'lower-bound', 'upper-bound', 'floor-and-ceil-in-sorted-array', 'count-occurrences-in-sorted-array', 'search-in-rotated-sorted-array-ii', 'find-minimum-in-rotated-sorted-array-ii', 'rotation-count-in-rotated-sorted-array', 'single-element-in-a-sorted-array', 'find-peak-element', 'nth-root-of-an-integer', 'minimum-days-to-make-m-bouquets', 'smallest-divisor-given-a-threshold', 'aggressive-cows', 'kth-element-of-two-sorted-arrays', 'row-with-maximum-ones', 'search-a-2d-matrix-ii', 'kth-missing-positive-number', 'median-in-a-row-wise-sorted-matrix', 'subsets', 'subsets-ii', 'combination-sum-ii', 'combination-sum-iii', 'permutations', 'letter-combinations-of-a-phone-number', 'subset-sums', 'permutation-sequence', 'rat-in-a-maze', 'm-coloring-problem', 'binary-strings-without-adjacent-ones', 'count-subsequences-with-sum-k', 'subsequences-with-sum-k', 'count-digits', 'gcd-of-two-numbers', 'armstrong-number', 'divisors-of-a-number', 'check-prime-number', 'sort-an-array', 'remove-outermost-parentheses', 'reverse-words-in-a-string', 'largest-odd-number-in-a-string', 'longest-common-prefix', 'rotate-string', 'maximum-nesting-depth-of-the-parentheses', 'string-to-integer-atoi', 'count-and-say', 'find-the-index-of-the-first-occurrence-in-a-string', 'sum-of-beauty-of-all-substrings'])
 SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
 
 

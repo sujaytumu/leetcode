@@ -2355,5 +2355,147 @@
     "approach": "Backtrack by choosing the next index j > previous, subtracting nums[j] from the remaining target and recursing; record the current subsequence when the remaining sum is exactly zero.",
     "time": "O(n * 2^n)",
     "space": "O(n)"
+  },
+  "count-digits": {
+    "hints": [
+      "Dividing by 10 removes the last digit."
+    ],
+    "approach": "Divide n by 10 until it reaches 0, counting the divisions.",
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "gcd-of-two-numbers": {
+    "hints": [
+      "gcd(a, b) = gcd(b, a mod b).",
+      "Stop when the second number is 0."
+    ],
+    "approach": "Use the Euclidean algorithm: replace (a, b) with (b, a mod b) until b becomes 0; a is then the greatest common divisor.",
+    "time": "O(log min(a, b))",
+    "space": "O(1)"
+  },
+  "armstrong-number": {
+    "hints": [
+      "Count the digits first.",
+      "Raise every digit to that power and add."
+    ],
+    "approach": "Count the digits of n, then sum each digit raised to that count (use 64-bit arithmetic) and compare with n.",
+    "time": "O(d^2) for d digits",
+    "space": "O(1)"
+  },
+  "divisors-of-a-number": {
+    "hints": [
+      "Divisors come in pairs d and n / d.",
+      "Only test d up to sqrt(n)."
+    ],
+    "approach": "Loop d from 1 while d * d <= n. When d divides n, record d and the partner n / d (once if equal). Collect the small ones in order and the partners in reverse to get ascending output without sorting.",
+    "time": "O(sqrt n)",
+    "space": "O(number of divisors)"
+  },
+  "check-prime-number": {
+    "hints": [
+      "A composite number has a divisor up to its square root.",
+      "After 2 and 3, every prime has the form 6k ± 1."
+    ],
+    "approach": "Reject n < 2 and multiples of 2 and 3, then test only divisors of the form 6k - 1 and 6k + 1 up to sqrt(n).",
+    "time": "O(sqrt n)",
+    "space": "O(1)"
+  },
+  "sort-an-array": {
+    "hints": [
+      "Split the array in halves, sort each, then merge.",
+      "Merging two sorted halves takes linear time."
+    ],
+    "approach": "Merge sort: recursively sort both halves and merge them with two pointers into a temporary buffer, then copy back. Always O(n log n), stable.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "remove-outermost-parentheses": {
+    "hints": [
+      "Track the current depth.",
+      "The outer pair of a primitive part is at depth 0 -> 1 and 1 -> 0."
+    ],
+    "approach": "Scan once with a depth counter. Keep an opening bracket only when it is not the one that takes the depth from 0 to 1, and keep a closing bracket only when it does not bring the depth back to 0.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "reverse-words-in-a-string": {
+    "hints": [
+      "Reverse the whole string first.",
+      "Then reverse each word back, skipping extra spaces."
+    ],
+    "approach": "Reverse the entire string so the words are in the right order but spelled backwards, then walk it, pick out every word, reverse it back and join the words with single spaces.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "largest-odd-number-in-a-string": {
+    "hints": [
+      "A number is odd when its last digit is odd.",
+      "The longest prefix ending at an odd digit is the largest."
+    ],
+    "approach": "Scan from the right for the last odd digit; the prefix ending there is the largest odd substring. If no digit is odd, return an empty string.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "longest-common-prefix": {
+    "hints": [
+      "After sorting, the first and last strings differ the most.",
+      "Compare just those two."
+    ],
+    "approach": "Sort the strings. The common prefix of all of them is the common prefix of the lexicographically smallest and largest strings, so compare these two characters until they differ.",
+    "time": "O(n * m log n)",
+    "space": "O(1) beyond sorting"
+  },
+  "rotate-string": {
+    "hints": [
+      "Every rotation of s is a substring of s + s.",
+      "Lengths must be equal."
+    ],
+    "approach": "If the lengths differ return false. Otherwise goal is a rotation of s exactly when it appears inside s + s.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "maximum-nesting-depth-of-the-parentheses": {
+    "hints": [
+      "Increase a counter on '(' and decrease it on ')'."
+    ],
+    "approach": "Scan once with a depth counter and keep the largest value it reaches.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "string-to-integer-atoi": {
+    "hints": [
+      "Follow the steps in order: spaces, sign, digits.",
+      "Stop growing the value once it passes the 32-bit range."
+    ],
+    "approach": "Skip leading spaces, read an optional sign, then accumulate digits into a 64-bit value, stopping as soon as it exceeds the 32-bit range. Apply the sign and clamp to the int limits.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "count-and-say": {
+    "hints": [
+      "Build each term from the previous one.",
+      "Group equal consecutive digits."
+    ],
+    "approach": "Start from \"1\" and repeat n - 1 times: scan the current string in runs of equal digits and append the run length followed by the digit to build the next term.",
+    "time": "O(n * length of the terms)",
+    "space": "O(length of a term)"
+  },
+  "find-the-index-of-the-first-occurrence-in-a-string": {
+    "hints": [
+      "Avoid re-comparing characters after a mismatch.",
+      "KMP precomputes how far to fall back."
+    ],
+    "approach": "Build the longest-proper-prefix-that-is-also-suffix table of the needle, then scan the haystack with two pointers. On a mismatch fall back in the needle using the table instead of moving the haystack pointer backwards.",
+    "time": "O(n + m)",
+    "space": "O(m)"
+  },
+  "sum-of-beauty-of-all-substrings": {
+    "hints": [
+      "Fix the start and extend the end one character at a time.",
+      "Keep 26 counters updated incrementally."
+    ],
+    "approach": "For each start index extend the substring to the right while updating a 26-entry frequency table; the beauty is the largest minus the smallest non-zero frequency, found with a 26-step scan.",
+    "time": "O(26 * n^2)",
+    "space": "O(1)"
   }
 }
