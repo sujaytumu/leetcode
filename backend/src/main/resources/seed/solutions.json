@@ -2659,5 +2659,101 @@
   "solutions": {
    "cpp": "// Optimised: O(n * 2^n) time, O(n) space\nvoid subseqGo(const vector<int> &nums, int i, int left, vector<int> &cur, vector<vector<int>> &out) {\n    if (left == 0 && !cur.empty()) out.push_back(cur);\n    if (left <= 0) return;\n    for (int j = i; j < (int)nums.size(); j++) {\n        if (nums[j] > left) continue;\n        cur.push_back(nums[j]);\n        subseqGo(nums, j + 1, left - nums[j], cur, out);\n        cur.pop_back();\n    }\n}\n\nclass Solution {\npublic:\n    vector<vector<int>> subsequencesWithSum(vector<int>& nums, int k) {\n        vector<vector<int>> out;\n        vector<int> cur;\n        subseqGo(nums, 0, k, cur, out);\n        return out;\n    }\n};\n"
   }
+ },
+ "count-digits": {
+  "editorial": "## Approach\n\nDivide n by 10 until it reaches 0, counting the divisions.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\nclass Solution {\npublic:\n    int countDigits(int n) {\n        int digits = 0;\n        for (; n > 0; n /= 10) digits++;\n        return digits;\n    }\n};\n"
+  }
+ },
+ "gcd-of-two-numbers": {
+  "editorial": "## Approach\n\nUse the Euclidean algorithm: replace (a, b) with (b, a mod b) until b becomes 0; a is then the greatest common divisor.\n\n**Complexity:** O(log min(a, b)) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log min(a, b)) time, O(1) space\nclass Solution {\npublic:\n    int gcd(int a, int b) {\n        while (b != 0) {\n            int r = a % b;\n            a = b;\n            b = r;\n        }\n        return a;\n    }\n};\n"
+  }
+ },
+ "armstrong-number": {
+  "editorial": "## Approach\n\nCount the digits of n, then sum each digit raised to that count (use 64-bit arithmetic) and compare with n.\n\n**Complexity:** O(d^2) for d digits time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(d^2) for d digits time, O(1) space\nclass Solution {\npublic:\n    bool isArmstrong(int n) {\n        int digits = 0;\n        for (int t = n; t > 0; t /= 10) digits++;\n        long long total = 0;\n        for (int t = n; t > 0; t /= 10) {\n            long long p = 1;\n            for (int i = 0; i < digits; i++) p *= t % 10;\n            total += p;\n        }\n        return total == n;\n    }\n};\n"
+  }
+ },
+ "divisors-of-a-number": {
+  "editorial": "## Approach\n\nLoop d from 1 while d * d <= n. When d divides n, record d and the partner n / d (once if equal). Collect the small ones in order and the partners in reverse to get ascending output without sorting.\n\n**Complexity:** O(sqrt n) time, O(number of divisors) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(sqrt n) time, O(number of divisors) space\nclass Solution {\npublic:\n    vector<int> divisors(int n) {\n        vector<int> small, large;\n        for (int d = 1; (long long)d * d <= n; d++) {\n            if (n % d != 0) continue;\n            small.push_back(d);\n            if (d != n / d) large.push_back(n / d);\n        }\n        reverse(large.begin(), large.end());\n        small.insert(small.end(), large.begin(), large.end());\n        return small;\n    }\n};\n"
+  }
+ },
+ "check-prime-number": {
+  "editorial": "## Approach\n\nReject n < 2 and multiples of 2 and 3, then test only divisors of the form 6k - 1 and 6k + 1 up to sqrt(n).\n\n**Complexity:** O(sqrt n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(sqrt n) time, O(1) space\nclass Solution {\npublic:\n    bool isPrime(int n) {\n        if (n < 2) return false;\n        if (n < 4) return true;\n        if (n % 2 == 0 || n % 3 == 0) return false;\n        for (long long i = 5; i * i <= n; i += 6)\n            if (n % i == 0 || n % (i + 2) == 0) return false;\n        return true;\n    }\n};\n"
+  }
+ },
+ "sort-an-array": {
+  "editorial": "## Approach\n\nMerge sort: recursively sort both halves and merge them with two pointers into a temporary buffer, then copy back. Always O(n log n), stable.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\nvoid mergeSortRange(vector<int> &a, vector<int> &tmp, int lo, int hi) {\n    if (hi - lo < 2) return;\n    int mid = (lo + hi) / 2;\n    mergeSortRange(a, tmp, lo, mid);\n    mergeSortRange(a, tmp, mid, hi);\n    int i = lo, j = mid, k = lo;\n    while (i < mid && j < hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];\n    while (i < mid) tmp[k++] = a[i++];\n    while (j < hi) tmp[k++] = a[j++];\n    copy(tmp.begin() + lo, tmp.begin() + hi, a.begin() + lo);\n}\n\nclass Solution {\npublic:\n    vector<int> sortArray(vector<int>& nums) {\n        vector<int> tmp(nums.size());\n        mergeSortRange(nums, tmp, 0, nums.size());\n        return nums;\n    }\n};\n"
+  }
+ },
+ "remove-outermost-parentheses": {
+  "editorial": "## Approach\n\nScan once with a depth counter. Keep an opening bracket only when it is not the one that takes the depth from 0 to 1, and keep a closing bracket only when it does not bring the depth back to 0.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    string removeOuterParentheses(string s) {\n        string out;\n        int depth = 0;\n        for (char c : s) {\n            if (c == '(') {\n                if (depth++ > 0) out += c;\n            } else {\n                if (--depth > 0) out += c;\n            }\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "reverse-words-in-a-string": {
+  "editorial": "## Approach\n\nReverse the entire string so the words are in the right order but spelled backwards, then walk it, pick out every word, reverse it back and join the words with single spaces.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    string reverseWords(string s) {\n        reverse(s.begin(), s.end());\n        string out;\n        for (size_t i = 0; i < s.size();) {\n            while (i < s.size() && s[i] == ' ') i++;\n            if (i == s.size()) break;\n            size_t j = i;\n            while (j < s.size() && s[j] != ' ') j++;\n            string word = s.substr(i, j - i);\n            reverse(word.begin(), word.end());\n            if (!out.empty()) out += ' ';\n            out += word;\n            i = j;\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "largest-odd-number-in-a-string": {
+  "editorial": "## Approach\n\nScan from the right for the last odd digit; the prefix ending there is the largest odd substring. If no digit is odd, return an empty string.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    string largestOddNumber(string num) {\n        for (int i = (int)num.size() - 1; i >= 0; i--)\n            if ((num[i] - '0') % 2 == 1) return num.substr(0, i + 1);\n        return \"\";\n    }\n};\n"
+  }
+ },
+ "longest-common-prefix": {
+  "editorial": "## Approach\n\nSort the strings. The common prefix of all of them is the common prefix of the lexicographically smallest and largest strings, so compare these two characters until they differ.\n\n**Complexity:** O(n * m log n) time, O(1) beyond sorting space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * m log n) time, O(1) beyond sorting space\nclass Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        sort(strs.begin(), strs.end());                    // only the first and last strings can differ the most\n        const string &a = strs.front(), &b = strs.back();\n        size_t i = 0;\n        while (i < a.size() && i < b.size() && a[i] == b[i]) i++;\n        return a.substr(0, i);\n    }\n};\n"
+  }
+ },
+ "rotate-string": {
+  "editorial": "## Approach\n\nIf the lengths differ return false. Otherwise goal is a rotation of s exactly when it appears inside s + s.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    bool rotateString(string s, string goal) {\n        return s.size() == goal.size() && (s + s).find(goal) != string::npos;\n    }\n};\n"
+  }
+ },
+ "maximum-nesting-depth-of-the-parentheses": {
+  "editorial": "## Approach\n\nScan once with a depth counter and keep the largest value it reaches.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int maxDepth(string s) {\n        int depth = 0, best = 0;\n        for (char c : s) {\n            if (c == '(') best = max(best, ++depth);\n            else if (c == ')') depth--;\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "string-to-integer-atoi": {
+  "editorial": "## Approach\n\nSkip leading spaces, read an optional sign, then accumulate digits into a 64-bit value, stopping as soon as it exceeds the 32-bit range. Apply the sign and clamp to the int limits.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\nclass Solution {\npublic:\n    int myAtoi(string s) {\n        size_t i = 0, n = s.size();\n        while (i < n && s[i] == ' ') i++;\n        int sign = 1;\n        if (i < n && (s[i] == '+' || s[i] == '-')) sign = s[i++] == '-' ? -1 : 1;\n        long long value = 0;\n        while (i < n && isdigit((unsigned char)s[i])) {\n            value = value * 10 + (s[i++] - '0');\n            if (value > (long long)INT_MAX + 1) break;     // already out of range, stop growing\n        }\n        value *= sign;\n        if (value > INT_MAX) return INT_MAX;\n        if (value < INT_MIN) return INT_MIN;\n        return (int)value;\n    }\n};\n"
+  }
+ },
+ "count-and-say": {
+  "editorial": "## Approach\n\nStart from \"1\" and repeat n - 1 times: scan the current string in runs of equal digits and append the run length followed by the digit to build the next term.\n\n**Complexity:** O(n * length of the terms) time, O(length of a term) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * length of the terms) time, O(length of a term) space\nclass Solution {\npublic:\n    string countAndSay(int n) {\n        string s = \"1\";\n        for (int step = 1; step < n; step++) {\n            string next;\n            for (size_t i = 0; i < s.size();) {\n                size_t j = i;\n                while (j < s.size() && s[j] == s[i]) j++;\n                next += to_string(j - i);\n                next += s[i];\n                i = j;\n            }\n            s = next;\n        }\n        return s;\n    }\n};\n"
+  }
+ },
+ "find-the-index-of-the-first-occurrence-in-a-string": {
+  "editorial": "## Approach\n\nBuild the longest-proper-prefix-that-is-also-suffix table of the needle, then scan the haystack with two pointers. On a mismatch fall back in the needle using the table instead of moving the haystack pointer backwards.\n\n**Complexity:** O(n + m) time, O(m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(m) space\nclass Solution {\npublic:\n    int strStr(string haystack, string needle) {\n        int n = haystack.size(), m = needle.size();\n        vector<int> lps(m, 0);                             // longest proper prefix that is also a suffix\n        for (int i = 1, len = 0; i < m;) {\n            if (needle[i] == needle[len]) lps[i++] = ++len;\n            else if (len > 0) len = lps[len - 1];\n            else lps[i++] = 0;\n        }\n        for (int i = 0, j = 0; i < n;) {\n            if (haystack[i] == needle[j]) {\n                i++;\n                j++;\n                if (j == m) return i - m;\n            } else if (j > 0) {\n                j = lps[j - 1];\n            } else {\n                i++;\n            }\n        }\n        return -1;\n    }\n};\n"
+  }
+ },
+ "sum-of-beauty-of-all-substrings": {
+  "editorial": "## Approach\n\nFor each start index extend the substring to the right while updating a 26-entry frequency table; the beauty is the largest minus the smallest non-zero frequency, found with a 26-step scan.\n\n**Complexity:** O(26 * n^2) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(26 * n^2) time, O(1) space\nclass Solution {\npublic:\n    int beautySum(string s) {\n        int n = s.size(), total = 0;\n        for (int i = 0; i < n; i++) {\n            int freq[26] = {};\n            for (int j = i; j < n; j++) {\n                freq[s[j] - 'a']++;\n                int hi = 0, lo = INT_MAX;\n                for (int f : freq) {\n                    if (f == 0) continue;\n                    hi = max(hi, f);\n                    lo = min(lo, f);\n                }\n                total += hi - lo;\n            }\n        }\n        return total;\n    }\n};\n"
+  }
  }
 }

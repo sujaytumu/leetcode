@@ -1,0 +1,211 @@
+=== count-digits
+--- cpp
+int solve(int n) {
+    int digits = 0;
+    for (; n > 0; n /= 10) digits++;
+    return digits;
+}
+=== gcd-of-two-numbers
+--- cpp
+int solve(int a, int b) {
+    while (b != 0) {
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+=== armstrong-number
+--- cpp
+bool solve(int n) {
+    int digits = 0;
+    for (int t = n; t > 0; t /= 10) digits++;
+    long long total = 0;
+    for (int t = n; t > 0; t /= 10) {
+        long long p = 1;
+        for (int i = 0; i < digits; i++) p *= t % 10;
+        total += p;
+    }
+    return total == n;
+}
+=== divisors-of-a-number
+--- cpp
+vector<int> solve(int n) {
+    vector<int> small, large;
+    for (int d = 1; (long long)d * d <= n; d++) {
+        if (n % d != 0) continue;
+        small.push_back(d);
+        if (d != n / d) large.push_back(n / d);
+    }
+    reverse(large.begin(), large.end());
+    small.insert(small.end(), large.begin(), large.end());
+    return small;
+}
+=== check-prime-number
+--- cpp
+bool solve(int n) {
+    if (n < 2) return false;
+    if (n < 4) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long long i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    return true;
+}
+=== sort-an-array
+--- cpp
+void mergeSortRange(vector<int> &a, vector<int> &tmp, int lo, int hi) {
+    if (hi - lo < 2) return;
+    int mid = (lo + hi) / 2;
+    mergeSortRange(a, tmp, lo, mid);
+    mergeSortRange(a, tmp, mid, hi);
+    int i = lo, j = mid, k = lo;
+    while (i < mid && j < hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];
+    while (i < mid) tmp[k++] = a[i++];
+    while (j < hi) tmp[k++] = a[j++];
+    copy(tmp.begin() + lo, tmp.begin() + hi, a.begin() + lo);
+}
+
+vector<int> solve(vector<int> nums) {
+    vector<int> tmp(nums.size());
+    mergeSortRange(nums, tmp, 0, nums.size());
+    return nums;
+}
+=== remove-outermost-parentheses
+--- cpp
+string solve(string s) {
+    string out;
+    int depth = 0;
+    for (char c : s) {
+        if (c == '(') {
+            if (depth++ > 0) out += c;
+        } else {
+            if (--depth > 0) out += c;
+        }
+    }
+    return out;
+}
+=== reverse-words-in-a-string
+--- cpp
+string solve(string s) {
+    reverse(s.begin(), s.end());
+    string out;
+    for (size_t i = 0; i < s.size();) {
+        while (i < s.size() && s[i] == ' ') i++;
+        if (i == s.size()) break;
+        size_t j = i;
+        while (j < s.size() && s[j] != ' ') j++;
+        string word = s.substr(i, j - i);
+        reverse(word.begin(), word.end());
+        if (!out.empty()) out += ' ';
+        out += word;
+        i = j;
+    }
+    return out;
+}
+=== largest-odd-number-in-a-string
+--- cpp
+string solve(string num) {
+    for (int i = (int)num.size() - 1; i >= 0; i--)
+        if ((num[i] - '0') % 2 == 1) return num.substr(0, i + 1);
+    return "";
+}
+=== longest-common-prefix
+--- cpp
+string solve(vector<string> strs) {
+    sort(strs.begin(), strs.end());                    // only the first and last strings can differ the most
+    const string &a = strs.front(), &b = strs.back();
+    size_t i = 0;
+    while (i < a.size() && i < b.size() && a[i] == b[i]) i++;
+    return a.substr(0, i);
+}
+=== rotate-string
+--- cpp
+bool solve(string s, string goal) {
+    return s.size() == goal.size() && (s + s).find(goal) != string::npos;
+}
+=== maximum-nesting-depth-of-the-parentheses
+--- cpp
+int solve(string s) {
+    int depth = 0, best = 0;
+    for (char c : s) {
+        if (c == '(') best = max(best, ++depth);
+        else if (c == ')') depth--;
+    }
+    return best;
+}
+=== string-to-integer-atoi
+--- cpp
+int solve(string s) {
+    size_t i = 0, n = s.size();
+    while (i < n && s[i] == ' ') i++;
+    int sign = 1;
+    if (i < n && (s[i] == '+' || s[i] == '-')) sign = s[i++] == '-' ? -1 : 1;
+    long long value = 0;
+    while (i < n && isdigit((unsigned char)s[i])) {
+        value = value * 10 + (s[i++] - '0');
+        if (value > (long long)INT_MAX + 1) break;     // already out of range, stop growing
+    }
+    value *= sign;
+    if (value > INT_MAX) return INT_MAX;
+    if (value < INT_MIN) return INT_MIN;
+    return (int)value;
+}
+=== count-and-say
+--- cpp
+string solve(int n) {
+    string s = "1";
+    for (int step = 1; step < n; step++) {
+        string next;
+        for (size_t i = 0; i < s.size();) {
+            size_t j = i;
+            while (j < s.size() && s[j] == s[i]) j++;
+            next += to_string(j - i);
+            next += s[i];
+            i = j;
+        }
+        s = next;
+    }
+    return s;
+}
+=== find-the-index-of-the-first-occurrence-in-a-string
+--- cpp
+int solve(string haystack, string needle) {
+    int n = haystack.size(), m = needle.size();
+    vector<int> lps(m, 0);                             // longest proper prefix that is also a suffix
+    for (int i = 1, len = 0; i < m;) {
+        if (needle[i] == needle[len]) lps[i++] = ++len;
+        else if (len > 0) len = lps[len - 1];
+        else lps[i++] = 0;
+    }
+    for (int i = 0, j = 0; i < n;) {
+        if (haystack[i] == needle[j]) {
+            i++;
+            j++;
+            if (j == m) return i - m;
+        } else if (j > 0) {
+            j = lps[j - 1];
+        } else {
+            i++;
+        }
+    }
+    return -1;
+}
+=== sum-of-beauty-of-all-substrings
+--- cpp
+int solve(string s) {
+    int n = s.size(), total = 0;
+    for (int i = 0; i < n; i++) {
+        int freq[26] = {};
+        for (int j = i; j < n; j++) {
+            freq[s[j] - 'a']++;
+            int hi = 0, lo = INT_MAX;
+            for (int f : freq) {
+                if (f == 0) continue;
+                hi = max(hi, f);
+                lo = min(lo, f);
+            }
+            total += hi - lo;
+        }
+    }
+    return total;
+}
