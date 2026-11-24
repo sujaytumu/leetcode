@@ -1,5 +1,13 @@
 [
   {
+    "id": "striver-sde",
+    "title": "Striver SDE Sheet",
+    "blurb": "Striver's SDE sheet, arrays to DP. Every problem with its editorial and solutions.",
+    "tags": [
+      "striver-sde"
+    ]
+  },
+  {
     "id": "warmup",
     "title": "Easy warm-up",
     "blurb": "Every easy problem. Build speed and confidence.",
