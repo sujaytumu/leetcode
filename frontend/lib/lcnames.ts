@@ -239,6 +239,19 @@ export const LC_METHODS: Record<string, string> = {
   "search-a-2d-matrix-ii": "searchMatrix",
   "kth-missing-positive-number": "findKthPositive",
   "median-in-a-row-wise-sorted-matrix": "findMedian",
+  "subsets": "subsets",
+  "subsets-ii": "subsetsWithDup",
+  "combination-sum-ii": "combinationSum2",
+  "combination-sum-iii": "combinationSum3",
+  "permutations": "permute",
+  "letter-combinations-of-a-phone-number": "letterCombinations",
+  "subset-sums": "subsetSums",
+  "permutation-sequence": "getPermutation",
+  "rat-in-a-maze": "findPath",
+  "m-coloring-problem": "graphColoring",
+  "binary-strings-without-adjacent-ones": "generateBinaryStrings",
+  "count-subsequences-with-sum-k": "countSubsequences",
+  "subsequences-with-sum-k": "subsequencesWithSum",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

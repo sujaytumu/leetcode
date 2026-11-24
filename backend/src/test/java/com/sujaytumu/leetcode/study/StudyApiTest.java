@@ -65,9 +65,9 @@ class StudyApiTest {
     @Test
     void dailyIndexIsDeterministicAndInRange() {
         LocalDate day = LocalDate.of(2026, 11, 16);
-        int first = StudyService.dailyIndex(239, day);
-        assertEquals(first, StudyService.dailyIndex(239, day));
-        assertEquals(true, first >= 0 && first < 239);
+        int first = StudyService.dailyIndex(252, day);
+        assertEquals(first, StudyService.dailyIndex(252, day));
+        assertEquals(true, first >= 0 && first < 252);
     }
 
     @Test

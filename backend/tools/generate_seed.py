@@ -6077,10 +6077,226 @@ A2Z_BATCH_2 = [
 PROBLEMS += A2Z_BATCH_2
 
 
+# ============================================================== Striver A2Z sheet, batch 3 (recursion and backtracking)
+def bt_subsets(nums):
+    out = []
+    for mask in range(1 << len(nums)):
+        out.append([nums[i] for i in range(len(nums)) if mask >> i & 1])
+    return out
+
+
+def bt_subsets_unique(nums):
+    return [list(t) for t in sorted({tuple(sorted(sub)) for sub in bt_subsets(nums)})]
+
+
+def bt_combination_sum_ii(candidates, target):
+    found = set()
+
+    def go(i, left, cur):
+        if left == 0:
+            found.add(tuple(cur))
+            return
+        if i == len(cands) or left < 0:
+            return
+        go(i + 1, left - cands[i], cur + [cands[i]])
+        go(i + 1, left, cur)
+
+    cands = sorted(candidates)
+    go(0, target, [])
+    return [list(t) for t in found]
+
+
+def bt_combination_sum_iii(k, n):
+    import itertools
+    return [list(c) for c in itertools.combinations(range(1, 10), k) if sum(c) == n]
+
+
+def bt_permutations(nums):
+    import itertools
+    return [list(p) for p in itertools.permutations(nums)]
+
+
+def bt_phone(digits):
+    import itertools
+    letters = {"2": "abc", "3": "def", "4": "ghi", "5": "jkl", "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"}
+    return ["".join(p) for p in itertools.product(*(letters[d] for d in digits))]
+
+
+def bt_subset_sums(nums):
+    return sorted(sum(sub) for sub in bt_subsets(nums))
+
+
+def bt_kth_permutation(n, k):
+    import itertools
+    return "".join(map(str, list(itertools.permutations(range(1, n + 1)))[k - 1]))
+
+
+def bt_rat_in_maze(maze):
+    n = len(maze)
+    out = []
+    if maze[0][0] == 0 or maze[n - 1][n - 1] == 0:
+        return out
+    moves = (("D", 1, 0), ("L", 0, -1), ("R", 0, 1), ("U", -1, 0))
+
+    def go(r, c, path, seen):
+        if (r, c) == (n - 1, n - 1):
+            out.append(path)
+            return
+        for name, dr, dc in moves:
+            a, b = r + dr, c + dc
+            if 0 <= a < n and 0 <= b < n and maze[a][b] == 1 and (a, b) not in seen:
+                seen.add((a, b))
+                go(a, b, path + name, seen)
+                seen.discard((a, b))
+
+    go(0, 0, "", {(0, 0)})
+    return out
+
+
+def bt_m_coloring(graph, m):
+    n = len(graph)
+    colors = [0] * n
+
+    def go(v):
+        if v == n:
+            return True
+        for c in range(1, m + 1):
+            if all(not (graph[v][u] and colors[u] == c) for u in range(v)):
+                colors[v] = c
+                if go(v + 1):
+                    return True
+                colors[v] = 0
+        return False
+
+    return go(0)
+
+
+def bt_binary_no_adjacent(n):
+    import itertools
+    return ["".join(b) for b in itertools.product("01", repeat=n) if "11" not in "".join(b)]
+
+
+def bt_count_subsequences(nums, k):
+    return sum(1 for sub in bt_subsets(nums) if sum(sub) == k)
+
+
+def bt_subsequences_with_sum(nums, k):
+    return [sub for sub in bt_subsets(nums) if sum(sub) == k]
+
+
+def a2z_cases_small_arrays(sizes, lo, hi, distinct=False):
+    out = []
+    for n in sizes:
+        out.append(a2z_rng.sample(range(lo, hi + 1), n) if distinct else a2z_arr(n, lo, hi))
+    return out
+
+
+def a2z_cases_comb_ii():
+    out = []
+    for n in [3, 5, 8, 11, 14]:
+        cands = a2z_arr(n, 1, 8)
+        out.append((cands, a2z_rng.randint(4, 14)))
+    return out + [([10, 1, 2, 7, 6, 1, 5], 8), ([2, 5, 2, 1, 2], 5)]
+
+
+def a2z_cases_phone():
+    return ["23", "2", "7", "79", "234", "2379", "9999", "5678"]
+
+
+def a2z_cases_maze():
+    out = [[[1, 0, 0, 0], [1, 1, 0, 1], [1, 1, 0, 0], [0, 1, 1, 1]], [[1, 0], [1, 0]], [[1]], [[1, 1, 1], [1, 1, 1], [1, 1, 1]]]
+    for n in [4, 5, 6]:
+        maze = [[1 if a2z_rng.random() < 0.72 else 0 for _ in range(n)] for _ in range(n)]
+        maze[0][0] = maze[n - 1][n - 1] = 1
+        out.append(maze)
+    return out
+
+
+def a2z_cases_coloring():
+    out = []
+    for n, p, m in [(4, 0.6, 3), (5, 0.7, 3), (6, 0.6, 2), (7, 0.55, 3), (8, 0.5, 3), (6, 0.9, 3), (3, 1.0, 2)]:
+        g = [[0] * n for _ in range(n)]
+        for i in range(n):
+            for j in range(i + 1, n):
+                if a2z_rng.random() < p:
+                    g[i][j] = g[j][i] = 1
+        out.append((g, m))
+    return out
+
+
+A2Z_BATCH_3 = [
+    mk("subsets", "Subsets", "MEDIUM", ["array", "backtracking"], [("nums", "int[]")], "sets", bt_subsets,
+       a2z_cases_small_arrays([1, 2, 3, 4, 6, 8, 10], -9, 9, True),
+       "`nums` holds distinct integers. Return all possible subsets (the power set), including the empty one, in any order.",
+       ARR_IN, "One subset per line, numbers separated by spaces (an empty line for the empty subset). The starter code sorts "
+       "the lines, so any order is accepted.", ["`1 <= n <= 10`", "All values are distinct"]),
+    mk("subsets-ii", "Subsets II", "MEDIUM", ["array", "backtracking"], [("nums", "int[]")], "sets", bt_subsets_unique,
+       a2z_cases_small_arrays([1, 2, 4, 6, 8, 10], 1, 4),
+       "`nums` may contain duplicates. Return all **unique** subsets, in any order.", ARR_IN,
+       "One subset per line (an empty line for the empty subset); order does not matter.", ["`1 <= n <= 10`", "`-10 <= nums[i] <= 10`"]),
+    mk("combination-sum-ii", "Combination Sum II", "MEDIUM", ["array", "backtracking"],
+       [("candidates", "int[]"), ("target", "int")], "sets", bt_combination_sum_ii, a2z_cases_comb_ii(),
+       "Each number in `candidates` may be used **at most once**, and `candidates` may contain duplicates. Return all unique "
+       "combinations that sum to `target`, in any order.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.",
+       "One combination per line; order does not matter.", ["`1 <= n <= 14`", "`1 <= candidates[i] <= 8`", "`1 <= target <= 14`"]),
+    mk("combination-sum-iii", "Combination Sum III", "MEDIUM", ["backtracking"], [("k", "int"), ("n", "int")], "sets",
+       bt_combination_sum_iii, [(3, 7), (3, 9), (4, 1), (2, 18), (4, 24), (5, 25), (6, 30), (9, 45), (2, 5)],
+       "Find all valid combinations of exactly `k` different numbers from `1` to `9` (each used at most once) that add up "
+       "to `n`. Return them in any order.", "Line 1: `k`.\nLine 2: `n`.", "One combination per line; order does not matter.",
+       ["`2 <= k <= 9`", "`1 <= n <= 60`"]),
+    mk("permutations", "Permutations", "MEDIUM", ["array", "backtracking"], [("nums", "int[]")], "rows", bt_permutations,
+       a2z_cases_small_arrays([1, 2, 3, 4, 5, 6, 7], -9, 9, True),
+       "`nums` holds distinct integers. Return all permutations, in any order.", ARR_IN,
+       "One permutation per line; the starter code sorts the lines.", ["`1 <= n <= 7`", "All values are distinct"]),
+    mk("letter-combinations-of-a-phone-number", "Letter Combinations of a Phone Number", "MEDIUM", ["string", "backtracking"],
+       [("digits", "str")], "strs", bt_phone, a2z_cases_phone(),
+       "Digits `2`-`9` map to letters as on a phone keypad (2 = abc, 3 = def, 4 = ghi, 5 = jkl, 6 = mno, 7 = pqrs, 8 = tuv, "
+       "9 = wxyz). Return all letter combinations the digit string could spell, in any order.", "A line with the digit string.",
+       "One combination per line; order does not matter.", ["`1 <= digits.length <= 4`", "Each digit is `2`-`9`"]),
+    mk("subset-sums", "Subset Sums", "MEDIUM", ["array", "backtracking"], [("nums", "int[]")], "int[]", bt_subset_sums,
+       a2z_cases_small_arrays([1, 2, 3, 5, 8, 12, 15], 0, 9),
+       "Return the sum of every subset of `nums` (including the empty subset, whose sum is `0`), sorted in ascending order.",
+       ARR_IN, "The sums in ascending order, one entry per subset (duplicates are kept).", ["`1 <= n <= 15`", "`0 <= nums[i] <= 100`"]),
+    mk("permutation-sequence", "Permutation Sequence", "HARD", ["math", "recursion"], [("n", "int"), ("k", "int")], "str",
+       bt_kth_permutation, [(3, 3), (4, 9), (3, 1), (1, 1), (5, 120), (6, 400), (7, 2500), (8, 40320), (9, 123456)],
+       "The numbers `1..n` have `n!` permutations. List them in lexicographic order and return the `k`-th one as a string, "
+       "without generating all of them.", "Line 1: `n`.\nLine 2: `k`.", "The k-th permutation as a string.",
+       ["`1 <= n <= 9`", "`1 <= k <= n!`"]),
+    mk("rat-in-a-maze", "Rat in a Maze", "MEDIUM", ["matrix", "backtracking"], [("maze", "int[][]")], "strs", bt_rat_in_maze,
+       a2z_cases_maze(),
+       "A rat starts at the top-left cell of an `n x n` maze and wants to reach the bottom-right cell. A cell with `1` is open "
+       "and `0` is blocked. The rat moves `D`, `L`, `R` or `U` and may not visit a cell twice on one path. Return every path "
+       "as a string of moves.", "Line 1: `n`.\nNext `n` lines: the maze rows.",
+       "One path per line, nothing if there is no path; the starter code sorts the lines.", ["`1 <= n <= 6`"]),
+    mk("m-coloring-problem", "M-Coloring Problem", "HARD", ["graph", "backtracking"], [("graph", "int[][]"), ("m", "int")], "bool",
+       bt_m_coloring, a2z_cases_coloring(),
+       "Given an undirected graph as an adjacency matrix and `m` colours, return `true` if its vertices can be coloured so that "
+       "no two adjacent vertices share a colour.", "Line 1: `n`.\nNext `n` lines: the adjacency matrix rows.\nLast line: `m`.",
+       "`true` or `false`.", ["`1 <= n <= 8`", "`1 <= m <= n`"]),
+    mk("binary-strings-without-adjacent-ones", "Generate Binary Strings Without Adjacent Ones", "EASY", ["string", "backtracking"],
+       [("n", "int")], "strs", bt_binary_no_adjacent, [1, 2, 3, 4, 5, 6, 8, 10],
+       "Return all binary strings of length `n` that do not contain two consecutive `1`s, in any order.", N_IN,
+       "One string per line; order does not matter.", ["`1 <= n <= 10`"]),
+    mk("count-subsequences-with-sum-k", "Count Subsequences with Sum K", "MEDIUM", ["array", "dynamic-programming", "backtracking"],
+       [("nums", "int[]"), ("k", "int")], "int", bt_count_subsequences,
+       [(a2z_arr(n, 1, 9), a2z_rng.randint(3, 25)) for n in [3, 5, 8, 12, 16, 20]] + [([1, 2, 3], 3), ([2, 2, 2], 4)],
+       "Return how many subsequences of `nums` (chosen by index, so equal values at different positions count separately) have "
+       "a sum equal to `k`.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "The number of subsequences.",
+       ["`1 <= n <= 20`", "`1 <= nums[i] <= 100`", "`1 <= k <= 1000`"]),
+    mk("subsequences-with-sum-k", "Print Subsequences with Sum K", "MEDIUM", ["array", "backtracking"],
+       [("nums", "int[]"), ("k", "int")], "rows", bt_subsequences_with_sum,
+       [(a2z_arr(n, 1, 6), a2z_rng.randint(3, 12)) for n in [3, 5, 7, 9, 11]] + [([1, 2, 3], 3), ([2, 2, 2], 4)],
+       "Return every subsequence of `nums` (keeping the original order of its elements, chosen by index) whose sum is `k`, in "
+       "any order.", "Line 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.", "One subsequence per line; the starter code sorts the lines.",
+       ["`1 <= n <= 11`", "`1 <= nums[i] <= 20`", "`1 <= k <= 100`"]),
+]
+PROBLEMS += A2Z_BATCH_3
+
+
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
 STRIVER_SDE = set(['add-two-numbers', 'balanced-binary-tree', 'best-time-to-buy-and-sell-stock', 'binary-tree-inorder-traversal', 'binary-tree-level-order-traversal', 'binary-tree-maximum-path-sum', 'binary-tree-zigzag-level-order-traversal', 'coin-change', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'course-schedule', 'diameter-of-binary-tree', 'edit-distance', 'find-the-duplicate-number', 'is-graph-bipartite', 'kth-largest-element-in-an-array', 'kth-smallest-element-in-a-bst', 'largest-rectangle-in-histogram', 'longest-common-subsequence', 'longest-consecutive-sequence', 'longest-increasing-subsequence', 'longest-substring-without-repeating-characters', 'lowest-common-ancestor-of-a-binary-search-tree', 'lowest-common-ancestor-of-a-binary-tree', 'majority-element', 'maximal-rectangle', 'maximum-depth-of-binary-tree', 'maximum-product-subarray', 'maximum-subarray', 'merge-intervals', 'merge-sorted-array', 'merge-two-sorted-lists', 'middle-of-the-linked-list', 'min-cost-to-connect-all-points', 'network-delay-time', 'next-permutation', 'number-of-islands', 'palindrome-linked-list', 'partition-equal-subset-sum', 'pascals-triangle', 'redundant-connection', 'remove-duplicates-from-sorted-array', 'remove-nth-node-from-end-of-list', 'reverse-linked-list', 'reverse-nodes-in-k-group', 'roman-to-integer', 'rotate-image', 'rotate-list', 'rotting-oranges', 'same-tree', 'search-a-2d-matrix', 'search-in-rotated-sorted-array', 'set-matrix-zeroes', 'sliding-window-maximum', 'sort-colors', 'symmetric-tree', 'top-k-frequent-elements', 'trapping-rain-water', 'two-sum', 'unique-paths', 'valid-parentheses', 'validate-binary-search-tree', 'word-break'])
-STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'lower-bound', 'upper-bound', 'floor-and-ceil-in-sorted-array', 'count-occurrences-in-sorted-array', 'search-in-rotated-sorted-array-ii', 'find-minimum-in-rotated-sorted-array-ii', 'rotation-count-in-rotated-sorted-array', 'single-element-in-a-sorted-array', 'find-peak-element', 'nth-root-of-an-integer', 'minimum-days-to-make-m-bouquets', 'smallest-divisor-given-a-threshold', 'aggressive-cows', 'kth-element-of-two-sorted-arrays', 'row-with-maximum-ones', 'search-a-2d-matrix-ii', 'kth-missing-positive-number', 'median-in-a-row-wise-sorted-matrix'])
+STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missing-number', 'single-number', 'two-sum', 'sort-colors', 'majority-element', 'maximum-subarray', 'best-time-to-buy-and-sell-stock', 'next-permutation', 'longest-consecutive-sequence', 'set-matrix-zeroes', 'rotate-image', 'spiral-matrix', 'subarray-sum-equals-k', 'pascals-triangle', '3sum-count', '4sum-count', 'merge-intervals', 'merge-sorted-array', 'maximum-product-subarray', 'rotate-array', 'binary-search', 'search-insert-position', 'find-first-and-last-position-of-element-in-sorted-array', 'search-in-rotated-sorted-array', 'find-minimum-in-rotated-sorted-array', 'sqrt-x', 'koko-eating-bananas', 'capacity-to-ship-packages', 'split-array-largest-sum', 'search-a-2d-matrix', 'isomorphic-strings', 'valid-anagram', 'roman-to-integer', 'longest-palindromic-substring-length', 'valid-palindrome', 'palindromic-substrings', 'reverse-linked-list', 'middle-of-the-linked-list', 'merge-two-sorted-lists', 'remove-nth-node-from-end-of-list', 'add-two-numbers', 'odd-even-linked-list', 'palindrome-linked-list', 'sort-list', 'rotate-list', 'reverse-nodes-in-k-group', 'remove-duplicates-from-sorted-list', 'find-the-duplicate-number', 'generate-parentheses-count', 'combination-sum-count', 'n-queens-count', 'word-search', 'palindrome-partitioning-count', 'distinct-permutations-count', 'single-number-ii', 'power-of-two', 'number-of-1-bits', 'count-primes', 'bitwise-and-of-numbers-range', 'valid-parentheses', 'next-greater-element-ii', 'daily-temperatures', 'trapping-rain-water', 'largest-rectangle-in-histogram', 'sum-of-subarray-minimums', 'evaluate-reverse-polish-notation', 'longest-substring-without-repeating-characters', 'longest-repeating-character-replacement', 'minimum-window-substring-length', 'longest-substring-with-at-most-k-distinct-characters', 'sliding-window-maximum', 'kth-largest-element-in-an-array', 'top-k-frequent-elements', 'task-scheduler', 'assign-cookies', 'lemonade-change', 'jump-game', 'jump-game-ii', 'candy', 'non-overlapping-intervals', 'insert-interval', 'meeting-rooms-ii', 'maximum-depth-of-binary-tree', 'balanced-binary-tree', 'diameter-of-binary-tree', 'binary-tree-maximum-path-sum', 'same-tree', 'binary-tree-level-order-traversal', 'binary-tree-zigzag-level-order-traversal', 'symmetric-tree', 'lowest-common-ancestor-of-a-binary-tree', 'binary-tree-inorder-traversal', 'binary-tree-right-side-view', 'construct-binary-tree-from-preorder-and-inorder-traversal', 'count-complete-tree-nodes', 'invert-binary-tree', 'validate-binary-search-tree', 'kth-smallest-element-in-a-bst', 'lowest-common-ancestor-of-a-binary-search-tree', 'number-of-islands', 'rotting-oranges', '01-matrix', 'surrounded-regions', 'number-of-provinces', 'is-graph-bipartite', 'course-schedule', 'network-delay-time', 'cheapest-flights-within-k-stops', 'path-with-minimum-effort', 'redundant-connection', 'min-cost-to-connect-all-points', 'swim-in-rising-water', 'shortest-path-in-binary-matrix', 'number-of-connected-components', 'climbing-stairs', 'house-robber', 'house-robber-ii', 'unique-paths', 'unique-paths-ii', 'minimum-path-sum', 'minimum-falling-path-sum', 'partition-equal-subset-sum', 'coin-change', 'coin-change-ii', 'target-sum', 'longest-increasing-subsequence', 'longest-common-subsequence', 'edit-distance', 'wildcard-matching', 'distinct-subsequences', 'best-time-to-buy-and-sell-stock-ii', 'best-time-to-buy-and-sell-stock-iii', 'best-time-to-buy-and-sell-stock-with-cooldown', 'maximal-rectangle', 'burst-balloons', 'largest-element-in-array', 'second-largest-element', 'check-if-array-is-sorted-and-rotated', 'left-rotate-array-by-one', 'linear-search', 'union-of-two-sorted-arrays', 'max-consecutive-ones', 'rearrange-array-elements-by-sign', 'leaders-in-an-array', 'longest-subarray-with-sum-k', 'find-the-repeating-and-missing-number', 'count-subarrays-with-given-xor', 'count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'lower-bound', 'upper-bound', 'floor-and-ceil-in-sorted-array', 'count-occurrences-in-sorted-array', 'search-in-rotated-sorted-array-ii', 'find-minimum-in-rotated-sorted-array-ii', 'rotation-count-in-rotated-sorted-array', 'single-element-in-a-sorted-array', 'find-peak-element', 'nth-root-of-an-integer', 'minimum-days-to-make-m-bouquets', 'smallest-divisor-given-a-threshold', 'aggressive-cows', 'kth-element-of-two-sorted-arrays', 'row-with-maximum-ones', 'search-a-2d-matrix-ii', 'kth-missing-positive-number', 'median-in-a-row-wise-sorted-matrix', 'subsets', 'subsets-ii', 'combination-sum-ii', 'combination-sum-iii', 'permutations', 'letter-combinations-of-a-phone-number', 'subset-sums', 'permutation-sequence', 'rat-in-a-maze', 'm-coloring-problem', 'binary-strings-without-adjacent-ones', 'count-subsequences-with-sum-k', 'subsequences-with-sum-k'])
 SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
 
 
