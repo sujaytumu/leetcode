@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { tagLabel, fetchAllProblems, Page, ProblemSummary, Progress } from "@/lib/api";
 import { prefetchProblem, swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
+import SheetPills from "@/components/SheetPills";
+import { isSheetTag } from "@/lib/sheets";
 import { useMeta } from "@/lib/meta";
 import { FILTER_KEY, parseFilters } from "@/lib/listFilters";
 
@@ -161,6 +163,7 @@ export default function ProblemsPage() {
         <nav>
           <Link href="/problemset" className="on"><Ico d="M4 4h4v16H4zM10 4h4v16h-4zM16 6l4-1 3 14-4 1z" />Library</Link>
           <Link href="/plans"><Ico d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5" />Study Plan</Link>
+          <Link href="/striver"><Ico d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11" />Striver Sheet</Link>
           <Link href="/daily"><Ico d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" />Daily Challenge</Link>
           <Link href="/practice"><Ico d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />Practice</Link>
           <Link href="/review"><Ico d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />Review</Link>
@@ -174,6 +177,11 @@ export default function ProblemsPage() {
       </aside>
       <div className="home home-solo">
         <div className="home-main">
+          <Link href="/striver" className="striverbar">
+            <span className="striverbar-ico" aria-hidden="true">📘</span>
+            <span className="striverbar-text"><b>Striver Sheet</b><small>A2Z and SDE sheets, grouped by topic, with your progress</small></span>
+            <span className="striverbar-go">Explore →</span>
+          </Link>
           <section className="topicpanel" aria-label="Topics">
             <div className="topichead">
               <b>Topics</b>
@@ -231,23 +239,24 @@ export default function ProblemsPage() {
             </button>
           </div>
           <table>
-            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm" style={{ width: 90, textAlign: "center" }}>Solution</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
+            <thead><tr><th style={{ width: 40 }}></th><th aria-sort={ariaSort("title")}><button className="sorth" onClick={() => toggleSort("title")}>Title{arrow("title")}</button></th><th className="hide-sm" style={{ width: 90, textAlign: "center" }}>Solution</th><th className="hide-sm col-sheet" style={{ textAlign: "center" }}>Striver</th><th className="th-num col-acc" aria-sort={ariaSort("acceptance")}><button className="sorth" onClick={() => toggleSort("acceptance")}>Acceptance{arrow("acceptance")}</button></th><th aria-sort={ariaSort("difficulty")}><button className="sorth" onClick={() => toggleSort("difficulty")}>Difficulty{arrow("difficulty")}</button></th></tr></thead>
             <tbody ref={tbodyRef}>
               {data?.items.map((p, i) => (
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
                   <td><Link href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
-                    <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}{p.tags.slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
+                    <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}<SheetPills tags={p.tags} />{p.tags.filter((t) => !isSheetTag(t)).slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
                   <td className="hide-sm" style={{ textAlign: "center" }}>
                     <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>
                       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
                     </Link>
                   </td>
+                  <td className="hide-sm col-sheet" style={{ textAlign: "center" }}><SheetPills tags={p.tags} /></td>
                   <td className="th-num col-acc mute">{p.acceptance != null ? `${p.acceptance.toFixed(1)}%` : "–"}</td>
                   <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                 </tr>
               ))}
-              {!loading && !error && data?.items.length === 0 && <tr><td colSpan={5} className="mute">No problems match.</td></tr>}
+              {!loading && !error && data?.items.length === 0 && <tr><td colSpan={6} className="mute">No problems match.</td></tr>}
             </tbody>
           </table>
           {rows.length > 0 && (

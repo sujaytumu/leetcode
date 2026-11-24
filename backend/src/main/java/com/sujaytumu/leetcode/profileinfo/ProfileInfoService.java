@@ -24,7 +24,7 @@ public class ProfileInfoService {
             "problems", "problemset", "login", "register", "contest", "leaderboard", "playground", "profile", "topics",
             "plans", "practice", "review", "notes", "lists", "mock", "daily", "stats", "submissions", "account",
             "api", "u", "forgot-password", "reset-password", "unsubscribe", "for-you", "catalog", "actuator", "admin",
-            "settings", "explore", "discuss", "interview", "store", "premium", "assets", "static");
+            "settings", "striver", "explore", "discuss", "interview", "store", "premium", "assets", "static");
     private static final Pattern HANDLE = Pattern.compile("[A-Za-z0-9_.-]*");
 
     private final ProfileInfoRepository repository;

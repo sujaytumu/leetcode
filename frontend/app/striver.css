@@ -1,0 +1,80 @@
+/* Striver sheets: the /striver page, the "Striver" column and pills in the problem list, and the explore bar.
+   Own file (imported by the components that use it) so it never collides with parallel edits to globals.css. */
+
+/* ---- pills (problem list column and phone sub-row) ---- */
+.sheetpill { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.3px; line-height:1; padding:4px 8px; border-radius:999px; margin:0 3px; border:1px solid transparent; text-decoration:none; }
+.sheetpill.A2Z { color:#ffa116; background:color-mix(in srgb, #ffa116 16%, transparent); border-color:color-mix(in srgb, #ffa116 40%, transparent); }
+.sheetpill.SDE { color:#2cbb5d; background:color-mix(in srgb, #2cbb5d 16%, transparent); border-color:color-mix(in srgb, #2cbb5d 40%, transparent); }
+.sheetpill:hover { filter:brightness(1.15); }
+.col-sheet { width:110px; white-space:nowrap; }
+.home .show-sm .sheetpill { margin:0; flex:none; }
+
+/* ---- explore bar above the topics on the problem list ---- */
+.striverbar { display:flex; align-items:center; gap:12px; margin:0 0 12px; padding:12px 14px; border-radius:12px; text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, #ffa116 10%, var(--panel)); border:1px solid color-mix(in srgb, #ffa116 45%, var(--line)); }
+.striverbar:hover { background:color-mix(in srgb, #ffa116 16%, var(--panel)); }
+.striverbar-ico { font-size:22px; line-height:1; }
+.striverbar-text { display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
+.striverbar-text b { font-size:15px; }
+.striverbar-text small { font-size:12.5px; color:var(--mute); }
+.striverbar-go { font-weight:700; font-size:14px; color:#ffa116; white-space:nowrap; }
+
+/* ---- /striver page ---- */
+.sh { max-width:860px; margin:0 auto; padding:16px 16px 96px; }
+.sh-head h1 { font-size:24px; margin:4px 0 4px; }
+.sh-head p { margin:0 0 14px; font-size:14px; }
+.sh-tabs { display:flex; gap:8px; margin-bottom:12px; }
+.sh-tabs button { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:8px 12px; border-radius:12px; font-size:15px;
+  background:var(--cell); border:1px solid transparent; color:var(--mute); cursor:pointer; }
+.sh-tabs button.on { color:var(--text); background:color-mix(in srgb, #ffa116 16%, var(--cell)); border-color:#ffa116; }
+.sh-n { font-size:12px; font-weight:600; padding:1px 8px; border-radius:999px; background:color-mix(in srgb, var(--text) 12%, transparent); }
+.sh-card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
+.sh-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.sh-card h2 { font-size:17px; margin:0 0 2px; }
+.sh-card p { margin:0; font-size:13.5px; }
+.sh-go { flex:none; align-self:center; padding:9px 16px; border-radius:999px; font-weight:700; font-size:14px; text-decoration:none; background:#ffa116; color:#1a1a1a; white-space:nowrap; }
+.sh-go:hover { filter:brightness(1.08); }
+.sh-done { flex:none; align-self:center; font-weight:700; font-size:14px; color:#2cbb5d; white-space:nowrap; }
+.sh-prog { display:flex; align-items:center; gap:12px; margin-top:12px; }
+.sh-bar { flex:1; height:8px; border-radius:999px; background:var(--cell); overflow:hidden; }
+.sh-bar i { display:block; height:100%; background:#2cbb5d; border-radius:999px; transition:width .3s; }
+.sh-count { font-size:13.5px; color:var(--mute); white-space:nowrap; }
+.sh-count b { color:var(--text); }
+.sh-filters { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+.sh-filters input[type="text"], .sh-filters input:not([type]) { flex:1 1 180px; min-width:0; }
+.sh-filters select { flex:0 0 auto; }
+.sh-hide { display:inline-flex; align-items:center; gap:6px; font-size:14px; color:var(--mute); white-space:nowrap; }
+.sh-empty { padding:16px 4px; }
+.sh-group { background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; overflow:hidden; }
+.sh-group summary { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 16px; cursor:pointer; font-weight:700; font-size:15px; list-style:none; }
+.sh-group summary::-webkit-details-marker { display:none; }
+.sh-group summary::after { content:"▾"; color:var(--mute); margin-left:6px; }
+.sh-group:not([open]) summary::after { content:"▸"; }
+.sh-gname { flex:1; }
+.sh-gcount { font-size:13px; font-weight:600; color:var(--mute); }
+.sh-list { list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+.sh-list li { display:grid; grid-template-columns:22px minmax(0,1fr) auto 28px; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--line); }
+.sh-list li:last-child { border-bottom:0; }
+.sh-list li:hover { background:var(--hover, var(--cell)); }
+.sh-title { color:var(--text); text-decoration:none; font-size:14.5px; line-height:1.35; overflow-wrap:anywhere; }
+.sh-title:hover { color:#ffa116; }
+.sh-st { display:inline-flex; justify-content:center; }
+.sh-diff { font-size:13px; font-weight:600; white-space:nowrap; }
+.sh-diff.EASY { color:var(--easy); } .sh-diff.MEDIUM { color:var(--med); } .sh-diff.HARD { color:var(--hard); }
+.sh-sol { display:inline-flex; justify-content:center; color:var(--mute); }
+.sh-sol:hover { color:var(--text); }
+@media (max-width:700px) {
+  .sh { padding:12px 12px 96px; }
+  .sh-card-top { flex-direction:column; }
+  .sh-go { align-self:stretch; text-align:center; }
+  .sh-list li { padding:10px 12px; gap:8px; }
+  .striverbar-text small { display:none; }
+}
+
+/* top nav has one more link (Striver Sheet): keep it from colliding with search on mid-width screens */
+@media (min-width:901px) and (max-width:1400px) {
+  header.nav nav { gap:2px; }
+  header.nav nav a { padding:0 9px; font-size:14px; white-space:nowrap; }
+  header.nav .brand { margin-right:8px; }
+  header.nav .brand-text { display:none; }
+}
