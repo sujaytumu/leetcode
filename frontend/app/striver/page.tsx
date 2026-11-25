@@ -144,6 +144,21 @@ export default function StriverPage() {
             <span className="sh-count"><b>{solved}</b> / {all.length} done{all.length > 0 && <> · {Math.round((solved / all.length) * 100)}%</>}</span>
           </div>
         )}
+        {all.length > 0 && (
+          <div className="sh-levels">
+            {(["EASY", "MEDIUM", "HARD"] as const).map((l) => {
+              const ps = all.filter((x) => x.difficulty === l);
+              const dn = ps.filter(isDone).length;
+              return (
+                <div key={l} className={`sh-lv ${l}`}>
+                  <span>{cap(l)}</span>
+                  <b>{dn}<small> / {ps.length}</small></b>
+                  <div className="sh-bar sm"><i style={{ width: `${ps.length ? (dn / ps.length) * 100 : 0}%` }} /></div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {all.length > 0 && (
