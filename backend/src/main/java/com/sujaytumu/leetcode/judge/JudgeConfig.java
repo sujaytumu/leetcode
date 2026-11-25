@@ -31,6 +31,12 @@ public class JudgeConfig {
         if (judge0.authToken() != null && !judge0.authToken().isBlank()) {
             builder.defaultHeader("X-Auth-Token", judge0.authToken());
         }
-        return new Judge0CodeExecutor(builder.build(), judge0.cpuTimeLimitSeconds());
+        CodeExecutor judge = new Judge0CodeExecutor(builder.build(), judge0.cpuTimeLimitSeconds());
+        // A free public Judge0 rate limits (HTTP 429) and sleeps; when the built-in runner is on, use it as the backup.
+        if (env.getProperty("exec.local.enabled", Boolean.class, false)) {
+            return new FallbackCodeExecutor(judge,
+                    new LocalCodeExecutor(judge0.cpuTimeLimitSeconds(), env.getProperty("exec.local.run-as", "")));
+        }
+        return judge;
     }
 }

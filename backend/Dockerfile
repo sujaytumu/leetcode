@@ -13,7 +13,7 @@ RUN apt-get update \
  && useradd --no-create-home --shell /usr/sbin/nologin --uid 10001 runner
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-ENV JAVA_OPTS="-XX:MaxRAMPercentage=60" \
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=60 -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xshare:auto" \
     EXEC_LOCAL=true \
     EXEC_RUN_AS=runner
 EXPOSE 8080
