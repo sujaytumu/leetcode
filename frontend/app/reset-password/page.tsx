@@ -3,7 +3,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Session, setSession } from "@/lib/auth";
+import Logo from "@/components/Logo";
 import { usePageTitle } from "@/lib/usePageTitle";
+import "../auth.css";
 
 /** Landing page of the emailed link: choose a new password, then you are signed in. */
 export default function ResetPasswordPage() {
@@ -14,6 +16,16 @@ export default function ResetPasswordPage() {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+
+  const score = (() => {
+    if (!password) return 0;
+    let n = 0;
+    if (password.length >= 8) n++;
+    if (password.length >= 12) n++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) n++;
+    if (/\d/.test(password) && /[^A-Za-z0-9]/.test(password)) n++;
+    return password.length < 8 ? Math.min(n, 1) : Math.max(n, 1);
+  })();
 
   useEffect(() => { setToken(new URLSearchParams(window.location.search).get("token") ?? ""); }, []);
 
@@ -34,6 +46,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="authpage">
       <section className="card authcard">
+        <div className="authlogo" style={{ display: "block" }}><Logo size={34} /></div>
         <h1 className="authtitle">Choose a new password</h1>
         {!token ? (
           <>
@@ -51,7 +64,10 @@ export default function ResetPasswordPage() {
             <label className="authfield"><span>Repeat new password</span>
               <input type={show ? "text" : "password"} value={again} onChange={(e) => setAgain(e.target.value)} autoComplete="new-password" maxLength={72} required />
             </label>
-            <span className="mute authhint">8+ characters. This signs out your other devices.</span>
+            <div className="strength" aria-live="polite">
+              <div className={`strength-bar s${score}`}><i /><i /><i /><i /></div>
+              <span className="mute authhint">{password ? `${["", "Weak", "Fair", "Good", "Strong"][score]} password. ` : ""}8+ characters. This signs out your other devices.</span>
+            </div>
             {error && (
               <div className="banner err" role="alert">{error} {/expired|invalid/i.test(error) && <Link href="/forgot-password">Request a new link</Link>}</div>
             )}
