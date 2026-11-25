@@ -2501,5 +2501,104 @@
     "approach": "For each start index extend the substring to the right while updating a 26-entry frequency table; the beauty is the largest minus the smallest non-zero frequency, found with a 26-step scan.",
     "time": "O(26 * n^2)",
     "space": "O(1)"
+  },
+  "n-meetings-in-one-room": {
+    "hints": [
+      "Finishing early leaves the most room for later meetings.",
+      "Sort by end time, then pick greedily."
+    ],
+    "approach": "Sort the meetings by end time. Take a meeting whenever it starts strictly after the end of the last one taken. Ending as early as possible keeps the most time free for the rest.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "minimum-platforms": {
+    "hints": [
+      "Only the order of arrivals and departures matters, not which train is which.",
+      "Sort both lists and sweep them with two pointers."
+    ],
+    "approach": "Sort arrivals and departures separately. Walk through them: if the next arrival is at or before the earliest remaining departure a new train is on a platform, otherwise a train leaves. The largest number of trains present at once is the answer.",
+    "time": "O(n log n)",
+    "space": "O(1) extra"
+  },
+  "job-sequencing-problem": {
+    "hints": [
+      "Try the most profitable jobs first.",
+      "Put each job in the latest free slot not after its deadline."
+    ],
+    "approach": "Sort jobs by profit, highest first. For each job find the latest free time slot at or before its deadline; a disjoint-set structure that points to the next free slot to the left makes that near constant time. Skip the job when no slot is free.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "next-smaller-element": {
+    "hints": [
+      "A stack can remember the elements still waiting for an answer.",
+      "Each element is pushed once and popped once."
+    ],
+    "approach": "Scan left to right with a stack of indices whose next smaller value is not known yet. While the stack top is larger than the current value, that current value is its answer. Then push the current index.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "stock-span-problem": {
+    "hints": [
+      "The span stops at the first earlier day with a higher price.",
+      "Keep a stack of days with strictly decreasing prices."
+    ],
+    "approach": "Keep a stack of indices with decreasing prices. Pop every day whose price is at most today's; the span is the distance to the day left on top (or all days so far if the stack is empty). Push today.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "maximum-of-minimums-for-every-window-size": {
+    "hints": [
+      "For each element, find the longest window in which it is the minimum.",
+      "An answer for length L also works for every shorter length."
+    ],
+    "approach": "With a monotonic stack find, for every element, how far it extends left and right before a smaller value appears. That gives the longest window length where it is the minimum. Store the best such value for each length, then sweep lengths from n down to 1 taking the running maximum.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "celebrity-problem": {
+    "hints": [
+      "If A knows B, A is not the celebrity. If A does not know B, B is not.",
+      "One pass can narrow the field to a single candidate."
+    ],
+    "approach": "Keep a candidate. For each next person i, if the candidate knows i the candidate is out and i takes over. After the pass verify the candidate: everyone knows them and they know nobody.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "integer-to-roman": {
+    "hints": [
+      "List the values in descending order including the subtractive forms like 900 and 40.",
+      "Take the largest value that still fits, repeatedly."
+    ],
+    "approach": "Use the 13 Roman values in descending order, subtractive pairs included (900, 400, 90, 40, 9, 4). For each, append its symbol while it still fits into the number and subtract it.",
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "kmp-pattern-search": {
+    "hints": [
+      "Precompute, for each prefix of the pattern, its longest border (prefix that is also a suffix).",
+      "After a mismatch, fall back using the border instead of restarting."
+    ],
+    "approach": "Build the prefix function of the pattern. Scan the text keeping the length of the current match; on a mismatch fall back through the prefix function, on a full match record the start and fall back once more so overlaps are found.",
+    "time": "O(n + m)",
+    "space": "O(m)"
+  },
+  "minimum-characters-to-make-palindrome": {
+    "hints": [
+      "Only a palindromic prefix can stay in place; the rest must be mirrored in front.",
+      "Find the longest palindromic prefix with the prefix function."
+    ],
+    "approach": "The answer is n minus the length of the longest palindromic prefix. Compute it as the last value of the prefix function of s + '#' + reverse(s).",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "rat-in-a-maze-count": {
+    "hints": [
+      "Explore all four directions and mark the current cell as used.",
+      "Unmark the cell when you return so other paths can use it."
+    ],
+    "approach": "Depth-first search from the top-left. Mark the cell as visited, try the four moves into open unvisited cells and add up the paths that reach the goal, then unmark the cell (backtrack).",
+    "time": "O(4^(n^2)) worst case",
+    "space": "O(n^2)"
   }
 }

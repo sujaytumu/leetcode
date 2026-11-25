@@ -1,0 +1,180 @@
+=== n-meetings-in-one-room
+--- cpp
+int solve(vector<int> start, vector<int> end) {
+    int n = start.size();
+    vector<pair<int, int>> meetings(n);
+    for (int i = 0; i < n; i++) meetings[i] = {end[i], start[i]};
+    sort(meetings.begin(), meetings.end());
+    int count = 0, lastEnd = -1;
+    for (auto& m : meetings) {
+        if (m.second > lastEnd) {
+            count++;
+            lastEnd = m.first;
+        }
+    }
+    return count;
+}
+=== minimum-platforms
+--- cpp
+int solve(vector<int> arr, vector<int> dep) {
+    sort(arr.begin(), arr.end());
+    sort(dep.begin(), dep.end());
+    int n = arr.size(), i = 0, j = 0, onPlatform = 0, best = 0;
+    while (i < n) {
+        if (arr[i] <= dep[j]) {          // next arrival comes before (or when) the earliest departure
+            best = max(best, ++onPlatform);
+            i++;
+        } else {
+            onPlatform--;
+            j++;
+        }
+    }
+    return best;
+}
+=== job-sequencing-problem
+--- cpp
+vector<int> solve(vector<int> deadline, vector<int> profit) {
+    int n = deadline.size();
+    vector<int> order(n);
+    iota(order.begin(), order.end(), 0);
+    sort(order.begin(), order.end(), [&](int a, int b) { return profit[a] > profit[b]; });
+    vector<int> parent(n + 1);            // parent[t] = latest free slot <= t (0 means none)
+    iota(parent.begin(), parent.end(), 0);
+    function<int(int)> find = [&](int t) { return parent[t] == t ? t : parent[t] = find(parent[t]); };
+    int jobs = 0, total = 0;
+    for (int id : order) {
+        int slot = find(min(deadline[id], n));
+        if (slot > 0) {
+            parent[slot] = slot - 1;
+            jobs++;
+            total += profit[id];
+        }
+    }
+    return {jobs, total};
+}
+=== next-smaller-element
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;                        // indices whose next smaller value is still unknown
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && nums[st.top()] > nums[i]) {
+            ans[st.top()] = nums[i];
+            st.pop();
+        }
+        st.push(i);
+    }
+    return ans;
+}
+=== stock-span-problem
+--- cpp
+vector<int> solve(vector<int> prices) {
+    int n = prices.size();
+    vector<int> span(n);
+    stack<int> st;                        // indices with strictly decreasing prices
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && prices[st.top()] <= prices[i]) st.pop();
+        span[i] = st.empty() ? i + 1 : i - st.top();
+        st.push(i);
+    }
+    return span;
+}
+=== maximum-of-minimums-for-every-window-size
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> left(n, -1), right(n, n);
+    stack<int> st;
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && nums[st.top()] >= nums[i]) {
+            right[st.top()] = i;
+            st.pop();
+        }
+        left[i] = st.empty() ? -1 : st.top();
+        st.push(i);
+    }
+    vector<int> ans(n + 2, 0);            // ans[len] = best minimum over windows of exactly len
+    for (int i = 0; i < n; i++) {
+        int len = right[i] - left[i] - 1;  // nums[i] is the minimum of a window this long
+        ans[len] = max(ans[len], nums[i]);
+    }
+    for (int len = n - 1; len >= 1; len--) ans[len] = max(ans[len], ans[len + 1]);
+    return vector<int>(ans.begin() + 1, ans.begin() + n + 1);
+}
+=== celebrity-problem
+--- cpp
+int solve(vector<vector<int>> M) {
+    int n = M.size(), cand = 0;
+    for (int i = 1; i < n; i++)
+        if (M[cand][i]) cand = i;         // cand knows i, so cand cannot be the celebrity
+    for (int i = 0; i < n; i++) {
+        if (i == cand) continue;
+        if (M[cand][i] || !M[i][cand]) return -1;
+    }
+    return cand;
+}
+=== integer-to-roman
+--- cpp
+string solve(int num) {
+    const int value[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char* symbol[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    string out;
+    for (int i = 0; i < 13; i++)
+        while (num >= value[i]) {
+            out += symbol[i];
+            num -= value[i];
+        }
+    return out;
+}
+=== kmp-pattern-search
+--- cpp
+vector<int> solve(string text, string pattern) {
+    int n = text.size(), m = pattern.size();
+    vector<int> fail(m, 0);               // longest proper prefix of pattern[0..i] that is also a suffix
+    for (int i = 1, k = 0; i < m; i++) {
+        while (k > 0 && pattern[i] != pattern[k]) k = fail[k - 1];
+        if (pattern[i] == pattern[k]) k++;
+        fail[i] = k;
+    }
+    vector<int> hits;
+    for (int i = 0, k = 0; i < n; i++) {
+        while (k > 0 && (k == m || text[i] != pattern[k])) k = fail[k - 1];
+        if (text[i] == pattern[k]) k++;
+        if (k == m) hits.push_back(i - m + 1);
+    }
+    if (hits.empty()) hits.push_back(-1);
+    return hits;
+}
+=== minimum-characters-to-make-palindrome
+--- cpp
+int solve(string s) {
+    string t = s + "#" + string(s.rbegin(), s.rend());
+    int n = t.size();
+    vector<int> fail(n, 0);               // prefix function of s + '#' + reverse(s)
+    for (int i = 1, k = 0; i < n; i++) {
+        while (k > 0 && t[i] != t[k]) k = fail[k - 1];
+        if (t[i] == t[k]) k++;
+        fail[i] = k;
+    }
+    return (int)s.size() - fail[n - 1];   // the last value is the longest palindromic prefix
+}
+=== rat-in-a-maze-count
+--- cpp
+int solve(vector<vector<int>> grid) {
+    int n = grid.size();
+    if (!grid[0][0] || !grid[n - 1][n - 1]) return 0;
+    const int dr[] = {1, 0, -1, 0}, dc[] = {0, 1, 0, -1};
+    function<int(int, int)> go = [&](int r, int c) {
+        if (r == n - 1 && c == n - 1) return 1;
+        grid[r][c] = 2;                   // mark as used on this path
+        int total = 0;
+        for (int d = 0; d < 4; d++) {
+            int nr = r + dr[d], nc = c + dc[d];
+            if (nr >= 0 && nr < n && nc >= 0 && nc < n && grid[nr][nc] == 1) total += go(nr, nc);
+        }
+        grid[r][c] = 1;
+        return total;
+    };
+    return go(0, 0);
+}

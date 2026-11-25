@@ -2532,6 +2532,81 @@
     "order": 31
   },
   {
+    "slug": "kmp-pattern-search",
+    "title": "Find All Occurrences of a Pattern",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the starting index of every occurrence of `pattern` in `text`, overlapping occurrences included, in increasing order. If there is none return `[-1]`. Aim for `O(n + m)` with the KMP prefix function.\n\n### Input\nLine 1: `text`.\nLine 2: `pattern`.\n\n### Output\nThe indices separated by spaces, or `-1`.\n\n### Constraints\n- `1 <= text.length <= 1000`\n- `1 <= pattern.length <= 1000`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\naabbabbbab\naa\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\naabaaabababbaaabbbbbaaababbbab\nbaa\n\nOutput:\n2 11 19\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(String text, String pattern) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String text = lines.get(pos++);\n        String pattern = lines.get(pos++);\n        int[] result = solve(text, pattern);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(text, pattern):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    text = lines[pos]; pos += 1\n    pattern = lines[pos]; pos += 1\n    result = solve(text, pattern)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(text, pattern) {\n  // Write your solution here\n}\n\nconst text = lines[pos++];\nconst pattern = lines[pos++];\nconst result = solve(text, pattern);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(string text, string pattern) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string text = lines[pos++];\n    string pattern = lines[pos++];\n    vector<int> result = solve(text, pattern);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "aabbabbbab\naa\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "aabaaabababbaaabbbbbaaababbbab\nbaa\n",
+        "expectedOutput": "2 11 19\n",
+        "sample": true
+      },
+      {
+        "input": "bbaabaaaaabbbbbaaaabbababbbbbaaaabbbabbbbbbbbbaaabbbbbabbaababbaabbbaaababbababa\nba\n",
+        "expectedOutput": "1 4 14 20 22 28 35 45 53 56 59 62 67 71 74 76 78\n",
+        "sample": false
+      },
+      {
+        "input": "baaabbabaaababaabbababaaaaababaabbabbbbaabbaabbaaabbbbabaaaaaaaabbbabaabbabbbabbbbbabababaaabbaaaabbbbaabbbbbaaabbbbbbbaabaaaabaaaabaaaabbaabbbaabaaabbaabbbaaababaaaaaaaaaabbbabaababaaaabaaaaabaabaaba\nabbb\n",
+        "expectedOutput": "34 49 63 73 77 97 103 111 139 152 171\n",
+        "sample": false
+      },
+      {
+        "input": "aaaababbbbaabbabbababbbbaaaaaaabbbabaabbabaaaaabaabbbbaaaababbaaababbbbabaaababaabbaaaaaaaabbbbaabaabaaaabaaababaaaaabbabbbabaabbaaaaabbaaabbabbbaaababbbaabbbabbbbbabbabbbbababbbbbbabaaaaaabbaaabbababbbaabaaabaabbbbabaaaabaabbbbabaabababbaaaaaaaaaaaabbbabaaababbbaababbbbababbbabbbbaabaaabbabbbbbaabbbaabaaabbabaabbaabaaaaabbbbbbbababbbaaaaaaababaaabbbababbaaabbababbbaabbbabaaaaaaabababaabbbabbbabaabbbbabbbbbabbabbaaaabbabbabaaabbbbbaaabaabbbbbbabbaaaaaabbbbaaaaabbbbababbbabaaaababbbbbaabbbabbaaabbabaabaababbaababbbaabaaababbabbbaaaabbabbabbbbbababaaaaababbbbbbaabaaabaaaaabbaaabbaabaaabaaaaaaaab\nbbb\n",
+        "expectedOutput": "6 7 20 21 31 50 51 67 68 91 92 120 142 150 155 159 160 161 168 169 175 176 177 178 199 211 212 224 225 250 260 267 268 274 278 279 291 292 293 298 323 324 325 326 327 333 349 365 370 389 393 400 401 405 406 407 430 431 432 441 442 443 444 456 457 465 466 472 483 484 485 490 516 530 543 544 545 559 560 561 562\n",
+        "sample": false
+      },
+      {
+        "input": "baaaababaababaabbbbaaabbaabababbbaabbbbbababbbabbababbbababbaababaababbaaababaababbaaababbaabbaabbbabbabbbbbbbabaabaaabbbabbbbbaaaaabbaaaabababaaabbbbaaaaabaaaaaaaaaaaaaaaaabbbaaabaaaabbbbbabababbbaababababaabaabbababaabaabbbaaabbbaaabbabbbaabbbbbaaaabaababaabaaababbbabbbbaabababbababbbabaabaaaaaabbbabababaaababbabaaaababaaaababbbbaaabbaabbaaaaabaabababbbbbabbaaababaaaaaabbabbaaabaaaabaabbaaaaabbbbbaaaaaaaaabbaaababbaaabaaaaaabbbabaababbbbbabbabbbbbabaaabbaaaaaabababbbbbbbabababbaaabbbbaaabbbbbaaabbbaabaaaaabbaaaaaabbabababbbababaabbababaababaaabbabbbbbaaaaabbbaababbbabababbbabbaaaaaaabaaaabbbbbabaababbaaaabaaaababaabaaabbbaababbaaabbbbabaaabaabaabbbbabbaabaababaabbabbbaaaaabbaaabbaabbaaabbaaababbababababaabaaaaababbbaabbbbbaaaaabbbaaababababababbabbababaababbabaaabbbabbaaabaaaaaaaababbbaabbaaaababaabbabbbabaababaaabbbabbbbaaaababbabbbaaaaabaabbabbbbabaaabbabbbbabbababbaabbabaaaaabaabaaa\nbabbb\n",
+        "expectedOutput": "28 41 50 101 120 192 235 263 267 282 327 352 437 446 468 526 552 569 577 673 722 793 812 829 842 856 868\n",
+        "sample": false
+      },
+      {
+        "input": "aaaaa\naa\n",
+        "expectedOutput": "0 1 2 3\n",
+        "sample": false
+      },
+      {
+        "input": "abcabcabc\nabc\n",
+        "expectedOutput": "0 3 6\n",
+        "sample": false
+      },
+      {
+        "input": "hello\nxyz\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "a\na\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "abab\nababab\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      }
+    ],
+    "order": 32
+  },
+  {
     "slug": "first-missing-positive",
     "title": "First Missing Positive",
     "difficulty": "HARD",
@@ -2623,7 +2698,7 @@
         "sample": false
       }
     ],
-    "order": 32
+    "order": 33
   },
   {
     "slug": "reverse-pairs",
@@ -2684,7 +2759,92 @@
         "sample": false
       }
     ],
-    "order": 33
+    "order": 34
+  },
+  {
+    "slug": "minimum-characters-to-make-palindrome",
+    "title": "Shortest Palindrome Length",
+    "difficulty": "HARD",
+    "tags": [
+      "string",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "You may add characters only at the **front** of `s`. Return the minimum number of characters to add so that the whole string becomes a palindrome.\n\n### Input\nLine 1: `s`.\n\n### Output\nThe minimum number of characters.\n\n### Constraints\n- `1 <= s.length <= 1000`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nc\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\ncc\n\nOutput:\n0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String s) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String s = lines.get(pos++);\n        int result = solve(s);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(s):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    s = lines[pos]; pos += 1\n    result = solve(s)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(s) {\n  // Write your solution here\n}\n\nconst s = lines[pos++];\nconst result = solve(s);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(string s) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string s = lines[pos++];\n    int result = solve(s);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "c\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "cc\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "abb\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "cbbabb\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "aaabacaaaaabaac\n",
+        "expectedOutput": "12\n",
+        "sample": false
+      },
+      {
+        "input": "baccabbcabaacaaacbbcaacbbacccabcbcbbaabcbabbbbabcbbbbbbabbab\n",
+        "expectedOutput": "54\n",
+        "sample": false
+      },
+      {
+        "input": "babbbaaabcbabbcbbcbcccbcacbaaccbaaccacacbcababbbcbaaaccabbacabababcabacacbcabababacacbcbcabbabbcccbbaacbbabbcbcbaaaaaccbaccacbacccaaabbcabcaacbbccbbaabcbbcbbaaaccabbbcbccabbaaaabbccbabcacbbbbabaccacbabccbcaabccabbababbacbbbbbcabcaaabbccccccaabbabaaacbabbabbbaacbcabbbbbcabcacaaaccbbbabaaabcabcccbcaaa\n",
+        "expectedOutput": "297\n",
+        "sample": false
+      },
+      {
+        "input": "babbcbaabcbaaccaccacabbaabacccbaaabcacbcbbabbccbabbbbacbaaaabacacaabcacbbbcbbccbaacbacbabbbacbbcbacacccbbbabaabbcccccbcbcacccccabaabbbbbabbcacaaabaacbbaaabacbbacccbbacccccbcbabaaacabacbccbcbcbbcabaabbbaabbccbbbbaacbcacabbbbbcbaaccbbcbbaaaacbcbcbaacccbbbaaabaccccacbbbccaabbababcccacabaaabcabcbbacabcabbabbccaabbbbaabbcaccbcbaabaabaacaababaccabbcabcabbabcccbbccbccacbaccacbcbcaaacbcaccaabccabbccccccaaaaccccbbbacabbbbcbcaaacbbabbabcbacbacbababaacbabccbbbbccbcbbabcbacabbbcacaabcbaaaacabcccaabccabacbbbcccabcccbacacbaabbababcacbbcabbbcababaaaabcabababcaabcbbabaabacbbaaacccaacbbaaababcaaaacbbbccbcbccaaabcabcccaaaccaccbbbbbbcbbbacaacbacaabccbccabccaaccaabbbbacababbabbcbcababcbcbaccaabaaaccabbaabbabcbaababbabaabbaaccabbcacabcbababbaccacabbabbcbcaaaaaccccbacaababbaabcccacacbbaaccbbccacacaacaacbcbcbbcaabccabacabcbaabccbbacabccacabacbabbbabbabccccaaabbcbcacacbbcbbabcaccbbcbcbccccabbabaaabaacbabccbbabb\n",
+        "expectedOutput": "897\n",
+        "sample": false
+      },
+      {
+        "input": "abcd\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "aacecaaa\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "aba\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "aaaa\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "abbacd\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      }
+    ],
+    "order": 35
   },
   {
     "slug": "valid-palindrome",
@@ -2789,7 +2949,7 @@
         "sample": false
       }
     ],
-    "order": 34
+    "order": 36
   },
   {
     "slug": "remove-duplicates-from-sorted-array",
@@ -2880,7 +3040,7 @@
         "sample": false
       }
     ],
-    "order": 35
+    "order": 37
   },
   {
     "slug": "move-zeroes",
@@ -2970,7 +3130,7 @@
         "sample": false
       }
     ],
-    "order": 36
+    "order": 38
   },
   {
     "slug": "squares-of-a-sorted-array",
@@ -3070,7 +3230,7 @@
         "sample": false
       }
     ],
-    "order": 37
+    "order": 39
   },
   {
     "slug": "valid-palindrome-ii",
@@ -3199,7 +3359,7 @@
         "sample": false
       }
     ],
-    "order": 38
+    "order": 40
   },
   {
     "slug": "merge-sorted-array",
@@ -3286,7 +3446,7 @@
         "sample": false
       }
     ],
-    "order": 39
+    "order": 41
   },
   {
     "slug": "union-of-two-sorted-arrays",
@@ -3346,7 +3506,7 @@
         "sample": false
       }
     ],
-    "order": 40
+    "order": 42
   },
   {
     "slug": "find-the-index-of-the-first-occurrence-in-a-string",
@@ -3411,7 +3571,7 @@
         "sample": false
       }
     ],
-    "order": 41
+    "order": 43
   },
   {
     "slug": "3sum-count",
@@ -3472,7 +3632,7 @@
         "sample": false
       }
     ],
-    "order": 42
+    "order": 44
   },
   {
     "slug": "rotate-array",
@@ -3578,7 +3738,7 @@
         "sample": false
       }
     ],
-    "order": 43
+    "order": 45
   },
   {
     "slug": "sort-colors",
@@ -3680,7 +3840,7 @@
         "sample": false
       }
     ],
-    "order": 44
+    "order": 46
   },
   {
     "slug": "next-permutation",
@@ -3796,7 +3956,7 @@
         "sample": false
       }
     ],
-    "order": 45
+    "order": 47
   },
   {
     "slug": "3sum-closest",
@@ -3896,7 +4056,7 @@
         "sample": false
       }
     ],
-    "order": 46
+    "order": 48
   },
   {
     "slug": "4sum-count",
@@ -3962,7 +4122,7 @@
         "sample": false
       }
     ],
-    "order": 47
+    "order": 49
   },
   {
     "slug": "rearrange-array-elements-by-sign",
@@ -4017,7 +4177,7 @@
         "sample": false
       }
     ],
-    "order": 48
+    "order": 50
   },
   {
     "slug": "reverse-words-in-a-string",
@@ -4082,7 +4242,7 @@
         "sample": false
       }
     ],
-    "order": 49
+    "order": 51
   },
   {
     "slug": "longest-substring-without-repeating-characters",
@@ -4189,7 +4349,7 @@
         "sample": false
       }
     ],
-    "order": 50
+    "order": 52
   },
   {
     "slug": "minimum-size-subarray-sum",
@@ -4284,7 +4444,7 @@
         "sample": false
       }
     ],
-    "order": 51
+    "order": 53
   },
   {
     "slug": "longest-repeating-character-replacement",
@@ -4380,7 +4540,7 @@
         "sample": false
       }
     ],
-    "order": 52
+    "order": 54
   },
   {
     "slug": "permutation-in-string",
@@ -4470,7 +4630,7 @@
         "sample": false
       }
     ],
-    "order": 53
+    "order": 55
   },
   {
     "slug": "longest-substring-with-at-most-k-distinct-characters",
@@ -4571,7 +4731,7 @@
         "sample": false
       }
     ],
-    "order": 54
+    "order": 56
   },
   {
     "slug": "minimum-window-substring-length",
@@ -4627,7 +4787,7 @@
         "sample": false
       }
     ],
-    "order": 55
+    "order": 57
   },
   {
     "slug": "valid-parentheses",
@@ -4728,7 +4888,7 @@
         "sample": false
       }
     ],
-    "order": 56
+    "order": 58
   },
   {
     "slug": "remove-outermost-parentheses",
@@ -4788,7 +4948,7 @@
         "sample": false
       }
     ],
-    "order": 57
+    "order": 59
   },
   {
     "slug": "maximum-nesting-depth-of-the-parentheses",
@@ -4848,7 +5008,7 @@
         "sample": false
       }
     ],
-    "order": 58
+    "order": 60
   },
   {
     "slug": "daily-temperatures",
@@ -4939,7 +5099,7 @@
         "sample": false
       }
     ],
-    "order": 59
+    "order": 61
   },
   {
     "slug": "evaluate-reverse-polish-notation",
@@ -5054,7 +5214,7 @@
         "sample": false
       }
     ],
-    "order": 60
+    "order": 62
   },
   {
     "slug": "next-greater-element-ii",
@@ -5145,7 +5305,7 @@
         "sample": false
       }
     ],
-    "order": 61
+    "order": 63
   },
   {
     "slug": "car-fleet",
@@ -5235,7 +5395,7 @@
         "sample": false
       }
     ],
-    "order": 62
+    "order": 64
   },
   {
     "slug": "sum-of-subarray-minimums",
@@ -5341,7 +5501,7 @@
         "sample": false
       }
     ],
-    "order": 63
+    "order": 65
   },
   {
     "slug": "minimum-add-to-make-parentheses-valid",
@@ -5441,7 +5601,213 @@
         "sample": false
       }
     ],
-    "order": 64
+    "order": 66
+  },
+  {
+    "slug": "next-smaller-element",
+    "title": "Next Smaller Element",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "stack",
+      "monotonic-stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "For every element, find the first element to its **right** that is strictly smaller. Return an array holding that value, or `-1` where none exists.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`n` integers: the next smaller value for each position.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n-39\n\nOutput:\n-1\n```\n\n**Example 2**\n```text\nInput:\n2\n-24 -28\n\nOutput:\n-28 -1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] nums) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(nums);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> nums) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(nums);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n-39\n",
+        "expectedOutput": "-1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n-24 -28\n",
+        "expectedOutput": "-28 -1\n",
+        "sample": true
+      },
+      {
+        "input": "5\n-49 39 33 27 -45\n",
+        "expectedOutput": "-1 33 27 -45 -1\n",
+        "sample": false
+      },
+      {
+        "input": "12\n-16 31 -22 9 7 -42 -9 -42 31 -42 38 14\n",
+        "expectedOutput": "-22 -22 -42 7 -42 -1 -42 -1 -42 -1 14 -1\n",
+        "sample": false
+      },
+      {
+        "input": "40\n12 26 -27 -39 44 -35 -47 10 26 38 20 13 4 -13 27 12 -29 46 -28 4 20 30 49 32 -49 28 -50 -49 5 -8 8 9 49 42 43 -14 26 -3 29 -19\n",
+        "expectedOutput": "-27 -27 -39 -47 -35 -47 -49 4 20 20 13 4 -13 -29 12 -29 -49 -28 -49 -49 -49 -49 32 -49 -50 -50 -1 -1 -8 -14 -14 -14 42 -14 -14 -19 -3 -19 -19 -1\n",
+        "sample": false
+      },
+      {
+        "input": "150\n17 -20 -1 35 -46 19 -28 29 -2 -23 5 -31 -8 41 -45 -16 -11 -22 -25 -14 -36 -49 -46 49 -36 25 -7 34 1 -42 -48 -20 36 -45 -5 35 -28 14 -16 39 -6 39 39 7 -5 36 -50 -33 -12 45 -6 11 21 42 -34 24 -20 43 -39 -44 7 -20 45 -29 -41 39 25 11 -4 -21 20 47 -3 -2 6 45 -21 29 -36 -17 -33 -49 31 -22 41 -47 24 15 -32 -11 -28 -3 -49 14 -37 46 31 -7 16 -8 -33 -21 46 28 -46 23 -6 -43 46 17 28 19 -1 -49 2 -35 -28 19 -40 -8 -38 -30 23 26 -19 -22 -39 2 -30 -34 -20 12 25 -44 29 22 30 23 38 46 13 41 44 33 -8 38 10 -37 -4 -22\n",
+        "expectedOutput": "-20 -46 -46 -46 -49 -28 -31 -2 -23 -31 -31 -45 -45 -45 -49 -22 -22 -25 -36 -36 -49 -50 -48 -36 -42 -7 -42 1 -42 -48 -50 -45 -45 -50 -28 -28 -50 -16 -50 -6 -50 7 7 -5 -50 -50 -1 -34 -34 -6 -34 -34 -34 -34 -39 -20 -39 -39 -44 -49 -20 -29 -29 -41 -49 25 11 -4 -21 -36 -3 -3 -21 -21 -21 -21 -36 -36 -49 -33 -49 -1 -22 -47 -47 -49 15 -32 -49 -28 -49 -49 -1 -37 -46 31 -7 -8 -8 -33 -46 -46 28 -46 -49 -6 -43 -49 17 -1 19 -1 -49 -1 -35 -40 -40 -40 -44 -38 -39 -39 -19 -19 -22 -39 -44 -30 -34 -44 -44 -44 -44 -1 22 13 23 13 13 13 -8 33 33 -8 -37 10 -37 -1 -22 -1\n",
+        "sample": false
+      },
+      {
+        "input": "500\n20 14 24 -46 38 9 38 -16 -24 -40 9 12 8 -25 4 -7 -20 23 -4 37 33 -15 41 6 43 -27 -12 1 28 -39 -2 -47 -33 41 41 38 19 -10 23 26 48 21 -31 -50 -49 2 -48 -15 38 -49 34 13 41 18 -10 44 10 18 -38 23 -20 41 4 30 37 28 12 -3 -31 -13 32 -4 13 -23 -35 11 -46 -24 40 42 12 35 2 41 -27 17 6 12 -32 -41 -2 -23 -7 -9 49 -18 9 -38 -31 25 -21 -35 -26 29 -20 -24 -22 -12 -15 13 -25 -47 36 -18 26 -29 -32 40 7 26 -29 1 -16 3 -25 -23 21 -24 1 42 -1 18 -34 6 -47 -38 43 -4 -47 40 39 43 -20 -42 -41 -7 -27 -10 43 -9 47 -48 -9 25 -38 24 -6 29 -48 -1 -36 49 -48 16 -3 -19 -11 -23 45 28 16 -48 39 34 37 19 -39 -5 -37 -44 36 -8 43 33 -39 -35 -5 49 50 -45 12 -11 -19 -29 -40 33 -30 46 -26 -11 30 -42 34 46 -4 -37 50 -48 20 31 37 -5 11 0 -14 41 23 30 -38 -42 36 -28 50 38 -43 -48 1 -12 -12 -42 49 -44 -36 -36 -12 -5 -36 -2 46 6 -41 34 -27 50 27 -22 42 35 -13 24 -5 28 41 24 35 -35 -44 -10 33 -32 16 -20 3 41 -34 -10 25 11 -22 -37 -23 -22 17 -15 49 -45 -43 -4 -30 -32 -32 -2 36 -46 -15 -22 -27 7 -31 -19 -36 29 -3 23 12 40 14 -27 -34 -28 40 -24 49 -36 31 49 30 -30 26 40 -28 -20 -16 50 30 4 36 41 -8 -46 36 38 2 13 -41 11 -25 43 -50 -12 16 44 -50 -18 45 38 10 -32 -29 35 -21 33 19 -50 -6 -38 -26 14 -40 17 -25 37 45 12 -45 -6 44 -33 16 -5 25 36 -32 -23 -48 -18 13 22 -38 -42 22 -12 -47 -18 47 35 -4 -11 9 -16 46 2 20 -12 37 -40 18 40 -25 -28 42 -6 15 39 4 -12 17 40 49 33 -22 -26 38 -49 7 -13 -17 39 32 12 -50 -48 12 -49 15 50 -13 6 36 -17 -17 -20 10 -38 -21 -19 -12 -50 -32 43 47 5 -7 -39 -29 3 -19 -7 -21 -17 -6 49 34 -2 1 -30 2 -1 -43 -28 -40 -43 9 30 -45 -19 48 41 49 -8 1 42 30 -47 -2 30 2 21 18 3 -32 32 -28 27 -11 -17 -20 8 -3 12 32 -5 26 -38 16 22 9 18 16 -1 39 -43 -37 21 -17 -33 32 37 -47 -14\n",
+        "expectedOutput": "14 -46 -46 -47 9 -16 -16 -24 -40 -47 8 8 -25 -27 -7 -20 -27 -4 -15 33 -15 -27 6 -27 -27 -39 -39 -39 -39 -47 -47 -50 -50 38 38 19 -10 -31 21 21 21 -31 -50 -1 -50 -48 -49 -49 -49 -50 13 -10 18 -10 -38 10 -38 -38 -46 -20 -31 4 -3 28 28 12 -3 -31 -35 -23 -4 -23 -23 -35 -46 -46 -47 -27 12 12 2 2 -27 -27 -32 6 -32 -32 -41 -47 -23 -38 -9 -18 -18 -38 -38 -47 -35 -21 -35 -47 -47 -20 -24 -25 -25 -15 -25 -25 -47 -48 -18 -29 -29 -32 -34 7 -29 -29 -34 -16 -25 -25 -34 -24 -24 -34 -1 -1 -34 -34 -47 -47 -48 -47 -4 -47 -48 39 -20 -20 -42 -48 -48 -27 -48 -48 -9 -48 -48 -50 -38 -38 -48 -6 -48 -48 -50 -36 -48 -48 -50 -3 -19 -23 -23 -48 28 16 -48 -50 34 19 19 -39 -44 -37 -44 -45 -8 -39 33 -39 -45 -45 -45 -45 -45 -48 -11 -19 -29 -40 -42 -30 -42 -26 -42 -42 -42 -48 -4 -4 -37 -48 -48 -50 -5 -5 -5 -14 0 -14 -38 23 -38 -38 -42 -43 -28 -43 38 -43 -48 -50 -12 -42 -42 -44 -44 -45 -41 -41 -36 -36 -41 -41 6 -41 -44 -27 -35 27 -22 -35 35 -13 -35 -5 -35 24 24 -35 -35 -44 -45 -32 -32 -34 -20 -34 -34 -34 -37 -22 11 -22 -37 -45 -45 -45 -15 -45 -45 -46 -46 -30 -32 -46 -46 -46 -46 -50 -22 -27 -31 -31 -36 -36 -46 -3 -27 12 -27 14 -27 -34 -36 -36 -24 -36 -36 -46 30 30 -30 -46 -28 -28 -46 -46 -46 30 4 -8 -8 -8 -46 -50 2 2 -41 -41 -50 -25 -50 -50 -1 -50 -50 -50 -1 -32 38 10 -32 -50 -50 -21 -50 19 -50 -1 -38 -40 -40 -40 -45 -25 -45 12 12 -45 -48 -33 -33 -48 -5 -32 -32 -32 -48 -48 -49 -38 -38 -38 -42 -47 -12 -47 -49 -40 35 -4 -11 -16 -16 -40 2 -12 -12 -40 -40 -49 -25 -25 -28 -49 -6 -12 4 4 -12 -22 -22 33 33 -22 -26 -49 -49 -50 -13 -17 -50 32 12 -50 -1 -49 -49 -50 -13 -13 -17 -17 -17 -20 -20 -38 -38 -50 -50 -50 -50 -1 -39 5 5 -7 -39 -43 -30 -19 -21 -21 -30 -30 -30 34 -2 -30 -30 -43 -1 -43 -45 -40 -43 -45 -45 -45 -47 -47 41 -8 -8 -47 -47 30 -47 -1 -32 2 -32 18 3 -32 -38 -28 -38 -11 -17 -20 -38 -3 -5 -5 -5 -38 -38 -43 9 9 -1 16 -1 -43 -43 -47 -47 -17 -33 -47 -47 -47 -1 -1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n5 4 3 2 1\n",
+        "expectedOutput": "4 3 2 1 -1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 3 4 5\n",
+        "expectedOutput": "-1 -1 -1 -1 -1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n4 8 5 2 25\n",
+        "expectedOutput": "2 5 2 -1 -1\n",
+        "sample": false
+      }
+    ],
+    "order": 67
+  },
+  {
+    "slug": "stock-span-problem",
+    "title": "Stock Span Problem",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "stack",
+      "monotonic-stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "The span of a day is the number of consecutive days ending on it (including itself) whose price is less than or equal to that day's price. Return the span for every day.\n\n### Input\nLine 1: `n`.\nLine 2: `n` daily prices.\n\n### Output\n`n` integers: the span of each day.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= prices[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n55\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n23 52\n\nOutput:\n1 2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] prices) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int pricesLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] prices = new int[pricesLen];\n        if (pricesLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < pricesLen; i++) prices[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(prices);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(prices):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    prices_len = int(lines[pos]); pos += 1\n    prices = list(map(int, lines[pos].split())) if prices_len > 0 else []; pos += 1\n    result = solve(prices)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(prices) {\n  // Write your solution here\n}\n\nconst pricesLen = parseInt(lines[pos++], 10);\nconst prices = pricesLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(prices);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> prices) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int pricesLen = stoi(lines[pos++]);\n    vector<int> prices(pricesLen);\n    if (pricesLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : prices) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(prices);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n55\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n23 52\n",
+        "expectedOutput": "1 2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n60 39 22 26 22\n",
+        "expectedOutput": "1 1 1 2 1\n",
+        "sample": false
+      },
+      {
+        "input": "12\n48 50 48 17 28 51 54 17 36 22 12 55\n",
+        "expectedOutput": "1 2 1 1 2 6 7 1 2 1 1 12\n",
+        "sample": false
+      },
+      {
+        "input": "40\n42 2 4 43 2 18 20 42 24 35 7 34 17 49 38 20 44 1 23 7 41 32 28 31 31 53 10 18 14 3 58 7 43 47 5 37 17 26 48 33\n",
+        "expectedOutput": "1 1 2 4 1 2 3 4 1 2 1 2 1 14 1 1 3 1 2 1 4 1 1 2 3 26 1 2 1 1 31 1 2 3 1 2 1 2 8 1\n",
+        "sample": false
+      },
+      {
+        "input": "150\n41 3 19 51 25 34 12 36 17 5 5 38 51 54 18 2 37 54 10 34 6 36 55 29 14 31 23 33 29 25 41 43 41 46 35 34 42 6 5 10 7 6 27 18 40 39 29 59 51 23 17 5 47 22 26 59 45 47 29 47 45 30 55 17 24 41 37 37 23 39 57 33 59 60 14 48 21 39 31 4 54 50 17 1 15 43 35 40 13 20 48 49 12 59 16 47 18 13 31 37 14 51 9 51 29 45 20 9 15 33 18 19 37 39 32 48 57 14 26 14 18 19 4 32 12 33 8 15 11 48 42 18 54 11 30 10 5 8 40 13 18 48 21 20 56 16 59 52 48 40\n",
+        "expectedOutput": "1 1 2 4 1 2 1 4 1 1 2 8 13 14 1 1 3 18 1 2 1 4 23 1 1 3 1 5 1 1 8 9 1 11 1 1 3 1 1 3 1 1 6 1 8 1 1 48 1 1 1 1 4 1 2 56 1 2 1 4 1 1 7 1 2 3 1 2 1 4 15 1 73 74 1 2 1 2 1 1 7 1 1 1 2 4 1 2 1 2 9 10 1 20 1 2 1 1 3 4 1 8 1 10 1 2 1 1 2 4 1 2 7 8 1 12 23 1 2 1 2 3 1 7 1 9 1 2 1 13 1 1 16 1 2 1 1 2 6 1 2 9 1 1 28 1 73 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "500\n52 17 7 1 54 23 19 45 17 36 60 8 29 10 28 13 42 58 16 27 16 17 27 53 38 49 54 26 10 7 51 35 30 48 30 29 3 7 20 19 30 47 37 43 24 49 54 40 15 28 27 57 30 26 23 42 31 43 29 31 27 11 16 6 21 2 27 51 55 34 31 9 14 18 13 52 4 45 3 41 50 46 31 32 59 48 45 45 6 12 44 13 21 47 2 12 58 47 33 21 13 18 14 18 45 60 48 35 47 10 1 41 34 43 32 10 35 56 57 30 35 13 18 10 55 22 47 36 1 14 9 18 41 46 26 49 38 50 32 53 4 32 40 16 17 13 4 38 57 33 58 11 44 29 20 9 13 14 26 34 24 36 2 26 31 48 40 42 14 53 57 23 15 53 29 23 12 56 32 31 43 13 60 41 21 8 47 30 25 45 34 10 48 51 44 34 50 14 7 1 27 33 53 11 50 25 53 24 45 52 33 26 58 20 38 43 29 33 36 54 48 54 31 5 23 53 55 12 28 55 16 30 9 7 13 8 46 20 15 27 9 11 17 54 60 50 3 41 38 53 46 24 40 36 15 31 22 44 25 34 32 43 45 19 14 49 54 22 53 8 4 43 55 45 8 37 57 27 42 3 9 14 13 12 13 56 2 8 2 15 29 29 34 36 46 1 5 25 2 41 12 24 9 31 8 51 23 10 58 54 58 41 53 37 40 29 49 43 45 49 48 52 38 39 28 43 33 56 26 11 38 57 14 56 13 55 38 33 22 44 56 1 51 20 43 53 3 12 38 11 5 52 27 33 21 50 58 42 44 52 55 34 24 47 14 50 48 5 24 40 40 55 40 47 56 42 19 59 27 36 52 47 28 3 42 58 36 45 52 19 10 17 31 4 54 51 12 45 17 25 52 46 34 38 46 20 9 18 24 43 33 9 26 17 29 2 36 5 22 5 52 42 36 13 28 7 13 3 10 60 58 60 33 4 43 13 27 10 18 54 29 37 40 51 21 47 51 56 7 22 3 12 25 41 29 38 3 28 57 6 28 9 25 15 43 7 4 35 10 6 40 48 1 33 15 12 20 17 8 59 49 58 8 31 36 57 23 16 51 58 41 15 20 28 10 58 54 1 7 51\n",
+        "expectedOutput": "1 1 1 1 5 1 1 3 1 2 11 1 2 1 2 1 6 7 1 2 1 2 5 6 1 2 9 1 1 1 4 1 1 3 1 1 1 2 3 1 7 8 1 2 1 15 29 1 1 2 1 34 1 1 1 4 1 6 1 2 1 1 2 1 4 1 7 16 17 1 1 1 2 3 1 7 1 2 1 2 5 1 1 2 74 1 1 2 1 2 3 1 2 8 1 2 12 1 1 1 1 2 1 4 7 106 1 1 2 1 1 3 1 5 1 1 3 12 13 1 2 1 2 1 6 1 2 1 1 2 1 4 6 7 1 11 1 13 1 15 1 2 3 1 2 1 1 5 43 1 45 1 2 1 1 1 2 3 5 7 1 9 1 2 3 15 1 2 1 19 20 1 1 3 1 1 1 7 1 1 3 1 183 1 1 1 4 1 1 3 1 1 10 11 1 1 3 1 1 1 4 5 20 1 2 1 24 1 2 3 1 1 30 1 2 3 1 2 3 7 1 9 1 1 2 4 14 1 2 17 1 2 1 1 3 1 7 1 1 3 1 2 3 14 245 1 1 2 1 5 1 1 2 1 1 2 1 7 1 2 1 4 12 1 1 16 22 1 2 1 1 3 28 1 1 2 32 1 2 1 2 3 1 1 3 9 1 2 1 4 5 6 7 8 9 1 2 3 1 5 1 2 1 4 1 20 1 1 64 1 66 1 2 1 2 1 4 1 2 7 1 9 1 2 1 4 1 17 1 1 3 21 1 2 1 2 1 1 1 4 9 1 2 1 2 5 1 2 3 1 1 6 1 2 1 4 112 1 2 3 4 1 1 3 1 5 1 1 2 3 4 15 1 2 18 1 1 133 1 2 3 1 1 1 3 8 1 2 3 1 1 2 4 1 9 1 1 2 1 2 6 1 1 2 4 1 1 2 4 5 1 1 2 1 4 1 7 1 2 1 26 1 1 1 2 1 2 1 2 430 1 432 1 1 3 1 2 1 2 8 1 2 3 4 1 2 7 16 1 2 1 2 5 6 1 2 1 2 27 1 2 1 2 1 6 1 1 3 1 1 6 13 1 2 1 1 3 1 1 48 1 2 1 2 3 4 1 1 3 10 1 1 2 3 1 16 1 1 2 3\n",
+        "sample": false
+      },
+      {
+        "input": "7\n100 80 60 70 60 75 85\n",
+        "expectedOutput": "1 1 1 2 1 4 6\n",
+        "sample": false
+      },
+      {
+        "input": "3\n10 20 30\n",
+        "expectedOutput": "1 2 3\n",
+        "sample": false
+      },
+      {
+        "input": "3\n30 20 10\n",
+        "expectedOutput": "1 1 1\n",
+        "sample": false
+      }
+    ],
+    "order": 68
+  },
+  {
+    "slug": "celebrity-problem",
+    "title": "The Celebrity Problem",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "matrix",
+      "stack",
+      "two-pointers",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "In a party of `n` people, `M[i][j] = 1` means person `i` knows person `j`. A celebrity is known by everybody else and knows nobody. Return the celebrity's index, or `-1` if there is none. Try to use `O(n)` calls to the matrix instead of checking every pair.\n\n### Input\nLine 1: `n`.\nNext `n` lines: the rows of `M`.\n\n### Output\nThe index of the celebrity, or `-1`.\n\n### Constraints\n- `2 <= n <= 100`\n- `M[i][i] = 0`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n0 0\n1 0\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\n3\n0 0 0\n1 0 0\n1 1 0\n\nOutput:\n0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[][] M) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int MLen = Integer.parseInt(lines.get(pos++).trim());\n        int[][] M = new int[MLen][];\n        for (int i = 0; i < MLen; i++) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos++));\n            M[i] = new int[st.countTokens()];\n            for (int j = 0; j < M[i].length; j++) M[i][j] = Integer.parseInt(st.nextToken());\n        }\n        int result = solve(M);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(M):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    M_len = int(lines[pos]); pos += 1\n    M = [list(map(int, lines[pos + i].split())) for i in range(M_len)]; pos += M_len\n    result = solve(M)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(M) {\n  // Write your solution here\n}\n\nconst MLen = parseInt(lines[pos++], 10);\nconst M = [];\nfor (let i = 0; i < MLen; i++) M.push(lines[pos++].trim().split(/\\s+/).map(Number));\nconst result = solve(M);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<vector<int>> M) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int MLen = stoi(lines[pos++]);\n    vector<vector<int>> M(MLen);\n    for (int i = 0; i < MLen; i++) {\n        istringstream iss(lines[pos++]);\n        int v;\n        while (iss >> v) M[i].push_back(v);\n    }\n    int result = solve(M);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2\n0 0\n1 0\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "3\n0 0 0\n1 0 0\n1 1 0\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "5\n0 1 1 1 1\n1 0 0 1 0\n1 1 0 1 0\n0 0 0 0 0\n0 0 0 1 0\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "8\n0 1 1 1 0 1 1 1\n0 0 0 0 0 0 0 0\n0 0 0 0 1 0 1 0\n0 0 1 0 1 0 1 1\n1 1 1 0 0 1 1 1\n1 0 1 0 0 0 0 1\n0 0 0 0 0 0 0 0\n0 0 1 1 1 1 1 0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "20\n0 0 0 0 1 0 0 0 1 1 1 0 0 1 0 1 0 1 1 0\n1 0 0 1 0 1 0 1 0 1 0 0 0 0 0 1 0 1 1 0\n0 0 0 0 1 1 1 0 1 1 1 1 0 1 0 0 0 1 0 1\n1 1 1 0 0 0 1 0 0 1 0 0 0 0 1 0 1 1 1 0\n1 1 0 1 0 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1\n1 0 0 0 1 0 1 1 1 1 1 0 1 0 0 0 1 0 1 0\n1 1 1 1 0 1 0 0 1 1 1 0 1 0 1 0 0 0 1 0\n0 1 1 1 0 1 0 0 0 1 1 1 0 0 0 0 1 0 0 0\n1 0 0 1 0 1 0 1 0 1 1 0 0 0 0 0 1 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n1 1 0 0 1 0 1 1 0 1 0 0 1 1 0 1 1 0 1 0\n0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 1 0 1 0 1\n0 0 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0 1 0 0\n0 0 0 0 1 1 1 1 0 1 1 1 0 0 1 0 0 0 1 0\n1 0 1 1 1 1 0 1 1 1 0 1 0 1 0 0 1 1 1 1\n1 0 1 0 1 1 0 1 1 1 0 1 0 0 1 0 1 0 0 1\n0 1 1 1 1 0 1 0 0 1 0 1 1 0 1 1 0 0 0 1\n1 1 1 0 1 0 0 1 1 1 0 1 0 1 0 1 1 0 1 1\n1 1 0 1 0 1 1 1 1 1 1 1 0 1 1 0 1 1 0 0\n0 1 0 0 0 0 0 1 0 1 0 1 1 0 1 0 0 1 1 0\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": "60\n0 1 0 0 1 1 0 1 1 1 0 1 1 0 0 0 0 0 1 0 0 1 1 0 1 1 1 0 1 0 0 0 1 0 0 1 1 1 1 0 1 0 1 1 0 0 1 1 0 1 0 1 1 1 1 1 1 0 0 0\n1 0 0 1 0 0 1 0 0 0 0 1 0 0 0 1 0 0 1 0 1 1 0 1 0 0 1 0 0 1 1 0 0 1 0 1 0 1 0 1 0 1 1 1 0 1 1 1 0 0 1 1 1 0 1 0 0 0 1 0\n0 0 0 0 0 0 1 0 0 0 0 1 1 1 0 0 0 0 1 1 1 0 1 0 1 1 0 1 1 0 1 0 1 1 1 0 0 0 1 0 1 0 0 1 1 1 1 0 1 1 0 1 0 1 1 0 0 1 0 0\n1 1 0 0 1 0 1 0 0 1 1 0 1 1 0 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 1 1 1 0 0 0 0 0 1 1 0 1 1 1 1 0 1 0 0 1 1\n0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 0 1 0 1 0 1 1 0 0 1 0 1 1 1 0 0 1 1 1 1 1 0 1 1 0 0 0 0 1 1 0 0 1 1 1 0 1 1 1 0 1 0 1\n1 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 1 0 1 1 1 0 0 1 0 1 1 0 1 1 0 0 0 1 1 0 1 1 1 1 0 1 1 0 1 0 1 1 0 0 1 0 0 0 0 1 0 1 1\n1 1 0 1 1 0 0 1 0 1 0 1 1 1 0 0 1 1 0 1 1 0 1 0 1 0 0 1 1 1 1 1 0 0 1 0 1 1 1 1 1 1 1 1 1 0 0 0 1 0 1 1 0 1 1 1 1 0 1 1\n0 1 0 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 1 1 0 1 1 0 0 0 1 0 1 0 1 0 0 1 1 0 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 0 1 0 0 1 0 0\n1 0 1 1 1 1 0 1 0 0 1 0 0 1 1 1 0 1 1 1 0 0 1 1 1 1 0 1 1 1 1 0 1 1 0 1 0 0 1 1 1 1 1 0 0 1 0 0 1 0 0 0 0 0 0 1 1 1 0 0\n0 1 1 0 1 1 1 0 0 0 0 1 0 1 0 0 1 0 0 1 0 0 1 1 1 1 0 0 0 0 0 1 1 1 1 0 1 1 0 1 0 1 1 1 0 0 0 0 0 1 0 0 1 0 0 1 1 0 1 1\n1 1 0 1 1 0 1 0 0 1 0 1 1 0 1 0 0 1 0 0 1 0 0 0 1 0 1 1 0 0 0 0 1 0 0 0 1 1 1 0 1 1 1 1 0 1 0 1 1 1 0 0 1 1 1 0 1 0 0 1\n0 1 0 0 1 0 1 1 0 1 1 0 0 0 0 0 1 1 0 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 0 0 1 0 1 0 0 1 1 1 0 1 1 1 1 1 0 1 1 1 1 0 1 1 0 0\n1 1 1 0 0 1 1 0 1 0 0 1 0 0 0 1 1 0 1 1 1 1 1 1 1 0 1 0 0 0 0 0 1 1 1 1 0 1 0 1 1 1 0 0 0 1 1 0 0 0 0 0 0 0 1 0 1 0 0 0\n0 0 0 0 1 0 1 1 1 0 1 1 1 0 0 0 1 0 0 0 1 0 1 0 0 1 0 1 0 0 0 0 1 1 0 1 0 1 1 0 1 1 1 0 1 1 0 1 0 0 1 0 0 1 1 1 0 1 0 0\n1 0 0 1 0 0 0 1 0 1 1 1 1 0 0 0 0 0 0 1 0 1 0 1 0 1 1 1 0 1 0 0 0 1 1 1 1 0 1 0 1 0 1 0 1 1 0 0 1 0 0 1 1 1 0 1 0 1 0 0\n1 0 1 0 1 1 0 0 0 0 1 1 1 0 1 0 0 0 1 0 1 0 0 1 1 0 1 0 0 1 0 1 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 1 0 0 1 0 0 0 1 1 1 0 0\n1 0 1 0 0 1 0 1 0 0 1 0 0 0 0 0 0 0 1 1 0 0 1 1 1 1 0 1 0 1 1 1 1 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 1 1 0 0 1 1 0 0 1 1 1 1\n0 1 1 0 0 0 1 1 0 1 1 1 1 1 1 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0 0 1 0 1 0 0 0 1 1 1 1 1 0 1 0 1 1 1 1 0 0 0 1 0 1 0 1 0 1 0\n1 0 1 0 1 1 1 1 1 0 0 1 0 0 0 0 1 0 0 1 1 0 1 1 0 1 1 0 1 0 0 1 0 0 1 0 1 1 0 1 0 0 0 1 0 1 1 1 0 1 0 1 0 1 1 1 0 0 1 1\n1 0 0 0 0 0 0 0 0 0 1 0 1 1 0 0 1 0 1 0 0 0 0 0 1 1 1 0 1 1 1 1 0 0 0 1 0 1 0 1 1 0 1 1 0 1 1 0 0 1 1 0 0 0 1 1 1 0 1 0\n1 1 1 0 0 0 0 1 1 1 1 0 1 1 1 0 0 1 0 1 0 0 0 0 0 1 1 1 1 0 0 0 0 1 0 1 1 1 1 1 1 1 1 1 1 0 0 0 1 0 0 1 1 1 0 1 1 1 0 1\n0 0 0 0 1 1 0 1 1 1 1 0 0 1 0 1 0 1 1 0 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 1 0 1 1 1 1 1 1 1 0 0 0 0 1 1 1 0 1\n0 1 1 0 1 1 0 1 0 1 0 1 1 1 0 1 1 0 1 1 1 1 0 0 0 0 0 1 0 1 1 1 1 0 0 0 1 1 1 1 0 0 0 0 1 0 1 0 0 1 0 1 1 1 0 0 1 0 1 1\n0 0 0 0 1 1 1 0 1 0 0 1 1 1 1 1 1 0 0 0 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 1 0 0 0 0 1 1 0 1 1 1 1 0 1 0 0 1 0 1 0 1 1 0 0 0\n0 0 0 1 1 0 1 0 1 0 1 0 0 1 0 1 0 0 1 0 1 0 0 0 0 0 0 1 0 0 1 1 1 0 0 1 1 0 0 1 0 0 1 0 0 0 0 1 0 1 1 0 1 1 0 0 0 0 0 1\n0 1 0 1 1 0 1 1 1 0 0 0 0 1 1 0 0 1 1 0 0 0 0 1 1 0 0 1 0 0 0 1 0 0 0 0 1 1 0 0 0 0 0 1 0 1 0 1 1 0 1 1 0 1 1 1 1 1 1 1\n0 1 1 0 1 1 1 0 0 1 1 0 0 0 1 1 0 0 0 1 1 1 0 1 1 1 0 1 0 1 0 0 1 0 1 1 0 0 1 0 0 1 0 0 1 0 0 0 1 1 0 1 1 1 1 0 0 1 0 1\n1 1 0 0 1 0 1 0 1 0 1 0 1 0 0 0 1 0 0 0 0 1 0 0 1 0 1 0 1 1 0 0 1 1 1 0 1 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 1 0 0 0 0 0 0 0\n0 0 0 0 1 0 0 0 0 0 0 0 1 0 1 0 1 0 0 0 1 1 1 1 1 0 1 1 0 1 0 1 1 0 1 1 0 1 1 0 0 1 1 0 1 0 1 1 1 0 0 1 0 0 0 1 1 0 0 1\n0 0 1 0 1 1 1 1 0 1 0 1 1 0 0 0 0 1 0 1 1 1 1 1 1 1 0 1 1 0 1 0 1 0 0 0 0 1 1 1 0 1 0 1 0 1 0 0 0 1 1 0 0 0 0 0 1 0 0 0\n1 0 1 1 0 1 1 1 0 1 0 1 0 0 1 1 0 1 1 1 1 0 0 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 1 1 0 1 1 0 1 0 1 1 0 1 1 1 1 0 1 1 0 0 1 1\n1 1 0 1 1 0 1 0 0 0 0 0 0 1 1 1 1 0 0 0 1 1 0 1 1 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 0 1 0 1 0 0 0 0 1 0 0 1 1 1\n0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 1 0 0 0 0 0 0 1 0 0 1 1 1 1 0 1 1 1 1 1 1 1 0 1 0 0 1 0 1 1 1 1 1 0 0 0 1 1 1 0 0 1\n1 1 0 0 0 1 0 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 1 1 0 0 1 0 1 1 1 0 0 0 1 0 1 0 1 1 0 0 1 0 1 0 0 1 1 1 0 0 0 0 0 0 1 1 1 0\n0 0 1 1 0 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 0 0 1 1 1 0 1 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 1 1 0 1 1 0 1 1 0 1 1 1 1 1\n0 1 0 1 0 0 1 0 1 1 0 1 0 0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 1 0 1 1 1 0 0 0 0 1 0 0 1 1 0 0 1 1 0 1 0 0 1 1 0 1 0 1 1 0 1 1\n1 1 1 0 1 1 1 0 1 1 0 0 1 1 1 0 1 1 0 0 1 1 0 0 1 0 1 0 0 1 1 0 0 1 1 0 0 0 0 0 0 1 0 0 1 1 1 1 0 1 0 1 0 0 0 0 1 1 0 1\n1 1 1 1 0 1 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 0 0 0 1 1 1 1 1 1 0 1 0 1 1 1 0 1 0 1 0 0 1 1 0 0 0 1 1 0 1 0 1 1 0\n0 1 0 0 1 1 1 1 1 0 1 1 1 0 0 0 0 0 0 1 0 1 1 1 0 0 0 0 1 0 1 1 0 0 1 1 1 0 0 0 1 1 1 0 1 0 0 1 0 1 1 0 0 0 0 0 0 0 0 1\n0 0 0 1 0 1 0 1 0 1 1 0 1 0 1 1 1 0 0 1 0 0 1 1 1 0 1 0 0 1 1 1 0 1 0 0 0 1 0 0 1 1 0 1 0 1 1 0 1 1 0 0 0 1 1 0 1 1 0 1\n0 1 1 0 1 0 1 1 1 1 0 1 1 1 0 0 0 1 1 0 1 0 0 1 1 0 0 0 0 0 1 1 1 0 0 1 1 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 1 1 0 1 0 1 0 0\n1 1 1 0 1 1 0 0 1 0 1 0 1 1 0 1 0 1 0 1 1 0 0 0 1 1 0 0 0 1 0 1 0 0 1 0 1 1 0 0 0 0 1 0 1 1 0 0 1 1 1 1 1 1 1 0 0 0 0 0\n0 1 0 0 0 0 0 1 1 1 0 0 0 1 0 0 1 0 0 0 1 1 1 1 0 1 1 1 1 1 0 1 1 1 1 1 1 0 0 0 1 0 0 1 1 0 1 1 0 1 1 0 1 1 1 0 0 0 0 0\n0 0 0 1 1 1 1 0 1 0 1 1 0 1 1 1 0 1 1 1 1 0 1 1 1 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 1 1 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 0 0\n0 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0 0 1 0 1 0 0 1 1 0 1 0 0 1 1 0 1 1 0 1 1 1 0 1 1 0 1 0 0 0 0 1 0 0 1 1 1 0 0 0 1 0 0 1 0\n0 1 1 1 0 0 1 1 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 1 1 1 1 0 0 0 1 0 0 0 0 0 1 1 0 1 0 0 1 0 0 1\n1 0 1 0 0 0 1 0 1 1 0 0 1 0 0 0 0 1 0 1 1 0 0 1 1 0 0 1 0 0 1 0 1 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0\n1 1 1 0 1 1 1 0 1 1 1 0 0 0 0 0 0 1 0 1 1 1 0 1 0 1 1 0 0 1 1 0 0 1 1 1 1 0 0 1 1 0 0 1 0 1 0 0 1 0 1 1 1 1 1 1 0 0 0 1\n1 0 1 1 1 1 0 0 1 1 0 1 0 1 0 0 1 0 1 0 1 0 1 0 0 1 1 0 1 1 1 1 0 1 1 0 1 1 0 0 1 0 1 0 0 0 1 1 0 0 1 1 0 1 0 1 0 1 0 1\n1 0 0 0 1 0 0 1 0 1 1 1 1 0 1 1 1 1 1 0 0 0 1 1 1 0 0 0 0 1 1 0 1 0 0 0 1 0 1 0 0 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 0\n0 0 0 1 0 1 1 0 1 0 1 1 0 0 0 1 1 0 1 0 0 1 0 1 0 0 0 0 0 0 1 0 1 0 0 1 0 1 0 0 1 0 0 1 1 0 1 0 0 0 0 0 1 0 0 0 1 1 0 0\n1 1 0 1 0 1 1 1 0 1 0 1 0 1 0 0 1 1 1 0 0 0 0 1 0 1 0 1 0 0 0 1 1 1 0 1 1 1 1 1 1 0 1 1 1 1 0 0 0 0 1 0 0 0 1 0 1 1 0 0\n0 1 1 1 0 0 0 0 1 0 0 1 1 1 0 1 1 1 0 0 0 0 1 0 1 0 0 1 0 1 0 0 0 0 1 1 0 1 0 1 0 1 1 1 1 1 0 1 1 1 1 1 0 1 1 0 1 0 1 0\n0 1 1 1 1 0 1 1 1 0 0 1 0 0 1 0 1 0 1 0 0 1 0 0 1 1 0 1 0 0 1 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1 1\n0 1 0 0 1 0 1 0 0 1 1 1 1 1 0 0 0 0 1 0 0 1 1 0 1 1 1 0 1 0 0 1 0 1 0 1 0 0 0 1 1 1 1 0 1 1 0 0 1 1 0 0 0 1 0 0 1 1 1 1\n0 0 1 1 1 1 1 0 0 0 0 0 1 1 0 1 1 0 1 0 0 1 1 1 1 0 1 1 1 0 0 1 0 0 0 1 1 0 1 1 1 1 1 0 1 0 1 0 0 0 1 1 1 0 1 0 0 1 0 1\n0 1 1 0 0 1 1 0 1 1 1 1 0 1 1 1 1 1 0 1 1 1 0 0 0 0 0 0 1 1 0 1 1 0 0 0 0 1 0 1 1 1 0 0 1 0 1 1 0 1 1 0 1 1 0 0 0 0 0 0\n0 0 0 1 1 1 0 1 1 1 1 0 0 1 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 0 0 1 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1\n1 0 0 1 0 1 1 0 0 0 1 1 1 0 1 1 0 1 1 0 1 0 0 0 0 1 1 1 1 1 0 1 0 1 1 0 0 0 1 0 1 1 0 1 0 0 0 0 1 0 1 1 0 1 0 1 1 0 0 0\n0 0 0 0 0 1 1 1 0 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 1 0 1 0 0 1 0 1 0 1 1 0 0 1 0 0 0 1 1 1 1 1 0 0 1 1 0 1 1 0 1 0 1 0 1 0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n0 1 0\n0 0 0\n0 1 0\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 69
   },
   {
     "slug": "trapping-rain-water",
@@ -5538,7 +5904,7 @@
         "sample": false
       }
     ],
-    "order": 65
+    "order": 70
   },
   {
     "slug": "largest-rectangle-in-histogram",
@@ -5635,7 +6001,79 @@
         "sample": false
       }
     ],
-    "order": 66
+    "order": 71
+  },
+  {
+    "slug": "maximum-of-minimums-for-every-window-size",
+    "title": "Maximum of Minimums for Every Window Size",
+    "difficulty": "HARD",
+    "tags": [
+      "array",
+      "stack",
+      "monotonic-stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "For every window size `k` from 1 to `n`, take the minimum of each window of that size and keep the largest of those minimums. Return the `n` answers for `k = 1, 2, ..., n`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`n` integers: the answer for each window size.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n88\n\nOutput:\n88\n```\n\n**Example 2**\n```text\nInput:\n2\n47 72\n\nOutput:\n72 47\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] nums) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(nums);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> nums) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(nums);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n88\n",
+        "expectedOutput": "88\n",
+        "sample": true
+      },
+      {
+        "input": "2\n47 72\n",
+        "expectedOutput": "72 47\n",
+        "sample": true
+      },
+      {
+        "input": "5\n53 7 77 27 17\n",
+        "expectedOutput": "77 27 17 7 7\n",
+        "sample": false
+      },
+      {
+        "input": "12\n24 35 75 62 15 83 64 12 27 24 22 42\n",
+        "expectedOutput": "83 64 35 24 15 15 15 12 12 12 12 12\n",
+        "sample": false
+      },
+      {
+        "input": "40\n21 15 80 58 30 4 6 72 44 10 90 84 82 60 86 52 29 27 79 40 2 77 42 79 33 61 31 43 47 52 2 39 46 14 12 30 71 87 55 38\n",
+        "expectedOutput": "90 84 82 60 60 52 31 31 31 27 10 10 10 6 4 4 4 4 4 4 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2\n",
+        "sample": false
+      },
+      {
+        "input": "150\n7 80 19 24 43 29 57 35 52 81 82 84 10 52 6 21 11 5 65 26 15 70 12 73 40 15 78 62 67 18 46 1 84 77 89 79 15 3 9 84 27 43 17 23 90 72 42 25 7 87 34 14 8 35 4 56 82 50 76 23 53 17 40 66 56 64 8 50 43 47 87 23 17 25 73 87 47 80 42 12 31 54 86 32 12 71 80 71 59 67 2 2 89 65 80 11 72 10 32 72 76 39 60 37 23 88 27 50 72 28 42 59 23 67 51 80 78 18 1 43 6 81 36 68 33 81 46 62 39 37 56 24 12 16 57 24 63 39 43 58 83 52 52 63 20 57 88 53 31 59\n",
+        "expectedOutput": "90 82 81 77 59 43 39 39 33 33 24 23 23 23 23 23 23 23 23 18 12 12 12 12 12 12 12 12 12 8 8 8 8 8 8 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "500\n44 45 48 55 76 59 63 3 42 23 75 2 59 44 19 29 37 43 32 13 76 15 75 74 43 47 24 78 48 59 12 83 4 36 50 67 37 45 27 25 58 77 14 79 56 63 50 8 83 73 57 41 87 44 68 54 33 12 51 46 61 54 68 24 65 15 8 38 60 47 59 32 38 2 65 88 71 44 82 42 61 25 64 19 48 25 90 4 20 5 90 35 23 13 44 88 27 42 83 39 85 3 70 20 52 55 6 7 57 37 24 13 1 74 57 84 2 18 65 34 13 45 64 26 80 71 14 30 29 57 68 48 77 41 87 50 84 52 72 13 77 31 5 28 31 11 5 68 68 12 29 3 65 89 47 77 71 84 68 23 15 78 22 50 41 21 23 57 7 79 21 62 39 75 6 5 83 1 78 33 88 72 79 64 2 29 52 76 33 2 87 78 81 81 42 49 39 19 40 1 65 14 13 37 41 28 62 74 9 25 49 33 23 83 27 12 64 59 82 76 31 18 49 31 40 9 42 56 22 56 84 74 9 55 67 32 18 48 21 22 52 46 79 30 13 47 35 30 78 17 37 6 9 89 48 3 77 23 69 7 30 44 43 77 77 67 88 11 85 84 14 48 9 6 89 65 22 65 51 66 27 90 4 52 37 44 83 54 55 73 26 86 82 9 59 42 85 59 82 80 63 14 38 70 20 1 70 20 3 14 79 51 84 3 27 42 8 6 83 18 2 82 75 72 55 22 88 21 20 51 15 73 50 33 88 76 68 67 83 10 72 38 74 39 12 9 44 53 12 40 42 48 68 53 85 32 70 78 62 63 34 79 9 4 20 22 71 7 7 27 61 12 74 81 80 79 48 2 33 23 16 57 3 89 55 8 39 18 10 60 37 7 81 63 27 25 89 89 81 70 90 7 82 1 12 43 78 53 2 56 77 49 80 74 41 34 89 50 12 62 64 83 88 48 21 73 83 72 34 63 65 42 47 57 89 76 3 53 38 49 57 28 84 38 22 57 39 13 57 10 39 1 80 89 79 63 24 40 54 78 21 39 84 51 88 86 33 19 90 44 19 16 53 48 14 24 16 47 15 15 41 78 79 45 3 52 21 3 3 80 70 7 34 8 66 33 87 18 44 30\n",
+        "expectedOutput": "90 89 81 78 70 47 47 41 41 41 34 32 32 21 21 21 21 19 19 16 16 16 14 14 14 14 14 14 14 14 14 14 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 6 6 6 6 4 4 4 4 4 4 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "7\n10 20 30 50 10 70 30\n",
+        "expectedOutput": "70 30 20 10 10 10 10\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n3 3 3\n",
+        "expectedOutput": "3 3 3\n",
+        "sample": false
+      }
+    ],
+    "order": 72
   },
   {
     "slug": "binary-search",
@@ -5730,7 +6168,7 @@
         "sample": false
       }
     ],
-    "order": 67
+    "order": 73
   },
   {
     "slug": "search-insert-position",
@@ -5820,7 +6258,7 @@
         "sample": false
       }
     ],
-    "order": 68
+    "order": 74
   },
   {
     "slug": "sqrt-x",
@@ -5930,7 +6368,7 @@
         "sample": false
       }
     ],
-    "order": 69
+    "order": 75
   },
   {
     "slug": "lower-bound",
@@ -6005,7 +6443,7 @@
         "sample": false
       }
     ],
-    "order": 70
+    "order": 76
   },
   {
     "slug": "upper-bound",
@@ -6080,7 +6518,7 @@
         "sample": false
       }
     ],
-    "order": 71
+    "order": 77
   },
   {
     "slug": "floor-and-ceil-in-sorted-array",
@@ -6155,7 +6593,7 @@
         "sample": false
       }
     ],
-    "order": 72
+    "order": 78
   },
   {
     "slug": "count-occurrences-in-sorted-array",
@@ -6230,7 +6668,7 @@
         "sample": false
       }
     ],
-    "order": 73
+    "order": 79
   },
   {
     "slug": "row-with-maximum-ones",
@@ -6290,7 +6728,7 @@
         "sample": false
       }
     ],
-    "order": 74
+    "order": 80
   },
   {
     "slug": "kth-missing-positive-number",
@@ -6350,7 +6788,7 @@
         "sample": false
       }
     ],
-    "order": 75
+    "order": 81
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array",
@@ -6435,7 +6873,7 @@
         "sample": false
       }
     ],
-    "order": 76
+    "order": 82
   },
   {
     "slug": "search-in-rotated-sorted-array",
@@ -6541,7 +6979,7 @@
         "sample": false
       }
     ],
-    "order": 77
+    "order": 83
   },
   {
     "slug": "two-sum-ii-input-array-is-sorted",
@@ -6636,7 +7074,7 @@
         "sample": false
       }
     ],
-    "order": 78
+    "order": 84
   },
   {
     "slug": "koko-eating-bananas",
@@ -6721,7 +7159,7 @@
         "sample": false
       }
     ],
-    "order": 79
+    "order": 85
   },
   {
     "slug": "capacity-to-ship-packages",
@@ -6806,7 +7244,7 @@
         "sample": false
       }
     ],
-    "order": 80
+    "order": 86
   },
   {
     "slug": "find-the-duplicate-number",
@@ -6918,7 +7356,7 @@
         "sample": false
       }
     ],
-    "order": 81
+    "order": 87
   },
   {
     "slug": "find-first-and-last-position-of-element-in-sorted-array",
@@ -7048,7 +7486,7 @@
         "sample": false
       }
     ],
-    "order": 82
+    "order": 88
   },
   {
     "slug": "search-a-2d-matrix",
@@ -7169,7 +7607,7 @@
         "sample": false
       }
     ],
-    "order": 83
+    "order": 89
   },
   {
     "slug": "search-in-rotated-sorted-array-ii",
@@ -7234,7 +7672,7 @@
         "sample": false
       }
     ],
-    "order": 84
+    "order": 90
   },
   {
     "slug": "rotation-count-in-rotated-sorted-array",
@@ -7299,7 +7737,7 @@
         "sample": false
       }
     ],
-    "order": 85
+    "order": 91
   },
   {
     "slug": "single-element-in-a-sorted-array",
@@ -7364,7 +7802,7 @@
         "sample": false
       }
     ],
-    "order": 86
+    "order": 92
   },
   {
     "slug": "find-peak-element",
@@ -7419,7 +7857,7 @@
         "sample": false
       }
     ],
-    "order": 87
+    "order": 93
   },
   {
     "slug": "nth-root-of-an-integer",
@@ -7509,7 +7947,7 @@
         "sample": false
       }
     ],
-    "order": 88
+    "order": 94
   },
   {
     "slug": "minimum-days-to-make-m-bouquets",
@@ -7579,7 +8017,7 @@
         "sample": false
       }
     ],
-    "order": 89
+    "order": 95
   },
   {
     "slug": "smallest-divisor-given-a-threshold",
@@ -7644,7 +8082,7 @@
         "sample": false
       }
     ],
-    "order": 90
+    "order": 96
   },
   {
     "slug": "search-a-2d-matrix-ii",
@@ -7694,7 +8132,7 @@
         "sample": false
       }
     ],
-    "order": 91
+    "order": 97
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array-ii",
@@ -7759,7 +8197,7 @@
         "sample": false
       }
     ],
-    "order": 92
+    "order": 98
   },
   {
     "slug": "aggressive-cows",
@@ -7825,7 +8263,7 @@
         "sample": false
       }
     ],
-    "order": 93
+    "order": 99
   },
   {
     "slug": "kth-element-of-two-sorted-arrays",
@@ -7885,7 +8323,7 @@
         "sample": false
       }
     ],
-    "order": 94
+    "order": 100
   },
   {
     "slug": "median-in-a-row-wise-sorted-matrix",
@@ -7940,7 +8378,7 @@
         "sample": false
       }
     ],
-    "order": 95
+    "order": 101
   },
   {
     "slug": "reverse-linked-list",
@@ -8040,7 +8478,7 @@
         "sample": false
       }
     ],
-    "order": 96
+    "order": 102
   },
   {
     "slug": "merge-two-sorted-lists",
@@ -8136,7 +8574,7 @@
         "sample": false
       }
     ],
-    "order": 97
+    "order": 103
   },
   {
     "slug": "middle-of-the-linked-list",
@@ -8232,7 +8670,7 @@
         "sample": false
       }
     ],
-    "order": 98
+    "order": 104
   },
   {
     "slug": "palindrome-linked-list",
@@ -8339,7 +8777,7 @@
         "sample": false
       }
     ],
-    "order": 99
+    "order": 105
   },
   {
     "slug": "remove-duplicates-from-sorted-list",
@@ -8423,7 +8861,7 @@
         "sample": false
       }
     ],
-    "order": 100
+    "order": 106
   },
   {
     "slug": "remove-linked-list-elements",
@@ -8506,7 +8944,7 @@
         "sample": false
       }
     ],
-    "order": 101
+    "order": 107
   },
   {
     "slug": "remove-nth-node-from-end-of-list",
@@ -8597,7 +9035,7 @@
         "sample": false
       }
     ],
-    "order": 102
+    "order": 108
   },
   {
     "slug": "add-two-numbers",
@@ -8688,7 +9126,7 @@
         "sample": false
       }
     ],
-    "order": 103
+    "order": 109
   },
   {
     "slug": "swap-nodes-in-pairs",
@@ -8781,7 +9219,7 @@
         "sample": false
       }
     ],
-    "order": 104
+    "order": 110
   },
   {
     "slug": "odd-even-linked-list",
@@ -8870,7 +9308,7 @@
         "sample": false
       }
     ],
-    "order": 105
+    "order": 111
   },
   {
     "slug": "sort-list",
@@ -8961,7 +9399,7 @@
         "sample": false
       }
     ],
-    "order": 106
+    "order": 112
   },
   {
     "slug": "reorder-list",
@@ -9055,7 +9493,7 @@
         "sample": false
       }
     ],
-    "order": 107
+    "order": 113
   },
   {
     "slug": "rotate-list",
@@ -9151,7 +9589,7 @@
         "sample": false
       }
     ],
-    "order": 108
+    "order": 114
   },
   {
     "slug": "partition-list",
@@ -9245,7 +9683,7 @@
         "sample": false
       }
     ],
-    "order": 109
+    "order": 115
   },
   {
     "slug": "remove-duplicates-from-sorted-list-ii",
@@ -9334,7 +9772,7 @@
         "sample": false
       }
     ],
-    "order": 110
+    "order": 116
   },
   {
     "slug": "reverse-linked-list-ii",
@@ -9427,7 +9865,7 @@
         "sample": false
       }
     ],
-    "order": 111
+    "order": 117
   },
   {
     "slug": "maximum-twin-sum-of-a-linked-list",
@@ -9516,7 +9954,7 @@
         "sample": false
       }
     ],
-    "order": 112
+    "order": 118
   },
   {
     "slug": "reverse-nodes-in-k-group",
@@ -9617,7 +10055,7 @@
         "sample": false
       }
     ],
-    "order": 113
+    "order": 119
   },
   {
     "slug": "maximum-depth-of-binary-tree",
@@ -9714,7 +10152,7 @@
         "sample": false
       }
     ],
-    "order": 114
+    "order": 120
   },
   {
     "slug": "invert-binary-tree",
@@ -9800,7 +10238,7 @@
         "sample": false
       }
     ],
-    "order": 115
+    "order": 121
   },
   {
     "slug": "symmetric-tree",
@@ -9897,7 +10335,7 @@
         "sample": false
       }
     ],
-    "order": 116
+    "order": 122
   },
   {
     "slug": "same-tree",
@@ -10003,7 +10441,7 @@
         "sample": false
       }
     ],
-    "order": 117
+    "order": 123
   },
   {
     "slug": "diameter-of-binary-tree",
@@ -10094,7 +10532,7 @@
         "sample": false
       }
     ],
-    "order": 118
+    "order": 124
   },
   {
     "slug": "binary-tree-inorder-traversal",
@@ -10186,7 +10624,7 @@
         "sample": false
       }
     ],
-    "order": 119
+    "order": 125
   },
   {
     "slug": "path-sum",
@@ -10305,7 +10743,7 @@
         "sample": false
       }
     ],
-    "order": 120
+    "order": 126
   },
   {
     "slug": "balanced-binary-tree",
@@ -10396,7 +10834,7 @@
         "sample": false
       }
     ],
-    "order": 121
+    "order": 127
   },
   {
     "slug": "subtree-of-another-tree",
@@ -10510,7 +10948,7 @@
         "sample": false
       }
     ],
-    "order": 122
+    "order": 128
   },
   {
     "slug": "minimum-depth-of-binary-tree",
@@ -10610,7 +11048,7 @@
         "sample": false
       }
     ],
-    "order": 123
+    "order": 129
   },
   {
     "slug": "count-complete-tree-nodes",
@@ -10706,7 +11144,7 @@
         "sample": false
       }
     ],
-    "order": 124
+    "order": 130
   },
   {
     "slug": "binary-tree-right-side-view",
@@ -10802,7 +11240,7 @@
         "sample": false
       }
     ],
-    "order": 125
+    "order": 131
   },
   {
     "slug": "validate-binary-search-tree",
@@ -10919,7 +11357,7 @@
         "sample": false
       }
     ],
-    "order": 126
+    "order": 132
   },
   {
     "slug": "kth-smallest-element-in-a-bst",
@@ -11011,7 +11449,7 @@
         "sample": false
       }
     ],
-    "order": 127
+    "order": 133
   },
   {
     "slug": "count-good-nodes-in-binary-tree",
@@ -11100,7 +11538,7 @@
         "sample": false
       }
     ],
-    "order": 128
+    "order": 134
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-search-tree",
@@ -11191,7 +11629,7 @@
         "sample": false
       }
     ],
-    "order": 129
+    "order": 135
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-tree",
@@ -11277,7 +11715,7 @@
         "sample": false
       }
     ],
-    "order": 130
+    "order": 136
   },
   {
     "slug": "binary-tree-level-order-traversal",
@@ -11378,7 +11816,7 @@
         "sample": false
       }
     ],
-    "order": 131
+    "order": 137
   },
   {
     "slug": "sum-root-to-leaf-numbers",
@@ -11477,7 +11915,7 @@
         "sample": false
       }
     ],
-    "order": 132
+    "order": 138
   },
   {
     "slug": "house-robber-iii",
@@ -11567,7 +12005,7 @@
         "sample": false
       }
     ],
-    "order": 133
+    "order": 139
   },
   {
     "slug": "path-sum-iii",
@@ -11671,7 +12109,7 @@
         "sample": false
       }
     ],
-    "order": 134
+    "order": 140
   },
   {
     "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
@@ -11767,7 +12205,7 @@
         "sample": false
       }
     ],
-    "order": 135
+    "order": 141
   },
   {
     "slug": "binary-tree-zigzag-level-order-traversal",
@@ -11863,7 +12301,7 @@
         "sample": false
       }
     ],
-    "order": 136
+    "order": 142
   },
   {
     "slug": "binary-tree-maximum-path-sum",
@@ -11960,7 +12398,7 @@
         "sample": false
       }
     ],
-    "order": 137
+    "order": 143
   },
   {
     "slug": "last-stone-weight",
@@ -12054,7 +12492,7 @@
         "sample": false
       }
     ],
-    "order": 138
+    "order": 144
   },
   {
     "slug": "kth-largest-element-in-an-array",
@@ -12137,7 +12575,7 @@
         "sample": false
       }
     ],
-    "order": 139
+    "order": 145
   },
   {
     "slug": "top-k-frequent-elements",
@@ -12234,7 +12672,7 @@
         "sample": false
       }
     ],
-    "order": 140
+    "order": 146
   },
   {
     "slug": "meeting-rooms-ii",
@@ -12330,7 +12768,7 @@
         "sample": false
       }
     ],
-    "order": 141
+    "order": 147
   },
   {
     "slug": "task-scheduler",
@@ -12431,7 +12869,7 @@
         "sample": false
       }
     ],
-    "order": 142
+    "order": 148
   },
   {
     "slug": "ugly-number-ii",
@@ -12541,7 +12979,7 @@
         "sample": false
       }
     ],
-    "order": 143
+    "order": 149
   },
   {
     "slug": "kth-smallest-element-in-a-sorted-matrix",
@@ -12631,7 +13069,7 @@
         "sample": false
       }
     ],
-    "order": 144
+    "order": 150
   },
   {
     "slug": "sliding-window-maximum",
@@ -12729,7 +13167,7 @@
         "sample": false
       }
     ],
-    "order": 145
+    "order": 151
   },
   {
     "slug": "binary-strings-without-adjacent-ones",
@@ -12789,7 +13227,7 @@
         "sample": false
       }
     ],
-    "order": 146
+    "order": 152
   },
   {
     "slug": "word-search",
@@ -12879,7 +13317,7 @@
         "sample": false
       }
     ],
-    "order": 147
+    "order": 153
   },
   {
     "slug": "count-subsets-with-sum",
@@ -12973,7 +13411,7 @@
         "sample": false
       }
     ],
-    "order": 148
+    "order": 154
   },
   {
     "slug": "distinct-permutations-count",
@@ -13038,7 +13476,7 @@
         "sample": false
       }
     ],
-    "order": 149
+    "order": 155
   },
   {
     "slug": "generate-parentheses-count",
@@ -13089,7 +13527,7 @@
         "sample": false
       }
     ],
-    "order": 150
+    "order": 156
   },
   {
     "slug": "palindrome-partitioning-count",
@@ -13185,7 +13623,7 @@
         "sample": false
       }
     ],
-    "order": 151
+    "order": 157
   },
   {
     "slug": "combination-sum-count",
@@ -13251,7 +13689,7 @@
         "sample": false
       }
     ],
-    "order": 152
+    "order": 158
   },
   {
     "slug": "subsets",
@@ -13306,7 +13744,7 @@
         "sample": false
       }
     ],
-    "order": 153
+    "order": 159
   },
   {
     "slug": "subsets-ii",
@@ -13356,7 +13794,7 @@
         "sample": false
       }
     ],
-    "order": 154
+    "order": 160
   },
   {
     "slug": "combination-sum-ii",
@@ -13411,7 +13849,7 @@
         "sample": false
       }
     ],
-    "order": 155
+    "order": 161
   },
   {
     "slug": "combination-sum-iii",
@@ -13475,7 +13913,7 @@
         "sample": false
       }
     ],
-    "order": 156
+    "order": 162
   },
   {
     "slug": "permutations",
@@ -13525,7 +13963,7 @@
         "sample": false
       }
     ],
-    "order": 157
+    "order": 163
   },
   {
     "slug": "letter-combinations-of-a-phone-number",
@@ -13585,7 +14023,7 @@
         "sample": false
       }
     ],
-    "order": 158
+    "order": 164
   },
   {
     "slug": "subset-sums",
@@ -13635,7 +14073,7 @@
         "sample": false
       }
     ],
-    "order": 159
+    "order": 165
   },
   {
     "slug": "rat-in-a-maze",
@@ -13690,7 +14128,7 @@
         "sample": false
       }
     ],
-    "order": 160
+    "order": 166
   },
   {
     "slug": "count-subsequences-with-sum-k",
@@ -13751,7 +14189,7 @@
         "sample": false
       }
     ],
-    "order": 161
+    "order": 167
   },
   {
     "slug": "subsequences-with-sum-k",
@@ -13806,7 +14244,88 @@
         "sample": false
       }
     ],
-    "order": 162
+    "order": 168
+  },
+  {
+    "slug": "rat-in-a-maze-count",
+    "title": "Rat in a Maze (Count Paths)",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "matrix",
+      "backtracking",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "A rat starts at the top-left cell of an `n x n` grid and wants to reach the bottom-right cell. A `1` cell is open and a `0` cell is blocked. It moves up, down, left or right and may not visit a cell twice in one path. Return the number of different paths.\n\n### Input\nLine 1: `n`.\nNext `n` lines: the rows, `n` integers each.\n\n### Output\nThe number of paths.\n\n### Constraints\n- `1 <= n <= 6`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n1 1\n1 1\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n3\n1 1 1\n1 1 1\n1 1 1\n\nOutput:\n12\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[][] grid) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int gridLen = Integer.parseInt(lines.get(pos++).trim());\n        int[][] grid = new int[gridLen][];\n        for (int i = 0; i < gridLen; i++) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos++));\n            grid[i] = new int[st.countTokens()];\n            for (int j = 0; j < grid[i].length; j++) grid[i][j] = Integer.parseInt(st.nextToken());\n        }\n        int result = solve(grid);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(grid):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    grid_len = int(lines[pos]); pos += 1\n    grid = [list(map(int, lines[pos + i].split())) for i in range(grid_len)]; pos += grid_len\n    result = solve(grid)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(grid) {\n  // Write your solution here\n}\n\nconst gridLen = parseInt(lines[pos++], 10);\nconst grid = [];\nfor (let i = 0; i < gridLen; i++) grid.push(lines[pos++].trim().split(/\\s+/).map(Number));\nconst result = solve(grid);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<vector<int>> grid) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int gridLen = stoi(lines[pos++]);\n    vector<vector<int>> grid(gridLen);\n    for (int i = 0; i < gridLen; i++) {\n        istringstream iss(lines[pos++]);\n        int v;\n        while (iss >> v) grid[i].push_back(v);\n    }\n    int result = solve(grid);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2\n1 1\n1 1\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "3\n1 1 1\n1 1 1\n1 1 1\n",
+        "expectedOutput": "12\n",
+        "sample": true
+      },
+      {
+        "input": "4\n1 1 1 1\n1 1 1 1\n0 1 1 1\n1 1 1 1\n",
+        "expectedOutput": "67\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 1 1 1 1\n1 0 1 0 1\n1 1 1 1 0\n1 1 1 1 0\n0 1 1 1 1\n",
+        "expectedOutput": "36\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 1 1 1 1\n1 1 1 1 0\n0 1 0 1 1\n1 1 1 1 1\n1 0 1 0 1\n",
+        "expectedOutput": "24\n",
+        "sample": false
+      },
+      {
+        "input": "6\n1 0 1 1 1 1\n0 1 1 1 0 0\n1 1 1 1 1 1\n1 1 1 1 1 1\n1 1 1 1 1 0\n1 1 1 1 1 1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "6\n1 1 1 1 1 1\n1 1 1 1 0 1\n1 1 1 1 1 1\n1 1 1 1 1 0\n1 1 1 1 1 1\n1 1 1 1 1 1\n",
+        "expectedOutput": "88627\n",
+        "sample": false
+      },
+      {
+        "input": "6\n1 1 0 1 1 0\n1 1 0 1 1 1\n1 1 1 1 1 1\n0 0 1 1 1 1\n1 0 0 1 1 1\n1 1 1 1 1 1\n",
+        "expectedOutput": "944\n",
+        "sample": false
+      },
+      {
+        "input": "2\n1 1\n1 1\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "2\n1 0\n0 1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 1 1\n1 1 1\n1 1 1\n",
+        "expectedOutput": "12\n",
+        "sample": false
+      }
+    ],
+    "order": 169
   },
   {
     "slug": "n-queens-count",
@@ -13870,7 +14389,7 @@
         "sample": false
       }
     ],
-    "order": 163
+    "order": 170
   },
   {
     "slug": "find-if-path-exists-in-graph",
@@ -13960,7 +14479,7 @@
         "sample": false
       }
     ],
-    "order": 164
+    "order": 171
   },
   {
     "slug": "find-the-town-judge",
@@ -14040,7 +14559,7 @@
         "sample": false
       }
     ],
-    "order": 165
+    "order": 172
   },
   {
     "slug": "number-of-islands",
@@ -14136,7 +14655,7 @@
         "sample": false
       }
     ],
-    "order": 166
+    "order": 173
   },
   {
     "slug": "course-schedule",
@@ -14228,7 +14747,7 @@
         "sample": false
       }
     ],
-    "order": 167
+    "order": 174
   },
   {
     "slug": "number-of-connected-components",
@@ -14324,7 +14843,7 @@
         "sample": false
       }
     ],
-    "order": 168
+    "order": 175
   },
   {
     "slug": "rotting-oranges",
@@ -14421,7 +14940,7 @@
         "sample": false
       }
     ],
-    "order": 169
+    "order": 176
   },
   {
     "slug": "shortest-path-in-binary-matrix",
@@ -14517,7 +15036,7 @@
         "sample": false
       }
     ],
-    "order": 170
+    "order": 177
   },
   {
     "slug": "perfect-squares",
@@ -14592,7 +15111,7 @@
         "sample": false
       }
     ],
-    "order": 171
+    "order": 178
   },
   {
     "slug": "longest-consecutive-sequence",
@@ -14684,7 +15203,7 @@
         "sample": false
       }
     ],
-    "order": 172
+    "order": 179
   },
   {
     "slug": "network-delay-time",
@@ -14780,7 +15299,7 @@
         "sample": false
       }
     ],
-    "order": 173
+    "order": 180
   },
   {
     "slug": "number-of-provinces",
@@ -14866,7 +15385,7 @@
         "sample": false
       }
     ],
-    "order": 174
+    "order": 181
   },
   {
     "slug": "redundant-connection",
@@ -14957,7 +15476,7 @@
         "sample": false
       }
     ],
-    "order": 175
+    "order": 182
   },
   {
     "slug": "min-cost-to-connect-all-points",
@@ -15054,7 +15573,7 @@
         "sample": false
       }
     ],
-    "order": 176
+    "order": 183
   },
   {
     "slug": "surrounded-regions",
@@ -15136,7 +15655,7 @@
         "sample": false
       }
     ],
-    "order": 177
+    "order": 184
   },
   {
     "slug": "01-matrix",
@@ -15232,7 +15751,7 @@
         "sample": false
       }
     ],
-    "order": 178
+    "order": 185
   },
   {
     "slug": "is-graph-bipartite",
@@ -15329,7 +15848,7 @@
         "sample": false
       }
     ],
-    "order": 179
+    "order": 186
   },
   {
     "slug": "cheapest-flights-within-k-stops",
@@ -15415,7 +15934,7 @@
         "sample": false
       }
     ],
-    "order": 180
+    "order": 187
   },
   {
     "slug": "path-with-minimum-effort",
@@ -15512,7 +16031,7 @@
         "sample": false
       }
     ],
-    "order": 181
+    "order": 188
   },
   {
     "slug": "swim-in-rising-water",
@@ -15609,7 +16128,7 @@
         "sample": false
       }
     ],
-    "order": 182
+    "order": 189
   },
   {
     "slug": "m-coloring-problem",
@@ -15664,7 +16183,7 @@
         "sample": false
       }
     ],
-    "order": 183
+    "order": 190
   },
   {
     "slug": "best-time-to-buy-and-sell-stock",
@@ -15760,7 +16279,7 @@
         "sample": false
       }
     ],
-    "order": 184
+    "order": 191
   },
   {
     "slug": "climbing-stairs",
@@ -15860,7 +16379,7 @@
         "sample": false
       }
     ],
-    "order": 185
+    "order": 192
   },
   {
     "slug": "min-cost-climbing-stairs",
@@ -15949,7 +16468,7 @@
         "sample": false
       }
     ],
-    "order": 186
+    "order": 193
   },
   {
     "slug": "counting-bits",
@@ -16028,7 +16547,7 @@
         "sample": false
       }
     ],
-    "order": 187
+    "order": 194
   },
   {
     "slug": "is-subsequence",
@@ -16123,7 +16642,7 @@
         "sample": false
       }
     ],
-    "order": 188
+    "order": 195
   },
   {
     "slug": "pascals-triangle",
@@ -16219,7 +16738,7 @@
         "sample": false
       }
     ],
-    "order": 189
+    "order": 196
   },
   {
     "slug": "maximum-subarray",
@@ -16315,7 +16834,7 @@
         "sample": false
       }
     ],
-    "order": 190
+    "order": 197
   },
   {
     "slug": "coin-change",
@@ -16410,7 +16929,7 @@
         "sample": false
       }
     ],
-    "order": 191
+    "order": 198
   },
   {
     "slug": "house-robber",
@@ -16500,7 +17019,7 @@
         "sample": false
       }
     ],
-    "order": 192
+    "order": 199
   },
   {
     "slug": "longest-increasing-subsequence",
@@ -16587,7 +17106,7 @@
         "sample": false
       }
     ],
-    "order": 193
+    "order": 200
   },
   {
     "slug": "jump-game",
@@ -16683,7 +17202,7 @@
         "sample": false
       }
     ],
-    "order": 194
+    "order": 201
   },
   {
     "slug": "unique-paths",
@@ -16784,7 +17303,7 @@
         "sample": false
       }
     ],
-    "order": 195
+    "order": 202
   },
   {
     "slug": "maximum-product-subarray",
@@ -16875,7 +17394,7 @@
         "sample": false
       }
     ],
-    "order": 196
+    "order": 203
   },
   {
     "slug": "longest-palindromic-substring-length",
@@ -16970,7 +17489,7 @@
         "sample": false
       }
     ],
-    "order": 197
+    "order": 204
   },
   {
     "slug": "longest-common-subsequence",
@@ -17061,7 +17580,7 @@
         "sample": false
       }
     ],
-    "order": 198
+    "order": 205
   },
   {
     "slug": "partition-equal-subset-sum",
@@ -17152,7 +17671,7 @@
         "sample": false
       }
     ],
-    "order": 199
+    "order": 206
   },
   {
     "slug": "maximal-square",
@@ -17246,7 +17765,7 @@
         "sample": false
       }
     ],
-    "order": 200
+    "order": 207
   },
   {
     "slug": "decode-ways",
@@ -17345,7 +17864,7 @@
         "sample": false
       }
     ],
-    "order": 201
+    "order": 208
   },
   {
     "slug": "unique-paths-ii",
@@ -17435,7 +17954,7 @@
         "sample": false
       }
     ],
-    "order": 202
+    "order": 209
   },
   {
     "slug": "house-robber-ii",
@@ -17530,7 +18049,7 @@
         "sample": false
       }
     ],
-    "order": 203
+    "order": 210
   },
   {
     "slug": "jump-game-ii",
@@ -17621,7 +18140,7 @@
         "sample": false
       }
     ],
-    "order": 204
+    "order": 211
   },
   {
     "slug": "minimum-path-sum",
@@ -17716,7 +18235,7 @@
         "sample": false
       }
     ],
-    "order": 205
+    "order": 212
   },
   {
     "slug": "word-break",
@@ -17837,7 +18356,7 @@
         "sample": false
       }
     ],
-    "order": 206
+    "order": 213
   },
   {
     "slug": "palindromic-substrings",
@@ -17952,7 +18471,7 @@
         "sample": false
       }
     ],
-    "order": 207
+    "order": 214
   },
   {
     "slug": "target-sum",
@@ -18047,7 +18566,7 @@
         "sample": false
       }
     ],
-    "order": 208
+    "order": 215
   },
   {
     "slug": "delete-and-earn",
@@ -18151,7 +18670,7 @@
         "sample": false
       }
     ],
-    "order": 209
+    "order": 216
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
@@ -18256,7 +18775,7 @@
         "sample": false
       }
     ],
-    "order": 210
+    "order": 217
   },
   {
     "slug": "minimum-falling-path-sum",
@@ -18346,7 +18865,7 @@
         "sample": false
       }
     ],
-    "order": 211
+    "order": 218
   },
   {
     "slug": "integer-break",
@@ -18455,7 +18974,7 @@
         "sample": false
       }
     ],
-    "order": 212
+    "order": 219
   },
   {
     "slug": "coin-change-ii",
@@ -18555,7 +19074,7 @@
         "sample": false
       }
     ],
-    "order": 213
+    "order": 220
   },
   {
     "slug": "maximum-sum-circular-subarray",
@@ -18654,7 +19173,7 @@
         "sample": false
       }
     ],
-    "order": 214
+    "order": 221
   },
   {
     "slug": "edit-distance",
@@ -18750,7 +19269,7 @@
         "sample": false
       }
     ],
-    "order": 215
+    "order": 222
   },
   {
     "slug": "longest-valid-parentheses",
@@ -18855,7 +19374,7 @@
         "sample": false
       }
     ],
-    "order": 216
+    "order": 223
   },
   {
     "slug": "split-array-largest-sum",
@@ -18941,7 +19460,7 @@
         "sample": false
       }
     ],
-    "order": 217
+    "order": 224
   },
   {
     "slug": "distinct-subsequences",
@@ -19051,7 +19570,7 @@
         "sample": false
       }
     ],
-    "order": 218
+    "order": 225
   },
   {
     "slug": "regular-expression-matching",
@@ -19190,7 +19709,7 @@
         "sample": false
       }
     ],
-    "order": 219
+    "order": 226
   },
   {
     "slug": "burst-balloons",
@@ -19290,7 +19809,7 @@
         "sample": false
       }
     ],
-    "order": 220
+    "order": 227
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-iii",
@@ -19390,7 +19909,7 @@
         "sample": false
       }
     ],
-    "order": 221
+    "order": 228
   },
   {
     "slug": "interleaving-string",
@@ -19509,7 +20028,7 @@
         "sample": false
       }
     ],
-    "order": 222
+    "order": 229
   },
   {
     "slug": "wildcard-matching",
@@ -19669,7 +20188,7 @@
         "sample": false
       }
     ],
-    "order": 223
+    "order": 230
   },
   {
     "slug": "maximal-rectangle",
@@ -19767,7 +20286,7 @@
         "sample": false
       }
     ],
-    "order": 224
+    "order": 231
   },
   {
     "slug": "assign-cookies",
@@ -19863,7 +20382,7 @@
         "sample": false
       }
     ],
-    "order": 225
+    "order": 232
   },
   {
     "slug": "can-place-flowers",
@@ -19962,7 +20481,7 @@
         "sample": false
       }
     ],
-    "order": 226
+    "order": 233
   },
   {
     "slug": "lemonade-change",
@@ -20087,7 +20606,7 @@
         "sample": false
       }
     ],
-    "order": 227
+    "order": 234
   },
   {
     "slug": "container-with-most-water",
@@ -20177,7 +20696,7 @@
         "sample": false
       }
     ],
-    "order": 228
+    "order": 235
   },
   {
     "slug": "gas-station",
@@ -20261,7 +20780,7 @@
         "sample": false
       }
     ],
-    "order": 229
+    "order": 236
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-ii",
@@ -20351,7 +20870,7 @@
         "sample": false
       }
     ],
-    "order": 230
+    "order": 237
   },
   {
     "slug": "partition-labels",
@@ -20446,7 +20965,223 @@
         "sample": false
       }
     ],
-    "order": 231
+    "order": 238
+  },
+  {
+    "slug": "n-meetings-in-one-room",
+    "title": "N Meetings in One Room",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "greedy",
+      "sorting",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Meeting `i` runs from `start[i]` to `end[i]` (both inclusive) and one room is available. A meeting can only begin after the previous one has ended, so it must start strictly later than the previous end. Return the maximum number of meetings that can be held.\n\n### Input\nLine 1: `n`.\nLine 2: `n` start times.\nLine 3: `n`.\nLine 4: `n` end times.\n\n### Output\nThe maximum number of meetings.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= start[i] <= end[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n42\n1\n48\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n99 114\n2\n108 118\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] start, int[] end) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int startLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] start = new int[startLen];\n        if (startLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < startLen; i++) start[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int endLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] end = new int[endLen];\n        if (endLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < endLen; i++) end[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(start, end);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(start, end):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    start_len = int(lines[pos]); pos += 1\n    start = list(map(int, lines[pos].split())) if start_len > 0 else []; pos += 1\n    end_len = int(lines[pos]); pos += 1\n    end = list(map(int, lines[pos].split())) if end_len > 0 else []; pos += 1\n    result = solve(start, end)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(start, end) {\n  // Write your solution here\n}\n\nconst startLen = parseInt(lines[pos++], 10);\nconst start = startLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst endLen = parseInt(lines[pos++], 10);\nconst end = endLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(start, end);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> start, vector<int> end) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int startLen = stoi(lines[pos++]);\n    vector<int> start(startLen);\n    if (startLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : start) iss >> v;\n    }\n    pos++;\n    int endLen = stoi(lines[pos++]);\n    vector<int> end(endLen);\n    if (endLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : end) iss >> v;\n    }\n    pos++;\n    int result = solve(start, end);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n42\n1\n48\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n99 114\n2\n108 118\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 43 93 10 37\n5\n9 43 95 14 42\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "12\n19 118 111 34 98 102 46 38 7 58 7 24\n12\n22 130 117 42 103 104 46 41 7 66 13 28\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": "40\n97 100 22 15 54 84 34 104 105 11 86 13 83 113 115 42 107 111 85 93 49 61 77 57 87 95 98 36 84 28 78 40 62 88 33 59 72 57 79 5\n40\n99 100 34 19 60 93 45 112 117 13 89 14 88 116 115 43 114 114 87 98 53 69 87 61 96 99 99 42 91 33 79 47 73 90 39 64 84 69 88 11\n",
+        "expectedOutput": "15\n",
+        "sample": false
+      },
+      {
+        "input": "150\n65 36 7 6 118 0 73 61 84 110 82 36 56 109 54 114 55 19 20 46 4 2 25 101 6 101 46 85 114 85 21 48 1 1 91 38 28 89 37 39 107 0 14 48 35 31 11 63 108 7 28 25 74 71 88 113 43 99 83 52 84 74 109 49 79 48 117 90 3 98 13 79 93 120 67 60 88 2 10 105 80 19 45 113 104 116 47 7 54 106 86 114 11 48 90 107 56 84 71 33 27 35 112 81 25 40 25 29 27 30 37 32 19 94 61 56 19 29 45 79 23 39 45 89 40 66 100 8 9 101 97 94 13 3 101 96 45 93 32 75 97 13 84 90 88 92 27 75 28 99\n150\n65 43 7 15 122 9 77 62 91 114 93 42 63 115 66 123 62 27 25 52 10 14 28 107 12 101 57 90 119 94 21 55 7 3 102 43 29 101 48 41 108 2 24 58 44 38 23 69 111 19 32 34 77 73 91 116 53 100 89 53 96 83 111 59 89 60 126 97 7 102 15 91 102 131 73 69 88 6 21 105 82 27 53 117 112 116 47 7 57 111 86 116 23 48 96 111 66 90 77 45 29 42 113 86 36 44 27 34 39 35 46 32 28 99 68 68 31 35 54 82 25 39 55 95 51 67 110 11 16 111 105 105 23 14 110 99 52 93 37 75 99 15 92 100 98 104 38 87 29 111\n",
+        "expectedOutput": "31\n",
+        "sample": false
+      },
+      {
+        "input": "500\n91 119 75 72 42 70 112 27 31 71 102 54 23 113 87 120 33 100 84 118 95 29 73 80 20 116 9 66 87 12 34 66 77 3 17 17 46 52 73 7 99 15 65 42 31 14 9 92 110 97 100 114 81 118 78 36 114 103 102 100 96 93 119 59 100 96 55 70 90 4 68 73 36 38 37 6 110 78 85 53 113 107 90 45 65 36 41 28 110 86 57 108 83 68 109 55 96 106 19 76 33 49 40 82 6 8 35 70 28 118 109 30 109 46 108 27 69 95 47 80 74 34 84 20 6 61 14 40 93 95 113 53 24 35 74 63 111 102 17 19 66 93 1 29 82 22 76 55 35 87 87 22 7 72 5 50 44 87 15 23 88 41 4 9 5 114 119 68 32 94 13 50 90 9 118 43 19 80 52 36 32 92 16 55 69 12 106 6 67 79 27 52 91 2 117 49 3 47 112 4 5 58 77 75 17 95 23 74 48 57 24 2 38 61 48 89 117 26 79 88 62 95 60 109 4 66 114 35 29 13 72 31 49 21 50 59 95 120 120 47 66 1 7 55 109 52 39 59 107 70 28 56 26 11 103 28 26 98 53 98 74 119 107 20 5 117 102 117 53 56 57 88 101 57 91 29 6 42 99 39 26 9 116 107 42 14 16 35 41 76 92 63 113 14 65 1 13 6 12 74 4 98 74 104 70 34 54 37 31 111 4 117 79 118 96 74 94 67 8 10 23 59 114 6 15 79 31 97 73 55 84 97 72 67 69 41 32 106 6 52 106 8 22 23 60 35 66 64 118 96 10 39 78 92 50 3 15 23 109 100 86 30 21 108 120 113 106 94 112 99 62 88 51 21 1 95 45 14 1 3 54 32 115 114 57 100 89 2 47 77 106 73 51 42 116 58 104 7 71 64 68 65 6 41 49 5 20 31 74 97 112 33 78 32 111 111 100 38 85 111 43 90 93 48 53 112 31 108 28 39 13 55 46 109 113 101 34 94 54 106 52 80 47 104 15 34 1 75 74 10 24 36 63 32 103 49 58 63 52 82 61 32 5 114 32 6 92 19 112 26 107 38 21 120 34 30 60 106 88 43 92 59 107 1 42 100 108 96 46 104 108 62 21 92 88 29 88 49 23 112\n500\n93 125 80 75 43 79 120 30 42 72 109 54 29 120 90 128 44 110 89 129 99 29 82 92 31 127 20 75 90 17 35 66 77 9 18 29 52 63 75 14 109 26 70 53 37 26 21 104 119 104 108 126 87 128 87 47 115 105 112 109 106 93 119 65 112 108 57 71 92 6 78 83 37 48 45 8 117 88 90 56 117 113 91 56 75 37 48 40 120 98 62 120 83 69 112 60 96 113 26 87 41 60 48 87 11 20 44 80 39 128 115 30 110 48 113 32 79 105 56 86 82 36 93 21 7 68 15 42 94 101 125 65 31 36 80 67 111 111 27 27 69 94 4 39 83 26 77 61 44 96 92 28 16 78 13 53 53 96 27 28 99 46 5 9 12 117 125 74 34 101 24 59 92 18 121 45 21 80 61 43 41 100 28 66 72 22 108 16 68 83 31 62 97 10 122 60 15 53 113 9 10 59 80 75 28 95 24 77 49 64 27 4 38 71 56 93 124 32 88 96 70 106 60 119 14 78 118 41 41 13 82 35 57 22 54 70 105 127 123 59 74 3 7 60 120 61 41 64 118 79 32 64 29 17 111 35 32 106 59 110 74 130 115 23 13 128 111 125 62 57 67 88 102 64 93 38 12 45 105 48 27 10 128 113 49 16 26 35 49 76 101 72 113 18 70 3 21 15 18 85 8 100 81 108 70 44 65 44 43 113 8 120 82 124 102 78 100 75 12 17 34 69 116 11 25 87 36 103 75 60 88 108 76 67 74 46 33 113 14 59 114 14 29 35 61 42 76 71 119 108 11 44 85 99 52 5 23 30 117 103 88 39 31 108 128 119 110 103 123 103 73 90 63 31 3 102 50 26 8 8 66 43 125 126 61 100 96 6 49 88 116 78 57 47 117 63 113 13 80 66 74 68 16 47 59 15 27 36 78 106 120 37 80 43 114 115 111 46 85 117 43 96 98 57 55 120 33 120 40 45 17 64 46 118 113 113 41 95 55 118 54 90 50 107 25 44 8 86 85 12 35 38 65 44 103 59 70 72 61 89 68 32 5 116 32 7 95 30 117 26 108 43 23 132 46 38 72 112 88 46 96 67 115 13 53 111 117 100 56 107 113 70 21 95 95 29 96 53 25 113\n",
+        "expectedOutput": "56\n",
+        "sample": false
+      },
+      {
+        "input": "6\n1 3 0 5 8 5\n6\n2 4 6 7 9 9\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "3\n10 12 20\n3\n20 25 30\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n1\n5\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 239
+  },
+  {
+    "slug": "minimum-platforms",
+    "title": "Minimum Platforms",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "greedy",
+      "sorting",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Train `i` arrives at `arr[i]` and leaves at `dep[i]`. A train still occupies its platform at its departure time, so a train arriving at that same moment needs another platform. Return the minimum number of platforms needed so that no train waits.\n\n### Input\nLine 1: `n`.\nLine 2: `n` arrival times.\nLine 3: `n`.\nLine 4: `n` departure times.\n\n### Output\nThe minimum number of platforms.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= arr[i] <= dep[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n2193\n1\n2218\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n1932 2068\n2\n2140 2223\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] arr, int[] dep) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int arrLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] arr = new int[arrLen];\n        if (arrLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < arrLen; i++) arr[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int depLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] dep = new int[depLen];\n        if (depLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < depLen; i++) dep[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(arr, dep);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(arr, dep):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    arr_len = int(lines[pos]); pos += 1\n    arr = list(map(int, lines[pos].split())) if arr_len > 0 else []; pos += 1\n    dep_len = int(lines[pos]); pos += 1\n    dep = list(map(int, lines[pos].split())) if dep_len > 0 else []; pos += 1\n    result = solve(arr, dep)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(arr, dep) {\n  // Write your solution here\n}\n\nconst arrLen = parseInt(lines[pos++], 10);\nconst arr = arrLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst depLen = parseInt(lines[pos++], 10);\nconst dep = depLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(arr, dep);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> arr, vector<int> dep) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int arrLen = stoi(lines[pos++]);\n    vector<int> arr(arrLen);\n    if (arrLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : arr) iss >> v;\n    }\n    pos++;\n    int depLen = stoi(lines[pos++]);\n    vector<int> dep(depLen);\n    if (depLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : dep) iss >> v;\n    }\n    pos++;\n    int result = solve(arr, dep);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n2193\n1\n2218\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1932 2068\n2\n2140 2223\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n636 1333 174 1803 976\n5\n776 1590 386 1985 986\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "12\n1679 132 2225 2000 981 1057 1055 2055 1220 1790 311 2060\n12\n1896 316 2453 2081 1142 1158 1211 2106 1243 1796 335 2094\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "40\n1102 2056 763 1120 384 1596 497 1866 1178 361 2340 750 996 1743 944 1069 635 1393 2288 258 956 5 2200 2046 457 1624 1750 2146 1407 2132 274 2123 1338 2289 1688 439 1304 2323 1239 287\n40\n1120 2200 834 1382 423 1887 658 2123 1278 364 2443 811 1188 1746 962 1179 752 1423 2373 309 1230 37 2461 2287 673 1734 1907 2186 1686 2368 500 2379 1423 2516 1746 596 1437 2411 1524 396\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "150\n1666 412 1495 71 1792 1712 865 1818 431 1407 440 586 664 1203 78 707 335 1243 2310 144 372 1961 1129 1395 789 2170 968 1600 1592 2233 1764 1818 1436 1338 285 996 2086 832 770 877 1684 1068 1090 1869 2000 1697 2002 567 39 623 1780 762 801 1087 1759 586 387 254 972 82 910 495 1013 1421 1127 1340 1830 1906 1965 440 1257 1831 1474 501 1884 2103 893 2030 10 1436 359 722 2021 17 2091 1230 2050 686 688 215 1644 2014 1709 2350 2165 1603 833 563 2221 1147 651 1650 1391 1257 786 1432 112 1424 2261 197 1511 1415 2271 1028 1773 1100 2116 1189 1694 2057 2072 1326 722 1928 585 2147 1355 1620 513 2181 935 1535 883 374 743 2281 1645 86 1612 1878 1546 796 1623 165 1195 904 2354 464 373 399\n150\n1674 429 1577 73 2039 1744 936 1883 607 1587 682 684 704 1460 227 919 474 1345 2334 202 397 2162 1416 1562 825 2344 1236 1643 1624 2307 2008 1822 1662 1566 392 1124 2210 1087 832 904 1916 1350 1307 2120 2109 1860 2007 692 176 797 2036 805 1046 1195 1796 847 504 321 1237 376 994 525 1291 1455 1336 1574 1896 2023 2003 457 1466 2028 1508 698 1944 2348 1006 2150 17 1638 541 1008 2175 139 2175 1440 2194 723 979 351 1775 2282 1754 2449 2413 1762 846 619 2482 1362 935 1835 1685 1545 1068 1520 344 1566 2476 301 1722 1533 2486 1313 1942 1147 2264 1475 1872 2352 2095 1355 857 2004 841 2152 1538 1773 654 2194 1139 1538 1137 540 757 2543 1828 213 1688 1902 1655 1054 1742 169 1390 1076 2405 733 493 697\n",
+        "expectedOutput": "17\n",
+        "sample": false
+      },
+      {
+        "input": "500\n2111 59 1861 309 804 2165 862 2320 413 1807 1013 1247 1598 1439 165 796 1629 150 1324 1543 643 920 1812 1297 1655 929 1986 2138 1854 629 1622 1714 1814 2071 925 628 2345 2070 849 1590 310 1143 78 1976 1506 1460 1746 59 65 254 862 645 417 2133 429 2132 1543 1742 1384 747 2214 1741 428 1007 1093 753 1393 1251 2311 1315 1844 1355 2178 865 273 672 2030 1599 823 1058 642 87 843 385 1937 1029 1602 1334 162 2346 778 849 1161 1309 808 1521 1297 1835 1773 1031 306 923 2263 718 2208 1865 125 838 1394 1374 321 759 1162 1899 1125 638 1534 883 473 2148 1738 241 1905 787 1645 1150 1647 2190 1843 1508 975 2155 932 2002 15 1537 1213 498 963 1268 424 317 425 1062 680 894 1453 257 1487 1618 1225 1188 447 2098 124 797 946 1981 501 1812 871 821 2073 2080 200 867 1305 1976 1536 1582 492 923 2233 1056 1208 331 2111 528 2184 1855 1015 1109 2125 1195 2263 1951 2210 28 2174 1156 1765 795 57 2331 1674 956 891 2027 1753 2146 877 691 2094 1748 140 1277 1259 1198 1425 1540 964 2128 2201 253 1423 2243 767 199 1317 1271 563 1415 1297 839 465 63 2103 1600 1744 496 2305 1876 1690 2085 158 426 666 98 1040 419 1830 209 1086 1163 1476 2022 959 336 1 916 2106 2338 2203 1149 1876 1463 782 473 1209 1879 2065 1736 787 214 1775 399 1872 2089 972 910 2347 658 533 709 1771 459 2150 7 90 1542 1540 1588 642 1241 491 823 722 1005 1417 1208 1424 1275 229 1872 828 1070 309 1917 409 2283 483 1185 503 725 621 1739 743 1961 2197 639 107 734 1876 506 193 1302 1259 885 89 2297 1760 2168 1576 111 782 1802 1188 1924 1631 1852 563 2296 798 1029 231 1820 2346 2002 1541 1745 789 839 905 495 2210 2282 1700 2268 798 519 215 706 1381 621 1689 1331 1994 1036 2013 1234 815 953 2314 352 176 1111 1697 297 257 1172 1396 597 1682 236 466 678 1900 74 2135 1044 2302 1054 1113 2342 1379 526 930 1796 1453 838 1277 1658 428 2032 1468 1831 1793 2039 2102 632 1083 1225 119 963 795 2343 140 31 422 1787 1520 1165 1805 1687 260 590 1136 1870 2130 740 1662 579 887 963 2181 1240 999 781 676 561 1885 642 2304 871 2004 195 1222 2093 697 2218 1369 1216 2349 2247 2223 1106 1635 1334 639 924 601 840 987 410 362 1615 1052 2038 564 643 2322 1564 2051 2061 841 498 2288 1777 1033 280 791 2227 364 749 330 623 292 1118 1675 994 567 1474 1733 613 1181 1129 141 1250 1422 1336 972 439 995 314 689 1274 1517 882 907 1371\n500\n2394 253 1938 440 832 2291 1045 2427 615 2095 1112 1285 1670 1491 302 1095 1907 319 1429 1784 723 1012 1871 1365 1905 936 2215 2197 2089 812 1794 1964 1954 2357 983 699 2620 2135 868 1635 347 1374 313 1979 1623 1617 1980 202 305 413 1099 779 714 2267 511 2352 1569 2003 1422 836 2482 1850 487 1090 1271 835 1575 1489 2546 1476 2079 1638 2341 956 479 926 2214 1778 1109 1358 902 195 983 618 2083 1125 1802 1499 334 2379 837 957 1227 1353 850 1720 1416 1878 1881 1096 585 923 2380 900 2325 2061 287 887 1565 1532 588 1015 1247 1928 1271 917 1769 1034 499 2406 1750 483 2185 968 1779 1444 1866 2277 2062 1669 1267 2291 1128 2226 257 1757 1472 780 996 1281 424 601 610 1090 753 1129 1537 445 1718 1715 1286 1386 606 2284 376 914 1071 2225 709 2080 1159 934 2159 2114 295 1139 1468 2035 1545 1636 654 1052 2449 1181 1226 481 2219 697 2412 1949 1140 1190 2346 1354 2562 2197 2303 308 2189 1305 1790 852 347 2364 1834 974 898 2268 2039 2146 952 828 2230 1754 435 1496 1408 1306 1645 1792 1132 2149 2452 495 1657 2423 791 205 1339 1529 776 1640 1299 1076 610 346 2129 1666 1856 767 2495 1961 1804 2320 371 664 671 175 1087 590 1917 245 1278 1203 1676 2069 1015 505 176 1077 2294 2554 2467 1207 2053 1516 1056 606 1285 2081 2115 1846 817 499 1926 631 2100 2144 1044 1092 2566 948 629 891 1849 598 2342 205 328 1627 1819 1645 692 1403 718 839 936 1068 1445 1483 1550 1476 467 2171 846 1251 491 2077 659 2470 489 1452 504 730 812 1948 780 1997 2471 911 303 760 2152 804 368 1306 1411 987 224 2496 1816 2226 1825 174 1057 1909 1293 2016 1656 2110 751 2297 1042 1111 315 2071 2427 2172 1755 2028 1041 923 1043 571 2405 2533 1817 2422 801 761 436 991 1681 863 1919 1356 2266 1097 2283 1358 892 1253 2578 382 446 1188 1722 580 446 1195 1523 832 1961 247 491 726 1918 101 2390 1182 2571 1232 1405 2501 1436 768 1179 1890 1623 1089 1566 1800 510 2325 1536 1859 1992 2317 2302 848 1149 1419 209 1042 890 2428 251 83 624 1811 1590 1419 2029 1953 338 848 1183 2007 2200 774 1912 861 974 1050 2414 1499 1051 830 959 775 1904 900 2545 1129 2149 380 1468 2228 783 2468 1441 1266 2478 2294 2364 1314 1705 1576 888 1201 624 989 1102 545 500 1864 1305 2085 713 912 2509 1574 2310 2129 844 501 2533 1931 1080 340 791 2491 566 948 347 895 515 1378 1902 1266 858 1602 1972 716 1200 1161 304 1450 1535 1584 1001 530 1070 405 865 1511 1800 1023 1015 1617\n",
+        "expectedOutput": "45\n",
+        "sample": false
+      },
+      {
+        "input": "6\n900 940 950 1100 1500 1800\n6\n910 1200 1120 1130 1900 2000\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "2\n100 200\n2\n100 300\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n1\n5\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 240
+  },
+  {
+    "slug": "job-sequencing-problem",
+    "title": "Job Sequencing Problem",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "greedy",
+      "sorting",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Every job takes one unit of time and earns `profit[i]` only if it is finished by `deadline[i]` (time slots are numbered from 1). Only one job runs at a time. Return `[jobs done, total profit]` for the best schedule.\n\n### Input\nLine 1: `n`.\nLine 2: `n` deadlines.\nLine 3: `n`.\nLine 4: `n` profits.\n\n### Output\nTwo integers: the number of jobs, then the total profit.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= deadline[i] <= n`\n- `1 <= profit[i] <= 500`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n1\n294\n\nOutput:\n1 294\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n2\n10 18\n\nOutput:\n2 28\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] deadline, int[] profit) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int deadlineLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] deadline = new int[deadlineLen];\n        if (deadlineLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < deadlineLen; i++) deadline[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int profitLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] profit = new int[profitLen];\n        if (profitLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < profitLen; i++) profit[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(deadline, profit);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(deadline, profit):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    deadline_len = int(lines[pos]); pos += 1\n    deadline = list(map(int, lines[pos].split())) if deadline_len > 0 else []; pos += 1\n    profit_len = int(lines[pos]); pos += 1\n    profit = list(map(int, lines[pos].split())) if profit_len > 0 else []; pos += 1\n    result = solve(deadline, profit)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(deadline, profit) {\n  // Write your solution here\n}\n\nconst deadlineLen = parseInt(lines[pos++], 10);\nconst deadline = deadlineLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst profitLen = parseInt(lines[pos++], 10);\nconst profit = profitLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(deadline, profit);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> deadline, vector<int> profit) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int deadlineLen = stoi(lines[pos++]);\n    vector<int> deadline(deadlineLen);\n    if (deadlineLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : deadline) iss >> v;\n    }\n    pos++;\n    int profitLen = stoi(lines[pos++]);\n    vector<int> profit(profitLen);\n    if (profitLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : profit) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(deadline, profit);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n1\n294\n",
+        "expectedOutput": "1 294\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 2\n2\n10 18\n",
+        "expectedOutput": "2 28\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 1 3 2 3\n5\n401 52 62 345 353\n",
+        "expectedOutput": "3 1099\n",
+        "sample": false
+      },
+      {
+        "input": "12\n3 5 3 6 6 2 2 7 5 5 1 3\n12\n315 141 303 240 10 79 67 255 327 185 46 100\n",
+        "expectedOutput": "7 1766\n",
+        "sample": false
+      },
+      {
+        "input": "40\n7 12 6 16 3 6 21 18 21 9 13 8 19 5 9 11 20 10 4 18 3 20 2 9 16 18 15 17 11 4 2 4 1 15 16 2 19 12 13 18\n40\n467 253 345 325 288 487 288 3 6 463 282 92 96 304 188 289 259 138 91 249 82 431 131 114 415 73 137 348 115 383 249 282 461 278 409 408 485 259 206 428\n",
+        "expectedOutput": "21 7814\n",
+        "sample": false
+      },
+      {
+        "input": "150\n76 68 73 1 65 29 18 75 71 40 25 53 25 13 16 34 16 67 7 12 73 21 52 11 58 51 71 20 63 43 19 46 19 53 17 64 17 37 32 24 75 54 63 8 23 23 31 45 74 36 63 56 18 69 52 71 55 35 43 56 70 20 22 57 52 58 3 46 33 30 54 70 43 63 66 69 26 24 2 65 8 74 58 8 30 13 62 8 37 19 37 57 13 18 3 35 13 46 66 15 20 48 10 45 33 24 67 11 70 61 54 28 39 36 41 17 47 20 39 26 72 62 5 36 61 75 14 57 25 56 71 14 42 33 18 75 46 72 8 38 40 2 76 63 37 63 36 56 34 65\n150\n174 301 152 91 470 28 279 3 240 304 497 476 213 386 325 232 243 248 487 350 72 157 442 86 241 205 470 458 46 59 364 364 420 78 33 29 343 204 470 104 181 131 485 200 323 322 251 232 232 228 307 60 361 373 164 494 52 164 426 355 217 29 442 41 42 289 307 485 233 308 352 338 43 151 447 218 421 101 178 13 128 323 142 376 284 298 424 97 340 376 339 232 168 84 103 219 46 364 51 454 391 7 397 394 463 447 350 109 329 242 246 204 337 321 235 159 35 383 443 309 283 330 414 50 120 258 332 363 442 47 186 14 180 442 484 329 257 381 192 326 80 201 234 468 101 303 251 295 98 447\n",
+        "expectedOutput": "76 28437\n",
+        "sample": false
+      },
+      {
+        "input": "500\n165 84 199 137 4 39 60 85 143 47 114 38 63 50 103 81 42 210 161 114 99 175 130 59 232 147 169 249 44 216 15 33 192 142 148 225 149 172 176 80 122 89 20 228 170 174 3 15 50 51 55 243 86 56 34 74 226 180 152 76 140 115 69 154 65 52 199 70 22 126 165 204 89 160 98 237 78 142 175 191 138 115 116 242 110 117 128 130 15 160 191 163 185 184 6 21 71 85 91 149 17 202 236 59 83 74 250 174 237 214 224 71 55 93 185 210 105 161 196 30 10 179 185 105 79 83 167 153 132 242 65 165 198 77 104 134 44 201 38 228 218 213 166 128 143 68 183 174 99 214 79 92 132 247 192 186 234 23 240 110 53 130 44 54 202 98 167 27 25 63 215 94 97 240 247 176 75 59 41 48 187 57 22 243 182 157 33 63 250 221 156 183 77 56 143 48 103 187 65 55 16 88 51 93 11 87 46 15 40 73 52 81 176 239 71 106 134 133 36 50 169 13 235 40 19 125 54 105 206 99 3 146 34 118 233 55 160 234 43 99 149 26 179 31 24 229 154 143 214 166 159 47 238 19 112 11 250 174 26 222 45 19 193 160 166 190 220 251 183 228 164 93 93 4 92 157 120 231 238 172 228 119 123 108 145 71 74 223 176 208 45 138 96 225 179 190 251 69 74 210 156 50 216 135 246 111 120 8 3 186 90 191 102 45 126 10 195 2 209 178 223 190 133 147 207 227 84 208 123 80 218 114 65 8 18 137 90 180 6 81 227 115 34 145 108 116 62 31 51 37 70 154 9 78 134 236 91 176 177 6 168 161 59 76 223 99 77 168 155 1 19 109 185 104 121 187 14 60 29 44 91 22 20 92 110 75 57 59 215 2 196 180 208 14 179 23 128 162 171 72 242 9 225 9 14 63 176 221 98 147 238 210 73 51 20 154 16 229 24 56 204 74 160 135 52 76 210 25 21 120 42 228 98 17 229 102 166 144 108 64 68 135 49 90 49 42 208 234 65 124 49 192 130 29 144 243 104 12 200 187 244 228 47 52 219 15 16 8 88 89 1 123 113 165 84 5 2 149 96 223 92 233 192 100 127 163 7 86 162 229 215 43 8 26 236 115 118 182 78 72\n500\n356 294 306 68 59 21 177 83 302 25 341 288 342 407 145 260 47 390 203 97 277 82 214 56 18 329 214 211 492 476 272 214 36 101 253 394 436 486 194 413 27 117 361 414 61 348 329 173 283 438 155 336 108 377 270 290 290 48 24 96 79 251 326 198 65 74 332 101 16 261 361 376 241 177 2 279 65 484 447 184 217 357 102 437 141 489 87 163 126 240 148 463 470 330 138 410 443 80 429 66 472 156 129 135 71 441 149 247 307 239 219 267 344 296 118 323 247 474 347 343 368 26 246 475 28 252 18 419 132 60 68 210 233 467 344 366 143 137 39 413 351 112 307 196 140 244 145 397 240 39 418 250 67 199 18 375 319 167 181 405 484 46 100 77 318 37 393 11 498 28 139 340 67 418 71 175 200 170 67 376 84 123 286 444 160 404 492 444 119 231 92 145 167 431 257 236 141 480 43 288 89 224 103 234 423 451 347 361 138 234 457 396 6 365 48 59 99 440 176 263 142 166 55 133 474 393 169 54 164 431 388 417 27 337 287 184 334 109 16 382 371 464 14 489 228 437 329 43 36 383 397 311 352 344 237 247 326 325 1 315 397 48 43 247 38 6 63 89 48 119 86 355 497 166 275 209 317 489 20 88 273 295 104 221 154 460 324 103 60 225 149 367 345 247 302 402 349 86 228 152 282 306 359 292 339 257 148 18 384 377 345 44 470 18 423 225 317 351 227 36 72 403 219 355 393 229 398 104 21 59 48 344 41 113 69 254 408 10 68 325 454 464 11 383 300 84 92 440 95 247 367 62 452 94 320 124 56 283 289 387 368 439 196 40 173 452 150 61 46 137 264 437 352 365 160 270 253 223 332 319 403 165 8 318 261 283 240 482 311 185 280 97 282 460 135 142 224 402 247 215 100 62 216 64 146 414 314 27 380 264 337 450 319 457 334 180 277 246 210 447 174 484 288 129 79 442 350 46 127 96 221 387 97 23 370 223 156 380 113 480 107 135 173 297 366 165 255 417 115 447 20 36 54 327 207 405 445 405 492 372 443 92 214 218 95 180 407 500 373 1 444 281 326 427 2 332 10 196 293 439 15 451 25 483 341 436 176 19 222 190 470 20 312 202 300 329 99 275 120 271\n",
+        "expectedOutput": "251 90897\n",
+        "sample": false
+      },
+      {
+        "input": "4\n4 1 1 1\n4\n20 10 40 30\n",
+        "expectedOutput": "2 60\n",
+        "sample": false
+      },
+      {
+        "input": "5\n2 1 2 1 1\n5\n100 19 27 25 15\n",
+        "expectedOutput": "2 127\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n1\n7\n",
+        "expectedOutput": "1 7\n",
+        "sample": false
+      }
+    ],
+    "order": 241
   },
   {
     "slug": "candy",
@@ -20546,7 +21281,7 @@
         "sample": false
       }
     ],
-    "order": 232
+    "order": 242
   },
   {
     "slug": "non-overlapping-intervals",
@@ -20642,7 +21377,7 @@
         "sample": false
       }
     ],
-    "order": 233
+    "order": 243
   },
   {
     "slug": "insert-interval",
@@ -20737,7 +21472,7 @@
         "sample": false
       }
     ],
-    "order": 234
+    "order": 244
   },
   {
     "slug": "minimum-number-of-arrows-to-burst-balloons",
@@ -20832,7 +21567,7 @@
         "sample": false
       }
     ],
-    "order": 235
+    "order": 245
   },
   {
     "slug": "palindrome-number",
@@ -20940,7 +21675,7 @@
         "sample": false
       }
     ],
-    "order": 236
+    "order": 246
   },
   {
     "slug": "single-number",
@@ -21035,7 +21770,7 @@
         "sample": false
       }
     ],
-    "order": 237
+    "order": 247
   },
   {
     "slug": "missing-number",
@@ -21121,7 +21856,7 @@
         "sample": false
       }
     ],
-    "order": 238
+    "order": 248
   },
   {
     "slug": "number-of-1-bits",
@@ -21215,7 +21950,7 @@
         "sample": false
       }
     ],
-    "order": 239
+    "order": 249
   },
   {
     "slug": "power-of-two",
@@ -21320,7 +22055,7 @@
         "sample": false
       }
     ],
-    "order": 240
+    "order": 250
   },
   {
     "slug": "happy-number",
@@ -21394,7 +22129,7 @@
         "sample": false
       }
     ],
-    "order": 241
+    "order": 251
   },
   {
     "slug": "roman-to-integer",
@@ -21500,7 +22235,7 @@
         "sample": false
       }
     ],
-    "order": 242
+    "order": 252
   },
   {
     "slug": "excel-sheet-column-number",
@@ -21594,7 +22329,7 @@
         "sample": false
       }
     ],
-    "order": 243
+    "order": 253
   },
   {
     "slug": "plus-one",
@@ -21688,7 +22423,7 @@
         "sample": false
       }
     ],
-    "order": 244
+    "order": 254
   },
   {
     "slug": "hamming-distance",
@@ -21791,7 +22526,7 @@
         "sample": false
       }
     ],
-    "order": 245
+    "order": 255
   },
   {
     "slug": "sum-of-two-integers",
@@ -21895,7 +22630,7 @@
         "sample": false
       }
     ],
-    "order": 246
+    "order": 256
   },
   {
     "slug": "count-digits",
@@ -21964,7 +22699,7 @@
         "sample": false
       }
     ],
-    "order": 247
+    "order": 257
   },
   {
     "slug": "gcd-of-two-numbers",
@@ -22033,7 +22768,7 @@
         "sample": false
       }
     ],
-    "order": 248
+    "order": 258
   },
   {
     "slug": "armstrong-number",
@@ -22112,7 +22847,7 @@
         "sample": false
       }
     ],
-    "order": 249
+    "order": 259
   },
   {
     "slug": "divisors-of-a-number",
@@ -22186,7 +22921,7 @@
         "sample": false
       }
     ],
-    "order": 250
+    "order": 260
   },
   {
     "slug": "check-prime-number",
@@ -22265,7 +23000,7 @@
         "sample": false
       }
     ],
-    "order": 251
+    "order": 261
   },
   {
     "slug": "largest-odd-number-in-a-string",
@@ -22335,7 +23070,7 @@
         "sample": false
       }
     ],
-    "order": 252
+    "order": 262
   },
   {
     "slug": "count-primes",
@@ -22420,7 +23155,7 @@
         "sample": false
       }
     ],
-    "order": 253
+    "order": 263
   },
   {
     "slug": "fast-power-mod",
@@ -22514,7 +23249,7 @@
         "sample": false
       }
     ],
-    "order": 254
+    "order": 264
   },
   {
     "slug": "reverse-integer",
@@ -22622,7 +23357,7 @@
         "sample": false
       }
     ],
-    "order": 255
+    "order": 265
   },
   {
     "slug": "rotate-image",
@@ -22709,7 +23444,7 @@
         "sample": false
       }
     ],
-    "order": 256
+    "order": 266
   },
   {
     "slug": "bitwise-and-of-numbers-range",
@@ -22813,7 +23548,7 @@
         "sample": false
       }
     ],
-    "order": 257
+    "order": 267
   },
   {
     "slug": "single-number-ii",
@@ -22913,7 +23648,7 @@
         "sample": false
       }
     ],
-    "order": 258
+    "order": 268
   },
   {
     "slug": "find-the-repeating-and-missing-number",
@@ -22969,7 +23704,7 @@
         "sample": false
       }
     ],
-    "order": 259
+    "order": 269
   },
   {
     "slug": "count-subarrays-with-given-xor",
@@ -23030,7 +23765,7 @@
         "sample": false
       }
     ],
-    "order": 260
+    "order": 270
   },
   {
     "slug": "string-to-integer-atoi",
@@ -23120,7 +23855,103 @@
         "sample": false
       }
     ],
-    "order": 261
+    "order": 271
+  },
+  {
+    "slug": "integer-to-roman",
+    "title": "Integer to Roman",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "math",
+      "string",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Convert an integer to a Roman numeral using the usual subtractive forms (`IV`, `IX`, `XL`, `XC`, `CD`, `CM`).\n\n### Input\nLine 1: `num`.\n\n### Output\nThe Roman numeral.\n\n### Constraints\n- `1 <= num <= 3999`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n\nOutput:\nIII\n```\n\n**Example 2**\n```text\nInput:\n4\n\nOutput:\nIV\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static String solve(int num) {\n        // Write your solution here\n        return \"\";\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int num = Integer.parseInt(lines.get(pos++).trim());\n        String result = solve(num);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(num):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    num = int(lines[pos]); pos += 1\n    result = solve(num)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(num) {\n  // Write your solution here\n}\n\nconst num = parseInt(lines[pos++], 10);\nconst result = solve(num);\nconsole.log(result);\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstring solve(int num) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int num = stoi(lines[pos++]);\n    string result = solve(num);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "3\n",
+        "expectedOutput": "III\n",
+        "sample": true
+      },
+      {
+        "input": "4\n",
+        "expectedOutput": "IV\n",
+        "sample": true
+      },
+      {
+        "input": "9\n",
+        "expectedOutput": "IX\n",
+        "sample": false
+      },
+      {
+        "input": "14\n",
+        "expectedOutput": "XIV\n",
+        "sample": false
+      },
+      {
+        "input": "40\n",
+        "expectedOutput": "XL\n",
+        "sample": false
+      },
+      {
+        "input": "58\n",
+        "expectedOutput": "LVIII\n",
+        "sample": false
+      },
+      {
+        "input": "90\n",
+        "expectedOutput": "XC\n",
+        "sample": false
+      },
+      {
+        "input": "400\n",
+        "expectedOutput": "CD\n",
+        "sample": false
+      },
+      {
+        "input": "1994\n",
+        "expectedOutput": "MCMXCIV\n",
+        "sample": false
+      },
+      {
+        "input": "2024\n",
+        "expectedOutput": "MMXXIV\n",
+        "sample": false
+      },
+      {
+        "input": "3999\n",
+        "expectedOutput": "MMMCMXCIX\n",
+        "sample": false
+      },
+      {
+        "input": "1\n",
+        "expectedOutput": "I\n",
+        "sample": false
+      },
+      {
+        "input": "3888\n",
+        "expectedOutput": "MMMDCCCLXXXVIII\n",
+        "sample": false
+      },
+      {
+        "input": "3235\n",
+        "expectedOutput": "MMMCCXXXV\n",
+        "sample": false
+      },
+      {
+        "input": "3333\n",
+        "expectedOutput": "MMMCCCXXXIII\n",
+        "sample": false
+      }
+    ],
+    "order": 272
   },
   {
     "slug": "permutation-sequence",
@@ -23185,7 +24016,7 @@
         "sample": false
       }
     ],
-    "order": 262
+    "order": 273
   },
   {
     "slug": "island-perimeter",
@@ -23274,7 +24105,7 @@
         "sample": false
       }
     ],
-    "order": 263
+    "order": 274
   },
   {
     "slug": "max-area-of-island",
@@ -23363,7 +24194,7 @@
         "sample": false
       }
     ],
-    "order": 264
+    "order": 275
   },
   {
     "slug": "spiral-matrix",
@@ -23473,7 +24304,7 @@
         "sample": false
       }
     ],
-    "order": 265
+    "order": 276
   },
   {
     "slug": "set-matrix-zeroes",
@@ -23560,7 +24391,7 @@
         "sample": false
       }
     ],
-    "order": 266
+    "order": 277
   },
   {
     "slug": "valid-sudoku",
@@ -23664,7 +24495,7 @@
         "sample": false
       }
     ],
-    "order": 267
+    "order": 278
   },
   {
     "slug": "game-of-life",
@@ -23758,6 +24589,6 @@
         "sample": false
       }
     ],
-    "order": 268
+    "order": 279
   }
 ]
