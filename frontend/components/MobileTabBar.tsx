@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useBackClose } from "@/lib/useBackClose";
 
 const TABS = [
   { href: "/problemset", label: "Problems", icon: "☰" },
@@ -26,6 +27,8 @@ const active = (path: string, href: string) =>
 export default function MobileTabBar() {
   const path = usePathname() ?? "/";
   const [more, setMore] = useState(false);
+  const router = useRouter();
+  const dismiss = useBackClose(more, () => setMore(false)); // Back closes the sheet instead of leaving the page
   useEffect(() => { setMore(false); }, [path]);
   useEffect(() => {
     if (!more) return;
@@ -38,11 +41,18 @@ export default function MobileTabBar() {
   return (
     <>
       {more && (
-        <div className="msheet-backdrop" onClick={() => setMore(false)}>
+        <div className="msheet-backdrop" onClick={() => dismiss()}>
           <div className="msheet" role="dialog" aria-label="More pages" onClick={(e) => e.stopPropagation()}>
             <div className="msheet-grip" aria-hidden="true" />
             <div className="msheet-grid">
-              {MORE.map((m) => <Link key={m.href} href={m.href} className={active(path, m.href) ? "on" : ""}>{m.label}</Link>)}
+              {MORE.map((m) => (
+                <Link key={m.href} href={m.href} className={active(path, m.href) ? "on" : ""}
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    dismiss(() => router.push(m.href));
+                  }}>{m.label}</Link>
+              ))}
             </div>
           </div>
         </div>

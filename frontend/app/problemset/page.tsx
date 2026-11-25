@@ -8,6 +8,7 @@ import { prefetchProblem, swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
 import SheetPills from "@/components/SheetPills";
 import { isSheetTag } from "@/lib/sheets";
+import { useBackClose } from "@/lib/useBackClose";
 import { useMeta } from "@/lib/meta";
 import { FILTER_KEY, parseFilters } from "@/lib/listFilters";
 
@@ -36,6 +37,7 @@ export default function ProblemsPage() {
   const [topicQ, setTopicQ] = useState("");
   const [topicSort, setTopicSort] = useState<"count" | "az">("count");
   const [sheet, setSheet] = useState(false); // phone filter bottom sheet
+  useBackClose(sheet, () => setSheet(false));
   const [data, setData] = useState<Page<ProblemSummary> | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState("");

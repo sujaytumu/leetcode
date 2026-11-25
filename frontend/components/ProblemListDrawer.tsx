@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useBackClose } from "@/lib/useBackClose";
 import { ProblemSummary } from "@/lib/api";
 import Skeleton from "./Skeleton";
 
@@ -11,6 +12,7 @@ export default function ProblemListDrawer({ open, onClose, problems, currentSlug
   { open: boolean; onClose: () => void; problems: ProblemSummary[]; currentSlug: string }) {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const dismiss = useBackClose(open, onClose);
   const input = useRef<HTMLInputElement>(null);
   const current = useRef<HTMLLIElement>(null);
 
@@ -31,7 +33,7 @@ export default function ProblemListDrawer({ open, onClose, problems, currentSlug
   }, [problems, q]);
 
   if (!open) return null;
-  const go = (slug: string) => { onClose(); router.push(`/problems/${slug}`); };
+  const go = (slug: string) => { dismiss(() => router.push(`/problems/${slug}`)); };
   const shuffle = () => {
     const pool = problems.filter((p) => p.status !== "SOLVED" && p.slug !== currentSlug);
     const pick = (pool.length ? pool : problems)[Math.floor(Math.random() * (pool.length || problems.length))];

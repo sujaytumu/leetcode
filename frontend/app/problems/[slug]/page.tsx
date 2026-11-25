@@ -13,6 +13,7 @@ import {
 import { pushRecent } from "@/lib/recent";
 import { loadAll, swr } from "@/lib/local";
 import { useMeta } from "@/lib/meta";
+import { useBackClose } from "@/lib/useBackClose";
 import { useCloudSync } from "@/lib/cloud";
 import { useMock } from "@/lib/mock";
 import VoteButtons from "@/components/VoteButtons";
@@ -125,6 +126,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const [runParts, setRunParts] = useState<Parts | null>(null);
   // Phones show one pane at a time (Problem / Code / Result); laptops ignore this and show everything.
   const [pane, setPane] = useState<"problem" | "code" | "result">("problem");
+  useBackClose(pane !== "problem", () => setPane("problem")); // phone Back goes Result/Code -> Problem before leaving the page
   const [savedCases, setSavedCases] = useState<string[]>([]);
   const [undoReset, setUndoReset] = useState<string | null>(null);
   const [savedFlash, setSavedFlash] = useState(false);
