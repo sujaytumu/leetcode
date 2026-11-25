@@ -172,9 +172,9 @@
       "Two strings are anagrams if every letter appears the same number of times in both.",
       "Sorting both strings, or counting letters, makes that easy to compare."
     ],
-    "approach": "Compare letter counts: count up for one string, count down for the other, and check that every count returns to zero (or simply compare the sorted strings).",
+    "approach": "Count letters of one string up and the other down in a fixed-size table; the strings are anagrams exactly when every count returns to zero.",
     "time": "O(n)",
-    "space": "O(1) for a fixed alphabet"
+    "space": "O(1)"
   },
   "search-insert-position": {
     "hints": [
@@ -384,7 +384,7 @@
       "Sorting makes it easy to ask 'how many papers have at least c citations?'.",
       "Avoid the sort: cap each citation at n and count into buckets, then scan from high to low accumulating papers."
     ],
-    "approach": "Counting sort: bucket[min(c, n)]++ for every citation. Scan h from n down to 0 keeping a running total of papers with at least h citations; the first h where the total is >= h is the answer. Sorting descending and finding the last index i with citations[i] >= i + 1 also works in O(n log n).",
+    "approach": "Count papers in buckets 0..n (citations above n count as n), then scan h from n down; the first h with at least h papers is the answer. No sorting needed.",
     "time": "O(n)",
     "space": "O(n)"
   },
@@ -774,9 +774,9 @@
       "Then you need the k entries with the highest counts; sorting all of them is the simple option.",
       "For linear time use bucket sort: index by frequency (at most n) and read buckets from high to low. Break ties by smaller value."
     ],
-    "approach": "Count with a map, then sort the distinct values by (frequency descending, value ascending) and take k — O(m log m) for m distinct values. A size-k min-heap gives O(m log k), and bucketing by frequency gives O(n) if you only need any valid order; the tie-break here needs an ordering inside each bucket.",
-    "time": "O(m log m)",
-    "space": "O(m)"
+    "approach": "Count frequencies, then partition with nth_element so the k most frequent values come first (average linear time) and sort only those k.",
+    "time": "O(n + d + k log k) average",
+    "space": "O(d)"
   },
   "meeting-rooms-ii": {
     "hints": [
@@ -914,9 +914,9 @@
       "dp[i] = 1 + min(dp[i - s]) over squares s <= i.",
       "BFS over remainders also works; Lagrange's four-square theorem bounds the answer by 4."
     ],
-    "approach": "dp[0] = 0; for i in 1..n: dp[i] = min over j with j*j <= i of dp[i - j*j] + 1. The answer is dp[n]. A number-theory solution checks for 1 square, 2 squares (sum of two squares), the 4^a(8b+7) form (4), else 3 in O(sqrt n).",
-    "time": "O(n√n)",
-    "space": "O(n)"
+    "approach": "Every n is a sum of at most four squares. One square: n is a perfect square. Four: after dividing out 4s, n % 8 == 7. Two: some n - i*i is a square. Otherwise three.",
+    "time": "O(sqrt n)",
+    "space": "O(1)"
   },
   "longest-consecutive-sequence": {
     "hints": [
@@ -1877,7 +1877,7 @@
       "If s is a repetition, it appears inside s + s at a non-trivial position.",
       "Remove the first and last character of the doubled string before searching."
     ],
-    "approach": "Check whether s occurs in (s + s) with the first and last characters removed. A match means s is made of a repeated block.",
+    "approach": "Compute the KMP prefix function. If the longest border has length b > 0 and n is divisible by n - b, then the first n - b characters repeat to form s.",
     "time": "O(n)",
     "space": "O(n)"
   },
@@ -1913,8 +1913,8 @@
       "Rows and columns are sorted.",
       "A min-heap seeded with the first column, or binary search on the value, both work."
     ],
-    "approach": "Binary search on the value range: count how many cells are <= mid by walking from the bottom-left corner; the smallest value with count >= k is the answer. (A k-step min-heap merge also works.)",
-    "time": "O(n log(range))",
+    "approach": "Binary search the answer value. For a candidate, walk the staircase from the bottom-left to count entries not larger than it; the smallest value with count >= k is the answer.",
+    "time": "O((rows + cols) log(max - min))",
     "space": "O(1)"
   },
   "merge-sorted-array": {
