@@ -1,0 +1,35 @@
+/* Login / register page. Own file so it never collides with parallel edits to globals.css. */
+.authsplit { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,420px); gap:48px; align-items:center; max-width:960px; margin:0 auto; padding:clamp(16px,7vh,64px) 16px 32px; }
+.authbrand { display:flex; flex-direction:column; gap:18px; padding:8px 8px 8px 0; }
+.authbrand h2 { margin:0; font-size:clamp(26px,3.4vw,36px); line-height:1.15; letter-spacing:-.02em; }
+.authbrand ul { list-style:none; margin:0; padding:0; display:grid; gap:12px; color:var(--mute); font-size:15px; line-height:1.4; }
+.authbrand li { padding-left:26px; position:relative; }
+.authbrand li::before { content:"✓"; position:absolute; left:0; top:0; color:#2cbb5d; font-weight:700; }
+.authbrand li b { color:var(--text); }
+.authsplit .authcard { max-width:420px; margin:0; padding:26px; }
+.authlogo { display:none; margin-bottom:10px; }
+.autherr { color:var(--hard, #ef4743); font-size:12.5px; }
+.authwarn { color:#ffa116; font-size:12.5px; }
+.authfield input[aria-invalid="true"] { border-color:var(--hard, #ef4743); }
+.authrow { display:flex; justify-content:space-between; align-items:center; margin-top:-6px; }
+.authrow a { color:var(--accent); font-weight:600; }
+.authguest { margin:10px 0 0; text-align:center; font-size:13.5px; }
+.authguest a { color:var(--mute); }
+.authguest a:hover { color:var(--text); }
+.strength { display:grid; gap:6px; margin-top:-4px; }
+.strength-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
+.strength-bar i { height:5px; border-radius:999px; background:var(--cell); transition:background .2s; }
+.strength-bar.s1 i:nth-child(-n+1) { background:#ef4743; }
+.strength-bar.s2 i:nth-child(-n+2) { background:#ffa116; }
+.strength-bar.s3 i:nth-child(-n+3) { background:#c8c92f; }
+.strength-bar.s4 i { background:#2cbb5d; }
+.authsubmit { display:flex; align-items:center; justify-content:center; gap:8px; min-height:46px; }
+.authspin { width:14px; height:14px; border-radius:50%; border:2px solid currentColor; border-top-color:transparent; animation:authspin .7s linear infinite; }
+@keyframes authspin { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .authspin { animation:none; } }
+@media (max-width:820px) {
+  .authsplit { grid-template-columns:minmax(0,1fr); gap:0; padding-top:20px; }
+  .authbrand { display:none; }
+  .authsplit .authcard { max-width:none; padding:20px; }
+  .authlogo { display:block; }
+}
