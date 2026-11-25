@@ -2138,3 +2138,9 @@ html { overscroll-behavior-y:contain; }
 
 /* The account menu lives inside the sticky top bar, so the bar must sit above sticky page toolbars (z-index 20), else they cover the menu. */
 .acct-pop { max-height:calc(100vh - var(--nav-h) - 24px); max-height:calc(100dvh - var(--nav-h) - 24px); overflow-y:auto; overscroll-behavior:contain; }
+
+/* ---- feel and speed ---- */
+/* No 300ms tap delay or double-tap zoom on controls, and no grey flash when tapping in the Android app. */
+a, button, summary, label, select, [role="button"], [role="tab"] { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+/* Long sheets: the browser skips layout and paint for topic cards that are scrolled far off screen. */
+.sh-group { content-visibility:auto; contain-intrinsic-size:auto 520px; }
