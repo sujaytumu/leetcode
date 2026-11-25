@@ -148,9 +148,14 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   const loadHistory = useCallback(
     () => api<Submission[]>(`/api/problems/${slug}/submissions`).then(setHistory).catch(() => {}), [slug]);
   useEffect(() => { loadHistoryRef.current = loadHistory; }, [loadHistory]);
-  const checkExec = useCallback(
-    () => api<ExecutionStatus>("/api/execution/status", {}, 20000).then(setExec)
-      .catch((e: ApiError) => setExec({ enabled: true, reachable: false, provider: "unknown", message: e.message })), []);
+  // A sleeping free-tier server fails this check for a while; retry quietly before telling the user execution is down.
+  const checkExec = useCallback(function check(tries = 0): Promise<void> {
+    return api<ExecutionStatus>("/api/execution/status", {}, 20000).then(setExec)
+      .catch((e: ApiError) => {
+        if (typeof tries === "number" && tries < 12) { setTimeout(() => { void check(tries + 1); }, 5000); return; }
+        setExec({ enabled: true, reachable: false, provider: "unknown", message: e.message });
+      });
+  }, []);
 
   const loadProblem = useCallback(() => {
     setLoadError("");
@@ -431,7 +436,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
       {execDown && (
         <div className="banner warn">
           Code execution is unavailable: {exec.message} Run and Submit will show an error until it is back.
-          <button onClick={checkExec}>Re-check</button>
+          <button onClick={() => { void checkExec(); }}>Re-check</button>
         </div>
       )}
       <div className="lctop">

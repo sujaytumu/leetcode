@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
+import "@/app/wake.css";
 
 type Phase = "check" | "show" | "fade" | "done";
 
@@ -12,10 +13,16 @@ type Phase = "check" | "show" | "fade" | "done";
 export default function Splash() {
   const [phase, setPhase] = useState<Phase>("check");
   const [slow, setSlow] = useState(false);
+  const [waking, setWaking] = useState(false); // server still asleep, but the app is already usable from its cache
 
   useEffect(() => {
     let stop = false;
-    const showTimer = setTimeout(() => { if (!stop) setPhase((p) => (p === "check" ? "show" : p)); }, 450);
+    // The app paints from its cached catalogue straight away, so the full-screen splash is only a brief intro (first
+    // visit only) and never holds the app hostage while a sleeping free-tier server wakes; a small pill shows instead.
+    let seen = false;
+    try { seen = localStorage.getItem("lc-seen") === "1"; localStorage.setItem("lc-seen", "1"); } catch { /* storage blocked */ }
+    const showTimer = setTimeout(() => { if (!stop && !seen) setPhase((p) => (p === "check" ? "show" : p)); }, 450);
+    const capTimer = setTimeout(() => { if (!stop) { setPhase((p) => (p === "show" ? "fade" : "done")); setWaking(true); } }, seen ? 800 : 2200);
     const slowTimer = setTimeout(() => { if (!stop) setSlow(true); }, 9000);
     const started = Date.now();
     const up = async () => {
@@ -28,10 +35,11 @@ export default function Splash() {
         await new Promise((r) => setTimeout(r, 2000));
       }
       if (stop) return;
-      clearTimeout(showTimer);
+      clearTimeout(showTimer); clearTimeout(capTimer);
+      setWaking(false);
       setPhase((p) => (p === "show" ? "fade" : "done"));
     })();
-    return () => { stop = true; clearTimeout(showTimer); clearTimeout(slowTimer); };
+    return () => { stop = true; clearTimeout(showTimer); clearTimeout(capTimer); clearTimeout(slowTimer); };
   }, []);
 
   useEffect(() => {
@@ -40,7 +48,11 @@ export default function Splash() {
     return () => clearTimeout(t);
   }, [phase]);
 
-  if (phase === "check" || phase === "done") return null;
+  if (phase === "check" || phase === "done") {
+    return waking ? (
+      <div className="wakepill" role="status" aria-live="polite"><i aria-hidden="true" />{slow ? "Waking the server… cached content is shown meanwhile" : "Connecting to the server…"}</div>
+    ) : null;
+  }
   return (
     <div className={`splash${phase === "fade" ? " out" : ""}`} role="status" aria-live="polite">
       <div className="splash-box">
