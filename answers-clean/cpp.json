@@ -1023,5 +1023,20 @@
   "solutions": {
    "cpp": "// Approach: DP where canBreak[i] means the first i characters can be segmented.\n// Time O(n^2 * L), Space O(n + total dictionary size), L = longest substring hashed\nclass Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> dict(wordDict.begin(), wordDict.end());\n        int n = s.size();\n        vector<bool> canBreak(n + 1, false);\n        canBreak[0] = true;\n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i && !canBreak[i]; j++) {\n                if (canBreak[j] && dict.count(s.substr(j, i - j))) {\n                    canBreak[i] = true;\n                }\n            }\n        }\n        return canBreak[n];\n    }\n};\n"
   }
+ },
+ "longest-common-prefix": {
+  "solutions": {
+   "cpp": "// Approach: The prefix common to all strings is the prefix common to the lexicographically smallest and largest ones; find both in one linear pass.\n// Time O(n * m), Space O(1)\nclass Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        if (strs.empty()) return \"\";\n        const string *smallest = &strs[0], *largest = &strs[0];\n        for (const string& s : strs) {\n            if (s < *smallest) smallest = &s;\n            if (s > *largest) largest = &s;\n        }\n        size_t i = 0;\n        while (i < smallest->size() && i < largest->size() && (*smallest)[i] == (*largest)[i]) i++;\n        return smallest->substr(0, i);\n    }\n};"
+  }
+ },
+ "rotate-string": {
+  "solutions": {
+   "cpp": "// Approach: KMP search for goal inside s + s (read through i % n so the doubled string is never built); linear worst case.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    bool rotateString(string s, string goal) {\n        int n = s.size();\n        if (n != (int)goal.size()) return false;\n        if (n == 0) return true;\n        vector<int> lps(n, 0);\n        for (int i = 1, len = 0; i < n; ) {\n            if (goal[i] == goal[len]) lps[i++] = ++len;\n            else if (len > 0) len = lps[len - 1];\n            else lps[i++] = 0;\n        }\n        for (int i = 0, matched = 0; i < 2 * n - 1; i++) {\n            char c = s[i % n];\n            while (matched > 0 && c != goal[matched]) matched = lps[matched - 1];\n            if (c == goal[matched]) matched++;\n            if (matched == n) return true;\n        }\n        return false;\n    }\n};"
+  }
+ },
+ "row-with-maximum-ones": {
+  "solutions": {
+   "cpp": "// Approach: Staircase walk from the top-right: step left while the cell is 1, otherwise step down; the last row that moved left holds the most ones.\n// Time O(rows + cols), Space O(1)\nclass Solution {\npublic:\n    int rowWithMaxOnes(vector<vector<int>>& matrix) {\n        int rows = matrix.size();\n        if (rows == 0) return 0;\n        int col = (int)matrix[0].size() - 1, best = 0;\n        for (int r = 0; r < rows && col >= 0; ) {\n            if (matrix[r][col] == 1) { best = r; col--; }  // this row has more ones than any row before it\n            else r++;\n        }\n        return best;\n    }\n};"
+  }
  }
 }

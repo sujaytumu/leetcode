@@ -2208,10 +2208,10 @@
   "row-with-maximum-ones": {
     "hints": [
       "Each row is sorted, so the ones form a suffix.",
-      "Binary search the first 1 in every row."
+      "Start at the top-right corner: a 1 means this row beats every earlier one, so move left; a 0 means move down."
     ],
-    "approach": "For each row binary search the first index holding a 1; the number of ones is row length minus that index. Keep the row with the most ones, preferring the smaller index on ties.",
-    "time": "O(r log c)",
+    "approach": "Each row is sorted, so its ones form a suffix. Walk from the top-right corner: on a 1 this row has more ones than any row so far, so record it and step left; on a 0 step down. The walk takes at most rows + cols steps and keeps the lowest index on ties.",
+    "time": "O(rows + cols)",
     "space": "O(1)"
   },
   "search-a-2d-matrix-ii": {
@@ -2441,19 +2441,19 @@
   },
   "longest-common-prefix": {
     "hints": [
-      "After sorting, the first and last strings differ the most.",
-      "Compare just those two."
+      "Any prefix shared by the smallest and the largest string (alphabetically) is shared by every string between them.",
+      "Find those two in one pass; no sorting is needed."
     ],
-    "approach": "Sort the strings. The common prefix of all of them is the common prefix of the lexicographically smallest and largest strings, so compare these two characters until they differ.",
-    "time": "O(n * m log n)",
-    "space": "O(1) beyond sorting"
+    "approach": "Any prefix shared by the lexicographically smallest and largest strings is shared by every string between them. Find both in one pass and compare just those two.",
+    "time": "O(n * m)",
+    "space": "O(1)"
   },
   "rotate-string": {
     "hints": [
       "Every rotation of s is a substring of s + s.",
       "Lengths must be equal."
     ],
-    "approach": "If the lengths differ return false. Otherwise goal is a rotation of s exactly when it appears inside s + s.",
+    "approach": "If the lengths differ return false. Otherwise goal is a rotation of s exactly when it occurs inside s + s. Search with KMP, reading s + s through i % n, so the worst case is linear rather than quadratic.",
     "time": "O(n)",
     "space": "O(n)"
   },
