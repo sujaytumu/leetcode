@@ -61,6 +61,9 @@ const norm = (t: string) => t.replace(/\s+$/, "");
 const isCustomInput = (p: ProblemDetail | null, text: string) =>
   !!p && norm(text) !== "" && !p.samples.some((s) => norm(s.input) === norm(text));
 
+/** The part of a saved submission the person wrote (without the hidden test harness / main()). */
+const shown = (s: { code: string; language: string }) => extractUser(s.code, s.language) ?? s.code;
+
 export default function ProblemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const router = useRouter();
@@ -617,26 +620,26 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                   {(() => {
                     const other = diffWith === "" ? null : history.find((h) => h.id === diffWith);
                     // Diff reads old -> new, so the older submission is the "before" side.
-                    return other ? <CodeDiff before={other.id < openSub.id ? other.code : openSub.code} after={other.id < openSub.id ? openSub.code : other.code} /> : null;
+                    return other ? <CodeDiff before={other.id < openSub.id ? shown(other) : shown(openSub)} after={other.id < openSub.id ? shown(openSub) : shown(other)} /> : null;
                   })()}
                   {diffWith !== "" ? null : showDiff ? (
                     <>
                       <div className="mute" style={{ fontSize: 12, marginBottom: 4 }}>Submission → your editor ({lang})</div>
-                      <pre className="subcode diff">{lineDiff(openSub.code, code).map((r, i) => (
+                      <pre className="subcode diff">{lineDiff(shown(openSub), code).map((r, i) => (
                         <div key={i} className={`dl ${r.kind}`}>{r.kind === "add" ? "+ " : r.kind === "del" ? "- " : "  "}{r.text}</div>
                       ))}</pre>
                     </>
                   ) : (
                     <div className={`subcodewrap${codeExpanded ? " open" : ""}`}>
-                      <pre className="subcode lnum">{openSub.code.replace(/\n+$/, "").split("\n").map((ln, i) => (
+                      <pre className="subcode lnum">{shown(openSub).replace(/\n+$/, "").split("\n").map((ln, i) => (
                         <div key={i} className="ln"><span className="lno">{i + 1}</span><span>{ln || " "}</span></div>
                       ))}</pre>
-                      {openSub.code.split("\n").length > 9 && (
+                      {shown(openSub).split("\n").length > 9 && (
                         <button className="viewmore" onClick={() => setCodeExpanded((v) => !v)}>{codeExpanded ? "︿ View less" : "﹀ View more"}</button>
                       )}
                     </div>
                   )}
-                  <button onClick={() => { setLang(openSub.language); setCode(openSub.code); setTab("desc"); setOpenSub(null); }}>Load into editor</button>{" "}
+                  <button onClick={() => { setLang(openSub.language); setCode(shown(openSub)); setTab("desc"); setOpenSub(null); }}>Load into editor</button>{" "}
                   <button className="ghost" disabled={openSub.language !== lang} title={openSub.language !== lang ? "Switch the editor to this submission's language to compare" : "Compare with the code in your editor"}
                     onClick={() => setShowDiff((v) => !v)}>{showDiff ? "Hide diff" : "Diff vs editor"}</button>
                   <NoteBox slug={slug} value={notes} tags={problem.tags}
