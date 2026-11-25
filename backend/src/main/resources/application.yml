@@ -67,3 +67,9 @@ app:
     auth-token: ${JUDGE0_AUTH_TOKEN:}
     cpu-time-limit-seconds: 2.0
     read-timeout-seconds: 20
+
+# Run code with the compilers installed on this server when no Judge0 is configured (the Docker image has them).
+exec:
+  local:
+    enabled: ${EXEC_LOCAL:false}
+    run-as: ${EXEC_RUN_AS:}

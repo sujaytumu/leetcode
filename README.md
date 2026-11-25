@@ -3,7 +3,7 @@
 A LeetCode-style practice app.
 
 - **Backend:** Java 21, Spring Boot 3, Spring Data JPA (H2 for dev, PostgreSQL for prod)
-- **Code execution:** sandboxed through [Judge0](https://github.com/judge0/judge0) (optional, configured via `JUDGE0_URL`)
+- **Code execution:** built-in runner (g++, javac, python3, node; `EXEC_LOCAL`) or a [Judge0](https://github.com/judge0/judge0) instance (`JUDGE0_URL`)
 - **Frontend:** Next.js + TypeScript with the Monaco editor
 
 ## Quick start with Docker
@@ -38,8 +38,10 @@ Frontend unit tests use Node's built-in runner (`cd frontend && npm test`, Node 
    environment variable `NEXT_PUBLIC_API_URL` = your Render URL. Deploy and copy the Vercel URL.
 4. Back in Render, set `CORS_ALLOWED_ORIGINS` to the Vercel URL (no trailing slash) and redeploy.
 
-Notes: Render's free plan sleeps after inactivity, so the first request can take about a minute. Run and Submit
-need a Judge0 instance (`JUDGE0_URL`); without one the app browses problems and tracks bookmarks but cannot execute code.
+Notes: Render's free plan sleeps after inactivity, so the first request can take about a minute. Run and Submit work out of the box:
+the Docker image ships g++, javac, python3 and node and runs submissions itself (`EXEC_LOCAL=true`, as an unprivileged user with
+CPU/file/process limits, a stripped environment and a wall-clock kill). It is not a hardened sandbox, so for a public deployment
+set `JUDGE0_URL` (which takes priority) or `EXEC_LOCAL=false`. Outside Docker, set `EXEC_LOCAL=true` yourself if the compilers are installed.
 
 ## Backend
 

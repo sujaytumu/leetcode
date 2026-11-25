@@ -39,3 +39,7 @@ services:
         sync: false
       - key: JUDGE0_AUTH_TOKEN
         sync: false
+      # Without JUDGE0_URL the Docker image runs submissions itself (g++, javac, python3, node as an unprivileged user).
+      # Set to false to turn code execution off.
+      - key: EXEC_LOCAL
+        value: "true"
