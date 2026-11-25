@@ -1,4 +1,5 @@
 "use client";
+import { useBackClose } from "@/lib/useBackClose";
 import { EditorSettings, EditorTheme } from "@/lib/editorSettings";
 
 interface Props {
@@ -15,6 +16,7 @@ const THEMES: { key: EditorTheme; label: string }[] = [
 
 /** LeetCode-style editor settings dialog. */
 export default function EditorSettingsModal({ settings, onChange, onReset, onClose }: Props) {
+  useBackClose(true, onClose); // mounted only while open
   const toggle = (key: "wordWrap" | "minimap" | "lineNumbers", label: string) => (
     <label className="setting-row">
       <span>{label}</span>

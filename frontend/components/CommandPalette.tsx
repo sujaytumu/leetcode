@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useBackClose } from "@/lib/useBackClose";
 import { api, Page, ProblemSummary } from "@/lib/api";
 import { getRecent, type RecentItem } from "@/lib/recent";
 
@@ -33,6 +34,7 @@ export function PaletteButton() {
 export default function CommandPalette() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const dismiss = useBackClose(open, () => setOpen(false));
   const [q, setQ] = useState("");
   const [found, setFound] = useState<ProblemSummary[]>([]);
   const [sel, setSel] = useState(0);
@@ -82,7 +84,7 @@ export default function CommandPalette() {
     ...PAGES.filter((p) => !term || p.label.toLowerCase().includes(term)).map((p) => ({ key: `g-${p.href}`, ...p })),
   ];
 
-  const go = (it: Item | undefined) => { if (!it) return; setOpen(false); router.push(it.href); };
+  const go = (it: Item | undefined) => { if (!it) return; dismiss(() => router.push(it.href)); };
   const onInputKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") { e.preventDefault(); setSel((s) => Math.min(items.length - 1, s + 1)); }
     else if (e.key === "ArrowUp") { e.preventDefault(); setSel((s) => Math.max(0, s - 1)); }
