@@ -133,16 +133,28 @@ export default function StriverPage() {
           <details className="sh-group" key={topic} open>
             <summary><span className="sh-gname">{tagLabel(topic)}</span><span className="sh-gcount">{g.solved}/{g.total}</span></summary>
             <ul className="sh-list">
-              {items.map((p) => (
-                <li key={p.id}>
-                  <span className="sh-st">{ICON[p.status]}</span>
-                  <Link className="sh-title" href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
-                  <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
-                  <Link href={`/problems/${p.slug}?tab=solutions`} className="solico sh-sol" title="Solutions" aria-label={`Solutions for ${p.title}`}>
-                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
-                  </Link>
-                </li>
-              ))}
+              {(["EASY", "MEDIUM", "HARD"] as const).map((d) => {
+                const part = items.filter((p) => p.difficulty === d);
+                if (!part.length) return null;
+                const done = part.filter((p) => p.status === "SOLVED").length;
+                return (
+                  <li key={d} className="sh-levelwrap">
+                    <div className={`sh-level ${d}`}><b>{cap(d)}</b><span>{done}/{part.length}</span></div>
+                    <ul className="sh-sublist">
+                      {part.map((p) => (
+                        <li key={p.id} className={`sh-row ${d}`}>
+                          <span className="sh-st">{ICON[p.status]}</span>
+                          <Link className="sh-title" href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
+                          <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
+                          <Link href={`/problems/${p.slug}?tab=solutions`} className="solico sh-sol" title="Solutions" aria-label={`Solutions for ${p.title}`}>
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
             </ul>
           </details>
         );
