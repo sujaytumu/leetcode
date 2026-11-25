@@ -31,6 +31,9 @@ public class DataSeeder implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
+    /** The test_cases columns hold 50,000 characters; a longer value aborts the whole seed (and the server start). */
+    private static final int MAX_CASE_CHARS = 50_000;
+
     record SeedTestCase(String input, String expectedOutput, boolean sample) {}
 
     record SeedProblem(
@@ -80,9 +83,14 @@ public class DataSeeder implements ApplicationRunner {
             problem.setTags(new LinkedHashSet<>(item.tags()));
             problem.setStarterCode(item.starterCode());
             problem.setSortOrder(item.order());
-            for (int i = 0; i < item.testCases().size(); i++) {
-                SeedTestCase tc = item.testCases().get(i);
-                problem.addTestCase(new TestCase(i, tc.input(), tc.expectedOutput(), tc.sample()));
+            int position = 0;
+            for (SeedTestCase tc : item.testCases()) {
+                if (tc.input().length() > MAX_CASE_CHARS || tc.expectedOutput().length() > MAX_CASE_CHARS) {
+                    log.warn("Skipping an oversized test case of {} (input {} / output {} chars)", item.slug(),
+                            tc.input().length(), tc.expectedOutput().length());
+                    continue;
+                }
+                problem.addTestCase(new TestCase(position++, tc.input(), tc.expectedOutput(), tc.sample()));
             }
             problems.save(problem);
             inserted++;

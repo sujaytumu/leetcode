@@ -6558,6 +6558,9 @@ STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missin
 SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
 
 
+MAX_CASE_CHARS = 40000  # keep well under the 50,000-character test_cases columns
+
+
 def to_seed(problem):
     params, ret, ref = problem["params"], problem["ret"], problem["ref"]
     tests = []
@@ -6569,6 +6572,9 @@ def to_seed(problem):
         answer = ref(*args)
         # Answers that list every solution must stay readable, and string answers must be unique.
         if ret in ("sets", "rows", "strs") and len(answer) > 1500:
+            continue
+        # The database columns hold at most 50,000 characters; one oversized case aborts the whole seed (and the server start).
+        if len(fmt_input(params, args)) > MAX_CASE_CHARS or len(fmt_output(ret, answer)) > MAX_CASE_CHARS:
             continue
         if accept is not None and not accept(*args):
             continue
