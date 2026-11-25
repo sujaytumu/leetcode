@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Page, ProblemSummary, tagLabel } from "@/lib/api";
 import { prefetchProblem, swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
@@ -15,6 +15,25 @@ const ICON = {
   TODO: null,
 } as const;
 const cap = (d: string) => d[0] + d.slice(1).toLowerCase();
+
+/** One row of the sheet. Memoised so ticking a problem re-renders that row only, not the whole sheet. */
+const SheetRow = memo(function SheetRow({ p, d, done, ticked, onToggle }: { p: ProblemSummary; d: string; done: boolean; ticked: boolean; onToggle: (slug: string) => void }) {
+  return (
+    <li className={`sh-row ${d}`}>
+                          <label className={`sh-check${p.status === "ATTEMPTED" && !done ? " att" : ""}`} title={p.status === "SOLVED" ? "Solved by a submission" : ticked ? "Marked done (tap to undo)" : "Mark as done"}>
+                            <input type="checkbox" checked={done} disabled={p.status === "SOLVED"} onChange={() => onToggle(p.slug)} aria-label={`Mark ${p.title} as done`} />
+                            <i aria-hidden="true" />
+                          </label>
+                          <Link prefetch={false} className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
+                          <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
+                          <Link prefetch={false} href={`/problems/${p.slug}?lang=cpp`} className="sh-btn sh-solve" aria-label={`Solve ${p.title}`}>Solve</Link>
+                          <Link prefetch={false} href={`/problems/${p.slug}?tab=solutions&lang=cpp`} className="sh-btn sh-sol" title="C++ solution" aria-label={`C++ solution for ${p.title}`}>
+                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                            <span>C++ solution</span>
+                          </Link>
+                        </li>
+  );
+});
 
 /** Striver's A2Z and SDE sheets on one page: pick a sheet, see your progress, work through it topic by topic. */
 export default function StriverPage() {
@@ -41,14 +60,14 @@ export default function StriverPage() {
   useEffect(() => {
     try { const raw = localStorage.getItem(TICK_KEY); if (raw) setTicked(new Set(JSON.parse(raw) as string[])); } catch { /* storage blocked */ }
   }, []);
-  const toggleTick = (slug: string) => {
+  const toggleTick = useCallback((slug: string) => {
     setTicked((prev) => {
       const next = new Set(prev);
       if (next.has(slug)) next.delete(slug); else next.add(slug);
       try { localStorage.setItem(TICK_KEY, JSON.stringify([...next])); } catch { /* storage blocked */ }
       return next;
     });
-  };
+  }, []);
   const isDone = (p: ProblemSummary) => p.status === "SOLVED" || ticked.has(p.slug);
 
   useEffect(() => {
@@ -158,19 +177,7 @@ export default function StriverPage() {
                     <div className={`sh-level ${d}`}><b>{cap(d)}</b><span>{done}/{part.length}</span></div>
                     <ul className="sh-sublist">
                       {part.map((p) => (
-                        <li key={p.id} className={`sh-row ${d}`}>
-                          <label className={`sh-check${p.status === "ATTEMPTED" && !isDone(p) ? " att" : ""}`} title={p.status === "SOLVED" ? "Solved by a submission" : ticked.has(p.slug) ? "Marked done (tap to undo)" : "Mark as done"}>
-                            <input type="checkbox" checked={isDone(p)} disabled={p.status === "SOLVED"} onChange={() => toggleTick(p.slug)} aria-label={`Mark ${p.title} as done`} />
-                            <i aria-hidden="true" />
-                          </label>
-                          <Link className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
-                          <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
-                          <Link href={`/problems/${p.slug}?lang=cpp`} className="sh-btn sh-solve" aria-label={`Solve ${p.title}`}>Solve</Link>
-                          <Link href={`/problems/${p.slug}?tab=solutions&lang=cpp`} className="sh-btn sh-sol" title="C++ solution" aria-label={`C++ solution for ${p.title}`}>
-                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
-                            <span>C++ solution</span>
-                          </Link>
-                        </li>
+                        <SheetRow key={p.id} p={p} d={d} done={isDone(p)} ticked={ticked.has(p.slug)} onToggle={toggleTick} />
                       ))}
                     </ul>
                   </li>
