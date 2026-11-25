@@ -2144,3 +2144,13 @@ html { overscroll-behavior-y:contain; }
 a, button, summary, label, select, [role="button"], [role="tab"] { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 /* Long sheets: the browser skips layout and paint for topic cards that are scrolled far off screen. */
 .sh-group { content-visibility:auto; contain-intrinsic-size:auto 520px; }
+
+/* ---- compact phone layout: smaller rows, no duplicated difficulty, tighter cards ---- */
+@media (max-width:700px) {
+  .sm-diff { display:none; }
+  th, td { padding:7px 10px; }
+  td .show-sm { margin-top:1px; font-size:12px; line-height:1.3; }
+  .card { padding:10px 12px; }
+  .card b { font-size:19px; }
+  .md h1, .md h2, .md h3 { margin:12px 0 5px; }
+}

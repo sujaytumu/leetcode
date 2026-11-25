@@ -73,9 +73,14 @@ public class DataSeeder implements ApplicationRunner {
         for (SeedProblem item : seed) {
             Problem existing = problems.findBySlug(item.slug()).orElse(null);
             if (existing != null) {
-                // Content is never overwritten, but the study-path position is kept in step with the seed file.
+                // Content is never overwritten, but the study-path position and the tags (which hold the Striver sheet
+                // memberships) are kept in step with the seed file.
                 if (item.order() != null && !item.order().equals(existing.getSortOrder())) {
                     existing.setSortOrder(item.order());
+                }
+                LinkedHashSet<String> wantedTags = new LinkedHashSet<>(item.tags());
+                if (!wantedTags.equals(new LinkedHashSet<>(existing.getTags()))) {
+                    existing.setTags(wantedTags);
                 }
                 continue;
             }
