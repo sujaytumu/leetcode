@@ -6554,6 +6554,11 @@ from sde_batch3 import make_batch  # noqa: E402  (greedy, stack, string and recu
 SDE_EXTRA = make_batch(mk, a2z_rng)
 PROBLEMS += SDE_EXTRA
 
+from sde_batch4 import make_batch as make_batch_4  # noqa: E402  (real Striver SDE problems the app was still missing)
+_have4 = {p["slug"] for p in PROBLEMS}
+SDE_BATCH_4 = [p for p in make_batch_4(mk, a2z_rng, dict(TN=TN, tok2tree=tok2tree, tree2tok=tree2tok, rand_tree=rand_tree, TREE_IN=TREE_IN, TREE_OUT=TREE_OUT)) if p["slug"] not in _have4]
+PROBLEMS += SDE_BATCH_4
+
 
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
@@ -6562,6 +6567,8 @@ STRIVER_A2Z = set(['move-zeroes', 'remove-duplicates-from-sorted-array', 'missin
 SHEET_TAGS = (("striver-sde", STRIVER_SDE), ("striver-a2z", STRIVER_A2Z))
 STRIVER_SDE |= {p["slug"] for p in SDE_EXTRA}
 STRIVER_A2Z |= {p["slug"] for p in SDE_EXTRA}
+STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_4}
+STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_4 if p["slug"] not in ("z-function", "compare-version-numbers")}
 
 
 MAX_CASE_CHARS = 40000  # keep well under the 50,000-character test_cases columns

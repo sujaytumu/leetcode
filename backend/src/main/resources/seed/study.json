@@ -2600,5 +2600,194 @@
     "approach": "Depth-first search from the top-left. Mark the cell as visited, try the four moves into open unvisited cells and add up the paths that reach the goal, then unmark the cell (backtrack).",
     "time": "O(4^(n^2)) worst case",
     "space": "O(n^2)"
+  },
+  "binary-tree-preorder-traversal": {
+    "hints": [
+      "A stack replaces the recursion.",
+      "Push the right child before the left so the left is processed first."
+    ],
+    "approach": "Keep a stack. Pop a node, record it, push its right child and then its left child, so the left subtree is handled before the right.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "binary-tree-postorder-traversal": {
+    "hints": [
+      "Postorder is the reverse of node, right, left.",
+      "Do a preorder that visits right before left, then reverse the result."
+    ],
+    "approach": "Run an iterative traversal that records the node and then pushes left and right, which visits node, right, left. Reversing that order gives left, right, node.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "left-view-of-binary-tree": {
+    "hints": [
+      "The left view is the first node of every level.",
+      "Level order (BFS) handles one level at a time."
+    ],
+    "approach": "Traverse level by level with a queue. The first node taken from the queue in each level is the one visible from the left.",
+    "time": "O(n)",
+    "space": "O(w)"
+  },
+  "top-view-of-binary-tree": {
+    "hints": [
+      "Give every node a horizontal distance.",
+      "The first node reached at a distance in level order is the highest."
+    ],
+    "approach": "BFS while tracking each node's horizontal distance (left -1, right +1). Store a value for a distance only the first time it is seen, then read the distances from smallest to largest.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "bottom-view-of-binary-tree": {
+    "hints": [
+      "Same distances as the top view.",
+      "A node seen later in level order is lower, so it replaces the earlier one."
+    ],
+    "approach": "BFS with horizontal distances. Overwrite the stored value for a distance every time a node arrives, so the last (lowest, and rightmost on ties) node stays. Read the distances in increasing order.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "vertical-order-traversal-of-a-binary-tree": {
+    "hints": [
+      "Record every node as (column, row, value).",
+      "Sorting the triples gives the required order directly."
+    ],
+    "approach": "Walk the tree once and store (column, row, value) for every node. Sort the list, which orders columns left to right, rows top to bottom and values inside a cell. Start a new group whenever the column changes.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "root-to-node-path-in-a-binary-tree": {
+    "hints": [
+      "Add the node to the path before going down.",
+      "If neither subtree contains the target, remove the node again."
+    ],
+    "approach": "DFS with a path list: push the node, return true if it is the target or a child subtree finds it, otherwise pop it (backtrack) and return false.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "maximum-width-of-binary-tree": {
+    "hints": [
+      "Number the nodes like a heap: children of i are 2i and 2i+1.",
+      "Subtract the first index of each level so the numbers do not overflow."
+    ],
+    "approach": "BFS with an index per node. For each level the width is last index minus first index plus one. Re-basing the indices at the start of every level keeps them small.",
+    "time": "O(n)",
+    "space": "O(w)"
+  },
+  "boundary-traversal-of-binary-tree": {
+    "hints": [
+      "Split the walk into three parts: left edge, leaves, right edge.",
+      "Collect the right edge top to bottom and reverse it."
+    ],
+    "approach": "Add the root, then the left boundary without leaves, then every leaf from left to right, then the right boundary without leaves in reverse order.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "construct-binary-tree-from-inorder-and-postorder-traversal": {
+    "hints": [
+      "The last postorder value is the root.",
+      "Rebuild the right subtree before the left one when reading postorder from the back."
+    ],
+    "approach": "Read postorder from the end: each value is a root. Find it in inorder with a hash map, build its right part first (the values after it) and then its left part.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "flatten-binary-tree-to-linked-list": {
+    "hints": [
+      "The new right chain follows preorder.",
+      "Hang the old right subtree below the rightmost node of the left subtree."
+    ],
+    "approach": "For each node with a left child, find the rightmost node of that left subtree, attach the node's right subtree to it, move the left subtree to the right and clear the left pointer. Then move on to the right child.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "children-sum-property": {
+    "hints": [
+      "Leaves are always fine.",
+      "Compare a node with the sum of its existing children, then check both children."
+    ],
+    "approach": "Recursively check every node: a leaf passes, otherwise its value must equal the sum of its children (a missing child counts as 0) and both children must pass too.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "fractional-knapsack": {
+    "hints": [
+      "Take the best value per weight first.",
+      "Only the last item may be taken partially."
+    ],
+    "approach": "Sort items by value/weight (compare with cross-multiplication to avoid decimals). Take whole items while they fit, then the needed fraction of the next one. Scale by 100 using integer arithmetic.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "minimum-number-of-coins": {
+    "hints": [
+      "Take the largest coin that still fits.",
+      "For these denominations the greedy choice is always optimal."
+    ],
+    "approach": "Go through the denominations from largest to smallest, take as many coins of each as fit into the remaining amount and continue with the remainder.",
+    "time": "O(1)",
+    "space": "O(1)"
+  },
+  "median-of-two-sorted-arrays": {
+    "hints": [
+      "Binary search how many elements come from the shorter array.",
+      "A split is correct when each left value is at most the other side's right value."
+    ],
+    "approach": "Binary search a cut in the shorter array; the cut in the longer one is implied. The cut is valid when both left maxima are at most both right minima. The median comes from those four values.",
+    "time": "O(log(min(m, n)))",
+    "space": "O(1)"
+  },
+  "merge-k-sorted-arrays": {
+    "hints": [
+      "Only the first unused element of each array matters.",
+      "A min-heap gives the smallest of them."
+    ],
+    "approach": "Put the first element of every array in a min-heap. Repeatedly pop the smallest, add it to the answer and push the next element of the same array.",
+    "time": "O(N log k)",
+    "space": "O(k)"
+  },
+  "k-maximum-sum-combinations": {
+    "hints": [
+      "Sort both arrays in descending order.",
+      "The next best sum is next to one you already took."
+    ],
+    "approach": "Sort descending. Start a max-heap with (0, 0). Each time you pop (i, j), push (i+1, j) and (i, j+1) if not seen before. After k pops you have the k largest sums.",
+    "time": "O(n log n + k log k)",
+    "space": "O(n + k)"
+  },
+  "next-greater-element": {
+    "hints": [
+      "Scan from the right while keeping a stack.",
+      "Remove stack values that are not greater than the current one."
+    ],
+    "approach": "Go from right to left. Pop every stack value that is smaller than or equal to the current element; the top that remains is its next greater element. Then push the current value.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "sort-a-stack": {
+    "hints": [
+      "Remove the top, sort the rest, insert the top in the right place.",
+      "Inserting also uses recursion."
+    ],
+    "approach": "Recursively pop the top element, sort what is left, then insert the element back so larger values stay on top: pop smaller-than-it values, put it in, and push those values back.",
+    "time": "O(n^2)",
+    "space": "O(n) recursion"
+  },
+  "z-function": {
+    "hints": [
+      "Reuse the match window [l, r) found so far.",
+      "Inside the window, start from the value already known at the mirrored position."
+    ],
+    "approach": "Maintain the rightmost window [l, r) that matches a prefix. For a new i inside it, start from min(r - i, z[i - l]) and extend by comparing characters. Each extension moves r forward, so the total is linear.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "compare-version-numbers": {
+    "hints": [
+      "Read one number from each version at a time.",
+      "A missing revision is 0."
+    ],
+    "approach": "Use two pointers. Parse the next dot-separated number from each version (0 when a version has ended) and compare. Return at the first difference, otherwise 0.",
+    "time": "O(n + m)",
+    "space": "O(1)"
   }
 }
