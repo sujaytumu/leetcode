@@ -796,7 +796,7 @@
  },
  "intersection-of-two-arrays-ii": {
   "solutions": {
-   "cpp": "// Approach: Count nums1 in a hash map, then consume matching counts while scanning sorted nums2.\n// Time O(n + m log m), Space O(n)\nclass Solution {\npublic:\n    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {\n        unordered_map<int, int> remaining;\n        for (int num : nums1) remaining[num]++;\n        sort(nums2.begin(), nums2.end());\n        vector<int> result;\n        for (int num : nums2) {\n            auto it = remaining.find(num);\n            if (it != remaining.end() && it->second > 0) {\n                result.push_back(num);\n                it->second--;\n            }\n        }\n        return result;\n    }\n};"
+   "cpp": "// Approach: Count nums1 in a hash map, consume matching counts while scanning nums2, and sort only the matches (at most min(n, m)).\n// Time O(n + m + k log k) for k matches, Space O(n)\nclass Solution {\npublic:\n    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {\n        unordered_map<int, int> remaining;\n        remaining.reserve(nums1.size());\n        for (int num : nums1) remaining[num]++;\n        vector<int> result;\n        for (int num : nums2) {\n            auto it = remaining.find(num);\n            if (it != remaining.end() && it->second > 0) {\n                result.push_back(num);\n                it->second--;\n            }\n        }\n        sort(result.begin(), result.end());\n        return result;\n    }\n};"
   }
  },
  "is-subsequence": {
