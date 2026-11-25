@@ -35,6 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* The code editor (Monaco) is fetched from this CDN when a problem opens; connect early so it starts sooner. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        {/* Open the connection to the API now (TLS handshake included) so the first real request is not waiting on it. */}
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"} crossOrigin="anonymous" />
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
         <script dangerouslySetInnerHTML={{ __html:
           "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" + ACCENT_BOOT_SCRIPT +
