@@ -2755,5 +2755,71 @@
   "solutions": {
    "cpp": "// Optimised: O(26 * n^2) time, O(1) space\nclass Solution {\npublic:\n    int beautySum(string s) {\n        int n = s.size(), total = 0;\n        for (int i = 0; i < n; i++) {\n            int freq[26] = {};\n            for (int j = i; j < n; j++) {\n                freq[s[j] - 'a']++;\n                int hi = 0, lo = INT_MAX;\n                for (int f : freq) {\n                    if (f == 0) continue;\n                    hi = max(hi, f);\n                    lo = min(lo, f);\n                }\n                total += hi - lo;\n            }\n        }\n        return total;\n    }\n};\n"
   }
+ },
+ "n-meetings-in-one-room": {
+  "editorial": "## Approach\n\nSort the meetings by end time. Take a meeting whenever it starts strictly after the end of the last one taken. Ending as early as possible keeps the most time free for the rest.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\n\nclass Solution {\npublic:\n    int maxMeetings(vector<int>& start, vector<int>& end) {\n        int n = start.size();\n        vector<pair<int, int>> meetings(n);\n        for (int i = 0; i < n; i++) meetings[i] = {end[i], start[i]};\n        sort(meetings.begin(), meetings.end());\n        int count = 0, lastEnd = -1;\n        for (auto& m : meetings) {\n            if (m.second > lastEnd) {\n                count++;\n                lastEnd = m.first;\n            }\n        }\n        return count;\n    }\n};\n"
+  }
+ },
+ "minimum-platforms": {
+  "editorial": "## Approach\n\nSort arrivals and departures separately. Walk through them: if the next arrival is at or before the earliest remaining departure a new train is on a platform, otherwise a train leaves. The largest number of trains present at once is the answer.\n\n**Complexity:** O(n log n) time, O(1) extra space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(1) extra space\n\nclass Solution {\npublic:\n    int minimumPlatforms(vector<int>& arr, vector<int>& dep) {\n        sort(arr.begin(), arr.end());\n        sort(dep.begin(), dep.end());\n        int n = arr.size(), i = 0, j = 0, onPlatform = 0, best = 0;\n        while (i < n) {\n            if (arr[i] <= dep[j]) {          // next arrival comes before (or when) the earliest departure\n                best = max(best, ++onPlatform);\n                i++;\n            } else {\n                onPlatform--;\n                j++;\n            }\n        }\n        return best;\n    }\n};\n"
+  }
+ },
+ "job-sequencing-problem": {
+  "editorial": "## Approach\n\nSort jobs by profit, highest first. For each job find the latest free time slot at or before its deadline; a disjoint-set structure that points to the next free slot to the left makes that near constant time. Skip the job when no slot is free.\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> jobSequencing(vector<int>& deadline, vector<int>& profit) {\n        int n = deadline.size();\n        vector<int> order(n);\n        iota(order.begin(), order.end(), 0);\n        sort(order.begin(), order.end(), [&](int a, int b) { return profit[a] > profit[b]; });\n        vector<int> parent(n + 1);            // parent[t] = latest free slot <= t (0 means none)\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> find = [&](int t) { return parent[t] == t ? t : parent[t] = find(parent[t]); };\n        int jobs = 0, total = 0;\n        for (int id : order) {\n            int slot = find(min(deadline[id], n));\n            if (slot > 0) {\n                parent[slot] = slot - 1;\n                jobs++;\n                total += profit[id];\n            }\n        }\n        return {jobs, total};\n    }\n};\n"
+  }
+ },
+ "next-smaller-element": {
+  "editorial": "## Approach\n\nScan left to right with a stack of indices whose next smaller value is not known yet. While the stack top is larger than the current value, that current value is its answer. Then push the current index.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> nextSmallerElement(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> ans(n, -1);\n        stack<int> st;                        // indices whose next smaller value is still unknown\n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && nums[st.top()] > nums[i]) {\n                ans[st.top()] = nums[i];\n                st.pop();\n            }\n            st.push(i);\n        }\n        return ans;\n    }\n};\n"
+  }
+ },
+ "stock-span-problem": {
+  "editorial": "## Approach\n\nKeep a stack of indices with decreasing prices. Pop every day whose price is at most today's; the span is the distance to the day left on top (or all days so far if the stack is empty). Push today.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> stockSpan(vector<int>& prices) {\n        int n = prices.size();\n        vector<int> span(n);\n        stack<int> st;                        // indices with strictly decreasing prices\n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && prices[st.top()] <= prices[i]) st.pop();\n            span[i] = st.empty() ? i + 1 : i - st.top();\n            st.push(i);\n        }\n        return span;\n    }\n};\n"
+  }
+ },
+ "maximum-of-minimums-for-every-window-size": {
+  "editorial": "## Approach\n\nWith a monotonic stack find, for every element, how far it extends left and right before a smaller value appears. That gives the longest window length where it is the minimum. Store the best such value for each length, then sweep lengths from n down to 1 taking the running maximum.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> maxOfMinimums(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> left(n, -1), right(n, n);\n        stack<int> st;\n        for (int i = 0; i < n; i++) {\n            while (!st.empty() && nums[st.top()] >= nums[i]) {\n                right[st.top()] = i;\n                st.pop();\n            }\n            left[i] = st.empty() ? -1 : st.top();\n            st.push(i);\n        }\n        vector<int> ans(n + 2, 0);            // ans[len] = best minimum over windows of exactly len\n        for (int i = 0; i < n; i++) {\n            int len = right[i] - left[i] - 1;  // nums[i] is the minimum of a window this long\n            ans[len] = max(ans[len], nums[i]);\n        }\n        for (int len = n - 1; len >= 1; len--) ans[len] = max(ans[len], ans[len + 1]);\n        return vector<int>(ans.begin() + 1, ans.begin() + n + 1);\n    }\n};\n"
+  }
+ },
+ "celebrity-problem": {
+  "editorial": "## Approach\n\nKeep a candidate. For each next person i, if the candidate knows i the candidate is out and i takes over. After the pass verify the candidate: everyone knows them and they know nobody.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\n\nclass Solution {\npublic:\n    int celebrity(vector<vector<int>>& M) {\n        int n = M.size(), cand = 0;\n        for (int i = 1; i < n; i++)\n            if (M[cand][i]) cand = i;         // cand knows i, so cand cannot be the celebrity\n        for (int i = 0; i < n; i++) {\n            if (i == cand) continue;\n            if (M[cand][i] || !M[i][cand]) return -1;\n        }\n        return cand;\n    }\n};\n"
+  }
+ },
+ "integer-to-roman": {
+  "editorial": "## Approach\n\nUse the 13 Roman values in descending order, subtractive pairs included (900, 400, 90, 40, 9, 4). For each, append its symbol while it still fits into the number and subtract it.\n\n**Complexity:** O(1) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(1) time, O(1) space\n\nclass Solution {\npublic:\n    string intToRoman(int num) {\n        const int value[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};\n        const char* symbol[] = {\"M\", \"CM\", \"D\", \"CD\", \"C\", \"XC\", \"L\", \"XL\", \"X\", \"IX\", \"V\", \"IV\", \"I\"};\n        string out;\n        for (int i = 0; i < 13; i++)\n            while (num >= value[i]) {\n                out += symbol[i];\n                num -= value[i];\n            }\n        return out;\n    }\n};\n"
+  }
+ },
+ "kmp-pattern-search": {
+  "editorial": "## Approach\n\nBuild the prefix function of the pattern. Scan the text keeping the length of the current match; on a mismatch fall back through the prefix function, on a full match record the start and fall back once more so overlaps are found.\n\n**Complexity:** O(n + m) time, O(m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(m) space\n\nclass Solution {\npublic:\n    vector<int> kmpSearch(string text, string pattern) {\n        int n = text.size(), m = pattern.size();\n        vector<int> fail(m, 0);               // longest proper prefix of pattern[0..i] that is also a suffix\n        for (int i = 1, k = 0; i < m; i++) {\n            while (k > 0 && pattern[i] != pattern[k]) k = fail[k - 1];\n            if (pattern[i] == pattern[k]) k++;\n            fail[i] = k;\n        }\n        vector<int> hits;\n        for (int i = 0, k = 0; i < n; i++) {\n            while (k > 0 && (k == m || text[i] != pattern[k])) k = fail[k - 1];\n            if (text[i] == pattern[k]) k++;\n            if (k == m) hits.push_back(i - m + 1);\n        }\n        if (hits.empty()) hits.push_back(-1);\n        return hits;\n    }\n};\n"
+  }
+ },
+ "minimum-characters-to-make-palindrome": {
+  "editorial": "## Approach\n\nThe answer is n minus the length of the longest palindromic prefix. Compute it as the last value of the prefix function of s + '#' + reverse(s).\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\n\nclass Solution {\npublic:\n    int minChar(string s) {\n        string t = s + \"#\" + string(s.rbegin(), s.rend());\n        int n = t.size();\n        vector<int> fail(n, 0);               // prefix function of s + '#' + reverse(s)\n        for (int i = 1, k = 0; i < n; i++) {\n            while (k > 0 && t[i] != t[k]) k = fail[k - 1];\n            if (t[i] == t[k]) k++;\n            fail[i] = k;\n        }\n        return (int)s.size() - fail[n - 1];   // the last value is the longest palindromic prefix\n    }\n};\n"
+  }
+ },
+ "rat-in-a-maze-count": {
+  "editorial": "## Approach\n\nDepth-first search from the top-left. Mark the cell as visited, try the four moves into open unvisited cells and add up the paths that reach the goal, then unmark the cell (backtrack).\n\n**Complexity:** O(4^(n^2)) worst case time, O(n^2) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(4^(n^2)) worst case time, O(n^2) space\n\nclass Solution {\npublic:\n    int countPaths(vector<vector<int>>& grid) {\n        int n = grid.size();\n        if (!grid[0][0] || !grid[n - 1][n - 1]) return 0;\n        const int dr[] = {1, 0, -1, 0}, dc[] = {0, 1, 0, -1};\n        function<int(int, int)> go = [&](int r, int c) {\n            if (r == n - 1 && c == n - 1) return 1;\n            grid[r][c] = 2;                   // mark as used on this path\n            int total = 0;\n            for (int d = 0; d < 4; d++) {\n                int nr = r + dr[d], nc = c + dc[d];\n                if (nr >= 0 && nr < n && nc >= 0 && nc < n && grid[nr][nc] == 1) total += go(nr, nc);\n            }\n            grid[r][c] = 1;\n            return total;\n        };\n        return go(0, 0);\n    }\n};\n"
+  }
  }
 }

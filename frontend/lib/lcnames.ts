@@ -268,6 +268,17 @@ export const LC_METHODS: Record<string, string> = {
   "count-and-say": "countAndSay",
   "find-the-index-of-the-first-occurrence-in-a-string": "strStr",
   "sum-of-beauty-of-all-substrings": "beautySum",
+  "n-meetings-in-one-room": "maxMeetings",
+  "minimum-platforms": "minimumPlatforms",
+  "job-sequencing-problem": "jobSequencing",
+  "next-smaller-element": "nextSmallerElement",
+  "stock-span-problem": "stockSpan",
+  "maximum-of-minimums-for-every-window-size": "maxOfMinimums",
+  "celebrity-problem": "celebrity",
+  "integer-to-roman": "intToRoman",
+  "kmp-pattern-search": "kmpSearch",
+  "minimum-characters-to-make-palindrome": "minChar",
+  "rat-in-a-maze-count": "countPaths",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */
