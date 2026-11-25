@@ -171,8 +171,13 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
   useEffect(() => {
     if (!meta || lang) return;
+    // C++ is the main language: ?lang= from a link wins, then your last choice, then C++, then the server default.
+    const ok = (k: string | null) => !!k && meta.languages.some((x) => x.key === k);
+    const asked = new URLSearchParams(window.location.search).get("lang");
     const saved = localStorage.getItem("lc-lang");
-    setLang(saved && meta.languages.some((x) => x.key === saved) ? saved : meta.defaultLanguage);
+    const pick = ok(asked) ? asked! : ok(saved) ? saved! : ok("cpp") ? "cpp" : meta.defaultLanguage;
+    if (ok(asked)) localStorage.setItem("lc-lang", pick);
+    setLang(pick);
   }, [meta, lang]);
   useEffect(() => {
     let live = true;

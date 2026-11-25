@@ -95,7 +95,7 @@ export default function StriverPage() {
     <div className="sh">
       <header className="sh-head">
         <h1>Striver Sheets</h1>
-        <p className="mute">Work through Striver&apos;s sheets topic by topic. Your progress is tracked as you solve.</p>
+        <p className="mute">Striver&apos;s sheets, topic by topic. Tick a problem when you are done, open the question to solve it in C++, and the answer shows the optimal C++ solution.</p>
       </header>
 
       <div className="sh-tabs" role="tablist" aria-label="Choose a sheet">
@@ -148,6 +148,7 @@ export default function StriverPage() {
           <details className="sh-group" key={topic} open>
             <summary><span className="sh-gname">{tagLabel(topic)}</span><span className="sh-gcount">{g.solved}/{g.total}</span></summary>
             <ul className="sh-list">
+              <li className="sh-cols" aria-hidden="true"><span>Done</span><span>Problem</span><span>Level</span><span>Question</span><span>Answer</span></li>
               {(["EASY", "MEDIUM", "HARD"] as const).map((d) => {
                 const part = items.filter((p) => p.difficulty === d);
                 if (!part.length) return null;
@@ -162,10 +163,12 @@ export default function StriverPage() {
                             <input type="checkbox" checked={isDone(p)} disabled={p.status === "SOLVED"} onChange={() => toggleTick(p.slug)} aria-label={`Mark ${p.title} as done`} />
                             <i aria-hidden="true" />
                           </label>
-                          <Link className="sh-title" href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
+                          <Link className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
                           <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
-                          <Link href={`/problems/${p.slug}?tab=solutions`} className="solico sh-sol" title="Solutions" aria-label={`Solutions for ${p.title}`}>
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                          <Link href={`/problems/${p.slug}?lang=cpp`} className="sh-btn sh-solve" aria-label={`Solve ${p.title}`}>Solve</Link>
+                          <Link href={`/problems/${p.slug}?tab=solutions&lang=cpp`} className="sh-btn sh-sol" title="C++ solution" aria-label={`C++ solution for ${p.title}`}>
+                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" /></svg>
+                            <span>C++ solution</span>
                           </Link>
                         </li>
                       ))}
