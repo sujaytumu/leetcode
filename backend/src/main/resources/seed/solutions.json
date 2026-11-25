@@ -2559,9 +2559,9 @@
   }
  },
  "row-with-maximum-ones": {
-  "editorial": "## Approach\n\nFor each row binary search the first index holding a 1; the number of ones is row length minus that index. Keep the row with the most ones, preferring the smaller index on ties.\n\n**Complexity:** O(r log c) time, O(1) space.",
+  "editorial": "## Approach\n\nEach row is sorted, so its ones form a suffix. Walk from the top-right corner: on a 1 this row has more ones than any row so far, so record it and step left; on a 0 step down. The walk takes at most rows + cols steps and keeps the lowest index on ties.\n\n**Complexity:** O(rows + cols) time, O(1) space.",
   "solutions": {
-   "cpp": "// Optimised: O(r log c) time, O(1) space\nclass Solution {\npublic:\n    int rowWithMaxOnes(vector<vector<int>>& matrix) {\n        int best = 0, bestCount = -1;\n        for (int r = 0; r < (int)matrix.size(); r++) {\n            const vector<int>& row = matrix[r];\n            int lo = 0, hi = row.size();                           // first 1 in the sorted row\n            while (lo < hi) {\n                int mid = lo + (hi - lo) / 2;\n                if (row[mid] == 1) hi = mid;\n                else lo = mid + 1;\n            }\n            int ones = (int)row.size() - lo;\n            if (ones > bestCount) { bestCount = ones; best = r; }\n        }\n        return best;\n    }\n};\n"
+   "cpp": "// Approach: Staircase walk from the top-right: step left while the cell is 1, otherwise step down; the last row that moved left holds the most ones.\n// Time O(rows + cols), Space O(1)\nclass Solution {\npublic:\n    int rowWithMaxOnes(vector<vector<int>>& matrix) {\n        int rows = matrix.size();\n        if (rows == 0) return 0;\n        int col = (int)matrix[0].size() - 1, best = 0;\n        for (int r = 0; r < rows && col >= 0; ) {\n            if (matrix[r][col] == 1) { best = r; col--; }  // this row has more ones than any row before it\n            else r++;\n        }\n        return best;\n    }\n};"
   }
  },
  "search-a-2d-matrix-ii": {
@@ -2715,15 +2715,15 @@
   }
  },
  "longest-common-prefix": {
-  "editorial": "## Approach\n\nSort the strings. The common prefix of all of them is the common prefix of the lexicographically smallest and largest strings, so compare these two characters until they differ.\n\n**Complexity:** O(n * m log n) time, O(1) beyond sorting space.",
+  "editorial": "## Approach\n\nAny prefix shared by the lexicographically smallest and largest strings is shared by every string between them. Find both in one pass and compare just those two.\n\n**Complexity:** O(n * m) time, O(1) space.",
   "solutions": {
-   "cpp": "// Optimised: O(n * m log n) time, O(1) beyond sorting space\nclass Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        sort(strs.begin(), strs.end());                    // only the first and last strings can differ the most\n        const string &a = strs.front(), &b = strs.back();\n        size_t i = 0;\n        while (i < a.size() && i < b.size() && a[i] == b[i]) i++;\n        return a.substr(0, i);\n    }\n};\n"
+   "cpp": "// Approach: The prefix common to all strings is the prefix common to the lexicographically smallest and largest ones; find both in one linear pass.\n// Time O(n * m), Space O(1)\nclass Solution {\npublic:\n    string longestCommonPrefix(vector<string>& strs) {\n        if (strs.empty()) return \"\";\n        const string *smallest = &strs[0], *largest = &strs[0];\n        for (const string& s : strs) {\n            if (s < *smallest) smallest = &s;\n            if (s > *largest) largest = &s;\n        }\n        size_t i = 0;\n        while (i < smallest->size() && i < largest->size() && (*smallest)[i] == (*largest)[i]) i++;\n        return smallest->substr(0, i);\n    }\n};"
   }
  },
  "rotate-string": {
-  "editorial": "## Approach\n\nIf the lengths differ return false. Otherwise goal is a rotation of s exactly when it appears inside s + s.\n\n**Complexity:** O(n) time, O(n) space.",
+  "editorial": "## Approach\n\nIf the lengths differ return false. Otherwise goal is a rotation of s exactly when it occurs inside s + s. Search with KMP, reading s + s through i % n, so the worst case is linear rather than quadratic.\n\n**Complexity:** O(n) time, O(n) space.",
   "solutions": {
-   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    bool rotateString(string s, string goal) {\n        return s.size() == goal.size() && (s + s).find(goal) != string::npos;\n    }\n};\n"
+   "cpp": "// Approach: KMP search for goal inside s + s (read through i % n so the doubled string is never built); linear worst case.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    bool rotateString(string s, string goal) {\n        int n = s.size();\n        if (n != (int)goal.size()) return false;\n        if (n == 0) return true;\n        vector<int> lps(n, 0);\n        for (int i = 1, len = 0; i < n; ) {\n            if (goal[i] == goal[len]) lps[i++] = ++len;\n            else if (len > 0) len = lps[len - 1];\n            else lps[i++] = 0;\n        }\n        for (int i = 0, matched = 0; i < 2 * n - 1; i++) {\n            char c = s[i % n];\n            while (matched > 0 && c != goal[matched]) matched = lps[matched - 1];\n            if (c == goal[matched]) matched++;\n            if (matched == n) return true;\n        }\n        return false;\n    }\n};"
   }
  },
  "maximum-nesting-depth-of-the-parentheses": {
