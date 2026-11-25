@@ -1996,8 +1996,9 @@ html[data-theme="light"] .theme-switch { background:#fff3d6; border-color:#f1d9a
 .lcphotobtn.ghost { background:transparent; color:var(--mute); }
 
 /* ---- Splash: a separate full-screen loading page, centred, fades into the app ---- */
-.splash { position:fixed; inset:0; z-index:1000; background:var(--bg); display:grid; place-items:center; transition:opacity .35s ease; }
+.splash { position:fixed; inset:0; z-index:1000; background:var(--bg); display:grid; place-items:center; transition:opacity .2s ease; }
 .splash.out { opacity:0; pointer-events:none; }
+body:has(.splash:not(.out)) { overflow:hidden; }
 .splash-box { display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px; text-align:center; }
 .splash-logo { animation:splashpulse 1.8s ease-in-out infinite; }
 .splash-name { font-size:22px; font-weight:600; letter-spacing:-.01em; margin-top:6px; }
