@@ -21,7 +21,7 @@
  },
  "binary-tree-inorder-traversal": {
   "solutions": {
-   "cpp": "// Approach: Iterative inorder traversal using an explicit stack of the left spine.\n// Time O(n), Space O(h) where h is the tree height\nclass Solution {\npublic:\n    vector<int> inorderTraversal(TreeNode* root) {\n        vector<int> result;\n        vector<TreeNode*> stack;\n        TreeNode* node = root;\n        while (node || !stack.empty()) {\n            while (node) {\n                stack.push_back(node);\n                node = node->left;\n            }\n            node = stack.back();\n            stack.pop_back();\n            result.push_back(node->val);\n            node = node->right;\n        }\n        return result;\n    }\n};"
+   "cpp": "// Approach: Morris traversal: thread each node's inorder predecessor back to it, so no stack is needed.\n// Time O(n), Space O(1) extra\nclass Solution {\npublic:\n    vector<int> inorderTraversal(TreeNode* root) {\n        vector<int> result;\n        TreeNode* cur = root;\n        while (cur) {\n            if (!cur->left) {\n                result.push_back(cur->val);\n                cur = cur->right;\n            } else {\n                TreeNode* pred = cur->left;\n                while (pred->right && pred->right != cur) pred = pred->right;\n                if (!pred->right) {\n                    pred->right = cur;\n                    cur = cur->left;\n                } else {\n                    pred->right = nullptr;\n                    result.push_back(cur->val);\n                    cur = cur->right;\n                }\n            }\n        }\n        return result;\n    }\n};"
   }
  },
  "binary-tree-right-side-view": {
@@ -141,12 +141,12 @@
  },
  "longest-common-subsequence": {
   "solutions": {
-   "cpp": "// Approach: 2D DP where dp[i][j] is the LCS length of the first i and first j characters.\n// Time O(n * m), Space O(n * m)\nclass Solution {\npublic:\n    int longestCommonSubsequence(string text1, string text2) {\n        int n = text1.size();\n        int m = text2.size();\n        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= m; j++) {\n                if (text1[i - 1] == text2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[n][m];\n    }\n};"
+   "cpp": "// Approach: DP over one row: each cell needs only the cell above, to its left and the diagonal.\n// Time O(m * n), Space O(min(m, n))\nclass Solution {\npublic:\n    int longestCommonSubsequence(string text1, string text2) {\n        if (text2.size() > text1.size()) swap(text1, text2);\n        int m = text1.size(), n = text2.size();\n        vector<int> dp(n + 1, 0);\n        for (int i = 1; i <= m; i++) {\n            int diag = 0;\n            for (int j = 1; j <= n; j++) {\n                int up = dp[j];\n                dp[j] = text1[i - 1] == text2[j - 1] ? diag + 1 : max(dp[j], dp[j - 1]);\n                diag = up;\n            }\n        }\n        return dp[n];\n    }\n};"
   }
  },
  "longest-palindromic-substring-length": {
   "solutions": {
-   "cpp": "// Approach: Expand around each of the 2n-1 palindrome centers and keep the longest.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    string longestPalindrome(string s) {\n        int n = s.size();\n        int bestLength = 0;\n        int bestStart = 0;\n        for (int center = 0; center < 2 * n - 1; center++) {\n            // Even centers start with left == right - 1, odd centers with left == right.\n            int left = center / 2;\n            int right = left + center % 2;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                left--;\n                right++;\n            }\n            int length = right - left - 1;\n            if (length > bestLength) {\n                bestLength = length;\n                bestStart = left + 1;\n            }\n        }\n        return s.substr(bestStart, bestLength);\n    }\n};\n"
+   "cpp": "// Approach: Manacher: transform with separators, reuse the mirror radius inside the rightmost palindrome, and keep the longest.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    string longestPalindrome(string s) {\n        string t = \"^\";\n        for (char ch : s) { t += '#'; t += ch; }\n        t += \"#$\";\n        int m = t.size(), center = 0, right = 0, bestLen = 0, bestCenter = 0;\n        vector<int> radius(m, 0);\n        for (int i = 1; i < m - 1; i++) {\n            if (i < right) radius[i] = min(right - i, radius[2 * center - i]);\n            while (t[i + radius[i] + 1] == t[i - radius[i] - 1]) radius[i]++;\n            if (i + radius[i] > right) { center = i; right = i + radius[i]; }\n            if (radius[i] > bestLen) { bestLen = radius[i]; bestCenter = i; }\n        }\n        return s.substr((bestCenter - bestLen) / 2, bestLen);\n    }\n};"
   }
  },
  "longest-substring-without-repeating-characters": {
@@ -221,7 +221,7 @@
  },
  "palindromic-substrings": {
   "solutions": {
-   "cpp": "// Approach: Expand around each of the 2n - 1 centers (characters and gaps), counting every palindrome found.\n// Time O(n^2), Space O(1)\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        int n = s.size();\n        int count = 0;\n        for (int center = 0; center < 2 * n - 1; center++) {\n            int left = center / 2;\n            int right = left + center % 2;\n            while (left >= 0 && right < n && s[left] == s[right]) {\n                count++;\n                left--;\n                right++;\n            }\n        }\n        return count;\n    }\n};"
+   "cpp": "// Approach: Manacher: each center with radius r contributes (r + 1) / 2 palindromes, found in linear time.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        string t = \"^\";\n        for (char ch : s) { t += '#'; t += ch; }\n        t += \"#$\";\n        int m = t.size(), center = 0, right = 0, total = 0;\n        vector<int> radius(m, 0);\n        for (int i = 1; i < m - 1; i++) {\n            if (i < right) radius[i] = min(right - i, radius[2 * center - i]);\n            while (t[i + radius[i] + 1] == t[i - radius[i] - 1]) radius[i]++;\n            if (i + radius[i] > right) { center = i; right = i + radius[i]; }\n            total += (radius[i] + 1) / 2;\n        }\n        return total;\n    }\n};"
   }
  },
  "partition-list": {
@@ -256,7 +256,7 @@
  },
  "repeated-substring-pattern": {
   "solutions": {
-   "cpp": "// Approach: s is a repeated pattern exactly when it occurs inside s + s with the first and last characters removed.\n// Time O(n^2) worst case (std::string::find), Space O(n)\nclass Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        string doubled = s + s;\n        return doubled.substr(1, doubled.size() - 2).find(s) != string::npos;\n    }\n};"
+   "cpp": "// Approach: Build the KMP failure table; the string is a repetition exactly when its longest border leaves a block length that divides n.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        int n = s.size();\n        vector<int> lps(n, 0);\n        for (int i = 1, len = 0; i < n; ) {\n            if (s[i] == s[len]) lps[i++] = ++len;\n            else if (len > 0) len = lps[len - 1];\n            else lps[i++] = 0;\n        }\n        int border = lps[n - 1];\n        return border > 0 && n % (n - border) == 0;\n    }\n};"
   }
  },
  "reverse-linked-list-ii": {
@@ -316,7 +316,7 @@
  },
  "top-k-frequent-elements": {
   "solutions": {
-   "cpp": "// Approach: Count frequencies, sort distinct values by count (ties by value), keep the first k.\n// Time O(n + d log d) where d is the number of distinct values, Space O(d)\nclass Solution {\npublic:\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        unordered_map<int, int> frequency;\n        for (int value : nums) frequency[value]++;\n        vector<int> values;\n        for (const auto& entry : frequency) values.push_back(entry.first);\n        sort(values.begin(), values.end(), [&](int a, int b) {\n            if (frequency[a] != frequency[b]) return frequency[a] > frequency[b];\n            return a < b;\n        });\n        values.resize(k);\n        return values;\n    }\n};"
+   "cpp": "// Approach: Count frequencies, then use nth_element to partition the k most frequent (ties by smaller value) and sort just those k.\n// Time O(n + d + k log k) average, d distinct values, Space O(d)\nclass Solution {\npublic:\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        unordered_map<int, int> frequency;\n        for (int value : nums) frequency[value]++;\n        vector<pair<int, int>> items;  // (count, value)\n        items.reserve(frequency.size());\n        for (const auto& entry : frequency) items.push_back({entry.second, entry.first});\n        auto better = [](const pair<int, int>& a, const pair<int, int>& b) {\n            if (a.first != b.first) return a.first > b.first;\n            return a.second < b.second;\n        };\n        if ((size_t)k < items.size()) nth_element(items.begin(), items.begin() + k, items.end(), better);\n        items.resize(min((size_t)k, items.size()));\n        sort(items.begin(), items.end(), better);\n        vector<int> result;\n        for (const auto& item : items) result.push_back(item.second);\n        return result;\n    }\n};"
   }
  },
  "two-sum-ii-input-array-is-sorted": {
@@ -476,7 +476,7 @@
  },
  "kth-smallest-element-in-a-sorted-matrix": {
   "solutions": {
-   "cpp": "// Approach: Flatten the matrix, sort it and take the k-th element.\n// Time O(N log N) for N cells, Space O(N)\nclass Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& matrix, int k) {\n        vector<int> values;\n        for (const auto& row : matrix) {\n            for (int value : row) {\n                values.push_back(value);\n            }\n        }\n        sort(values.begin(), values.end());\n        return values[k - 1];\n    }\n};"
+   "cpp": "// Approach: Binary search on the value; count entries <= mid with a staircase walk from the bottom-left corner.\n// Time O((rows + cols) log(max - min)), Space O(1)\nclass Solution {\npublic:\n    int kthSmallest(vector<vector<int>>& matrix, int k) {\n        int rows = matrix.size(), cols = matrix[0].size();\n        int low = matrix[0][0], high = matrix[rows - 1][cols - 1];\n        while (low < high) {\n            int mid = low + (high - low) / 2;\n            int count = 0, r = rows - 1, c = 0;\n            while (r >= 0 && c < cols) {\n                if (matrix[r][c] <= mid) { count += r + 1; c++; }\n                else r--;\n            }\n            if (count >= k) high = mid;\n            else low = mid + 1;\n        }\n        return low;\n    }\n};"
   }
  },
  "lemonade-change": {
@@ -496,7 +496,7 @@
  },
  "longest-valid-parentheses": {
   "solutions": {
-   "cpp": "// Approach: Stack of indices, with the last unmatched position at the bottom as a base.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int longestValidParentheses(string s) {\n        int n = s.size();\n        int bestLength = 0;\n        vector<int> stack = {-1};\n        for (int i = 0; i < n; i++) {\n            if (s[i] == '(') {\n                stack.push_back(i);\n                continue;\n            }\n            stack.pop_back();\n            if (stack.empty()) {\n                stack.push_back(i);\n            } else {\n                bestLength = max(bestLength, i - stack.back());\n            }\n        }\n        return bestLength;\n    }\n};"
+   "cpp": "// Approach: Two counter passes (left to right, then right to left); no stack. A balanced run ends when the counters match.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    int longestValidParentheses(string s) {\n        int n = s.size(), best = 0;\n        for (int i = 0, open = 0, close = 0; i < n; i++) {\n            if (s[i] == '(') open++; else close++;\n            if (open == close) best = max(best, 2 * close);\n            else if (close > open) open = close = 0;\n        }\n        for (int i = n - 1, open = 0, close = 0; i >= 0; i--) {\n            if (s[i] == '(') open++; else close++;\n            if (open == close) best = max(best, 2 * open);\n            else if (open > close) open = close = 0;\n        }\n        return best;\n    }\n};"
   }
  },
  "majority-element": {
@@ -506,7 +506,7 @@
  },
  "maximal-square": {
   "solutions": {
-   "cpp": "// Approach: DP where dp[i][j] is the side of the largest square ending at corner (i, j).\n// Time O(rows * cols), Space O(rows * cols)\nclass Solution {\npublic:\n    int maximalSquare(vector<vector<char>>& matrix) {\n        int rows = matrix.size();\n        int cols = matrix[0].size();\n        vector<vector<int>> dp(rows + 1, vector<int>(cols + 1, 0));\n        int bestSide = 0;\n        for (int i = 1; i <= rows; i++) {\n            for (int j = 1; j <= cols; j++) {\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[i][j] = 1 + min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});\n                    bestSide = max(bestSide, dp[i][j]);\n                }\n            }\n        }\n        return bestSide * bestSide;\n    }\n};"
+   "cpp": "// Approach: DP over one row: the side ending at a cell is 1 + the minimum of its up, left and diagonal neighbours.\n// Time O(rows * cols), Space O(cols)\nclass Solution {\npublic:\n    int maximalSquare(vector<vector<char>>& matrix) {\n        if (matrix.empty()) return 0;\n        int rows = matrix.size(), cols = matrix[0].size(), best = 0;\n        vector<int> dp(cols + 1, 0);\n        for (int i = 0; i < rows; i++) {\n            int diag = 0;\n            for (int j = 1; j <= cols; j++) {\n                int up = dp[j];\n                if (matrix[i][j - 1] == '1') {\n                    dp[j] = 1 + min({dp[j], dp[j - 1], diag});\n                    best = max(best, dp[j]);\n                } else {\n                    dp[j] = 0;\n                }\n                diag = up;\n            }\n        }\n        return best * best;\n    }\n};"
   }
  },
  "maximum-subarray": {
@@ -566,7 +566,7 @@
  },
  "partition-equal-subset-sum": {
   "solutions": {
-   "cpp": "// Approach: 0/1 knapsack boolean DP for a subset summing to half the total.\n// Time O(n * sum), Space O(sum)\nclass Solution {\npublic:\n    bool canPartition(vector<int>& nums) {\n        int total = 0;\n        for (int x : nums) {\n            total += x;\n        }\n        if (total % 2 != 0) {\n            return false;\n        }\n        int half = total / 2;\n        vector<bool> reachable(half + 1, false);\n        reachable[0] = true;\n        for (int x : nums) {\n            // Go downwards so each number is used at most once.\n            for (int sum = half; sum >= x; sum--) {\n                if (reachable[sum - x]) {\n                    reachable[sum] = true;\n                }\n            }\n        }\n        return reachable[half];\n    }\n};"
+   "cpp": "// Approach: Subset-sum with a bitset: shift-or the reachable sums once per number and test half the total.\n// Time O(n * S / 64), Space O(S / 8)\nclass Solution {\npublic:\n    bool canPartition(vector<int>& nums) {\n        int total = accumulate(nums.begin(), nums.end(), 0);\n        if (total % 2) return false;\n        bitset<20001> reachable;\n        reachable[0] = 1;\n        for (int x : nums) reachable |= reachable << x;\n        return reachable[total / 2];\n    }\n};"
   }
  },
  "pascals-triangle": {
@@ -671,7 +671,7 @@
  },
  "valid-anagram": {
   "solutions": {
-   "cpp": "// Approach: Two strings are anagrams exactly when their sorted forms are equal.\n// Time O(n log n), Space O(1) extra (sorts the copies in place)\nclass Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        sort(s.begin(), s.end());\n        sort(t.begin(), t.end());\n        return s == t;\n    }\n};"
+   "cpp": "// Approach: Count letters of s up and letters of t down in one 256-entry table; the strings are anagrams when every count returns to zero.\n// Time O(n), Space O(1)\nclass Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        if (s.size() != t.size()) return false;\n        int count[256] = {};\n        for (size_t i = 0; i < s.size(); i++) {\n            count[(unsigned char)s[i]]++;\n            count[(unsigned char)t[i]]--;\n        }\n        for (int c : count) if (c != 0) return false;\n        return true;\n    }\n};"
   }
  },
  "valid-parentheses": {
@@ -756,7 +756,7 @@
  },
  "edit-distance": {
   "solutions": {
-   "cpp": "// Approach: DP over prefixes; dp[i][j] is the edit distance between word1[0..i) and word2[0..j).\n// Time O(n * m), Space O(n * m)\nclass Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        int n = word1.size();\n        int m = word2.size();\n        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));\n        for (int i = 0; i <= n; i++) dp[i][0] = i;\n        for (int j = 0; j <= m; j++) dp[0][j] = j;\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= m; j++) {\n                int substitute = dp[i - 1][j - 1] + (word1[i - 1] != word2[j - 1]);\n                int remove = dp[i - 1][j] + 1;\n                int insert = dp[i][j - 1] + 1;\n                dp[i][j] = min({substitute, remove, insert});\n            }\n        }\n        return dp[n][m];\n    }\n};"
+   "cpp": "// Approach: DP over one row of prefix distances, carrying the diagonal value.\n// Time O(m * n), Space O(n)\nclass Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        int m = word1.size(), n = word2.size();\n        vector<int> dp(n + 1);\n        iota(dp.begin(), dp.end(), 0);\n        for (int i = 1; i <= m; i++) {\n            int diag = dp[0];\n            dp[0] = i;\n            for (int j = 1; j <= n; j++) {\n                int up = dp[j];\n                dp[j] = word1[i - 1] == word2[j - 1] ? diag : 1 + min({diag, dp[j], dp[j - 1]});\n                diag = up;\n            }\n        }\n        return dp[n];\n    }\n};"
   }
  },
  "fast-power-mod": {
@@ -781,7 +781,7 @@
  },
  "h-index": {
   "solutions": {
-   "cpp": "// Approach: Sort ascending; the first citation count that is at least the papers remaining wins.\n// Time O(n log n), Space O(1) extra\nclass Solution {\npublic:\n    int hIndex(vector<int>& citations) {\n        sort(citations.begin(), citations.end());\n        int n = citations.size();\n        for (int i = 0; i < n; i++) {\n            int papersAtLeast = n - i;\n            if (citations[i] >= papersAtLeast) return papersAtLeast;\n        }\n        return 0;\n    }\n};"
+   "cpp": "// Approach: Bucket the citation counts, capping at n, then scan from the top; the first h with at least h papers wins.\n// Time O(n), Space O(n)\nclass Solution {\npublic:\n    int hIndex(vector<int>& citations) {\n        int n = citations.size();\n        vector<int> bucket(n + 1, 0);\n        for (int c : citations) bucket[min(c, n)]++;\n        int papers = 0;\n        for (int h = n; h >= 0; h--) {\n            papers += bucket[h];\n            if (papers >= h) return h;\n        }\n        return 0;\n    }\n};"
   }
  },
  "house-robber": {
@@ -811,7 +811,7 @@
  },
  "kth-largest-element-in-an-array": {
   "solutions": {
-   "cpp": "// Approach: Keep a min-heap of size k; its top is the kth largest value.\n// Time O(n log k), Space O(k)\nclass Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        priority_queue<int, vector<int>, greater<int>> minHeap;\n        for (int num : nums) {\n            minHeap.push(num);\n            if ((int)minHeap.size() > k) minHeap.pop();\n        }\n        return minHeap.top();\n    }\n};"
+   "cpp": "// Approach: Quickselect via nth_element: partition so the k-th largest lands at index k - 1.\n// Time O(n) average, Space O(1)\nclass Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        nth_element(nums.begin(), nums.begin() + (k - 1), nums.end(), greater<int>());\n        return nums[k - 1];\n    }\n};"
   }
  },
  "largest-rectangle-in-histogram": {
@@ -916,7 +916,7 @@
  },
  "perfect-squares": {
   "solutions": {
-   "cpp": "// Approach: DP where dp[i] is the fewest squares summing to i, trying every square below i.\n// Time O(n * sqrt(n)), Space O(n)\nclass Solution {\npublic:\n    int numSquares(int n) {\n        vector<int> dp(n + 1, n);\n        dp[0] = 0;\n        for (int i = 1; i <= n; i++) {\n            for (int root = 1; root * root <= i; root++) {\n                dp[i] = min(dp[i], dp[i - root * root] + 1);\n            }\n        }\n        return dp[n];\n    }\n};"
+   "cpp": "// Approach: Lagrange four-square theorem with Legendre three-square test: the answer is 1, 2, 3 or 4, decided by square checks.\n// Time O(sqrt n), Space O(1)\nclass Solution {\npublic:\n    int numSquares(int n) {\n        auto isSquare = [](int x) {\n            int r = (int)sqrt((double)x);\n            while (r * r > x) r--;\n            while ((r + 1) * (r + 1) <= x) r++;\n            return r * r == x;\n        };\n        if (isSquare(n)) return 1;\n        while (n % 4 == 0) n /= 4;\n        if (n % 8 == 7) return 4;\n        for (int i = 1; i * i <= n; i++) {\n            if (isSquare(n - i * i)) return 2;\n        }\n        return 3;\n    }\n};"
   }
  },
  "power-of-two": {
@@ -971,7 +971,7 @@
  },
  "sort-list": {
   "solutions": {
-   "cpp": "// Approach: Top-down merge sort; split at the middle and merge the sorted halves.\n// Time O(n log n), Space O(log n)\nListNode* mergeSorted(ListNode* a, ListNode* b) {\n    ListNode dummy(0);\n    ListNode* tail = &dummy;\n    while (a && b) {\n        if (a->val <= b->val) {\n            tail->next = a;\n            a = a->next;\n        } else {\n            tail->next = b;\n            b = b->next;\n        }\n        tail = tail->next;\n    }\n    tail->next = a ? a : b;\n    return dummy.next;\n}\n\nclass Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head || !head->next) return head;\n        ListNode* slow = head;\n        ListNode* fast = head->next;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        ListNode* second = slow->next;\n        slow->next = nullptr;\n        return mergeSorted(sortList(head), sortList(second));\n    }\n};"
+   "cpp": "// Approach: Bottom-up merge sort: merge runs of length 1, 2, 4, ... by relinking nodes, so no recursion stack is needed.\n// Time O(n log n), Space O(1)\nListNode* splitAfter(ListNode* head, int count) {\n    for (int i = 1; head && i < count; i++) head = head->next;\n    if (!head) return nullptr;\n    ListNode* rest = head->next;\n    head->next = nullptr;\n    return rest;\n}\n\nListNode* mergeInto(ListNode* tail, ListNode* a, ListNode* b) {\n    while (a && b) {\n        if (a->val <= b->val) { tail->next = a; a = a->next; }\n        else { tail->next = b; b = b->next; }\n        tail = tail->next;\n    }\n    tail->next = a ? a : b;\n    while (tail->next) tail = tail->next;\n    return tail;\n}\n\nclass Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        int n = 0;\n        for (ListNode* p = head; p; p = p->next) n++;\n        ListNode dummy(0);\n        dummy.next = head;\n        for (int step = 1; step < n; step <<= 1) {\n            ListNode* prev = &dummy;\n            ListNode* cur = dummy.next;\n            while (cur) {\n                ListNode* left = cur;\n                ListNode* right = splitAfter(left, step);\n                cur = splitAfter(right, step);\n                prev = mergeInto(prev, left, right);\n            }\n        }\n        return dummy.next;\n    }\n};"
   }
  },
  "sqrt-x": {
