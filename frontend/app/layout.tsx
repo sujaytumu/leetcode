@@ -14,6 +14,7 @@ import MockBar from "@/components/MockBar";
 import PwaRegister from "@/components/PwaRegister";
 import { ACCENT_BOOT_SCRIPT } from "@/lib/appearance";
 import CommandPalette from "@/components/CommandPalette";
+import BackHandler from "@/components/BackHandler";
 import RefreshButton from "@/components/RefreshButton";
 import PullToRefresh from "@/components/PullToRefresh";
 import UpdateWatcher from "@/components/UpdateWatcher";
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <PwaRegister />
         <PullToRefresh />
+        <BackHandler />
         <UpdateWatcher />
         <MockBar />
         <main id="main" tabIndex={-1}>{children}</main>
