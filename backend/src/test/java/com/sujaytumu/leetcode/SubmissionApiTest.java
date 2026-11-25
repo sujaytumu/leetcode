@@ -107,10 +107,10 @@ class SubmissionApiTest {
 
         mvc.perform(get("/api/progress").header(CLIENT, client.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.total").value(279))
+                .andExpect(jsonPath("$.total").value(300))
                 .andExpect(jsonPath("$.solved").value(1))
                 .andExpect(jsonPath("$.attempted").value(1))
-                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(86))
+                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(89))
                 .andExpect(jsonPath("$.byDifficulty.EASY.solved").value(1))
                 .andExpect(jsonPath("$.byDifficulty.HARD.solved").value(0));
     }

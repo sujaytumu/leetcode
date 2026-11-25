@@ -1,0 +1,358 @@
+=== binary-tree-preorder-traversal
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    stack<TreeNode*> st;
+    if (root) st.push(root);
+    while (!st.empty()) {
+        TreeNode* node = st.top();
+        st.pop();
+        out.push_back(node->val);
+        if (node->right) st.push(node->right);   // pushed first so the left child is handled first
+        if (node->left) st.push(node->left);
+    }
+    return out;
+}
+=== binary-tree-postorder-traversal
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    stack<TreeNode*> st;
+    if (root) st.push(root);
+    while (!st.empty()) {                         // node, right, left ... then reversed gives left, right, node
+        TreeNode* node = st.top();
+        st.pop();
+        out.push_back(node->val);
+        if (node->left) st.push(node->left);
+        if (node->right) st.push(node->right);
+    }
+    reverse(out.begin(), out.end());
+    return out;
+}
+=== left-view-of-binary-tree
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    if (!root) return out;
+    queue<TreeNode*> q;
+    q.push(root);
+    while (!q.empty()) {
+        int size = q.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode* node = q.front();
+            q.pop();
+            if (i == 0) out.push_back(node->val);   // first node of the level
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+    }
+    return out;
+}
+=== top-view-of-binary-tree
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    if (!root) return out;
+    map<int, int> view;                           // horizontal distance -> value
+    queue<pair<TreeNode*, int>> q;
+    q.push({root, 0});
+    while (!q.empty()) {
+        auto [node, hd] = q.front();
+        q.pop();
+        view.emplace(hd, node->val);              // keeps the first (highest) node seen at this distance
+        if (node->left) q.push({node->left, hd - 1});
+        if (node->right) q.push({node->right, hd + 1});
+    }
+    for (auto& kv : view) out.push_back(kv.second);
+    return out;
+}
+=== bottom-view-of-binary-tree
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    if (!root) return out;
+    map<int, int> view;
+    queue<pair<TreeNode*, int>> q;
+    q.push({root, 0});
+    while (!q.empty()) {
+        auto [node, hd] = q.front();
+        q.pop();
+        view[hd] = node->val;                     // a later node in level order is lower (or further right), so it wins
+        if (node->left) q.push({node->left, hd - 1});
+        if (node->right) q.push({node->right, hd + 1});
+    }
+    for (auto& kv : view) out.push_back(kv.second);
+    return out;
+}
+=== vertical-order-traversal-of-a-binary-tree
+--- cpp
+vector<vector<int>> solve(TreeNode* root) {
+    vector<tuple<int, int, int>> items;           // (column, row, value)
+    function<void(TreeNode*, int, int)> go = [&](TreeNode* node, int col, int row) {
+        if (!node) return;
+        items.emplace_back(col, row, node->val);
+        go(node->left, col - 1, row + 1);
+        go(node->right, col + 1, row + 1);
+    };
+    go(root, 0, 0);
+    sort(items.begin(), items.end());
+    vector<vector<int>> out;
+    int lastCol = INT_MIN;
+    for (auto& [col, row, val] : items) {
+        if (col != lastCol) {
+            out.emplace_back();
+            lastCol = col;
+        }
+        out.back().push_back(val);
+    }
+    return out;
+}
+=== root-to-node-path-in-a-binary-tree
+--- cpp
+vector<int> solve(TreeNode* root, int target) {
+    vector<int> path;
+    function<bool(TreeNode*)> dfs = [&](TreeNode* node) {
+        if (!node) return false;
+        path.push_back(node->val);
+        if (node->val == target || dfs(node->left) || dfs(node->right)) return true;
+        path.pop_back();                          // this node is not on the way to the target
+        return false;
+    };
+    dfs(root);
+    return path;
+}
+=== maximum-width-of-binary-tree
+--- cpp
+int solve(TreeNode* root) {
+    if (!root) return 0;
+    long long best = 0;
+    queue<pair<TreeNode*, unsigned long long>> q;
+    q.push({root, 0});
+    while (!q.empty()) {
+        int size = q.size();
+        unsigned long long first = q.front().second, last = first;
+        for (int i = 0; i < size; i++) {
+            auto [node, idx] = q.front();
+            q.pop();
+            idx -= first;                         // start every level at 0 so the numbers stay small
+            last = idx;
+            if (node->left) q.push({node->left, 2 * idx});
+            if (node->right) q.push({node->right, 2 * idx + 1});
+        }
+        best = max(best, (long long)last + 1);
+    }
+    return (int)best;
+}
+=== boundary-traversal-of-binary-tree
+--- cpp
+vector<int> solve(TreeNode* root) {
+    vector<int> out;
+    if (!root) return out;
+    auto isLeaf = [](TreeNode* n) { return !n->left && !n->right; };
+    if (!isLeaf(root)) out.push_back(root->val);
+    for (TreeNode* n = root->left; n; n = n->left ? n->left : n->right)
+        if (!isLeaf(n)) out.push_back(n->val);    // left boundary, top to bottom
+    function<void(TreeNode*)> leaves = [&](TreeNode* n) {
+        if (!n) return;
+        if (isLeaf(n)) out.push_back(n->val);
+        leaves(n->left);
+        leaves(n->right);
+    };
+    leaves(root);                                 // all leaves, left to right
+    vector<int> right;
+    for (TreeNode* n = root->right; n; n = n->right ? n->right : n->left)
+        if (!isLeaf(n)) right.push_back(n->val);  // right boundary, collected top to bottom
+    out.insert(out.end(), right.rbegin(), right.rend());
+    return out;
+}
+=== construct-binary-tree-from-inorder-and-postorder-traversal
+--- cpp
+TreeNode* solve(vector<int> inorder, vector<int> postorder) {
+    unordered_map<int, int> pos;
+    for (int i = 0; i < (int)inorder.size(); i++) pos[inorder[i]] = i;
+    int post = (int)postorder.size() - 1;         // postorder is read from the back: node, right, left
+    function<TreeNode*(int, int)> build = [&](int lo, int hi) -> TreeNode* {
+        if (lo > hi) return nullptr;
+        TreeNode* node = new TreeNode(postorder[post--]);
+        int k = pos[node->val];
+        node->right = build(k + 1, hi);
+        node->left = build(lo, k - 1);
+        return node;
+    };
+    return build(0, (int)inorder.size() - 1);
+}
+=== flatten-binary-tree-to-linked-list
+--- cpp
+TreeNode* solve(TreeNode* root) {
+    for (TreeNode* cur = root; cur; cur = cur->right) {
+        if (!cur->left) continue;
+        TreeNode* tail = cur->left;               // rightmost node of the left subtree
+        while (tail->right) tail = tail->right;
+        tail->right = cur->right;                 // the old right subtree continues after it
+        cur->right = cur->left;
+        cur->left = nullptr;
+    }
+    return root;
+}
+=== children-sum-property
+--- cpp
+bool solve(TreeNode* root) {
+    if (!root || (!root->left && !root->right)) return true;
+    int sum = (root->left ? root->left->val : 0) + (root->right ? root->right->val : 0);
+    return root->val == sum && solve(root->left) && solve(root->right);
+}
+=== fractional-knapsack
+--- cpp
+int solve(vector<int> values, vector<int> weights, int capacity) {
+    int n = values.size();
+    vector<int> order(n);
+    iota(order.begin(), order.end(), 0);
+    sort(order.begin(), order.end(), [&](int a, int b) {
+        return (long long)values[a] * weights[b] > (long long)values[b] * weights[a];   // better value per weight first
+    });
+    long long whole = 0, fractional = 0;
+    int left = capacity;
+    for (int id : order) {
+        if (left == 0) break;
+        int take = min(weights[id], left);
+        if (take == weights[id]) whole += values[id];
+        else fractional = (long long)values[id] * take * 100 / weights[id];
+        left -= take;
+    }
+    return (int)(whole * 100 + fractional);
+}
+=== minimum-number-of-coins
+--- cpp
+int solve(int amount) {
+    const int coins[] = {1000, 500, 100, 50, 20, 10, 5, 2, 1};
+    int count = 0;
+    for (int c : coins) {
+        count += amount / c;                      // the biggest coin that fits is always right for these denominations
+        amount %= c;
+    }
+    return count;
+}
+=== median-of-two-sorted-arrays
+--- cpp
+string solve(vector<int> nums1, vector<int> nums2) {
+    if (nums1.size() > nums2.size()) swap(nums1, nums2);
+    int m = nums1.size(), n = nums2.size(), half = (m + n + 1) / 2;
+    int lo = 0, hi = m;
+    const int NEG = INT_MIN, POS = INT_MAX;
+    while (lo <= hi) {                            // binary search how many elements come from the shorter array
+        int i = (lo + hi) / 2, j = half - i;
+        int l1 = i == 0 ? NEG : nums1[i - 1], r1 = i == m ? POS : nums1[i];
+        int l2 = j == 0 ? NEG : nums2[j - 1], r2 = j == n ? POS : nums2[j];
+        if (l1 <= r2 && l2 <= r1) {
+            int left = max(l1, l2);
+            if ((m + n) % 2) return to_string(left);
+            long long s = (long long)left + min(r1, r2);
+            if (s % 2 == 0) return to_string(s / 2);
+            return string(s < 0 ? "-" : "") + to_string(llabs(s) / 2) + ".5";
+        }
+        if (l1 > r2) hi = i - 1;
+        else lo = i + 1;
+    }
+    return "0";
+}
+=== merge-k-sorted-arrays
+--- cpp
+vector<int> solve(vector<vector<int>> arrays) {
+    typedef tuple<int, int, int> T;               // value, which array, position in it
+    priority_queue<T, vector<T>, greater<T>> heap;
+    for (int i = 0; i < (int)arrays.size(); i++)
+        if (!arrays[i].empty()) heap.emplace(arrays[i][0], i, 0);
+    vector<int> out;
+    while (!heap.empty()) {
+        auto [val, i, j] = heap.top();
+        heap.pop();
+        out.push_back(val);
+        if (j + 1 < (int)arrays[i].size()) heap.emplace(arrays[i][j + 1], i, j + 1);
+    }
+    return out;
+}
+=== k-maximum-sum-combinations
+--- cpp
+vector<int> solve(vector<int> a, vector<int> b, int k) {
+    sort(a.rbegin(), a.rend());
+    sort(b.rbegin(), b.rend());
+    int n = a.size();
+    priority_queue<tuple<int, int, int>> heap;    // sum, i, j
+    set<pair<int, int>> seen;
+    heap.emplace(a[0] + b[0], 0, 0);
+    seen.insert({0, 0});
+    vector<int> out;
+    while ((int)out.size() < k && !heap.empty()) {
+        auto [sum, i, j] = heap.top();
+        heap.pop();
+        out.push_back(sum);
+        if (i + 1 < n && seen.insert({i + 1, j}).second) heap.emplace(a[i + 1] + b[j], i + 1, j);
+        if (j + 1 < n && seen.insert({i, j + 1}).second) heap.emplace(a[i] + b[j + 1], i, j + 1);
+    }
+    return out;
+}
+=== next-greater-element
+--- cpp
+vector<int> solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;                                // values to the right that could still be somebody's answer
+    for (int i = n - 1; i >= 0; i--) {
+        while (!st.empty() && st.top() <= nums[i]) st.pop();
+        if (!st.empty()) ans[i] = st.top();
+        st.push(nums[i]);
+    }
+    return ans;
+}
+=== sort-a-stack
+--- cpp
+void insertSorted(vector<int>& st, int x) {       // keeps the larger values on top
+    if (st.empty() || st.back() <= x) {
+        st.push_back(x);
+        return;
+    }
+    int top = st.back();
+    st.pop_back();
+    insertSorted(st, x);
+    st.push_back(top);
+}
+
+void sortStack(vector<int>& st) {
+    if (st.empty()) return;
+    int top = st.back();
+    st.pop_back();
+    sortStack(st);
+    insertSorted(st, top);
+}
+
+vector<int> solve(vector<int> stack) {
+    sortStack(stack);
+    return stack;
+}
+=== z-function
+--- cpp
+vector<int> solve(string s) {
+    int n = s.size();
+    vector<int> z(n, 0);
+    z[0] = n;
+    for (int i = 1, l = 0, r = 0; i < n; i++) {   // [l, r) is the rightmost prefix-match window found so far
+        if (i < r) z[i] = min(r - i, z[i - l]);
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;
+        if (i + z[i] > r) l = i, r = i + z[i];
+    }
+    return z;
+}
+=== compare-version-numbers
+--- cpp
+int solve(string version1, string version2) {
+    int i = 0, j = 0, n = version1.size(), m = version2.size();
+    while (i < n || j < m) {
+        long long a = 0, b = 0;
+        while (i < n && version1[i] != '.') a = a * 10 + (version1[i++] - '0');
+        while (j < m && version2[j] != '.') b = b * 10 + (version2[j++] - '0');
+        if (a != b) return a > b ? 1 : -1;
+        i++;                                      // skip the dot
+        j++;
+    }
+    return 0;
+}
