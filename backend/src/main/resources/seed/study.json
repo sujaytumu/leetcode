@@ -1973,7 +1973,8 @@
   },
   "linear-search": {
     "hints": [
-      "Check the elements in order and stop at the first match."
+      "Check the elements in order and stop at the first match.",
+      "Return -1 only after the whole array has been checked."
     ],
     "approach": "Walk the array from the left and return the index of the first element equal to the target, or -1 if the loop finishes without a match.",
     "time": "O(n)",
@@ -2089,7 +2090,8 @@
   },
   "upper-bound": {
     "hints": [
-      "It is the same search with a strict comparison."
+      "It is the same search with a strict comparison.",
+      "Keep a candidate answer of n and shrink the search range toward the leftmost index that qualifies."
     ],
     "approach": "Binary search for the first index whose value is strictly greater than x: when nums[mid] > x move left, otherwise move right.",
     "time": "O(log n)",
@@ -2358,7 +2360,8 @@
   },
   "count-digits": {
     "hints": [
-      "Dividing by 10 removes the last digit."
+      "Dividing by 10 removes the last digit.",
+      "A positive number has at least one digit, so the count after the loop is the answer."
     ],
     "approach": "Divide n by 10 until it reaches 0, counting the divisions.",
     "time": "O(log n)",
@@ -2456,7 +2459,8 @@
   },
   "maximum-nesting-depth-of-the-parentheses": {
     "hints": [
-      "Increase a counter on '(' and decrease it on ')'."
+      "Increase a counter on '(' and decrease it on ')'.",
+      "Track the maximum of the running depth, not its final value."
     ],
     "approach": "Scan once with a depth counter and keep the largest value it reaches.",
     "time": "O(n)",

@@ -44,9 +44,9 @@ class StudyApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("striver-sde"))
                 .andExpect(jsonPath("$[0].total").value(62))
-                .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(61)))
+                .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(86)))
                 .andExpect(jsonPath("$[?(@.id=='warmup')].solved").value(hasItem(0)))
-                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(20)));
+                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(27)));
     }
 
     @Test
