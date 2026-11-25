@@ -8,6 +8,7 @@ import { SHEETS, Sheet, sheetFromParam, topicOf } from "@/lib/sheets";
 import "../striver.css";
 
 const SHEET_KEY = "lc-striver-sheet";
+const TICK_KEY = "lc-striver-done";
 const ICON = {
   SOLVED: <span className="st-done" title="Solved" aria-label="Solved">✔</span>,
   ATTEMPTED: <span className="st-att" title="Attempted" aria-label="Attempted" />,
@@ -27,6 +28,7 @@ export default function StriverPage() {
   const [difficulty, setDifficulty] = useState("");
   const [hideSolved, setHideSolved] = useState(false);
   const [q, setQ] = useState("");
+  const [ticked, setTicked] = useState<Set<string>>(new Set()); // problems you ticked by hand, kept on this device
 
   // Which sheet: ?sheet=a2z|sde from a link, else the one you used last time.
   useEffect(() => {
@@ -35,6 +37,19 @@ export default function StriverPage() {
     if (s) setSheet(s);
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    try { const raw = localStorage.getItem(TICK_KEY); if (raw) setTicked(new Set(JSON.parse(raw) as string[])); } catch { /* storage blocked */ }
+  }, []);
+  const toggleTick = (slug: string) => {
+    setTicked((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug); else next.add(slug);
+      try { localStorage.setItem(TICK_KEY, JSON.stringify([...next])); } catch { /* storage blocked */ }
+      return next;
+    });
+  };
+  const isDone = (p: ProblemSummary) => p.status === "SOLVED" || ticked.has(p.slug);
 
   useEffect(() => {
     swr<{ tag: string; total: number }[]>("/api/topics", (t) => setTotals(new Map(t.map((x) => [x.tag, x.total]))), () => {}).catch(() => {});
@@ -63,14 +78,14 @@ export default function StriverPage() {
   };
 
   const all = Object.keys(pages).map(Number).sort((a, b) => a - b).flatMap((k) => pages[k]);
-  const solved = all.filter((p) => p.status === "SOLVED").length;
-  const next = all.find((p) => p.status !== "SOLVED");
+  const solved = all.filter(isDone).length;
+  const next = all.find((p) => !isDone(p));
   const text = q.trim().toLowerCase();
-  const shown = all.filter((p) => (!difficulty || p.difficulty === difficulty) && (!hideSolved || p.status !== "SOLVED") && (!text || p.title.toLowerCase().includes(text)));
+  const shown = all.filter((p) => (!difficulty || p.difficulty === difficulty) && (!hideSolved || !isDone(p)) && (!text || p.title.toLowerCase().includes(text)));
   const groupTotals = new Map<string, { solved: number; total: number }>();
   for (const p of all) {
     const t = topicOf(p), g = groupTotals.get(t) ?? { solved: 0, total: 0 };
-    g.total++; if (p.status === "SOLVED") g.solved++;
+    g.total++; if (isDone(p)) g.solved++;
     groupTotals.set(t, g);
   }
   const groups = new Map<string, ProblemSummary[]>();
@@ -106,8 +121,8 @@ export default function StriverPage() {
         </div>
         {all.length > 0 && (
           <div className="sh-prog">
-            <div className="sh-bar" role="progressbar" aria-valuemin={0} aria-valuemax={all.length} aria-valuenow={solved} aria-label="Solved on this sheet"><i style={{ width: `${(solved / all.length) * 100}%` }} /></div>
-            <span className="sh-count"><b>{solved}</b> / {all.length} solved</span>
+            <div className="sh-bar" role="progressbar" aria-valuemin={0} aria-valuemax={all.length} aria-valuenow={solved} aria-label="Done on this sheet"><i style={{ width: `${(solved / all.length) * 100}%` }} /></div>
+            <span className="sh-count"><b>{solved}</b> / {all.length} done{all.length > 0 && <> · {Math.round((solved / all.length) * 100)}%</>}</span>
           </div>
         )}
       </section>
@@ -119,7 +134,7 @@ export default function StriverPage() {
             <option value="">All difficulties</option>
             <option value="EASY">Easy</option><option value="MEDIUM">Medium</option><option value="HARD">Hard</option>
           </select>
-          <label className="sh-hide"><input type="checkbox" checked={hideSolved} onChange={(e) => setHideSolved(e.target.checked)} /> Hide solved</label>
+          <label className="sh-hide"><input type="checkbox" checked={hideSolved} onChange={(e) => setHideSolved(e.target.checked)} /> Hide done</label>
         </div>
       )}
 
@@ -136,14 +151,17 @@ export default function StriverPage() {
               {(["EASY", "MEDIUM", "HARD"] as const).map((d) => {
                 const part = items.filter((p) => p.difficulty === d);
                 if (!part.length) return null;
-                const done = part.filter((p) => p.status === "SOLVED").length;
+                const done = part.filter(isDone).length;
                 return (
                   <li key={d} className="sh-levelwrap">
                     <div className={`sh-level ${d}`}><b>{cap(d)}</b><span>{done}/{part.length}</span></div>
                     <ul className="sh-sublist">
                       {part.map((p) => (
                         <li key={p.id} className={`sh-row ${d}`}>
-                          <span className="sh-st">{ICON[p.status]}</span>
+                          <label className={`sh-check${p.status === "ATTEMPTED" && !isDone(p) ? " att" : ""}`} title={p.status === "SOLVED" ? "Solved by a submission" : ticked.has(p.slug) ? "Marked done (tap to undo)" : "Mark as done"}>
+                            <input type="checkbox" checked={isDone(p)} disabled={p.status === "SOLVED"} onChange={() => toggleTick(p.slug)} aria-label={`Mark ${p.title} as done`} />
+                            <i aria-hidden="true" />
+                          </label>
                           <Link className="sh-title" href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
                           <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
                           <Link href={`/problems/${p.slug}?tab=solutions`} className="solico sh-sol" title="Solutions" aria-label={`Solutions for ${p.title}`}>
