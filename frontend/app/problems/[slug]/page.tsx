@@ -2,6 +2,7 @@
 import ThemeToggle from "@/components/ThemeToggle";
 import AccountMenu from "@/components/AccountMenu";
 import dynamic from "next/dynamic";
+import { initialLang, runBlocker } from "@/lib/runguard";
 import Markdown from "react-markdown";
 import { type ComponentType, type PointerEvent as RPointerEvent, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -173,15 +174,14 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
   }, [problem?.slug]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { loadProblem(); loadHistory(); checkExec(); }, [loadProblem, loadHistory, checkExec]);
   useEffect(() => {
-    if (!meta || lang) return;
-    // C++ is the main language: ?lang= from a link wins, then your last choice, then C++, then the server default.
-    const ok = (k: string | null) => !!k && meta.languages.some((x) => x.key === k);
+    if (lang) return;
+    // C++ is the main language: ?lang= from a link wins, then your last choice, then C++. Chosen at once (the four judge
+    // languages are fixed), so Run/Submit never go out with an empty language while /api/meta is still waking up.
     const asked = new URLSearchParams(window.location.search).get("lang");
-    const saved = localStorage.getItem("lc-lang");
-    const pick = ok(asked) ? asked! : ok(saved) ? saved! : ok("cpp") ? "cpp" : meta.defaultLanguage;
-    if (ok(asked)) localStorage.setItem("lc-lang", pick);
+    const pick = initialLang(asked, localStorage.getItem("lc-lang"));
+    if (asked === pick) localStorage.setItem("lc-lang", pick);
     setLang(pick);
-  }, [meta, lang]);
+  }, [lang]);
   useEffect(() => {
     let live = true;
     setStudy(null);
@@ -258,6 +258,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
 
   const run = useCallback(async (kind: "run" | "submit") => {
     if (busy) return;
+    const blocked = runBlocker(lang, parts ? composeProgram(parts, code) : code);
+    if (blocked) { setError(blocked); setPane("result"); setConsoleTab("result"); return; }
     const custom = kind === "run" && isCustomInput(problem, customInput);
     setBusy(kind); setError(""); setMode(kind); setCustomRun(custom); setResult(null); setCaseTab(0);
     setConsoleTab("result");
