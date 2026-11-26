@@ -6576,6 +6576,8 @@ STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_4}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_4 if p["slug"] not in ("z-function", "compare-version-numbers")}
 STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_5}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_5}
+# Already-seeded problems that are also on the real Striver SDE sheet (tag only; their tests and answers exist).
+STRIVER_SDE |= set(['count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'count-subarrays-with-given-xor', 'find-the-repeating-and-missing-number', 'search-a-2d-matrix-ii', 'nth-root-of-an-integer', 'single-element-in-a-sorted-array', 'kth-element-of-two-sorted-arrays', 'aggressive-cows', 'median-in-a-row-wise-sorted-matrix', 'split-array-largest-sum', 'subset-sums', 'subsets-ii', 'combination-sum-ii', 'combination-sum-count', 'palindrome-partitioning-count', 'permutation-sequence', 'permutations', 'n-queens-count', 'm-coloring-problem', 'next-greater-element-ii', 'reverse-words-in-a-string', 'string-to-integer-atoi', 'longest-common-prefix', 'count-and-say', 'longest-palindromic-substring-length', 'binary-tree-right-side-view', 'count-complete-tree-nodes'])
 
 
 MAX_CASE_CHARS = 40000  # keep well under the 50,000-character test_cases columns
