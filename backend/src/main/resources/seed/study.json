@@ -2789,5 +2789,265 @@
     "approach": "Use two pointers. Parse the next dot-separated number from each version (0 when a version has ended) and compare. Return at the first difference, otherwise 0.",
     "time": "O(n + m)",
     "space": "O(1)"
+  },
+  "three-sum": {
+    "hints": [
+      "Sort the array first, then fix one value at a time.",
+      "For the fixed value, move two pointers inward from both ends of the rest.",
+      "Skip repeated values so no triplet is listed twice."
+    ],
+    "approach": "Sort the array. For each index i (skipping repeats) use two pointers l and r on the suffix: move l up when the sum is too small, r down when it is too big, and record a triplet when it is zero, then skip duplicates on both sides.",
+    "time": "O(n^2)",
+    "space": "O(1) extra"
+  },
+  "four-sum": {
+    "hints": [
+      "It is 3Sum with one more fixed value.",
+      "Sort, fix two values with two loops, and use two pointers for the other two.",
+      "Use long long for the sum and skip repeated values at every level."
+    ],
+    "approach": "Sort the array and fix the first two values with nested loops, skipping repeats. A two-pointer scan over the remaining suffix finds the other two values, with duplicates skipped.",
+    "time": "O(n^3)",
+    "space": "O(1) extra"
+  },
+  "detect-cycle-in-an-undirected-graph": {
+    "hints": [
+      "Think of adding the edges one by one.",
+      "An edge whose two ends are already connected closes a cycle.",
+      "A union-find structure answers 'already connected?' quickly."
+    ],
+    "approach": "Use union-find. For every edge, find the roots of both ends; if they are equal the edge closes a cycle, otherwise union them. (A DFS that remembers the parent also works.)",
+    "time": "O(m * alpha(n))",
+    "space": "O(n)"
+  },
+  "detect-cycle-in-a-directed-graph": {
+    "hints": [
+      "Repeatedly remove nodes that have no incoming edge.",
+      "Nodes on a cycle can never reach in-degree 0.",
+      "Compare how many nodes were removed with n."
+    ],
+    "approach": "Run Kahn's algorithm: push every node with in-degree 0, pop one, and lower the in-degree of its neighbours. If fewer than n nodes are popped, the rest sit on a cycle.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "topological-sort": {
+    "hints": [
+      "Count the incoming edges of every node.",
+      "A node can be placed once all its prerequisites are placed.",
+      "Use a min-heap instead of a plain queue to always take the smallest label."
+    ],
+    "approach": "Kahn's algorithm with a min-heap: start with all in-degree 0 nodes, repeatedly take the smallest, append it to the order and decrease its neighbours' in-degrees, pushing those that reach 0.",
+    "time": "O((n + m) log n)",
+    "space": "O(n + m)"
+  },
+  "bfs-of-graph": {
+    "hints": [
+      "Use a queue and a visited array.",
+      "Sort every adjacency list so neighbours come in ascending order.",
+      "Mark a node visited when you push it, not when you pop it."
+    ],
+    "approach": "Build sorted adjacency lists. Start from node 0, pop a node, record it and push its unvisited neighbours (marking them visited as they are pushed).",
+    "time": "O(n + m log m)",
+    "space": "O(n + m)"
+  },
+  "dfs-of-graph": {
+    "hints": [
+      "Recursion visits a node and then goes deep into its first unvisited neighbour.",
+      "Sort the adjacency lists to visit neighbours in ascending order.",
+      "Keep a visited array so nodes are never recorded twice."
+    ],
+    "approach": "Build sorted adjacency lists and run a recursive DFS from node 0, recording each node when it is first reached.",
+    "time": "O(n + m log m)",
+    "space": "O(n + m)"
+  },
+  "shortest-path-in-undirected-graph": {
+    "hints": [
+      "With unit weights, the first time BFS reaches a node is the shortest way there.",
+      "Start the queue at src with distance 0.",
+      "Leave unreached nodes at -1."
+    ],
+    "approach": "BFS from src. Each node's distance is its parent's distance plus 1; nodes that are never reached keep -1.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "dijkstra-algorithm": {
+    "hints": [
+      "Always settle the unsettled node with the smallest known distance.",
+      "A min-heap of (distance, node) gives that node quickly.",
+      "Ignore heap entries that are older than the stored distance."
+    ],
+    "approach": "Dijkstra with a priority queue: pop the closest node, relax every outgoing edge and push improved distances. Stale heap entries are skipped. Unreached nodes are reported as -1.",
+    "time": "O((n + m) log n)",
+    "space": "O(n + m)"
+  },
+  "bellman-ford-algorithm": {
+    "hints": [
+      "Relaxing every edge n - 1 times is enough when there is no negative cycle.",
+      "Only relax from nodes whose distance is already known.",
+      "If an n-th round still improves something, a negative cycle is reachable."
+    ],
+    "approach": "Run n - 1 rounds of relaxing all edges from the source. A further successful relaxation proves a reachable negative cycle (answer -1); otherwise the distances are final, with 100000000 for unreachable nodes.",
+    "time": "O(n * m)",
+    "space": "O(n)"
+  },
+  "floyd-warshall": {
+    "hints": [
+      "Let k be the largest intermediate node a path may use.",
+      "d[i][j] = min(d[i][j], d[i][k] + d[k][j]).",
+      "Loop k on the outside, and skip pairs that have no path yet."
+    ],
+    "approach": "Dynamic programming over intermediate nodes: for k = 0..n-1 try to improve every pair (i, j) by going through k. Missing edges start as infinity and become -1 in the output when still unreachable.",
+    "time": "O(n^3)",
+    "space": "O(n^2)"
+  },
+  "minimum-spanning-tree": {
+    "hints": [
+      "Take the cheapest edges first, but never create a cycle.",
+      "Union-find tells whether two nodes are already connected.",
+      "Stop being picky: a spanning tree has exactly n - 1 edges."
+    ],
+    "approach": "Kruskal's algorithm: sort the edges by weight and add an edge whenever it joins two different union-find components; the added weights sum to the MST weight.",
+    "time": "O(m log m)",
+    "space": "O(n)"
+  },
+  "eventual-safe-states": {
+    "hints": [
+      "A node is safe when every neighbour is safe.",
+      "Terminal nodes are the safe starting point.",
+      "Reverse the edges and peel nodes off like a topological sort."
+    ],
+    "approach": "Reverse the graph and run Kahn's algorithm from the terminal nodes, counting down each node's out-degree. Nodes that reach out-degree 0 are safe; sort them for the output.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "number-of-operations-to-make-network-connected": {
+    "hints": [
+      "Joining n computers needs at least n - 1 cables.",
+      "Count the connected components with union-find.",
+      "Every spare cable can join one more component."
+    ],
+    "approach": "If there are fewer than n - 1 cables the answer is -1. Otherwise union all cables and count the components; the answer is components - 1.",
+    "time": "O(m * alpha(n))",
+    "space": "O(n)"
+  },
+  "strongly-connected-components-kosaraju": {
+    "hints": [
+      "Do a DFS and record the nodes by finishing time.",
+      "Reverse every edge.",
+      "Process nodes in decreasing finishing time and DFS on the reversed graph."
+    ],
+    "approach": "Kosaraju: DFS the graph pushing nodes in finishing order, then take them in reverse order and DFS on the transposed graph. Every fresh DFS tree in the second pass is one strongly connected component.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "critical-connections-in-a-network": {
+    "hints": [
+      "Record the discovery time tin[u] and the lowest time low[u] reachable from u's subtree.",
+      "Back edges lower low[u].",
+      "An edge u-v to a child is a bridge when low[v] > tin[u]."
+    ],
+    "approach": "Tarjan's bridge-finding DFS: track tin and low. After returning from a child v, the edge (u, v) is a bridge if low[v] > tin[u], meaning v's subtree cannot reach u or above any other way. Sort the bridges for the output.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "articulation-point-in-graph": {
+    "hints": [
+      "Use the same tin and low values as for bridges.",
+      "A non-root node u is an articulation point if some child v has low[v] >= tin[u].",
+      "The DFS root is one only when it has two or more DFS children."
+    ],
+    "approach": "Tarjan's DFS with tin and low. A non-root u is an articulation point when a child subtree cannot reach above u (low[v] >= tin[u]); the root is one when it has more than one DFS child. Output them sorted, or -1 when there are none.",
+    "time": "O(n + m)",
+    "space": "O(n + m)"
+  },
+  "ceil-in-a-bst": {
+    "hints": [
+      "The BST order tells you which way to go.",
+      "When the node is at least the key, it is a candidate - remember it and try the left side.",
+      "When the node is smaller than the key, go right."
+    ],
+    "approach": "Walk down from the root. If the value equals the key, that is the ceil. If it is larger, remember it and go left; otherwise go right. The last remembered value is the answer.",
+    "time": "O(h)",
+    "space": "O(1)"
+  },
+  "floor-in-a-bst": {
+    "hints": [
+      "The BST order tells you which way to go.",
+      "When the node is at most the key, it is a candidate - remember it and try the right side.",
+      "When the node is larger than the key, go left."
+    ],
+    "approach": "Walk down from the root. If the value equals the key, that is the floor. If it is smaller, remember it and go right; otherwise go left. The last remembered value is the answer.",
+    "time": "O(h)",
+    "space": "O(1)"
+  },
+  "inorder-successor-in-bst": {
+    "hints": [
+      "The successor is the smallest value that is larger than the key.",
+      "You do not need parent pointers: search from the root.",
+      "When a node is larger than the key, remember it and go left; otherwise go right."
+    ],
+    "approach": "Search from the root keeping the best candidate: a node larger than the key becomes the candidate and we go left to look for a closer one; a node not larger than the key sends us right.",
+    "time": "O(h)",
+    "space": "O(1)"
+  },
+  "construct-binary-search-tree-from-preorder-traversal": {
+    "hints": [
+      "The first value is the root.",
+      "Pass down an upper bound: a value above it belongs further up the tree.",
+      "Consume the preorder array once, left subtree before right."
+    ],
+    "approach": "Recursive build with an upper bound. Take the next value as a node if it is within the bound, build its left subtree with the node's value as the new bound, then its right subtree with the inherited bound. Each value is used once.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "two-sum-iv-input-is-a-bst": {
+    "hints": [
+      "An inorder traversal of a BST is sorted.",
+      "Two pointers work on a sorted array.",
+      "Move the left pointer up when the sum is small and the right pointer down when it is large."
+    ],
+    "approach": "Collect the inorder values into a sorted array and run the classic two-pointer search for a pair summing to k. The two values always come from different nodes because the pointers never meet.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "recover-binary-search-tree": {
+    "hints": [
+      "An inorder traversal of a valid BST is increasing.",
+      "Two swapped nodes create one or two places where the order goes down.",
+      "The first node of the first dip and the second node of the last dip are the swapped pair."
+    ],
+    "approach": "Do an inorder traversal remembering the previous node. At every inversion (prev > current) the first time set first = prev, and always set second = current. Swap the values of first and second at the end.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "largest-bst-subtree": {
+    "hints": [
+      "Solve it bottom-up with a postorder traversal.",
+      "Each subtree reports whether it is a BST, its size, its smallest and its largest value.",
+      "A node roots a BST when both children are BSTs and left max < node < right min."
+    ],
+    "approach": "Postorder DP: a subtree is a BST when both children are BSTs and the left maximum is below the node and the right minimum is above it. Its size is the sum plus one, and the biggest size seen is the answer.",
+    "time": "O(n)",
+    "space": "O(h)"
+  },
+  "amount-of-time-for-binary-tree-to-be-infected": {
+    "hints": [
+      "Fire spreads to the parent too, so you need parent links.",
+      "Build a parent map with one traversal.",
+      "Run a BFS from the start node and count the levels."
+    ],
+    "approach": "Record every node's parent, then BFS from the start node over left, right and parent links with a visited set. The number of BFS levels (minus the first) is the time to burn the whole tree.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "all-nodes-distance-k-in-binary-tree": {
+    "hints": [
+      "Moving up to a parent is allowed, so build a parent map.",
+      "Treat the tree as an undirected graph.",
+      "BFS from the target for exactly k levels."
+    ],
+    "approach": "Build a parent map, then BFS from the target node over left, right and parent links with a visited set. After k levels the queue holds all nodes at distance k; sort them for the output.",
+    "time": "O(n)",
+    "space": "O(n)"
   }
 }

@@ -6559,6 +6559,11 @@ _have4 = {p["slug"] for p in PROBLEMS}
 SDE_BATCH_4 = [p for p in make_batch_4(mk, a2z_rng, dict(TN=TN, tok2tree=tok2tree, tree2tok=tree2tok, rand_tree=rand_tree, TREE_IN=TREE_IN, TREE_OUT=TREE_OUT)) if p["slug"] not in _have4]
 PROBLEMS += SDE_BATCH_4
 
+from sde_batch5 import make_batch as make_batch_5  # noqa: E402  (3Sum/4Sum, core graph algorithms and BST problems)
+_have5 = {p["slug"] for p in PROBLEMS}
+SDE_BATCH_5 = [p for p in make_batch_5(mk, a2z_rng, dict(TN=TN, tok2tree=tok2tree, tree2tok=tree2tok, rand_tree=rand_tree, TREE_IN=TREE_IN, TREE_OUT=TREE_OUT)) if p["slug"] not in _have5]
+PROBLEMS += SDE_BATCH_5
+
 
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
@@ -6569,6 +6574,8 @@ STRIVER_SDE |= {p["slug"] for p in SDE_EXTRA}
 STRIVER_A2Z |= {p["slug"] for p in SDE_EXTRA}
 STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_4}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_4 if p["slug"] not in ("z-function", "compare-version-numbers")}
+STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_5}
+STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_5}
 
 
 MAX_CASE_CHARS = 40000  # keep well under the 50,000-character test_cases columns

@@ -103,14 +103,14 @@ class SubmissionApiTest {
                 .andExpect(jsonPath("$.items[0].slug").value("two-sum"));
 
         mvc.perform(get("/api/problems").param("status", "todo").header(CLIENT, client.toString()))
-                .andExpect(jsonPath("$.totalElements").value(267));
+                .andExpect(jsonPath("$.totalElements").value(325));
 
         mvc.perform(get("/api/progress").header(CLIENT, client.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.total").value(300))
+                .andExpect(jsonPath("$.total").value(326))
                 .andExpect(jsonPath("$.solved").value(1))
                 .andExpect(jsonPath("$.attempted").value(1))
-                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(89))
+                .andExpect(jsonPath("$.byDifficulty.EASY.total").value(92))
                 .andExpect(jsonPath("$.byDifficulty.EASY.solved").value(1))
                 .andExpect(jsonPath("$.byDifficulty.HARD.solved").value(0));
     }

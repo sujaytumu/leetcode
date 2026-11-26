@@ -42,7 +42,7 @@ class ProfileApiTest {
     void newClientHasAnEmptyProfile() throws Exception {
         mvc.perform(get("/api/profile").header(CLIENT, UUID.randomUUID().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.progress.total").value(300))
+                .andExpect(jsonPath("$.progress.total").value(326))
                 .andExpect(jsonPath("$.progress.solved").value(0))
                 .andExpect(jsonPath("$.attempting").value(0))
                 .andExpect(jsonPath("$.submissionsPastYear").value(0))

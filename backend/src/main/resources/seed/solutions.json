@@ -2947,5 +2947,161 @@
   "solutions": {
    "cpp": "// Optimised: O(n + m) time, O(1) space\n\nclass Solution {\npublic:\n    int compareVersion(string version1, string version2) {\n        int i = 0, j = 0, n = version1.size(), m = version2.size();\n        while (i < n || j < m) {\n            long long a = 0, b = 0;\n            while (i < n && version1[i] != '.') a = a * 10 + (version1[i++] - '0');\n            while (j < m && version2[j] != '.') b = b * 10 + (version2[j++] - '0');\n            if (a != b) return a > b ? 1 : -1;\n            i++;                                      // skip the dot\n            j++;\n        }\n        return 0;\n    }\n};\n"
   }
+ },
+ "three-sum": {
+  "editorial": "## Approach\n\nSort the array. For each index i (skipping repeats) use two pointers l and r on the suffix: move l up when the sum is too small, r down when it is too big, and record a triplet when it is zero, then skip duplicates on both sides.\n\n**Complexity:** O(n^2) time, O(1) extra space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^2) time, O(1) extra space\nclass Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        vector<vector<int>> out;\n        for (int i = 0; i + 2 < n; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;       // skip duplicate first values\n            int l = i + 1, r = n - 1;\n            while (l < r) {\n                int sum = nums[i] + nums[l] + nums[r];\n                if (sum < 0) l++;\n                else if (sum > 0) r--;\n                else {\n                    out.push_back({nums[i], nums[l], nums[r]});\n                    l++; r--;\n                    while (l < r && nums[l] == nums[l - 1]) l++;   // skip duplicates on both sides\n                    while (l < r && nums[r] == nums[r + 1]) r--;\n                }\n            }\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "four-sum": {
+  "editorial": "## Approach\n\nSort the array and fix the first two values with nested loops, skipping repeats. A two-pointer scan over the remaining suffix finds the other two values, with duplicates skipped.\n\n**Complexity:** O(n^3) time, O(1) extra space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^3) time, O(1) extra space\nclass Solution {\npublic:\n    vector<vector<int>> fourSum(vector<int>& nums, int target) {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        vector<vector<int>> out;\n        for (int i = 0; i + 3 < n; i++) {\n            if (i > 0 && nums[i] == nums[i - 1]) continue;\n            for (int j = i + 1; j + 2 < n; j++) {\n                if (j > i + 1 && nums[j] == nums[j - 1]) continue;\n                int l = j + 1, r = n - 1;\n                while (l < r) {\n                    long long sum = (long long)nums[i] + nums[j] + nums[l] + nums[r];\n                    if (sum < target) l++;\n                    else if (sum > target) r--;\n                    else {\n                        out.push_back({nums[i], nums[j], nums[l], nums[r]});\n                        l++; r--;\n                        while (l < r && nums[l] == nums[l - 1]) l++;\n                        while (l < r && nums[r] == nums[r + 1]) r--;\n                    }\n                }\n            }\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "detect-cycle-in-an-undirected-graph": {
+  "editorial": "## Approach\n\nUse union-find. For every edge, find the roots of both ends; if they are equal the edge closes a cycle, otherwise union them. (A DFS that remembers the parent also works.)\n\n**Complexity:** O(m * alpha(n)) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(m * alpha(n)) time, O(n) space\nclass Solution {\npublic:\n    bool isCycleUndirected(int n, vector<vector<int>>& edges) {\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> find = [&](int x) {\n            while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n            return x;\n        };\n        for (auto &e : edges) {\n            int a = find(e[0]), b = find(e[1]);\n            if (a == b) return true;          // both ends already connected: this edge closes a cycle\n            parent[a] = b;\n        }\n        return false;\n    }\n};\n"
+  }
+ },
+ "detect-cycle-in-a-directed-graph": {
+  "editorial": "## Approach\n\nRun Kahn's algorithm: push every node with in-degree 0, pop one, and lower the in-degree of its neighbours. If fewer than n nodes are popped, the rest sit on a cycle.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    bool isCycleDirected(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        vector<int> indeg(n, 0);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); indeg[e[1]]++; }\n        queue<int> q;\n        for (int i = 0; i < n; i++) if (indeg[i] == 0) q.push(i);\n        int done = 0;\n        while (!q.empty()) {                  // Kahn's algorithm: nodes on a cycle never reach in-degree 0\n            int u = q.front(); q.pop();\n            done++;\n            for (int v : adj[u]) if (--indeg[v] == 0) q.push(v);\n        }\n        return done < n;\n    }\n};\n"
+  }
+ },
+ "topological-sort": {
+  "editorial": "## Approach\n\nKahn's algorithm with a min-heap: start with all in-degree 0 nodes, repeatedly take the smallest, append it to the order and decrease its neighbours' in-degrees, pushing those that reach 0.\n\n**Complexity:** O((n + m) log n) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O((n + m) log n) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> topoSort(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        vector<int> indeg(n, 0);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); indeg[e[1]]++; }\n        priority_queue<int, vector<int>, greater<int>> heap;   // smallest available label first\n        for (int i = 0; i < n; i++) if (indeg[i] == 0) heap.push(i);\n        vector<int> order;\n        while (!heap.empty()) {\n            int u = heap.top(); heap.pop();\n            order.push_back(u);\n            for (int v : adj[u]) if (--indeg[v] == 0) heap.push(v);\n        }\n        return order;\n    }\n};\n"
+  }
+ },
+ "bfs-of-graph": {
+  "editorial": "## Approach\n\nBuild sorted adjacency lists. Start from node 0, pop a node, record it and push its unvisited neighbours (marking them visited as they are pushed).\n\n**Complexity:** O(n + m log m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m log m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> bfsOfGraph(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }\n        for (auto &a : adj) sort(a.begin(), a.end());\n        vector<bool> seen(n, false);\n        vector<int> order;\n        queue<int> q;\n        q.push(0);\n        seen[0] = true;\n        while (!q.empty()) {\n            int u = q.front(); q.pop();\n            order.push_back(u);\n            for (int v : adj[u]) if (!seen[v]) { seen[v] = true; q.push(v); }\n        }\n        return order;\n    }\n};\n"
+  }
+ },
+ "dfs-of-graph": {
+  "editorial": "## Approach\n\nBuild sorted adjacency lists and run a recursive DFS from node 0, recording each node when it is first reached.\n\n**Complexity:** O(n + m log m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m log m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> dfsOfGraph(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }\n        for (auto &a : adj) sort(a.begin(), a.end());\n        vector<bool> seen(n, false);\n        vector<int> order;\n        function<void(int)> dfs = [&](int u) {\n            seen[u] = true;\n            order.push_back(u);\n            for (int v : adj[u]) if (!seen[v]) dfs(v);\n        };\n        dfs(0);\n        return order;\n    }\n};\n"
+  }
+ },
+ "shortest-path-in-undirected-graph": {
+  "editorial": "## Approach\n\nBFS from src. Each node's distance is its parent's distance plus 1; nodes that are never reached keep -1.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> shortestPath(int n, vector<vector<int>>& edges, int src) {\n        vector<vector<int>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }\n        vector<int> dist(n, -1);\n        queue<int> q;\n        dist[src] = 0;\n        q.push(src);\n        while (!q.empty()) {                  // BFS gives the fewest edges to every node\n            int u = q.front(); q.pop();\n            for (int v : adj[u]) if (dist[v] < 0) { dist[v] = dist[u] + 1; q.push(v); }\n        }\n        return dist;\n    }\n};\n"
+  }
+ },
+ "dijkstra-algorithm": {
+  "editorial": "## Approach\n\nDijkstra with a priority queue: pop the closest node, relax every outgoing edge and push improved distances. Stale heap entries are skipped. Unreached nodes are reported as -1.\n\n**Complexity:** O((n + m) log n) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O((n + m) log n) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> dijkstra(int n, vector<vector<int>>& edges, int src) {\n        vector<vector<pair<int, int>>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back({e[1], e[2]}); adj[e[1]].push_back({e[0], e[2]}); }\n        const long long INF = LLONG_MAX;\n        vector<long long> dist(n, INF);\n        priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> heap;\n        dist[src] = 0;\n        heap.push({0, src});\n        while (!heap.empty()) {\n            auto [d, u] = heap.top(); heap.pop();\n            if (d > dist[u]) continue;        // stale entry\n            for (auto [v, w] : adj[u]) {\n                if (d + w < dist[v]) { dist[v] = d + w; heap.push({dist[v], v}); }\n            }\n        }\n        vector<int> out(n);\n        for (int i = 0; i < n; i++) out[i] = dist[i] == INF ? -1 : (int)dist[i];\n        return out;\n    }\n};\n"
+  }
+ },
+ "bellman-ford-algorithm": {
+  "editorial": "## Approach\n\nRun n - 1 rounds of relaxing all edges from the source. A further successful relaxation proves a reachable negative cycle (answer -1); otherwise the distances are final, with 100000000 for unreachable nodes.\n\n**Complexity:** O(n * m) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n * m) time, O(n) space\nclass Solution {\npublic:\n    vector<int> bellmanFord(int n, vector<vector<int>>& edges, int src) {\n        const long long INF = 100000000;\n        vector<long long> dist(n, INF);\n        dist[src] = 0;\n        for (int round = 0; round < n - 1; round++) {          // n - 1 rounds are enough without a negative cycle\n            bool changed = false;\n            for (auto &e : edges) {\n                if (dist[e[0]] != INF && dist[e[0]] + e[2] < dist[e[1]]) { dist[e[1]] = dist[e[0]] + e[2]; changed = true; }\n            }\n            if (!changed) break;\n        }\n        for (auto &e : edges) {                                // one more improvement means a reachable negative cycle\n            if (dist[e[0]] != INF && dist[e[0]] + e[2] < dist[e[1]]) return {-1};\n        }\n        vector<int> out(n);\n        for (int i = 0; i < n; i++) out[i] = (int)dist[i];\n        return out;\n    }\n};\n"
+  }
+ },
+ "floyd-warshall": {
+  "editorial": "## Approach\n\nDynamic programming over intermediate nodes: for k = 0..n-1 try to improve every pair (i, j) by going through k. Missing edges start as infinity and become -1 in the output when still unreachable.\n\n**Complexity:** O(n^3) time, O(n^2) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^3) time, O(n^2) space\nclass Solution {\npublic:\n    vector<vector<int>> floydWarshall(vector<vector<int>>& matrix) {\n        int n = matrix.size();\n        const long long INF = (long long)1e15;\n        vector<vector<long long>> d(n, vector<long long>(n, INF));\n        for (int i = 0; i < n; i++)\n            for (int j = 0; j < n; j++) if (matrix[i][j] >= 0) d[i][j] = matrix[i][j];\n        for (int i = 0; i < n; i++) d[i][i] = 0;\n        for (int k = 0; k < n; k++)                            // allow node k as an intermediate stop\n            for (int i = 0; i < n; i++)\n                for (int j = 0; j < n; j++)\n                    if (d[i][k] < INF && d[k][j] < INF) d[i][j] = min(d[i][j], d[i][k] + d[k][j]);\n        vector<vector<int>> out(n, vector<int>(n));\n        for (int i = 0; i < n; i++)\n            for (int j = 0; j < n; j++) out[i][j] = d[i][j] >= INF ? -1 : (int)d[i][j];\n        return out;\n    }\n};\n"
+  }
+ },
+ "minimum-spanning-tree": {
+  "editorial": "## Approach\n\nKruskal's algorithm: sort the edges by weight and add an edge whenever it joins two different union-find components; the added weights sum to the MST weight.\n\n**Complexity:** O(m log m) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(m log m) time, O(n) space\nclass Solution {\npublic:\n    int spanningTree(int n, vector<vector<int>>& edges) {\n        sort(edges.begin(), edges.end(), [](const vector<int> &a, const vector<int> &b) { return a[2] < b[2]; });\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> find = [&](int x) {\n            while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n            return x;\n        };\n        int total = 0;\n        for (auto &e : edges) {               // Kruskal: take the cheapest edge that joins two different components\n            int a = find(e[0]), b = find(e[1]);\n            if (a != b) { parent[a] = b; total += e[2]; }\n        }\n        return total;\n    }\n};\n"
+  }
+ },
+ "eventual-safe-states": {
+  "editorial": "## Approach\n\nReverse the graph and run Kahn's algorithm from the terminal nodes, counting down each node's out-degree. Nodes that reach out-degree 0 are safe; sort them for the output.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> eventualSafeNodes(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> rev(n);\n        vector<int> outdeg(n, 0);\n        for (auto &e : edges) { rev[e[1]].push_back(e[0]); outdeg[e[0]]++; }\n        queue<int> q;\n        for (int i = 0; i < n; i++) if (outdeg[i] == 0) q.push(i);   // terminal nodes are safe\n        vector<int> safe;\n        while (!q.empty()) {                  // a node becomes safe once all of its out-neighbours are safe\n            int u = q.front(); q.pop();\n            safe.push_back(u);\n            for (int p : rev[u]) if (--outdeg[p] == 0) q.push(p);\n        }\n        sort(safe.begin(), safe.end());\n        return safe;\n    }\n};\n"
+  }
+ },
+ "number-of-operations-to-make-network-connected": {
+  "editorial": "## Approach\n\nIf there are fewer than n - 1 cables the answer is -1. Otherwise union all cables and count the components; the answer is components - 1.\n\n**Complexity:** O(m * alpha(n)) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(m * alpha(n)) time, O(n) space\nclass Solution {\npublic:\n    int makeConnected(int n, vector<vector<int>>& connections) {\n        if ((int)connections.size() < n - 1) return -1;          // not enough cables to join everything\n        vector<int> parent(n);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> find = [&](int x) {\n            while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n            return x;\n        };\n        int components = n;\n        for (auto &c : connections) {\n            int a = find(c[0]), b = find(c[1]);\n            if (a != b) { parent[a] = b; components--; }\n        }\n        return components - 1;                // each spare cable can join one more component\n    }\n};\n"
+  }
+ },
+ "strongly-connected-components-kosaraju": {
+  "editorial": "## Approach\n\nKosaraju: DFS the graph pushing nodes in finishing order, then take them in reverse order and DFS on the transposed graph. Every fresh DFS tree in the second pass is one strongly connected component.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    int kosaraju(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n), rev(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); rev[e[1]].push_back(e[0]); }\n        vector<bool> seen(n, false);\n        vector<int> order;\n        function<void(int)> first = [&](int u) {              // pass 1: nodes by finishing time\n            seen[u] = true;\n            for (int v : adj[u]) if (!seen[v]) first(v);\n            order.push_back(u);\n        };\n        for (int i = 0; i < n; i++) if (!seen[i]) first(i);\n        fill(seen.begin(), seen.end(), false);\n        function<void(int)> second = [&](int u) {             // pass 2: walk the reversed graph\n            seen[u] = true;\n            for (int v : rev[u]) if (!seen[v]) second(v);\n        };\n        int count = 0;\n        for (int i = n - 1; i >= 0; i--) {\n            if (!seen[order[i]]) { count++; second(order[i]); }\n        }\n        return count;\n    }\n};\n"
+  }
+ },
+ "critical-connections-in-a-network": {
+  "editorial": "## Approach\n\nTarjan's bridge-finding DFS: track tin and low. After returning from a child v, the edge (u, v) is a bridge if low[v] > tin[u], meaning v's subtree cannot reach u or above any other way. Sort the bridges for the output.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }\n        vector<int> tin(n, -1), low(n, 0);\n        int timer = 0;\n        vector<vector<int>> bridges;\n        function<void(int, int)> dfs = [&](int u, int parent) {\n            tin[u] = low[u] = timer++;\n            for (int v : adj[u]) {\n                if (v == parent) continue;\n                if (tin[v] != -1) {\n                    low[u] = min(low[u], tin[v]);             // back edge\n                } else {\n                    dfs(v, u);\n                    low[u] = min(low[u], low[v]);\n                    if (low[v] > tin[u]) bridges.push_back({min(u, v), max(u, v)});   // v's subtree cannot reach above u\n                }\n            }\n        };\n        for (int i = 0; i < n; i++) if (tin[i] == -1) dfs(i, -1);\n        sort(bridges.begin(), bridges.end());\n        return bridges;\n    }\n};\n"
+  }
+ },
+ "articulation-point-in-graph": {
+  "editorial": "## Approach\n\nTarjan's DFS with tin and low. A non-root u is an articulation point when a child subtree cannot reach above u (low[v] >= tin[u]); the root is one when it has more than one DFS child. Output them sorted, or -1 when there are none.\n\n**Complexity:** O(n + m) time, O(n + m) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(n + m) space\nclass Solution {\npublic:\n    vector<int> articulationPoints(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> adj(n);\n        for (auto &e : edges) { adj[e[0]].push_back(e[1]); adj[e[1]].push_back(e[0]); }\n        vector<int> tin(n, -1), low(n, 0);\n        vector<bool> isPoint(n, false);\n        int timer = 0;\n        function<void(int, int)> dfs = [&](int u, int parent) {\n            tin[u] = low[u] = timer++;\n            int children = 0;\n            for (int v : adj[u]) {\n                if (v == parent) continue;\n                if (tin[v] != -1) {\n                    low[u] = min(low[u], tin[v]);\n                } else {\n                    dfs(v, u);\n                    low[u] = min(low[u], low[v]);\n                    if (low[v] >= tin[u] && parent != -1) isPoint[u] = true;   // v's subtree hangs on u alone\n                    children++;\n                }\n            }\n            if (parent == -1 && children > 1) isPoint[u] = true;                // a root with 2+ DFS children\n        };\n        for (int i = 0; i < n; i++) if (tin[i] == -1) dfs(i, -1);\n        vector<int> out;\n        for (int i = 0; i < n; i++) if (isPoint[i]) out.push_back(i);\n        if (out.empty()) out.push_back(-1);\n        return out;\n    }\n};\n"
+  }
+ },
+ "ceil-in-a-bst": {
+  "editorial": "## Approach\n\nWalk down from the root. If the value equals the key, that is the ceil. If it is larger, remember it and go left; otherwise go right. The last remembered value is the answer.\n\n**Complexity:** O(h) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(h) time, O(1) space\nclass Solution {\npublic:\n    int findCeil(TreeNode* root, int key) {\n        int ans = -1;\n        while (root) {\n            if (root->val == key) return key;\n            if (root->val > key) { ans = root->val; root = root->left; }   // a candidate: look for a smaller one on the left\n            else root = root->right;\n        }\n        return ans;\n    }\n};\n"
+  }
+ },
+ "floor-in-a-bst": {
+  "editorial": "## Approach\n\nWalk down from the root. If the value equals the key, that is the floor. If it is smaller, remember it and go right; otherwise go left. The last remembered value is the answer.\n\n**Complexity:** O(h) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(h) time, O(1) space\nclass Solution {\npublic:\n    int findFloor(TreeNode* root, int key) {\n        int ans = -1;\n        while (root) {\n            if (root->val == key) return key;\n            if (root->val < key) { ans = root->val; root = root->right; }  // a candidate: look for a larger one on the right\n            else root = root->left;\n        }\n        return ans;\n    }\n};\n"
+  }
+ },
+ "inorder-successor-in-bst": {
+  "editorial": "## Approach\n\nSearch from the root keeping the best candidate: a node larger than the key becomes the candidate and we go left to look for a closer one; a node not larger than the key sends us right.\n\n**Complexity:** O(h) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(h) time, O(1) space\nclass Solution {\npublic:\n    int inorderSuccessor(TreeNode* root, int key) {\n        int ans = -1;\n        while (root) {\n            if (root->val > key) { ans = root->val; root = root->left; }   // possible successor, try something smaller\n            else root = root->right;\n        }\n        return ans;\n    }\n};\n"
+  }
+ },
+ "construct-binary-search-tree-from-preorder-traversal": {
+  "editorial": "## Approach\n\nRecursive build with an upper bound. Take the next value as a node if it is within the bound, build its left subtree with the node's value as the new bound, then its right subtree with the inherited bound. Each value is used once.\n\n**Complexity:** O(n) time, O(h) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(h) space\nclass Solution {\npublic:\n    TreeNode* bstFromPreorder(vector<int>& preorder) {\n        int i = 0;\n        // build(upper): consume values below `upper` for this subtree\n        function<TreeNode*(long long)> build = [&](long long upper) -> TreeNode* {\n            if (i == (int)preorder.size() || preorder[i] > upper) return nullptr;\n            TreeNode* node = new TreeNode(preorder[i++]);\n            node->left = build(node->val);    // the left subtree only holds smaller values\n            node->right = build(upper);       // the right subtree keeps the parent's bound\n            return node;\n        };\n        return build(LLONG_MAX);\n    }\n};\n"
+  }
+ },
+ "two-sum-iv-input-is-a-bst": {
+  "editorial": "## Approach\n\nCollect the inorder values into a sorted array and run the classic two-pointer search for a pair summing to k. The two values always come from different nodes because the pointers never meet.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    bool findTarget(TreeNode* root, int k) {\n        vector<int> vals;\n        function<void(TreeNode*)> inorder = [&](TreeNode* n) {\n            if (!n) return;\n            inorder(n->left); vals.push_back(n->val); inorder(n->right);\n        };\n        inorder(root);                         // sorted values\n        int l = 0, r = (int)vals.size() - 1;\n        while (l < r) {\n            int sum = vals[l] + vals[r];\n            if (sum == k) return true;\n            if (sum < k) l++; else r--;\n        }\n        return false;\n    }\n};\n"
+  }
+ },
+ "recover-binary-search-tree": {
+  "editorial": "## Approach\n\nDo an inorder traversal remembering the previous node. At every inversion (prev > current) the first time set first = prev, and always set second = current. Swap the values of first and second at the end.\n\n**Complexity:** O(n) time, O(h) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(h) space\nclass Solution {\npublic:\n    TreeNode* recoverTree(TreeNode* root) {\n        TreeNode *first = nullptr, *second = nullptr, *prev = nullptr;\n        function<void(TreeNode*)> inorder = [&](TreeNode* n) {\n            if (!n) return;\n            inorder(n->left);\n            if (prev && prev->val > n->val) {  // an inversion in the inorder sequence\n                if (!first) first = prev;\n                second = n;\n            }\n            prev = n;\n            inorder(n->right);\n        };\n        inorder(root);\n        if (first && second) swap(first->val, second->val);\n        return root;\n    }\n};\n"
+  }
+ },
+ "largest-bst-subtree": {
+  "editorial": "## Approach\n\nPostorder DP: a subtree is a BST when both children are BSTs and the left maximum is below the node and the right minimum is above it. Its size is the sum plus one, and the biggest size seen is the answer.\n\n**Complexity:** O(n) time, O(h) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(h) space\nclass Solution {\npublic:\n    int largestBSTSubtree(TreeNode* root) {\n        int best = 0;\n        // returns {isBST, size, smallest, largest} of the subtree\n        function<array<long long, 4>(TreeNode*)> go = [&](TreeNode* n) -> array<long long, 4> {\n            if (!n) return {1, 0, LLONG_MAX, LLONG_MIN};\n            auto l = go(n->left), r = go(n->right);\n            if (l[0] && r[0] && l[3] < n->val && n->val < r[2]) {\n                int size = (int)(l[1] + r[1] + 1);\n                best = max(best, size);\n                return {1, size, min(l[2], (long long)n->val), max(r[3], (long long)n->val)};\n            }\n            return {0, 0, 0, 0};\n        };\n        go(root);\n        return best;\n    }\n};\n"
+  }
+ },
+ "amount-of-time-for-binary-tree-to-be-infected": {
+  "editorial": "## Approach\n\nRecord every node's parent, then BFS from the start node over left, right and parent links with a visited set. The number of BFS levels (minus the first) is the time to burn the whole tree.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    int amountOfTime(TreeNode* root, int start) {\n        unordered_map<TreeNode*, TreeNode*> parent;\n        TreeNode* source = nullptr;\n        queue<TreeNode*> q;\n        q.push(root);\n        while (!q.empty()) {                   // record every node's parent so the fire can climb up\n            TreeNode* node = q.front(); q.pop();\n            if (node->val == start) source = node;\n            if (node->left) { parent[node->left] = node; q.push(node->left); }\n            if (node->right) { parent[node->right] = node; q.push(node->right); }\n        }\n        unordered_set<TreeNode*> burnt{source};\n        q.push(source);\n        int minutes = -1;\n        while (!q.empty()) {\n            int size = q.size();\n            minutes++;\n            while (size--) {\n                TreeNode* node = q.front(); q.pop();\n                for (TreeNode* next : {node->left, node->right, parent.count(node) ? parent[node] : nullptr}) {\n                    if (next && !burnt.count(next)) { burnt.insert(next); q.push(next); }\n                }\n            }\n        }\n        return minutes;\n    }\n};\n"
+  }
+ },
+ "all-nodes-distance-k-in-binary-tree": {
+  "editorial": "## Approach\n\nBuild a parent map, then BFS from the target node over left, right and parent links with a visited set. After k levels the queue holds all nodes at distance k; sort them for the output.\n\n**Complexity:** O(n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(n) space\nclass Solution {\npublic:\n    vector<int> distanceK(TreeNode* root, int target, int k) {\n        unordered_map<TreeNode*, TreeNode*> parent;\n        TreeNode* source = nullptr;\n        queue<TreeNode*> q;\n        q.push(root);\n        while (!q.empty()) {\n            TreeNode* node = q.front(); q.pop();\n            if (node->val == target) source = node;\n            if (node->left) { parent[node->left] = node; q.push(node->left); }\n            if (node->right) { parent[node->right] = node; q.push(node->right); }\n        }\n        unordered_set<TreeNode*> seen{source};\n        q.push(source);\n        for (int step = 0; step < k && !q.empty(); step++) {   // move one edge further per round\n            int size = q.size();\n            while (size--) {\n                TreeNode* node = q.front(); q.pop();\n                for (TreeNode* next : {node->left, node->right, parent.count(node) ? parent[node] : nullptr}) {\n                    if (next && !seen.count(next)) { seen.insert(next); q.push(next); }\n                }\n            }\n        }\n        vector<int> out;\n        while (!q.empty()) { out.push_back(q.front()->val); q.pop(); }\n        sort(out.begin(), out.end());\n        return out;\n    }\n};\n"
+  }
  }
 }
