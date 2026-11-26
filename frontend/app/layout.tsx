@@ -32,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         {/* The code editor (Monaco) is fetched from this CDN when a problem opens; connect early so it starts sooner. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
@@ -40,7 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"} crossOrigin="anonymous" />
         {/* Apply the saved theme before first paint so there is no flash of the wrong theme. */}
         <script dangerouslySetInnerHTML={{ __html:
-          "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" + ACCENT_BOOT_SCRIPT +
+          "try{if(localStorage.getItem('lc-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}" +
+          // Returning visitors skip the full-screen splash: cached pages render at once and the server wakes in the background.
+          "try{if(localStorage.getItem('lc-warm'))document.documentElement.dataset.warm='1'}catch(e){}" + ACCENT_BOOT_SCRIPT +
           // Start waking the (free-tier) backend the moment the page arrives, before any app code runs.
           `try{fetch(${JSON.stringify((process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080") + "/actuator/health")},{mode:'no-cors',keepalive:true})}catch(e){}` }} />
       </head>

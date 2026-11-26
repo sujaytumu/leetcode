@@ -14,6 +14,9 @@ export default function Splash() {
   const [slow, setSlow] = useState(false);
 
   useEffect(() => {
+    // Returning visitor: no splash at all. The boot script in the layout already pings the server awake,
+    // and each page shows cached data plus its own "waking up" note, so nothing waits on the backend.
+    if (document.documentElement.dataset.warm) { setPhase("done"); return; }
     let stop = false;
     const slowTimer = setTimeout(() => { if (!stop) setSlow(true); }, 6000);
     const started = Date.now();
@@ -33,6 +36,7 @@ export default function Splash() {
       }
       if (stop) return;
       clearTimeout(slowTimer);
+      try { localStorage.setItem("lc-warm", "1"); } catch { /* storage blocked: splash simply shows next time */ }
       setPhase("fade");
     })();
     return () => { stop = true; clearTimeout(slowTimer); };

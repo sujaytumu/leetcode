@@ -9,3 +9,6 @@
 .approach-seg button.on { background:var(--text) !important; color:var(--bg) !important; font-weight:600; }
 .answer-code { border-radius:10px; font-size:13px; line-height:1.55; }
 .answer-code::first-line { color:var(--mute); }
+
+/* Returning visitors: no blocking splash; pages show cached data instantly (see Splash.tsx / layout boot script). */
+html[data-warm] .splash { display: none !important; }
