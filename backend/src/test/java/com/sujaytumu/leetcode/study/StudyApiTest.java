@@ -43,7 +43,7 @@ class StudyApiTest {
         mvc.perform(get("/api/plans"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("striver-sde"))
-                .andExpect(jsonPath("$[0].total").value(94))
+                .andExpect(jsonPath("$[0].total").value(120))
                 .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(92)))
                 .andExpect(jsonPath("$[?(@.id=='warmup')].solved").value(hasItem(0)))
                 .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(36)));
