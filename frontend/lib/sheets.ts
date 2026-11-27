@@ -19,13 +19,13 @@ export const sheetsOf = (tags: readonly string[]): Sheet[] => SHEETS.filter((s) 
 
 /** Topics in the order the sheet shows them (roughly Striver's own order). */
 export const TOPIC_ORDER: readonly string[] = [
-  "array", "matrix", "string", "linked-list", "stack", "backtracking", "binary-search", "greedy", "heap",
+  "array", "matrix", "string", "linked-list", "stack", "backtracking", "binary-search", "greedy", "heap", "trie",
   "tree", "graph", "dynamic-programming", "math", "bit-manipulation",
 ];
 /** Most specific first: a problem tagged array + backtracking belongs under Backtracking, not Array. */
 const SPECIFICITY: readonly string[] = [
   "dynamic-programming", "backtracking", "binary-search", "graph", "tree", "linked-list", "heap", "matrix", "stack",
-  "greedy", "string", "math", "bit-manipulation", "array",
+  "greedy", "trie", "string", "math", "bit-manipulation", "array",
 ];
 
 /** The topic a problem is filed under inside a sheet: its most specific known tag, else its first non-sheet tag. */

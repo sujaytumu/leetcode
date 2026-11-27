@@ -1,0 +1,183 @@
+=== combination-sum
+--- cpp
+vector<vector<int>> solve(vector<int> candidates, int target) {
+    sort(candidates.begin(), candidates.end());
+    vector<vector<int>> out;
+    vector<int> cur;
+    // pick numbers in non-decreasing order (start index only moves forward) so every combination appears once
+    function<void(int, int)> go = [&](int start, int left) {
+        if (left == 0) { out.push_back(cur); return; }
+        for (int i = start; i < (int)candidates.size() && candidates[i] <= left; i++) {
+            cur.push_back(candidates[i]);
+            go(i, left - candidates[i]);          // i, not i + 1: the same number may be reused
+            cur.pop_back();
+        }
+    };
+    go(0, target);
+    return out;
+}
+=== sudoku-solver
+--- cpp
+vector<vector<int>> solve(vector<vector<int>> board) {
+    int row[9] = {0}, col[9] = {0}, box[9] = {0};          // bit d set = digit d already used
+    for (int r = 0; r < 9; r++)
+        for (int c = 0; c < 9; c++)
+            if (board[r][c]) {
+                int bit = 1 << board[r][c];
+                row[r] |= bit; col[c] |= bit; box[r / 3 * 3 + c / 3] |= bit;
+            }
+    function<bool()> go = [&]() {
+        int br = -1, bc = -1, bestMask = 0, bestCount = 10;   // choose the emptiest-choice cell first
+        for (int r = 0; r < 9; r++)
+            for (int c = 0; c < 9; c++) {
+                if (board[r][c]) continue;
+                int free = ~(row[r] | col[c] | box[r / 3 * 3 + c / 3]) & 0x3FE;
+                int cnt = __builtin_popcount(free);
+                if (cnt < bestCount) { bestCount = cnt; br = r; bc = c; bestMask = free; }
+            }
+        if (br == -1) return true;                            // no empty cell left: solved
+        for (int d = 1; d <= 9; d++) {
+            if (!(bestMask >> d & 1)) continue;
+            int bit = 1 << d;
+            board[br][bc] = d; row[br] |= bit; col[bc] |= bit; box[br / 3 * 3 + bc / 3] |= bit;
+            if (go()) return true;
+            board[br][bc] = 0; row[br] ^= bit; col[bc] ^= bit; box[br / 3 * 3 + bc / 3] ^= bit;
+        }
+        return false;
+    };
+    go();
+    return board;
+}
+=== longest-bitonic-subsequence
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size(), best = 0;
+    vector<int> inc(n, 1), dec(n, 1);              // longest increasing ending at i / longest decreasing starting at i
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < i; j++)
+            if (nums[j] < nums[i]) inc[i] = max(inc[i], inc[j] + 1);
+    for (int i = n - 1; i >= 0; i--)
+        for (int j = n - 1; j > i; j--)
+            if (nums[j] < nums[i]) dec[i] = max(dec[i], dec[j] + 1);
+    for (int i = 0; i < n; i++) best = max(best, inc[i] + dec[i] - 1);   // i is counted twice
+    return best;
+}
+=== number-of-longest-increasing-subsequences
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size();
+    vector<int> len(n, 1), ways(n, 1);             // best length ending at i, and how many ways reach it
+    int top = 1;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (nums[j] >= nums[i]) continue;
+            if (len[j] + 1 > len[i]) { len[i] = len[j] + 1; ways[i] = ways[j]; }
+            else if (len[j] + 1 == len[i]) ways[i] += ways[j];
+        }
+        top = max(top, len[i]);
+    }
+    long long total = 0;
+    for (int i = 0; i < n; i++) if (len[i] == top) total += ways[i];
+    return (int)total;
+}
+=== minimum-insertion-steps-to-make-a-string-palindrome
+--- cpp
+int solve(string s) {
+    int n = s.size();
+    vector<vector<int>> dp(n, vector<int>(n, 0));  // dp[i][j] = insertions needed for s[i..j]
+    for (int len = 2; len <= n; len++)
+        for (int i = 0; i + len - 1 < n; i++) {
+            int j = i + len - 1;
+            dp[i][j] = s[i] == s[j] ? dp[i + 1][j - 1] : 1 + min(dp[i + 1][j], dp[i][j - 1]);
+        }
+    return dp[0][n - 1];
+}
+=== find-median-from-data-stream
+--- cpp
+vector<int> solve(vector<int> nums) {
+    priority_queue<int> low;                               // max-heap: the smaller half
+    priority_queue<int, vector<int>, greater<int>> high;   // min-heap: the larger half
+    vector<int> out;
+    for (int x : nums) {
+        low.push(x);
+        high.push(low.top()); low.pop();                   // balance: low's max moves to high
+        if (high.size() > low.size()) { low.push(high.top()); high.pop(); }
+        out.push_back(low.size() > high.size() ? low.top() : (int)(((long long)low.top() + high.top()) / 2));
+    }
+    return out;
+}
+=== implement-trie-prefix-count
+--- cpp
+vector<int> solve(vector<string> words, vector<string> queries) {
+    vector<array<int, 26>> next(1);                        // trie nodes stored in arrays; node 0 is the root
+    next[0].fill(-1);
+    vector<int> through(1, 0);                             // how many words pass through each node
+    for (auto &w : words) {
+        int node = 0;
+        for (char ch : w) {
+            int c = ch - 'a';
+            if (next[node][c] == -1) {
+                next[node][c] = next.size();
+                next.emplace_back(); next.back().fill(-1);
+                through.push_back(0);
+            }
+            node = next[node][c];
+            through[node]++;
+        }
+    }
+    vector<int> out;
+    for (auto &q : queries) {
+        int node = 0;
+        for (char ch : q) {
+            node = next[node][ch - 'a'];
+            if (node == -1) break;
+        }
+        out.push_back(node == -1 ? 0 : through[node]);
+    }
+    return out;
+}
+=== lru-cache
+--- cpp
+vector<int> solve(int capacity, vector<string> ops) {
+    list<pair<int, int>> order;                            // front = most recently used
+    unordered_map<int, list<pair<int, int>>::iterator> where;
+    vector<int> out;
+    for (auto &line : ops) {
+        istringstream in(line);
+        string cmd; int k, v;
+        in >> cmd >> k;
+        if (cmd == "put") {
+            in >> v;
+            auto it = where.find(k);
+            if (it != where.end()) order.erase(it->second);
+            order.push_front({k, v});
+            where[k] = order.begin();
+            if ((int)order.size() > capacity) { where.erase(order.back().first); order.pop_back(); }
+        } else {
+            auto it = where.find(k);
+            if (it == where.end()) { out.push_back(-1); continue; }
+            order.splice(order.begin(), order, it->second);   // move to the front in O(1)
+            out.push_back(order.front().second);
+        }
+    }
+    return out;
+}
+=== min-stack
+--- cpp
+vector<int> solve(vector<string> ops) {
+    vector<int> st, mins;                                  // mins[i] = smallest value among st[0..i]
+    vector<int> out;
+    for (auto &line : ops) {
+        istringstream in(line);
+        string cmd; in >> cmd;
+        if (cmd == "push") {
+            int x; in >> x;
+            st.push_back(x);
+            mins.push_back(mins.empty() ? x : min(x, mins.back()));
+        } else if (cmd == "pop") {
+            st.pop_back(); mins.pop_back();
+        } else if (cmd == "top") out.push_back(st.back());
+        else out.push_back(mins.back());
+    }
+    return out;
+}

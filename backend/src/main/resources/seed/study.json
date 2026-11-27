@@ -3147,5 +3147,95 @@
     "approach": "For each i, sum[i] = nums[i] + max of sum[j] over earlier j with nums[j] < nums[i]; the answer is the largest sum[i].",
     "time": "O(n^2)",
     "space": "O(n)"
+  },
+  "combination-sum": {
+    "hints": [
+      "Sort the candidates so combinations come out in order and you can stop early.",
+      "Recurse with a start index: reusing the current number is allowed, going back to earlier numbers is not.",
+      "Stop a branch when the next candidate is larger than what is left."
+    ],
+    "approach": "Backtracking: go(start, left) tries candidates[i] for i >= start, recursing with the same i so a number can repeat, and records the path when left hits 0.",
+    "time": "O(number of combinations * length)",
+    "space": "O(target / smallest) recursion depth"
+  },
+  "sudoku-solver": {
+    "hints": [
+      "Keep a bitmask of used digits per row, column and 3 x 3 box.",
+      "Always fill the empty cell with the fewest possible digits first.",
+      "If no digit fits, undo and backtrack."
+    ],
+    "approach": "Backtracking with bitmasks and the 'fewest choices first' heuristic (MRV): pick the most constrained empty cell, try each allowed digit, recurse, undo on failure.",
+    "time": "Exponential worst case, tiny in practice",
+    "space": "O(81)"
+  },
+  "longest-bitonic-subsequence": {
+    "hints": [
+      "Compute the longest increasing subsequence ending at every index.",
+      "Compute the longest decreasing subsequence starting at every index.",
+      "The peak index is counted twice."
+    ],
+    "approach": "Two LIS passes: inc[i] from the left, dec[i] from the right; the answer is max(inc[i] + dec[i] - 1).",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "number-of-longest-increasing-subsequences": {
+    "hints": [
+      "Track two things per index: the best length ending there and how many ways give it.",
+      "If a longer length is found, replace the count; if equal, add the counts.",
+      "Finally add the counts of every index whose length is the overall maximum."
+    ],
+    "approach": "LIS DP with counts: for j < i with nums[j] < nums[i], update len[i] and ways[i]; sum ways[i] over indices with len[i] equal to the maximum.",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "minimum-insertion-steps-to-make-a-string-palindrome": {
+    "hints": [
+      "Look at the two ends of s[i..j].",
+      "If they match, the inside decides the answer.",
+      "If not, insert a copy of one end: 1 + the better of the two shorter ranges."
+    ],
+    "approach": "Interval DP: dp[i][j] = dp[i + 1][j - 1] if s[i] == s[j], else 1 + min(dp[i + 1][j], dp[i][j - 1]). It equals n minus the longest palindromic subsequence.",
+    "time": "O(n^2)",
+    "space": "O(n^2)"
+  },
+  "find-median-from-data-stream": {
+    "hints": [
+      "Keep the smaller half in a max-heap and the larger half in a min-heap.",
+      "Keep the halves balanced so their sizes differ by at most one.",
+      "The median is the top of the bigger heap, or the average of both tops."
+    ],
+    "approach": "Two heaps: push into the max-heap, move its top to the min-heap, then rebalance so the lower half is never smaller. Read the median from the tops in O(1).",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "implement-trie-prefix-count": {
+    "hints": [
+      "Each trie node is one letter; children are the next letters.",
+      "Store at each node how many words pass through it.",
+      "A query's answer is the count at the node where the query ends."
+    ],
+    "approach": "Insert every word letter by letter, incrementing a counter on each node visited; for a query, walk its letters and return the node's counter (0 if the path breaks).",
+    "time": "O(total letters)",
+    "space": "O(total letters * 26)"
+  },
+  "lru-cache": {
+    "hints": [
+      "You need O(1) lookup and O(1) 'move to most recent'.",
+      "A hash map points to nodes of a doubly linked list ordered by recency.",
+      "On overflow, drop the node at the tail."
+    ],
+    "approach": "Doubly linked list (front = most recent) plus a hash map from key to list node. get moves the node to the front; put inserts or updates at the front and evicts the tail when over capacity.",
+    "time": "O(1) per command",
+    "space": "O(capacity)"
+  },
+  "min-stack": {
+    "hints": [
+      "Storing only the minimum is not enough once you pop it.",
+      "Store alongside each element the minimum of the stack up to that element.",
+      "Popping removes both together."
+    ],
+    "approach": "Two parallel stacks: values and running minimums, where mins[i] = min(value, mins[i - 1]). getMin reads the top of mins.",
+    "time": "O(1) per command",
+    "space": "O(n)"
   }
 }

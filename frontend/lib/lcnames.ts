@@ -336,6 +336,15 @@ export const LC_METHODS: Record<string, string> = {
   "subset-sum-equal-to-target": "isSubsetSum",
   "longest-common-substring": "longestCommonSubstr",
   "maximum-sum-increasing-subsequence": "maxSumIncreasingSubsequence",
+  "combination-sum": "combinationSum",
+  "sudoku-solver": "solveSudoku",
+  "longest-bitonic-subsequence": "longestBitonicSubsequence",
+  "number-of-longest-increasing-subsequences": "findNumberOfLIS",
+  "minimum-insertion-steps-to-make-a-string-palindrome": "minInsertions",
+  "find-median-from-data-stream": "findMedians",
+  "implement-trie-prefix-count": "prefixCounts",
+  "lru-cache": "lruCache",
+  "min-stack": "minStack",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

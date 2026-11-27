@@ -3163,5 +3163,59 @@
   "solutions": {
    "cpp": "// Optimised: O(n^2) time, O(n) space\n\nclass Solution {\npublic:\n    int maxSumIncreasingSubsequence(vector<int>& nums) {\n        int n = nums.size(), best = 0;\n        vector<int> sum(nums);                         // sum[i] = top sum of an increasing subsequence ending at i\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < i; j++)\n                if (nums[j] < nums[i]) sum[i] = max(sum[i], sum[j] + nums[i]);\n            best = max(best, sum[i]);\n        }\n        return best;\n    }\n};\n"
   }
+ },
+ "combination-sum": {
+  "editorial": "## Approach\n\nBacktracking: go(start, left) tries candidates[i] for i >= start, recursing with the same i so a number can repeat, and records the path when left hits 0.\n\n**Complexity:** O(number of combinations * length) time, O(target / smallest) recursion depth space.",
+  "solutions": {
+   "cpp": "// Optimised: O(number of combinations * length) time, O(target / smallest) recursion depth space\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        vector<vector<int>> out;\n        vector<int> cur;\n        // pick numbers in non-decreasing order (start index only moves forward) so every combination appears once\n        function<void(int, int)> go = [&](int start, int left) {\n            if (left == 0) { out.push_back(cur); return; }\n            for (int i = start; i < (int)candidates.size() && candidates[i] <= left; i++) {\n                cur.push_back(candidates[i]);\n                go(i, left - candidates[i]);          // i, not i + 1: the same number may be reused\n                cur.pop_back();\n            }\n        };\n        go(0, target);\n        return out;\n    }\n};\n"
+  }
+ },
+ "sudoku-solver": {
+  "editorial": "## Approach\n\nBacktracking with bitmasks and the 'fewest choices first' heuristic (MRV): pick the most constrained empty cell, try each allowed digit, recurse, undo on failure.\n\n**Complexity:** Exponential worst case, tiny in practice time, O(81) space.",
+  "solutions": {
+   "cpp": "// Optimised: Exponential worst case, tiny in practice time, O(81) space\n\nclass Solution {\npublic:\n    vector<vector<int>> solveSudoku(vector<vector<int>>& board) {\n        int row[9] = {0}, col[9] = {0}, box[9] = {0};          // bit d set = digit d already used\n        for (int r = 0; r < 9; r++)\n            for (int c = 0; c < 9; c++)\n                if (board[r][c]) {\n                    int bit = 1 << board[r][c];\n                    row[r] |= bit; col[c] |= bit; box[r / 3 * 3 + c / 3] |= bit;\n                }\n        function<bool()> go = [&]() {\n            int br = -1, bc = -1, bestMask = 0, bestCount = 10;   // choose the emptiest-choice cell first\n            for (int r = 0; r < 9; r++)\n                for (int c = 0; c < 9; c++) {\n                    if (board[r][c]) continue;\n                    int free = ~(row[r] | col[c] | box[r / 3 * 3 + c / 3]) & 0x3FE;\n                    int cnt = __builtin_popcount(free);\n                    if (cnt < bestCount) { bestCount = cnt; br = r; bc = c; bestMask = free; }\n                }\n            if (br == -1) return true;                            // no empty cell left: solved\n            for (int d = 1; d <= 9; d++) {\n                if (!(bestMask >> d & 1)) continue;\n                int bit = 1 << d;\n                board[br][bc] = d; row[br] |= bit; col[bc] |= bit; box[br / 3 * 3 + bc / 3] |= bit;\n                if (go()) return true;\n                board[br][bc] = 0; row[br] ^= bit; col[bc] ^= bit; box[br / 3 * 3 + bc / 3] ^= bit;\n            }\n            return false;\n        };\n        go();\n        return board;\n    }\n};\n"
+  }
+ },
+ "longest-bitonic-subsequence": {
+  "editorial": "## Approach\n\nTwo LIS passes: inc[i] from the left, dec[i] from the right; the answer is max(inc[i] + dec[i] - 1).\n\n**Complexity:** O(n^2) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^2) time, O(n) space\n\nclass Solution {\npublic:\n    int longestBitonicSubsequence(vector<int>& nums) {\n        int n = nums.size(), best = 0;\n        vector<int> inc(n, 1), dec(n, 1);              // longest increasing ending at i / longest decreasing starting at i\n        for (int i = 0; i < n; i++)\n            for (int j = 0; j < i; j++)\n                if (nums[j] < nums[i]) inc[i] = max(inc[i], inc[j] + 1);\n        for (int i = n - 1; i >= 0; i--)\n            for (int j = n - 1; j > i; j--)\n                if (nums[j] < nums[i]) dec[i] = max(dec[i], dec[j] + 1);\n        for (int i = 0; i < n; i++) best = max(best, inc[i] + dec[i] - 1);   // i is counted twice\n        return best;\n    }\n};\n"
+  }
+ },
+ "number-of-longest-increasing-subsequences": {
+  "editorial": "## Approach\n\nLIS DP with counts: for j < i with nums[j] < nums[i], update len[i] and ways[i]; sum ways[i] over indices with len[i] equal to the maximum.\n\n**Complexity:** O(n^2) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^2) time, O(n) space\n\nclass Solution {\npublic:\n    int findNumberOfLIS(vector<int>& nums) {\n        int n = nums.size();\n        vector<int> len(n, 1), ways(n, 1);             // best length ending at i, and how many ways reach it\n        int top = 1;\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (nums[j] >= nums[i]) continue;\n                if (len[j] + 1 > len[i]) { len[i] = len[j] + 1; ways[i] = ways[j]; }\n                else if (len[j] + 1 == len[i]) ways[i] += ways[j];\n            }\n            top = max(top, len[i]);\n        }\n        long long total = 0;\n        for (int i = 0; i < n; i++) if (len[i] == top) total += ways[i];\n        return (int)total;\n    }\n};\n"
+  }
+ },
+ "minimum-insertion-steps-to-make-a-string-palindrome": {
+  "editorial": "## Approach\n\nInterval DP: dp[i][j] = dp[i + 1][j - 1] if s[i] == s[j], else 1 + min(dp[i + 1][j], dp[i][j - 1]). It equals n minus the longest palindromic subsequence.\n\n**Complexity:** O(n^2) time, O(n^2) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n^2) time, O(n^2) space\n\nclass Solution {\npublic:\n    int minInsertions(string s) {\n        int n = s.size();\n        vector<vector<int>> dp(n, vector<int>(n, 0));  // dp[i][j] = insertions needed for s[i..j]\n        for (int len = 2; len <= n; len++)\n            for (int i = 0; i + len - 1 < n; i++) {\n                int j = i + len - 1;\n                dp[i][j] = s[i] == s[j] ? dp[i + 1][j - 1] : 1 + min(dp[i + 1][j], dp[i][j - 1]);\n            }\n        return dp[0][n - 1];\n    }\n};\n"
+  }
+ },
+ "find-median-from-data-stream": {
+  "editorial": "## Approach\n\nTwo heaps: push into the max-heap, move its top to the min-heap, then rebalance so the lower half is never smaller. Read the median from the tops in O(1).\n\n**Complexity:** O(n log n) time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n log n) time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> findMedians(vector<int>& nums) {\n        priority_queue<int> low;                               // max-heap: the smaller half\n        priority_queue<int, vector<int>, greater<int>> high;   // min-heap: the larger half\n        vector<int> out;\n        for (int x : nums) {\n            low.push(x);\n            high.push(low.top()); low.pop();                   // balance: low's max moves to high\n            if (high.size() > low.size()) { low.push(high.top()); high.pop(); }\n            out.push_back(low.size() > high.size() ? low.top() : (int)(((long long)low.top() + high.top()) / 2));\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "implement-trie-prefix-count": {
+  "editorial": "## Approach\n\nInsert every word letter by letter, incrementing a counter on each node visited; for a query, walk its letters and return the node's counter (0 if the path breaks).\n\n**Complexity:** O(total letters) time, O(total letters * 26) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(total letters) time, O(total letters * 26) space\n\nclass Solution {\npublic:\n    vector<int> prefixCounts(vector<string>& words, vector<string>& queries) {\n        vector<array<int, 26>> next(1);                        // trie nodes stored in arrays; node 0 is the root\n        next[0].fill(-1);\n        vector<int> through(1, 0);                             // how many words pass through each node\n        for (auto &w : words) {\n            int node = 0;\n            for (char ch : w) {\n                int c = ch - 'a';\n                if (next[node][c] == -1) {\n                    next[node][c] = next.size();\n                    next.emplace_back(); next.back().fill(-1);\n                    through.push_back(0);\n                }\n                node = next[node][c];\n                through[node]++;\n            }\n        }\n        vector<int> out;\n        for (auto &q : queries) {\n            int node = 0;\n            for (char ch : q) {\n                node = next[node][ch - 'a'];\n                if (node == -1) break;\n            }\n            out.push_back(node == -1 ? 0 : through[node]);\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "lru-cache": {
+  "editorial": "## Approach\n\nDoubly linked list (front = most recent) plus a hash map from key to list node. get moves the node to the front; put inserts or updates at the front and evicts the tail when over capacity.\n\n**Complexity:** O(1) per command time, O(capacity) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(1) per command time, O(capacity) space\n\nclass Solution {\npublic:\n    vector<int> lruCache(int capacity, vector<string>& ops) {\n        list<pair<int, int>> order;                            // front = most recently used\n        unordered_map<int, list<pair<int, int>>::iterator> where;\n        vector<int> out;\n        for (auto &line : ops) {\n            istringstream in(line);\n            string cmd; int k, v;\n            in >> cmd >> k;\n            if (cmd == \"put\") {\n                in >> v;\n                auto it = where.find(k);\n                if (it != where.end()) order.erase(it->second);\n                order.push_front({k, v});\n                where[k] = order.begin();\n                if ((int)order.size() > capacity) { where.erase(order.back().first); order.pop_back(); }\n            } else {\n                auto it = where.find(k);\n                if (it == where.end()) { out.push_back(-1); continue; }\n                order.splice(order.begin(), order, it->second);   // move to the front in O(1)\n                out.push_back(order.front().second);\n            }\n        }\n        return out;\n    }\n};\n"
+  }
+ },
+ "min-stack": {
+  "editorial": "## Approach\n\nTwo parallel stacks: values and running minimums, where mins[i] = min(value, mins[i - 1]). getMin reads the top of mins.\n\n**Complexity:** O(1) per command time, O(n) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(1) per command time, O(n) space\n\nclass Solution {\npublic:\n    vector<int> minStack(vector<string>& ops) {\n        vector<int> st, mins;                                  // mins[i] = smallest value among st[0..i]\n        vector<int> out;\n        for (auto &line : ops) {\n            istringstream in(line);\n            string cmd; in >> cmd;\n            if (cmd == \"push\") {\n                int x; in >> x;\n                st.push_back(x);\n                mins.push_back(mins.empty() ? x : min(x, mins.back()));\n            } else if (cmd == \"pop\") {\n                st.pop_back(); mins.pop_back();\n            } else if (cmd == \"top\") out.push_back(st.back());\n            else out.push_back(mins.back());\n        }\n        return out;\n    }\n};\n"
+  }
  }
 }
