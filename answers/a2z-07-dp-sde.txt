@@ -1,0 +1,129 @@
+=== zero-one-knapsack
+--- cpp
+int solve(vector<int> weights, vector<int> values, int capacity) {
+    // best[c] = most value with total weight <= c; go downwards so each item is used once
+    vector<int> best(capacity + 1, 0);
+    for (size_t i = 0; i < weights.size(); i++)
+        for (int c = capacity; c >= weights[i]; c--)
+            best[c] = max(best[c], best[c - weights[i]] + values[i]);
+    return best[capacity];
+}
+=== rod-cutting
+--- cpp
+int solve(vector<int> prices) {
+    int n = prices.size();
+    // best[j] = most money from a rod of length j: try every first piece length i
+    vector<int> best(n + 1, 0);
+    for (int j = 1; j <= n; j++)
+        for (int i = 1; i <= j; i++)
+            best[j] = max(best[j], prices[i - 1] + best[j - i]);
+    return best[n];
+}
+=== matrix-chain-multiplication
+--- cpp
+int solve(vector<int> dims) {
+    int m = dims.size() - 1;                       // number of matrices
+    vector<vector<int>> cost(m, vector<int>(m, 0));
+    for (int len = 2; len <= m; len++) {           // chain length
+        for (int i = 0; i + len - 1 < m; i++) {
+            int j = i + len - 1;
+            cost[i][j] = INT_MAX;
+            for (int k = i; k < j; k++)            // last multiplication splits the chain after matrix k
+                cost[i][j] = min(cost[i][j], cost[i][k] + cost[k + 1][j] + dims[i] * dims[k + 1] * dims[j + 1]);
+        }
+    }
+    return cost[0][m - 1];
+}
+=== palindrome-partitioning-ii
+--- cpp
+int solve(string s) {
+    int n = s.size();
+    vector<vector<char>> pal(n, vector<char>(n, 0));
+    for (int i = n - 1; i >= 0; i--)
+        for (int j = i; j < n; j++)
+            pal[i][j] = s[i] == s[j] && (j - i < 2 || pal[i + 1][j - 1]);
+    vector<int> cuts(n, 0);                        // cuts[j] = fewest cuts for the prefix ending at j
+    for (int j = 0; j < n; j++) {
+        if (pal[0][j]) { cuts[j] = 0; continue; }
+        cuts[j] = INT_MAX;
+        for (int i = 1; i <= j; i++)
+            if (pal[i][j]) cuts[j] = min(cuts[j], cuts[i - 1] + 1);
+    }
+    return cuts[n - 1];
+}
+=== longest-palindromic-subsequence
+--- cpp
+int solve(string s) {
+    int n = s.size();
+    vector<vector<int>> dp(n, vector<int>(n, 0));  // dp[i][j] = answer for s[i..j]
+    for (int i = n - 1; i >= 0; i--) {
+        dp[i][i] = 1;
+        for (int j = i + 1; j < n; j++)
+            dp[i][j] = s[i] == s[j] ? dp[i + 1][j - 1] + 2 : max(dp[i + 1][j], dp[i][j - 1]);
+    }
+    return dp[0][n - 1];
+}
+=== egg-dropping-puzzle
+--- cpp
+int solve(int eggs, int floors) {
+    // reach[e] = how many floors e eggs can fully check with the current number of drops
+    vector<long long> reach(eggs + 1, 0);
+    int moves = 0;
+    while (reach[eggs] < floors) {
+        moves++;
+        for (int e = eggs; e >= 1; e--)            // one more drop: egg breaks (e-1 left) or survives (e left)
+            reach[e] = reach[e] + reach[e - 1] + 1;
+    }
+    return moves;
+}
+=== maximum-profit-in-job-scheduling
+--- cpp
+int solve(vector<int> startTime, vector<int> endTime, vector<int> profit) {
+    int n = startTime.size();
+    vector<int> idx(n);
+    iota(idx.begin(), idx.end(), 0);
+    sort(idx.begin(), idx.end(), [&](int a, int b) { return endTime[a] < endTime[b]; });
+    vector<int> ends(n);
+    for (int i = 0; i < n; i++) ends[i] = endTime[idx[i]];
+    vector<int> best(n + 1, 0);                    // best[i] = top profit using the first i jobs by end time
+    for (int i = 0; i < n; i++) {
+        int j = idx[i];
+        int k = upper_bound(ends.begin(), ends.begin() + i, startTime[j]) - ends.begin();  // jobs finished by its start
+        best[i + 1] = max(best[i], best[k] + profit[j]);
+    }
+    return best[n];
+}
+=== subset-sum-equal-to-target
+--- cpp
+bool solve(vector<int> nums, int target) {
+    bitset<5001> reach;                            // bit t is set when some subset sums to t
+    reach[0] = 1;
+    for (int x : nums) reach |= reach << x;
+    return reach[target];
+}
+=== longest-common-substring
+--- cpp
+int solve(string s1, string s2) {
+    int n = s1.size(), m = s2.size(), best = 0;
+    vector<int> prev(m + 1, 0), cur(m + 1, 0);     // length of the common suffix ending at (i, j)
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            cur[j] = s1[i - 1] == s2[j - 1] ? prev[j - 1] + 1 : 0;
+            best = max(best, cur[j]);
+        }
+        swap(prev, cur);
+    }
+    return best;
+}
+=== maximum-sum-increasing-subsequence
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size(), best = 0;
+    vector<int> sum(nums);                         // sum[i] = top sum of an increasing subsequence ending at i
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++)
+            if (nums[j] < nums[i]) sum[i] = max(sum[i], sum[j] + nums[i]);
+        best = max(best, sum[i]);
+    }
+    return best;
+}

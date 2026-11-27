@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { Page, ProblemSummary, tagLabel } from "@/lib/api";
 import { prefetchProblem, swr } from "@/lib/local";
 import FreeSpace from "@/components/FreeSpace";
-import { SHEETS, Sheet, sheetFromParam, topicOf } from "@/lib/sheets";
+import { SHEETS, Sheet, compareTopics, sheetFromParam, topicOf } from "@/lib/sheets";
 import "../striver.css";
 
 const SHEET_KEY = "lc-striver-sheet";
@@ -176,7 +176,7 @@ export default function StriverPage() {
       {all.length > 0 && error && <div className="banner err">{error} <button onClick={() => setReload((n) => n + 1)}>Retry</button></div>}
       {all.length > 0 && shown.length === 0 && <p className="mute sh-empty">Nothing matches those filters.</p>}
 
-      {[...groups.entries()].map(([topic, items]) => {
+      {[...groups.entries()].sort(([a], [b]) => compareTopics(a, b)).map(([topic, items]) => {
         const g = groupTotals.get(topic)!;
         return (
           <details className="sh-group" key={topic} open>

@@ -6564,6 +6564,11 @@ _have5 = {p["slug"] for p in PROBLEMS}
 SDE_BATCH_5 = [p for p in make_batch_5(mk, a2z_rng, dict(TN=TN, tok2tree=tok2tree, tree2tok=tree2tok, rand_tree=rand_tree, TREE_IN=TREE_IN, TREE_OUT=TREE_OUT)) if p["slug"] not in _have5]
 PROBLEMS += SDE_BATCH_5
 
+from sde_batch6 import make_batch as make_batch_6  # noqa: E402  (classic dynamic-programming problems of the SDE sheet)
+_have6 = {p["slug"] for p in PROBLEMS}
+SDE_BATCH_6 = [p for p in make_batch_6(mk, a2z_rng) if p["slug"] not in _have6]
+PROBLEMS += SDE_BATCH_6
+
 
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
@@ -6576,6 +6581,8 @@ STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_4}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_4 if p["slug"] not in ("z-function", "compare-version-numbers")}
 STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_5}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_5}
+STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_6}
+STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_6}
 # Already-seeded problems that are also on the real Striver SDE sheet (tag only; their tests and answers exist).
 STRIVER_SDE |= set(['count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'count-subarrays-with-given-xor', 'find-the-repeating-and-missing-number', 'search-a-2d-matrix-ii', 'nth-root-of-an-integer', 'single-element-in-a-sorted-array', 'kth-element-of-two-sorted-arrays', 'aggressive-cows', 'median-in-a-row-wise-sorted-matrix', 'split-array-largest-sum', 'subset-sums', 'subsets-ii', 'combination-sum-ii', 'combination-sum-count', 'palindrome-partitioning-count', 'permutation-sequence', 'permutations', 'n-queens-count', 'm-coloring-problem', 'next-greater-element-ii', 'reverse-words-in-a-string', 'string-to-integer-atoi', 'longest-common-prefix', 'count-and-say', 'longest-palindromic-substring-length', 'binary-tree-right-side-view', 'count-complete-tree-nodes'])
 

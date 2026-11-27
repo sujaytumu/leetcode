@@ -326,6 +326,16 @@ export const LC_METHODS: Record<string, string> = {
   "largest-bst-subtree": "largestBSTSubtree",
   "amount-of-time-for-binary-tree-to-be-infected": "amountOfTime",
   "all-nodes-distance-k-in-binary-tree": "distanceK",
+  "zero-one-knapsack": "knapsack",
+  "rod-cutting": "rodCutting",
+  "matrix-chain-multiplication": "matrixChainOrder",
+  "palindrome-partitioning-ii": "minCut",
+  "longest-palindromic-subsequence": "longestPalindromeSubseq",
+  "egg-dropping-puzzle": "eggDrop",
+  "maximum-profit-in-job-scheduling": "jobScheduling",
+  "subset-sum-equal-to-target": "isSubsetSum",
+  "longest-common-substring": "longestCommonSubstr",
+  "maximum-sum-increasing-subsequence": "maxSumIncreasingSubsequence",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

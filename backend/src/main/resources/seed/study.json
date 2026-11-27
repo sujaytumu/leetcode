@@ -3049,5 +3049,103 @@
     "approach": "Build a parent map, then BFS from the target node over left, right and parent links with a visited set. After k levels the queue holds all nodes at distance k; sort them for the output.",
     "time": "O(n)",
     "space": "O(n)"
+  },
+  "zero-one-knapsack": {
+    "hints": [
+      "Decide per item: take it or leave it.",
+      "best[c] is the most value that fits in capacity c.",
+      "Loop capacity downwards so an item is not used twice."
+    ],
+    "approach": "1D DP over capacity: for each item, for c from capacity down to its weight, best[c] = max(best[c], best[c - w] + v).",
+    "time": "O(n * capacity)",
+    "space": "O(capacity)"
+  },
+  "rod-cutting": {
+    "hints": [
+      "Try every length for the first piece.",
+      "best[j] is the most money from a rod of length j."
+    ],
+    "approach": "Unbounded knapsack: best[j] = max over i in 1..j of prices[i - 1] + best[j - i], with best[0] = 0.",
+    "time": "O(n^2)",
+    "space": "O(n)"
+  },
+  "matrix-chain-multiplication": {
+    "hints": [
+      "Pick which multiplication happens last: it splits the chain in two.",
+      "cost[i][j] is the cheapest way to multiply matrices i..j.",
+      "Fill by increasing chain length."
+    ],
+    "approach": "Interval DP: cost[i][j] = min over k of cost[i][k] + cost[k + 1][j] + dims[i] * dims[k + 1] * dims[j + 1].",
+    "time": "O(n^3)",
+    "space": "O(n^2)"
+  },
+  "palindrome-partitioning-ii": {
+    "hints": [
+      "First precompute which substrings are palindromes.",
+      "cuts[j] is the fewest cuts for the prefix ending at j.",
+      "If the whole prefix is a palindrome it needs 0 cuts."
+    ],
+    "approach": "Precompute pal[i][j] in O(n^2); then cuts[j] = 0 if pal[0][j], else min over i of cuts[i - 1] + 1 where pal[i][j].",
+    "time": "O(n^2)",
+    "space": "O(n^2)"
+  },
+  "longest-palindromic-subsequence": {
+    "hints": [
+      "Compare the two ends of s[i..j].",
+      "If they match, they wrap the best answer of the inside plus 2.",
+      "Otherwise drop one end and take the better result."
+    ],
+    "approach": "Interval DP: dp[i][j] = dp[i + 1][j - 1] + 2 when s[i] == s[j], else max(dp[i + 1][j], dp[i][j - 1]). It equals the LCS of s and reverse(s).",
+    "time": "O(n^2)",
+    "space": "O(n^2)"
+  },
+  "egg-dropping-puzzle": {
+    "hints": [
+      "Flip the question: with m drops and e eggs, how many floors can you check?",
+      "One drop splits into: egg breaks (e - 1 eggs, m - 1 drops) or survives (e eggs, m - 1 drops).",
+      "Keep adding drops until the reach covers all floors."
+    ],
+    "approach": "reach[e] += reach[e - 1] + 1 for each new drop, updating e from high to low; the answer is the number of drops needed until reach[eggs] >= floors.",
+    "time": "O(eggs * answer)",
+    "space": "O(eggs)"
+  },
+  "maximum-profit-in-job-scheduling": {
+    "hints": [
+      "Sort the jobs by end time.",
+      "For each job, find the last job that ends by its start time.",
+      "Either skip the job or take it plus the best before it."
+    ],
+    "approach": "Sort by end time, best[i + 1] = max(best[i], best[k] + profit) where k comes from a binary search over the end times.",
+    "time": "O(n log n)",
+    "space": "O(n)"
+  },
+  "subset-sum-equal-to-target": {
+    "hints": [
+      "reach[t] is true when some subset sums to t.",
+      "Adding a number x shifts every reachable sum up by x.",
+      "A bitset does the whole shift in one operation."
+    ],
+    "approach": "Start with only sum 0 reachable; for each number do reach |= reach << x. The answer is whether bit target is set.",
+    "time": "O(n * target / 64)",
+    "space": "O(target)"
+  },
+  "longest-common-substring": {
+    "hints": [
+      "A common substring must be consecutive, so unlike LCS a mismatch resets the count.",
+      "cur[j] is the common suffix length ending at s1[i] and s2[j].",
+      "Track the maximum seen anywhere."
+    ],
+    "approach": "DP table of common suffix lengths: if the characters match it is the diagonal plus 1, else 0. Keep two rows and the best value.",
+    "time": "O(n * m)",
+    "space": "O(m)"
+  },
+  "maximum-sum-increasing-subsequence": {
+    "hints": [
+      "Same shape as longest increasing subsequence, but add values instead of counting.",
+      "sum[i] is the best sum of an increasing subsequence ending at i."
+    ],
+    "approach": "For each i, sum[i] = nums[i] + max of sum[j] over earlier j with nums[j] < nums[i]; the answer is the largest sum[i].",
+    "time": "O(n^2)",
+    "space": "O(n)"
   }
 }
