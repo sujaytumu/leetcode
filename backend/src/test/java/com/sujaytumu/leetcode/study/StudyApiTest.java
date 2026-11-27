@@ -43,10 +43,10 @@ class StudyApiTest {
         mvc.perform(get("/api/plans"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("striver-sde"))
-                .andExpect(jsonPath("$[0].total").value(169))
-                .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(92)))
+                .andExpect(jsonPath("$[0].total").value(177))
+                .andExpect(jsonPath("$[?(@.id=='warmup')].total").value(hasItem(94)))
                 .andExpect(jsonPath("$[?(@.id=='warmup')].solved").value(hasItem(0)))
-                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(43)));
+                .andExpect(jsonPath("$[?(@.id=='hard')].total").value(hasItem(44)));
     }
 
     @Test
@@ -65,9 +65,9 @@ class StudyApiTest {
     @Test
     void dailyIndexIsDeterministicAndInRange() {
         LocalDate day = LocalDate.of(2026, 11, 16);
-        int first = StudyService.dailyIndex(345, day);
-        assertEquals(first, StudyService.dailyIndex(345, day));
-        assertEquals(true, first >= 0 && first < 345);
+        int first = StudyService.dailyIndex(353, day);
+        assertEquals(first, StudyService.dailyIndex(353, day));
+        assertEquals(true, first >= 0 && first < 353);
     }
 
     @Test

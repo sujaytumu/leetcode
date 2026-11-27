@@ -345,6 +345,14 @@ export const LC_METHODS: Record<string, string> = {
   "implement-trie-prefix-count": "prefixCounts",
   "lru-cache": "lruCache",
   "min-stack": "minStack",
+  "lfu-cache": "lfuCache",
+  "implement-queue-using-stacks": "queueWithStacks",
+  "implement-stack-using-queues": "stackWithQueues",
+  "implement-min-heap": "minHeap",
+  "longest-word-with-all-prefixes": "longestWord",
+  "maximum-xor-of-two-numbers-in-an-array": "findMaximumXOR",
+  "count-distinct-substrings": "countDistinctSubstrings",
+  "divide-two-integers": "divide",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

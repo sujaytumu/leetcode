@@ -2757,6 +2757,178 @@
     "order": 34
   },
   {
+    "slug": "longest-word-with-all-prefixes",
+    "title": "Longest Word With All Prefixes",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "trie",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Find the longest word in `words` such that **every prefix** of it (of length 1 up to its length) is also in `words`. If several words have that length, return the lexicographically smallest. If no word qualifies, return `None`.\n\n### Input\nLine 1: `n`, then `n` lines, one word each.\n\n### Output\nThe word, or `None`.\n\n### Constraints\n- `1 <= n <= 200`\n- `1 <= length <= 10`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\n5\nk\nki\nkir\nkira\nkiran\n\nOutput:\nkiran\n```\n\n**Example 2**\n```text\nInput:\n7\na\nbanana\napp\nappl\nap\napply\napple\n\nOutput:\napple\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static String solve(String[] words) {\n        // Write your solution here\n        return \"\";\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int wordsRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] words = new String[wordsRows];\n        for (int i = 0; i < wordsRows; i++) words[i] = lines.get(pos++);\n        String result = solve(words);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(words):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    words_rows = int(lines[pos].split()[0]); pos += 1\n    words = lines[pos:pos + words_rows]; pos += words_rows\n    result = solve(words)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(words) {\n  // Write your solution here\n}\n\nconst wordsRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst words = lines.slice(pos, pos + wordsRows);\npos += wordsRows;\nconst result = solve(words);\nconsole.log(result);\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstring solve(vector<string> words) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int wordsRows = stoi(lines[pos++]);\n    vector<string> words(lines.begin() + pos, lines.begin() + pos + wordsRows);\n    pos += wordsRows;\n    string result = solve(words);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "5\nk\nki\nkir\nkira\nkiran\n",
+        "expectedOutput": "kiran\n",
+        "sample": true
+      },
+      {
+        "input": "7\na\nbanana\napp\nappl\nap\napply\napple\n",
+        "expectedOutput": "apple\n",
+        "sample": true
+      },
+      {
+        "input": "4\nabc\nbc\nab\nbd\n",
+        "expectedOutput": "None\n",
+        "sample": false
+      },
+      {
+        "input": "1\nx\n",
+        "expectedOutput": "x\n",
+        "sample": false
+      },
+      {
+        "input": "2\nab\nabc\n",
+        "expectedOutput": "None\n",
+        "sample": false
+      },
+      {
+        "input": "8\nw\nwo\nwor\nworl\nworld\nwa\nwal\nwalk\n",
+        "expectedOutput": "world\n",
+        "sample": false
+      },
+      {
+        "input": "6\nb\nba\nbat\nc\nca\ncat\n",
+        "expectedOutput": "bat\n",
+        "sample": false
+      },
+      {
+        "input": "11\naba\nbab\naab\nbbb\nb\nbbba\nbbbb\nbba\na\nbb\nba\n",
+        "expectedOutput": "bbba\n",
+        "sample": false
+      },
+      {
+        "input": "25\na\nc\nacbba\nabc\ncabc\nbbc\ncaccc\nbcacb\nbc\nbcbba\nbab\nbca\naaccb\ncab\nca\nabaab\ncccc\nbcac\nbacc\nb\nbb\nccbba\naccc\nab\nbbb\n",
+        "expectedOutput": "bcacb\n",
+        "sample": false
+      },
+      {
+        "input": "48\nbbaa\nbbbba\nabbaa\nbaaa\nbbabb\nba\nbabb\nbabbb\nbbaaa\naaba\nbbbbaa\nbba\nbbaab\nbabbab\naabbba\nbbb\nbaaaab\nbb\naba\naaab\nabaa\nabbbb\naaa\nababa\nbbbbb\nbabba\nabbab\naab\nabbbaa\nabbba\nbaba\nbabaaa\naaabb\naaabaa\nab\nbaa\naaaaaa\nabab\nabaaa\na\nabba\nabaaba\nbbaaba\nabaab\nababbb\nb\nbab\naa\n",
+        "expectedOutput": "abaaba\n",
+        "sample": false
+      },
+      {
+        "input": "116\nabacbaba\nbacccabc\ncab\nbbaabb\nccabcba\naabcbb\ncba\nbccbbc\ncabca\ncbcababa\naa\nbbab\nbacbbbc\nbcca\nbaacaac\nbbccc\nccaacbbc\naabcb\naccab\nccaacb\ncc\ncaaabab\nbcc\ncca\nabbb\ncbb\nccccabb\nabccabbb\nba\nbbb\nacacc\ncabbcbba\nbccbb\nac\nbcbccab\nabbcb\nabacab\nbabbbbc\naca\ncbbca\nbbaac\naac\nacbcbc\nacba\nacccba\nbbbbac\nbbba\nacabac\ncacac\naaaa\nbabccbbc\nccaa\nbbaaaa\ncbbcc\nccab\nccacc\nbacbc\nabbcc\nccbbbc\nacaaaa\naccbb\nbcbacc\nccabaacc\nccbbbac\nccabccb\ncacacaca\ncacaaa\nab\nbcbbcaca\nca\naba\nbccca\ncacccaaa\nacbab\nabba\nccaac\nbbbaaa\ncacccbc\nabcbc\nbabaab\naacaaaaa\nbbaaa\nbbbcbaa\nbabcca\nbcbaa\nccaacbb\nabacb\naacabac\nababbcc\nbbaca\ncaacb\nacaaac\ncbabbbbb\ncac\na\ncbcccab\nb\nbac\nbab\naaaabab\nccbaabb\nbbc\ncbbaac\nbbccbab\nbcacaa\naaba\nbcabccaa\ncbcbaca\nc\ncacba\ncbc\nbcac\naacba\ncabaaacc\ncb\nbcbb\n",
+        "expectedOutput": "ccaacbbc\n",
+        "sample": false
+      },
+      {
+        "input": "139\nbbaabba\nabaaaaa\nbbaabaa\nabbbbab\nbaabbabbab\naabbab\nbaabaa\naabba\nbabbba\nbbaabababb\nababbbbb\nbbabbbbba\nbbabbaa\nabbb\nabbbbabbb\nabbaaaaaa\nbaaba\nabaaaa\naababbaab\nbbb\nabbabababb\nbbaaabaa\naaaabaab\nbaaaaaabab\nbababb\nbaabbbaaba\nbaabbbabb\nbbbbbb\nababbbba\nababbb\nbbbaabab\nbaab\naaaabbbabb\nbbabbba\nababaaabaa\naabaaabaa\nbbaaaa\nabbbaaab\naababbaba\naaaaba\naba\nabaaababaa\naaa\nabab\nbaabbbb\nabaaba\nababaabbba\nbaa\nbba\naaabaa\naaabba\naaaaaabb\nabbaabbaaa\nbbbbbab\nabbabaaa\nbbbab\naabbababab\nbbba\nbabb\nbababaa\nabaaabb\naaaabbb\nb\nabbabbabb\nbbaabbaa\nbaabbbaaaa\nbbbbaabaaa\nababaa\nbaabbbbbb\naababab\nabbaabaab\nabbabaab\nbbbbab\nbbbabbbab\nbaaabb\nbabaabba\nbb\naa\naaaabbba\naab\nababb\nabba\nabbaaabbb\nbbbaaaaba\nbabbaa\nbaaaaaaaab\nbbababbabb\naabbbbaaaa\nbabaaabaa\nabbbab\nbaaabbb\nba\nbbbb\nababbbb\naaabbbb\naaabaaabaa\naabaab\nbab\nbabba\nababbbbba\naabaaaaba\nabb\naaaa\nabaabab\na\nbaaaabb\nabbbba\nbbaa\nbaaabaa\nbbaab\naababa\nbabaaaaaa\nbbaaaaaa\naabaaaaaab\nab\nbaaaabbbba\nbbbbaa\nabbaabaaa\nabaa\nbabbbaaab\nababbbbbaa\nbaabaabbba\nbabbbbbbab\nabbbbabbaa\naaabb\naaab\nbbabbbaaa\naababbbbbb\nababaabba\nbaaaaaabbb\nabbbbba\nbbbabbaa\nbaababbab\nbaaaaabbab\nbbabb\naaababaaa\nabaab\nabbba\nbaaaa\n",
+        "expectedOutput": "ababbbbbaa\n",
+        "sample": false
+      }
+    ],
+    "order": 35
+  },
+  {
+    "slug": "count-distinct-substrings",
+    "title": "Count Distinct Substrings",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "trie",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the number of different non-empty substrings of `s` (equal substrings at different positions count once).\n\n### Input\nA line with the string `s`.\n\n### Output\nThe number of distinct substrings.\n\n### Constraints\n- `1 <= s.length <= 300`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nabc\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\naaa\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String s) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String s = lines.get(pos++);\n        int result = solve(s);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(s):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    s = lines[pos]; pos += 1\n    result = solve(s)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(s) {\n  // Write your solution here\n}\n\nconst s = lines[pos++];\nconst result = solve(s);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(string s) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string s = lines[pos++];\n    int result = solve(s);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "abc\n",
+        "expectedOutput": "6\n",
+        "sample": true
+      },
+      {
+        "input": "aaa\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "abab\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "a\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "ab\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "abcabc\n",
+        "expectedOutput": "15\n",
+        "sample": false
+      },
+      {
+        "input": "banana\n",
+        "expectedOutput": "15\n",
+        "sample": false
+      },
+      {
+        "input": "mississippi\n",
+        "expectedOutput": "53\n",
+        "sample": false
+      },
+      {
+        "input": "baaaabbaaa\n",
+        "expectedOutput": "38\n",
+        "sample": false
+      },
+      {
+        "input": "cbbccccaccaabacccacaabbaccccbb\n",
+        "expectedOutput": "397\n",
+        "sample": false
+      },
+      {
+        "input": "bdbccacccbbdabdbddbdcdacbccadcbbaabcbbbdabddcaacdbddccbdcccc\n",
+        "expectedOutput": "1703\n",
+        "sample": false
+      },
+      {
+        "input": "aaabbababaaaabbabaababaababbababbbaaabababbabbbbbaabbaababbbbaabbaabbbbbbbaaabbabbbbbabbbaabbaaaabbabbbbababababaaaababa\n",
+        "expectedOutput": "6590\n",
+        "sample": false
+      },
+      {
+        "input": "accabbcacaabcbccaacbbcbbccabbbbccbbabbabbbacaabbcbacbabbcbcbbcbbabcbaccabaaaabbcbaababcbabccccbcacbcacccbabcaabbaaccbbbcacabccbbbbcacccbabbccbbaabbbccbbbcbcbbbbccaabaabccababaaacbcbaabaccaabcaabbbabcc\n",
+        "expectedOutput": "19319\n",
+        "sample": false
+      },
+      {
+        "input": "bbebbaeddabdaaaedeaeccddbbeeeeedacddcabeeadeadecaeecdadebecdbccaecedeceabbdbbcaaabcaaceceabdcaedcbdbdacacabaeedaecaacacbbcdccdeedebbdbcaddaeaababcedeababdcdebedceceadbdbbdbdabdbbbbedcadeeeceaebdeaeadbcacdbbebaecdbaabbcbaecdbcaaaebeebddaaebeeeedacdeecbecbaccdecbccbdbeadcddacbcebebecdddeacdcabebecdacb\n",
+        "expectedOutput": "44313\n",
+        "sample": false
+      }
+    ],
+    "order": 36
+  },
+  {
     "slug": "first-missing-positive",
     "title": "First Missing Positive",
     "difficulty": "HARD",
@@ -2848,7 +3020,7 @@
         "sample": false
       }
     ],
-    "order": 35
+    "order": 37
   },
   {
     "slug": "reverse-pairs",
@@ -2910,7 +3082,7 @@
         "sample": false
       }
     ],
-    "order": 36
+    "order": 38
   },
   {
     "slug": "minimum-characters-to-make-palindrome",
@@ -2995,7 +3167,7 @@
         "sample": false
       }
     ],
-    "order": 37
+    "order": 39
   },
   {
     "slug": "valid-palindrome",
@@ -3100,7 +3272,7 @@
         "sample": false
       }
     ],
-    "order": 38
+    "order": 40
   },
   {
     "slug": "remove-duplicates-from-sorted-array",
@@ -3191,7 +3363,7 @@
         "sample": false
       }
     ],
-    "order": 39
+    "order": 41
   },
   {
     "slug": "move-zeroes",
@@ -3281,7 +3453,7 @@
         "sample": false
       }
     ],
-    "order": 40
+    "order": 42
   },
   {
     "slug": "squares-of-a-sorted-array",
@@ -3381,7 +3553,7 @@
         "sample": false
       }
     ],
-    "order": 41
+    "order": 43
   },
   {
     "slug": "valid-palindrome-ii",
@@ -3510,7 +3682,7 @@
         "sample": false
       }
     ],
-    "order": 42
+    "order": 44
   },
   {
     "slug": "merge-sorted-array",
@@ -3597,7 +3769,7 @@
         "sample": false
       }
     ],
-    "order": 43
+    "order": 45
   },
   {
     "slug": "union-of-two-sorted-arrays",
@@ -3657,7 +3829,7 @@
         "sample": false
       }
     ],
-    "order": 44
+    "order": 46
   },
   {
     "slug": "find-the-index-of-the-first-occurrence-in-a-string",
@@ -3722,7 +3894,7 @@
         "sample": false
       }
     ],
-    "order": 45
+    "order": 47
   },
   {
     "slug": "3sum-count",
@@ -3783,7 +3955,7 @@
         "sample": false
       }
     ],
-    "order": 46
+    "order": 48
   },
   {
     "slug": "rotate-array",
@@ -3889,7 +4061,7 @@
         "sample": false
       }
     ],
-    "order": 47
+    "order": 49
   },
   {
     "slug": "sort-colors",
@@ -3991,7 +4163,7 @@
         "sample": false
       }
     ],
-    "order": 48
+    "order": 50
   },
   {
     "slug": "next-permutation",
@@ -4107,7 +4279,7 @@
         "sample": false
       }
     ],
-    "order": 49
+    "order": 51
   },
   {
     "slug": "3sum-closest",
@@ -4207,7 +4379,7 @@
         "sample": false
       }
     ],
-    "order": 50
+    "order": 52
   },
   {
     "slug": "4sum-count",
@@ -4273,7 +4445,7 @@
         "sample": false
       }
     ],
-    "order": 51
+    "order": 53
   },
   {
     "slug": "rearrange-array-elements-by-sign",
@@ -4328,7 +4500,7 @@
         "sample": false
       }
     ],
-    "order": 52
+    "order": 54
   },
   {
     "slug": "reverse-words-in-a-string",
@@ -4394,7 +4566,7 @@
         "sample": false
       }
     ],
-    "order": 53
+    "order": 55
   },
   {
     "slug": "compare-version-numbers",
@@ -4484,7 +4656,7 @@
         "sample": false
       }
     ],
-    "order": 54
+    "order": 56
   },
   {
     "slug": "three-sum",
@@ -4586,7 +4758,7 @@
         "sample": false
       }
     ],
-    "order": 55
+    "order": 57
   },
   {
     "slug": "four-sum",
@@ -4668,7 +4840,7 @@
         "sample": false
       }
     ],
-    "order": 56
+    "order": 58
   },
   {
     "slug": "longest-substring-without-repeating-characters",
@@ -4775,7 +4947,7 @@
         "sample": false
       }
     ],
-    "order": 57
+    "order": 59
   },
   {
     "slug": "minimum-size-subarray-sum",
@@ -4870,7 +5042,7 @@
         "sample": false
       }
     ],
-    "order": 58
+    "order": 60
   },
   {
     "slug": "longest-repeating-character-replacement",
@@ -4966,7 +5138,7 @@
         "sample": false
       }
     ],
-    "order": 59
+    "order": 61
   },
   {
     "slug": "permutation-in-string",
@@ -5056,7 +5228,7 @@
         "sample": false
       }
     ],
-    "order": 60
+    "order": 62
   },
   {
     "slug": "longest-substring-with-at-most-k-distinct-characters",
@@ -5157,7 +5329,7 @@
         "sample": false
       }
     ],
-    "order": 61
+    "order": 63
   },
   {
     "slug": "minimum-window-substring-length",
@@ -5213,7 +5385,7 @@
         "sample": false
       }
     ],
-    "order": 62
+    "order": 64
   },
   {
     "slug": "valid-parentheses",
@@ -5314,7 +5486,7 @@
         "sample": false
       }
     ],
-    "order": 63
+    "order": 65
   },
   {
     "slug": "remove-outermost-parentheses",
@@ -5374,7 +5546,7 @@
         "sample": false
       }
     ],
-    "order": 64
+    "order": 66
   },
   {
     "slug": "maximum-nesting-depth-of-the-parentheses",
@@ -5434,7 +5606,149 @@
         "sample": false
       }
     ],
-    "order": 65
+    "order": 67
+  },
+  {
+    "slug": "implement-queue-using-stacks",
+    "title": "Implement Queue using Stacks",
+    "difficulty": "EASY",
+    "tags": [
+      "stack",
+      "design",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Build a first-in-first-out queue using only stacks. Run the commands `push x`, `pop` (remove and report the front), `peek` (report the front) and `empty` (report `1` if the queue is empty, else `0`). Return the results of all `pop`, `peek` and `empty` commands, in order.\n\n### Input\nLine 1: `m`, the number of commands.\nThen `m` lines, each one command.\n\n### Output\nThe results as space-separated integers.\n\n### Constraints\n- `1 <= m <= 250`\n- `-1000 <= x <= 1000`\n- `pop` and `peek` only run on a non-empty queue\n- At least one `pop`, `peek` or `empty`\n\n### Examples\n**Example 1**\n```text\nInput:\n5\npush 1\npush 2\npeek\npop\nempty\n\nOutput:\n1 1 0\n```\n\n**Example 2**\n```text\nInput:\n1\nempty\n\nOutput:\n1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(String[] ops) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int opsRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] ops = new String[opsRows];\n        for (int i = 0; i < opsRows; i++) ops[i] = lines.get(pos++);\n        int[] result = solve(ops);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(ops):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    ops_rows = int(lines[pos].split()[0]); pos += 1\n    ops = lines[pos:pos + ops_rows]; pos += ops_rows\n    result = solve(ops)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(ops) {\n  // Write your solution here\n}\n\nconst opsRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst ops = lines.slice(pos, pos + opsRows);\npos += opsRows;\nconst result = solve(ops);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<string> ops) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int opsRows = stoi(lines[pos++]);\n    vector<string> ops(lines.begin() + pos, lines.begin() + pos + opsRows);\n    pos += opsRows;\n    vector<int> result = solve(ops);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "5\npush 1\npush 2\npeek\npop\nempty\n",
+        "expectedOutput": "1 1 0\n",
+        "sample": true
+      },
+      {
+        "input": "1\nempty\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "3\npush 7\npop\nempty\n",
+        "expectedOutput": "7 1\n",
+        "sample": false
+      },
+      {
+        "input": "7\npush 3\npush 4\npop\npush 5\npop\npop\nempty\n",
+        "expectedOutput": "3 4 5 1\n",
+        "sample": false
+      },
+      {
+        "input": "8\npush 705\nempty\nempty\nempty\npush 495\npop\npop\npush -691\n",
+        "expectedOutput": "0 0 0 705 495\n",
+        "sample": false
+      },
+      {
+        "input": "20\nempty\nempty\nempty\nempty\nempty\nempty\npush -714\npop\npush -887\npush 54\npush 812\npush -369\npush -73\npop\nempty\npop\npop\nempty\npeek\npeek\n",
+        "expectedOutput": "1 1 1 1 1 1 -714 -887 0 54 812 0 -369 -369\n",
+        "sample": false
+      },
+      {
+        "input": "40\nempty\npush 323\npush 953\npush -148\nempty\npeek\nempty\npush 325\nempty\npush 535\npeek\npeek\npush 43\npeek\npush -672\npop\npeek\npush 769\npop\npop\nempty\npush 771\npush 886\npeek\npush -384\npop\npush 698\npush 270\nempty\npeek\nempty\npush 246\npush -623\npush 18\npush -421\npeek\npush 205\npush 993\npush 253\nempty\n",
+        "expectedOutput": "1 0 323 0 0 323 323 323 323 953 953 -148 0 325 325 0 535 0 535 0\n",
+        "sample": false
+      },
+      {
+        "input": "80\npush -802\nempty\npush 1\npush 117\npop\npush 879\npeek\npush -849\npush 119\nempty\npeek\npush -356\nempty\npeek\npush -771\npeek\npop\npop\npop\npush 932\npop\npeek\npeek\npush 875\npeek\npeek\nempty\nempty\npeek\npop\npush -215\nempty\npeek\npeek\npush -943\npush -432\nempty\npop\npush -697\npush -743\npeek\nempty\npush -920\nempty\npop\npeek\npush 142\npush -984\npeek\npush 413\npush 555\npush 655\npeek\npeek\npush -878\npop\npeek\npush 60\npush 701\nempty\npeek\npeek\npeek\npeek\npop\npop\npush -896\nempty\npush 648\nempty\nempty\npeek\npop\npush 48\npop\npeek\npop\npush -279\npush -392\npush 929\n",
+        "expectedOutput": "0 -802 1 0 1 0 1 1 1 117 879 -849 119 119 119 119 0 0 119 119 0 -356 -356 0 -356 -771 0 0 -771 932 932 932 932 932 875 0 875 875 875 875 875 -215 0 0 0 -943 -943 -432 -697 -697\n",
+        "sample": false
+      },
+      {
+        "input": "150\nempty\npush 852\npush 205\nempty\npeek\nempty\nempty\npush -700\npush 713\npush -342\npush -394\npeek\npeek\npeek\nempty\npush -264\nempty\nempty\npush 707\npop\npop\npush 621\npop\npush -441\npop\nempty\npush -640\npush -43\npeek\npush -322\npop\npop\npush 668\npop\nempty\npop\npush -922\npeek\npop\nempty\npop\nempty\npush 432\npeek\npush 269\npush -162\npush 994\npush 738\npop\npush 105\npush -804\npush 603\nempty\npush 598\npeek\npop\npush 643\nempty\npeek\npeek\npush 535\npush -946\npop\npush 354\npush 637\npop\npush -496\nempty\npush 523\nempty\npop\npush 61\npop\npop\npop\npush 133\nempty\npush -688\npeek\nempty\npeek\npeek\npush -512\nempty\npeek\npop\npeek\nempty\npop\nempty\nempty\npush 525\npush -152\nempty\npop\npush 524\npush 37\npeek\nempty\npeek\npeek\npush -653\npop\npush -765\npush -558\npeek\npop\npop\npeek\nempty\npush 752\npeek\npeek\npush -420\nempty\nempty\npush -807\npush 883\npush -662\npeek\npush 566\npush 531\npush 916\npush 530\npeek\nempty\npush -244\nempty\npush -61\npeek\npop\npush 593\npush -839\npush 503\npop\npop\npush 56\nempty\npush -761\npush -387\npop\npush -906\nempty\npop\nempty\npush -65\npop\npop\npush -752\npop\n",
+        "expectedOutput": "1 0 852 0 0 852 852 852 0 0 0 852 205 -700 713 0 -342 -342 -394 -264 0 707 621 621 0 -441 0 -640 -640 0 -43 -43 0 -322 -322 -322 668 0 0 -922 432 269 -162 0 994 0 994 994 0 994 994 738 0 738 0 0 0 105 -804 0 -804 -804 -804 603 603 598 643 0 643 643 0 0 643 643 0 0 643 643 535 -946 0 354 0 637 0 -496 523 61\n",
+        "sample": false
+      },
+      {
+        "input": "250\npush 548\npush -199\nempty\npop\npush -215\npeek\npop\npush -616\npop\npeek\npush 239\nempty\npush 527\npop\npop\npop\npush -219\npush 715\nempty\npop\npush -807\npush 457\npush 908\npop\npush 713\npop\nempty\npush 557\npush -957\npush -130\npop\npush -729\npush 949\npeek\npop\npeek\npeek\npush -746\npush -352\npush 929\nempty\npush 909\npop\nempty\npeek\npush 285\npop\nempty\nempty\npeek\npop\npush -109\nempty\nempty\npop\nempty\npush 971\npeek\npeek\npop\npop\npush -730\npush -860\npush 228\npeek\npush 841\npush -419\npop\npush 807\npop\npop\npop\npop\npush -58\nempty\npush 832\npush 465\npop\npush 189\npop\npush 373\npop\npush -922\npop\npush -681\nempty\nempty\nempty\nempty\npush 771\npush -904\nempty\npush 86\npush 943\npush -505\nempty\npeek\nempty\nempty\nempty\npop\npop\npop\nempty\npush -50\npeek\npop\npush 133\npeek\npop\nempty\npush 290\npop\npop\nempty\npeek\npush 77\npeek\npush -57\nempty\npush 74\npush -487\npush 404\npop\npeek\npeek\nempty\npeek\nempty\nempty\npush -39\npeek\npush -367\nempty\nempty\nempty\npeek\npeek\npop\npush -639\npeek\npush -848\npop\npush -168\npush -677\npush -44\nempty\npush 315\npop\npush 946\npush 610\npush 930\npush -909\nempty\nempty\npush -108\npush 25\nempty\npush 201\npush -45\npush 445\npush -836\npush -212\npush 951\npush -100\nempty\npop\npop\npeek\npush -947\npop\npush -706\npeek\npush -712\npush -54\npop\npush -215\npush -963\npop\npeek\npush 739\npop\npush 975\nempty\npop\npeek\npush 971\nempty\npush 889\npop\nempty\nempty\npush 58\npush -655\npush 327\npeek\npush -108\npush 588\nempty\nempty\nempty\nempty\npush 616\npush -671\npop\npop\npop\nempty\npeek\npush -206\nempty\npop\npush -989\npush 195\npush -879\npop\npop\npush -882\nempty\npush -695\npeek\npush -666\npush 495\npush 268\npop\nempty\nempty\npop\npeek\npeek\npush 523\nempty\nempty\npeek\npop\npop\npeek\npush -977\nempty\npush 654\npop\npush -883\npush 868\nempty\nempty\npeek\npeek\nempty\npop\nempty\n",
+        "expectedOutput": "0 548 -199 -199 -215 -616 0 -616 239 527 0 -219 715 -807 0 457 908 908 713 713 0 713 0 557 557 0 0 -957 -957 0 0 -130 0 -729 -729 -729 949 -746 -746 -352 929 909 285 0 -109 971 -730 -860 0 0 0 0 0 0 228 0 0 0 228 841 -419 0 807 807 -58 -58 0 832 465 0 189 189 0 189 373 373 0 373 0 0 373 0 0 0 373 373 373 -922 -922 0 -681 0 0 0 0 771 -904 86 86 943 943 -505 -50 -50 0 133 290 0 290 0 0 77 0 0 0 0 77 -57 74 0 -487 0 -487 404 -39 0 -367 -367 0 0 -639 -848 -848 0 0 -848 -848 -168 -677 0 -677 0 0 -44 -44 0 -44 0\n",
+        "sample": false
+      }
+    ],
+    "order": 68
+  },
+  {
+    "slug": "implement-stack-using-queues",
+    "title": "Implement Stack using Queues",
+    "difficulty": "EASY",
+    "tags": [
+      "stack",
+      "design",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Build a last-in-first-out stack using only queues. Run the commands `push x`, `pop` (remove and report the top), `top` (report the top) and `empty` (report `1` if the stack is empty, else `0`). Return the results of all `pop`, `top` and `empty` commands, in order.\n\n### Input\nLine 1: `m`, the number of commands.\nThen `m` lines, each one command.\n\n### Output\nThe results as space-separated integers.\n\n### Constraints\n- `1 <= m <= 250`\n- `-1000 <= x <= 1000`\n- `pop` and `top` only run on a non-empty stack\n- At least one `pop`, `top` or `empty`\n\n### Examples\n**Example 1**\n```text\nInput:\n5\npush 1\npush 2\ntop\npop\nempty\n\nOutput:\n2 2 0\n```\n\n**Example 2**\n```text\nInput:\n1\nempty\n\nOutput:\n1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(String[] ops) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int opsRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] ops = new String[opsRows];\n        for (int i = 0; i < opsRows; i++) ops[i] = lines.get(pos++);\n        int[] result = solve(ops);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(ops):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    ops_rows = int(lines[pos].split()[0]); pos += 1\n    ops = lines[pos:pos + ops_rows]; pos += ops_rows\n    result = solve(ops)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(ops) {\n  // Write your solution here\n}\n\nconst opsRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst ops = lines.slice(pos, pos + opsRows);\npos += opsRows;\nconst result = solve(ops);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<string> ops) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int opsRows = stoi(lines[pos++]);\n    vector<string> ops(lines.begin() + pos, lines.begin() + pos + opsRows);\n    pos += opsRows;\n    vector<int> result = solve(ops);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "5\npush 1\npush 2\ntop\npop\nempty\n",
+        "expectedOutput": "2 2 0\n",
+        "sample": true
+      },
+      {
+        "input": "1\nempty\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "3\npush 7\npop\nempty\n",
+        "expectedOutput": "7 1\n",
+        "sample": false
+      },
+      {
+        "input": "7\npush 3\npush 4\npop\npush 5\npop\npop\nempty\n",
+        "expectedOutput": "4 5 3 1\n",
+        "sample": false
+      },
+      {
+        "input": "8\nempty\npush -111\npop\npush -247\npush 435\nempty\npop\nempty\n",
+        "expectedOutput": "1 -111 0 435 0\n",
+        "sample": false
+      },
+      {
+        "input": "20\npush 289\npush -829\npop\npush 71\npop\npop\npush 595\npop\npush -980\nempty\ntop\npop\npush -266\ntop\nempty\npush 537\nempty\ntop\npop\nempty\n",
+        "expectedOutput": "-829 71 289 595 0 -980 -980 -266 0 0 537 537 0\n",
+        "sample": false
+      },
+      {
+        "input": "40\npush 878\nempty\npush 701\ntop\npush 150\ntop\npop\nempty\npush -660\ntop\ntop\npush 388\ntop\npush -222\ntop\nempty\ntop\npop\npush 11\npush -697\npop\npush -412\nempty\ntop\ntop\npush -247\npush -924\nempty\ntop\nempty\npush -38\npop\npush -93\nempty\nempty\npop\ntop\npop\ntop\npush 210\n",
+        "expectedOutput": "0 701 150 150 0 -660 -660 388 -222 0 -222 -222 -697 0 -412 -412 0 -924 0 -38 0 0 -93 -924 -924 -247\n",
+        "sample": false
+      },
+      {
+        "input": "80\npush 898\npush -816\npush -173\npush 821\ntop\npush 308\ntop\ntop\nempty\nempty\npush -906\ntop\nempty\npush -47\npop\npop\ntop\ntop\npush 78\npush -293\npush 734\npop\npush -84\npush -349\ntop\nempty\nempty\npush -405\npop\nempty\ntop\npush -841\npush -375\npush -421\ntop\npush -151\npop\npush -651\ntop\ntop\nempty\npush 829\ntop\ntop\ntop\npush -280\npush 587\nempty\npop\npop\npush 396\npush 556\nempty\npush 565\nempty\npush 113\npush 123\npush -986\npush -515\npush 238\ntop\npush -874\ntop\npush -46\npop\npush 10\nempty\nempty\ntop\npush 20\npush -954\nempty\npop\npop\ntop\npush 266\ntop\ntop\npop\npush 484\n",
+        "expectedOutput": "821 308 308 0 0 -906 0 -47 -906 308 308 734 -349 0 0 -405 0 -349 -421 -151 -651 -651 0 829 829 829 0 587 -280 0 0 238 -874 -46 0 0 10 0 -954 20 10 266 266 266\n",
+        "sample": false
+      },
+      {
+        "input": "150\npush -425\npush 741\npop\npop\nempty\npush 356\npush 49\ntop\nempty\npush -445\npush 585\nempty\nempty\npush 530\npush -605\nempty\ntop\npop\npop\nempty\npop\npush 886\nempty\npush -573\ntop\nempty\npush -432\ntop\ntop\npush -387\npop\npop\npush 398\npop\npush -465\npush 956\npop\npush -639\npop\npop\ntop\npop\ntop\ntop\npop\npush 911\npush -384\npush 762\npush 84\ntop\nempty\ntop\npop\npush 24\ntop\npop\nempty\npop\npop\ntop\ntop\npop\npush -431\nempty\nempty\nempty\npop\nempty\npush -434\ntop\npush 111\npop\npop\npush 262\npush 294\npush 894\npush 398\npush -626\ntop\npush -413\npop\npush 562\ntop\npop\npop\ntop\nempty\npush -635\ntop\npop\npop\nempty\npop\ntop\npush 979\npush -333\npush -246\npush -517\npush -624\npush -78\npop\ntop\npush 785\npop\npop\nempty\npush -313\nempty\npush 513\npop\npop\npush 540\npush -337\ntop\npush -84\nempty\npush 492\npush 701\npop\npop\ntop\npush 672\npop\npush -581\npush 768\nempty\npop\ntop\npush 214\npush 509\nempty\npop\nempty\npush -200\nempty\nempty\npush 90\npush 719\npop\npop\nempty\nempty\ntop\npop\npush 872\npop\npop\npush -853\ntop\npop\n",
+        "expectedOutput": "741 -425 1 49 0 0 0 0 -605 -605 530 0 585 0 -573 0 -432 -432 -387 -432 398 956 -639 -465 -573 -573 886 886 886 84 0 84 84 24 24 0 762 -384 911 911 911 0 0 0 -431 0 -434 111 -434 -626 -413 562 562 -626 398 0 -635 -635 398 0 894 294 -78 -624 785 -624 0 0 513 -313 -337 0 701 492 -84 672 0 768 -581 0 509 0 0 0 719 90 0 0 -200 -200 872 214 -853 -853\n",
+        "sample": false
+      },
+      {
+        "input": "250\nempty\npush -794\nempty\npush -811\npush -447\npop\npush 864\npush 995\npush -443\npush 400\ntop\npop\nempty\npush -711\ntop\npush -7\ntop\npush 354\npush -778\npush -624\ntop\ntop\npop\npush -551\npush -793\npush -60\ntop\npush -745\npop\ntop\npush -118\npop\npop\nempty\npush 467\nempty\npush -468\npush 560\nempty\npush -572\nempty\npush -667\npush 690\ntop\npush 197\npop\npush 638\npush -649\npush 420\ntop\npush 639\ntop\npush 18\npop\npush -347\ntop\npush -289\npush 687\npush -353\nempty\npop\npush 285\npush -883\npush 354\npush -629\nempty\npop\ntop\ntop\npop\npush -867\nempty\npop\ntop\npush 865\npush 921\npush -650\npop\npush -157\npop\npop\npop\npush -355\npush -386\nempty\npush -194\npop\npush 296\nempty\npush 449\nempty\ntop\npush -714\npush 230\npush -501\ntop\nempty\nempty\npop\nempty\npop\npush -489\npush -722\ntop\npop\npush 540\npop\ntop\ntop\npush -637\npush 667\npush 109\ntop\nempty\npush -952\ntop\npush -981\npush 786\npop\nempty\npush 217\ntop\npush -922\npop\nempty\npush 272\nempty\npush 601\npush 734\nempty\npush -462\npush -245\npush 248\npush -172\npush 984\ntop\npop\npush -672\npush -361\npush -558\ntop\npop\npush 62\ntop\ntop\npush -412\ntop\npush 57\ntop\ntop\npush -394\nempty\nempty\npush 695\nempty\npush -163\npop\ntop\ntop\npop\npop\npush 696\npop\npush -945\nempty\npop\npop\npush 80\npop\npush -875\npop\npush 578\npush -849\npush -242\ntop\npush -940\npop\nempty\npop\nempty\npush 691\ntop\nempty\nempty\npush 998\nempty\npush 794\npush 131\npush -292\nempty\npop\ntop\ntop\ntop\nempty\npush -461\npush -361\nempty\ntop\ntop\ntop\npush 764\ntop\ntop\ntop\ntop\npush -801\nempty\npush -249\npush 380\npop\ntop\npush -876\npush -654\npop\ntop\nempty\npush -155\npush -781\npush -599\npush -576\ntop\npush -134\ntop\npush 819\nempty\npush -990\ntop\npop\ntop\npop\nempty\npush -810\npop\npush -861\npush 366\nempty\npop\npush -517\nempty\npop\nempty\npush 354\npop\ntop\nempty\npush -301\npush 18\nempty\npop\n",
+        "expectedOutput": "1 0 -447 400 400 0 -711 -7 -624 -624 -624 -60 -745 -60 -118 -60 0 0 0 0 690 197 420 639 18 -347 0 -353 0 -629 354 354 354 0 -867 -883 -650 -157 921 865 0 -194 0 0 449 -501 0 0 -501 0 230 -722 -722 540 -489 -489 109 0 -952 786 0 217 -922 0 0 0 984 984 -558 -558 62 62 -412 57 57 0 0 0 -163 695 695 695 -394 696 0 -945 57 80 -875 -242 -940 0 -242 0 691 0 0 0 0 -292 131 131 131 0 0 -361 -361 -361 764 764 764 764 0 380 -249 -654 -876 0 -576 -134 0 -990 -990 819 819 0 -810 0 366 0 -517 0 354 -861 0 0 18\n",
+        "sample": false
+      }
+    ],
+    "order": 69
   },
   {
     "slug": "daily-temperatures",
@@ -5525,7 +5839,7 @@
         "sample": false
       }
     ],
-    "order": 66
+    "order": 70
   },
   {
     "slug": "evaluate-reverse-polish-notation",
@@ -5640,7 +5954,7 @@
         "sample": false
       }
     ],
-    "order": 67
+    "order": 71
   },
   {
     "slug": "next-greater-element-ii",
@@ -5732,7 +6046,7 @@
         "sample": false
       }
     ],
-    "order": 68
+    "order": 72
   },
   {
     "slug": "car-fleet",
@@ -5822,7 +6136,7 @@
         "sample": false
       }
     ],
-    "order": 69
+    "order": 73
   },
   {
     "slug": "sum-of-subarray-minimums",
@@ -5928,7 +6242,7 @@
         "sample": false
       }
     ],
-    "order": 70
+    "order": 74
   },
   {
     "slug": "minimum-add-to-make-parentheses-valid",
@@ -6028,7 +6342,7 @@
         "sample": false
       }
     ],
-    "order": 71
+    "order": 75
   },
   {
     "slug": "next-smaller-element",
@@ -6105,7 +6419,7 @@
         "sample": false
       }
     ],
-    "order": 72
+    "order": 76
   },
   {
     "slug": "stock-span-problem",
@@ -6177,7 +6491,7 @@
         "sample": false
       }
     ],
-    "order": 73
+    "order": 77
   },
   {
     "slug": "celebrity-problem",
@@ -6234,7 +6548,7 @@
         "sample": false
       }
     ],
-    "order": 74
+    "order": 78
   },
   {
     "slug": "next-greater-element",
@@ -6306,7 +6620,7 @@
         "sample": false
       }
     ],
-    "order": 75
+    "order": 79
   },
   {
     "slug": "sort-a-stack",
@@ -6373,7 +6687,7 @@
         "sample": false
       }
     ],
-    "order": 76
+    "order": 80
   },
   {
     "slug": "lru-cache",
@@ -6445,7 +6759,7 @@
         "sample": false
       }
     ],
-    "order": 77
+    "order": 81
   },
   {
     "slug": "min-stack",
@@ -6511,7 +6825,7 @@
         "sample": false
       }
     ],
-    "order": 78
+    "order": 82
   },
   {
     "slug": "trapping-rain-water",
@@ -6608,7 +6922,7 @@
         "sample": false
       }
     ],
-    "order": 79
+    "order": 83
   },
   {
     "slug": "largest-rectangle-in-histogram",
@@ -6705,7 +7019,7 @@
         "sample": false
       }
     ],
-    "order": 80
+    "order": 84
   },
   {
     "slug": "maximum-of-minimums-for-every-window-size",
@@ -6777,7 +7091,79 @@
         "sample": false
       }
     ],
-    "order": 81
+    "order": 85
+  },
+  {
+    "slug": "lfu-cache",
+    "title": "LFU Cache",
+    "difficulty": "HARD",
+    "tags": [
+      "stack",
+      "design",
+      "hash-table",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Simulate a Least Frequently Used cache with the given `capacity`. `put k v` stores or updates a key, `get k` returns its value or `-1`. Every `put` and every successful `get` of a key raises that key's use count by one (a new key starts at 1). When a new key arrives and the cache is full, first remove the key with the **smallest use count**; if several tie, remove the **least recently used** among them. Return the result of every `get`, in order.\n\n### Input\nLine 1: `capacity`.\nLine 2: `m`, the number of commands.\nThen `m` lines, each `put k v` or `get k`.\n\n### Output\nThe results of the `get` commands as space-separated integers.\n\n### Constraints\n- `1 <= capacity <= 50`\n- `1 <= m <= 300`\n- `1 <= k <= 120`, `0 <= v <= 1000`\n- At least one `get`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n10\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nget 3\nput 4 4\nget 1\nget 3\nget 4\n\nOutput:\n1 -1 3 -1 3 4\n```\n\n**Example 2**\n```text\nInput:\n1\n5\nput 1 1\nget 1\nput 2 2\nget 1\nget 2\n\nOutput:\n1 -1 2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int capacity, String[] ops) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int capacity = Integer.parseInt(lines.get(pos++).trim());\n        int opsRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] ops = new String[opsRows];\n        for (int i = 0; i < opsRows; i++) ops[i] = lines.get(pos++);\n        int[] result = solve(capacity, ops);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(capacity, ops):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    capacity = int(lines[pos]); pos += 1\n    ops_rows = int(lines[pos].split()[0]); pos += 1\n    ops = lines[pos:pos + ops_rows]; pos += ops_rows\n    result = solve(capacity, ops)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(capacity, ops) {\n  // Write your solution here\n}\n\nconst capacity = parseInt(lines[pos++], 10);\nconst opsRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst ops = lines.slice(pos, pos + opsRows);\npos += opsRows;\nconst result = solve(capacity, ops);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(int capacity, vector<string> ops) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int capacity = stoi(lines[pos++]);\n    int opsRows = stoi(lines[pos++]);\n    vector<string> ops(lines.begin() + pos, lines.begin() + pos + opsRows);\n    pos += opsRows;\n    vector<int> result = solve(capacity, ops);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2\n10\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nget 3\nput 4 4\nget 1\nget 3\nget 4\n",
+        "expectedOutput": "1 -1 3 -1 3 4\n",
+        "sample": true
+      },
+      {
+        "input": "1\n5\nput 1 1\nget 1\nput 2 2\nget 1\nget 2\n",
+        "expectedOutput": "1 -1 2\n",
+        "sample": true
+      },
+      {
+        "input": "2\n7\nput 1 1\nput 2 2\nput 1 10\nput 3 3\nget 1\nget 2\nget 3\n",
+        "expectedOutput": "10 -1 3\n",
+        "sample": false
+      },
+      {
+        "input": "3\n11\nput 1 1\nput 2 2\nput 3 3\nget 1\nget 1\nget 2\nput 4 4\nget 3\nget 4\nget 2\nget 1\n",
+        "expectedOutput": "1 1 2 -1 4 2 1\n",
+        "sample": false
+      },
+      {
+        "input": "2\n20\nget 2\nget 1\nput 4 970\nget 3\nget 1\nput 2 760\nput 2 948\nget 4\nget 1\nput 4 452\nput 1 113\nput 4 138\nput 2 212\nget 3\nget 4\nget 2\nput 4 157\nget 2\nget 2\nget 3\n",
+        "expectedOutput": "-1 -1 -1 -1 970 -1 -1 138 212 212 212 -1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n40\nput 4 211\nget 6\nput 4 961\nput 2 983\nget 3\nget 5\nput 6 310\nput 6 571\nget 5\nput 1 602\nget 3\nput 1 530\nget 3\nput 3 379\nput 6 678\nget 6\nget 1\nget 4\nput 4 60\nget 2\nget 5\nget 4\nget 2\nget 3\nput 4 312\nput 2 256\nput 4 320\nput 4 45\nput 5 540\nget 3\nget 2\nget 6\nget 1\nput 2 702\nput 5 768\nget 2\nget 4\nput 1 521\nput 6 926\nget 5\n",
+        "expectedOutput": "-1 -1 -1 -1 -1 -1 678 530 -1 -1 -1 60 -1 -1 -1 -1 678 -1 -1 45 -1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n80\nput 2 362\nput 4 740\nput 5 363\nget 2\nput 4 127\nget 6\nput 9 331\nput 8 800\nget 6\nget 2\nget 1\nget 1\nget 2\nget 6\nget 10\nget 9\nget 6\nget 6\nget 10\nget 9\nget 2\nput 7 425\nput 9 112\nput 5 34\nput 1 399\nget 1\nput 2 484\nput 6 238\nput 9 149\nput 9 971\nget 4\nget 2\nget 8\nput 6 93\nget 5\nget 7\nput 8 255\nget 9\nget 4\nget 6\nget 2\nget 6\nput 1 861\nput 6 254\nget 1\nget 9\nput 10 625\nget 2\nput 10 963\nget 5\nput 4 453\nget 9\nget 8\nget 9\nget 3\nput 7 745\nput 1 595\nget 3\nget 1\nput 2 386\nput 7 617\nget 5\nput 8 601\nget 5\nget 2\nput 8 306\nget 6\nput 9 168\nput 4 288\nget 9\nput 1 783\nget 7\nget 8\nget 8\nput 6 900\nget 3\nget 9\nput 6 315\nget 4\nget 6\n",
+        "expectedOutput": "362 -1 -1 362 -1 -1 362 -1 -1 331 -1 -1 -1 331 362 399 127 484 -1 -1 -1 971 127 93 484 93 861 971 484 -1 971 -1 971 -1 -1 595 -1 -1 386 254 168 -1 -1 -1 -1 168 288 315\n",
+        "sample": false
+      },
+      {
+        "input": "10\n150\nget 11\nput 12 334\nput 14 669\nget 23\nget 9\nput 1 936\nget 5\nget 22\nget 6\nget 12\nget 24\nget 8\nput 25 825\nput 13 662\nput 1 568\nget 25\nput 18 689\nput 9 654\nget 14\nget 17\nget 3\nput 11 913\nput 14 197\nput 4 133\nget 3\nget 8\nget 23\nget 25\nget 11\nget 15\nput 23 929\nget 21\nput 6 488\nget 2\nget 13\nget 22\nput 14 246\nget 12\nget 23\nget 24\nput 16 773\nput 25 751\nget 12\nget 16\nput 4 299\nput 24 961\nput 23 682\nget 25\nput 15 773\nget 8\nget 3\nput 24 333\nput 25 939\nput 13 225\nput 2 357\nget 10\nget 5\nput 3 940\nget 23\nget 6\nput 19 692\nput 9 908\nput 12 94\nget 17\nget 4\nget 10\nget 5\nget 5\nget 12\nget 12\nget 6\nput 2 756\nget 14\nget 12\nput 16 80\nget 11\nput 10 352\nput 23 484\nget 5\nget 11\nput 12 379\nget 19\nget 24\nput 20 56\nput 12 142\nget 5\nput 5 183\nget 14\nget 17\nget 16\nput 20 841\nget 4\nput 11 233\nput 24 214\nget 11\nget 23\nget 5\nget 5\nput 6 594\nput 12 981\nget 11\nput 4 947\nget 22\nget 17\nput 16 650\nget 2\nget 19\nget 25\nput 7 419\nput 5 318\nget 14\nput 1 874\nput 6 179\nget 4\nget 6\nput 19 974\nput 19 370\nget 21\nput 11 980\nget 14\nget 8\nget 15\nget 10\nget 16\nget 9\nget 15\nput 8 257\nput 23 239\nget 22\nget 21\nput 11 28\nput 10 400\nput 14 170\nget 23\nput 1 750\nget 7\nget 9\nput 21 27\nput 3 531\nput 9 466\nput 8 151\nput 24 213\nget 1\nget 17\nget 7\nget 3\nput 15 970\nget 18\nget 2\nget 22\n",
+        "expectedOutput": "-1 -1 -1 -1 -1 -1 334 -1 -1 825 669 -1 -1 -1 -1 -1 825 913 -1 -1 -1 -1 -1 334 929 -1 334 773 751 -1 -1 -1 -1 682 -1 -1 299 -1 -1 -1 94 94 -1 246 94 913 -1 913 -1 333 -1 246 -1 80 299 233 484 -1 -1 233 -1 -1 -1 -1 939 246 947 179 -1 246 -1 -1 -1 650 -1 -1 -1 -1 239 -1 -1 750 -1 -1 -1 -1 -1 -1\n",
+        "sample": false
+      },
+      {
+        "input": "20\n250\nget 7\nget 5\nget 38\nget 28\nget 7\nput 23 444\nget 15\nget 16\nget 11\nget 37\nput 26 23\nget 6\nput 32 507\nget 9\nget 19\nput 31 196\nput 4 792\nput 1 760\nget 17\nput 21 861\nget 40\nget 11\nget 17\nget 36\nget 1\nget 16\nput 29 241\nput 34 950\nget 17\nput 23 813\nput 6 185\nput 22 160\nget 40\nget 14\nget 2\nget 11\nget 4\nget 13\nget 7\nput 1 864\nget 28\nget 38\nput 35 424\nget 7\nget 39\nget 5\nput 19 373\nput 27 434\nget 33\nput 30 437\nget 31\nput 27 881\nput 18 477\nget 29\nget 4\nput 37 358\nget 20\nput 37 172\nput 7 744\nget 20\nget 19\nget 8\nget 10\nput 19 70\nput 33 358\nget 35\nput 40 685\nget 11\nput 20 963\nput 21 429\nput 31 174\nput 40 285\nget 37\nget 12\nput 30 427\nget 3\nget 9\nget 21\nput 17 139\nput 12 499\nget 14\nput 29 468\nput 36 579\nput 30 89\nput 16 980\nget 28\nget 16\nget 15\nget 3\nput 20 808\nput 25 276\nput 38 163\nget 24\nput 8 905\nget 1\nput 1 74\nget 35\nput 34 12\nput 12 682\nget 11\nput 27 143\nget 14\nput 25 619\nget 3\nget 11\nput 14 513\nget 2\nput 9 637\nget 36\nput 12 431\nput 37 844\nput 35 758\nput 20 921\nput 11 398\nget 6\nput 7 869\nget 11\nput 20 427\nget 30\nget 26\nput 12 891\nget 7\nget 18\nget 3\nget 12\nput 21 882\nget 16\nget 27\nput 3 353\nput 25 539\nput 22 833\nget 25\nget 24\nput 5 897\nput 12 372\nget 33\nput 5 519\nget 39\nget 38\nput 33 412\nget 4\nget 17\nput 23 671\nput 24 810\nput 22 914\nget 21\nget 7\nget 27\nput 10 511\nput 36 220\nget 27\nput 2 297\nget 28\nget 36\nget 8\nget 33\nput 2 809\nget 7\nget 32\nget 20\nput 9 73\nput 29 630\nget 12\nput 14 345\nget 39\nget 4\nget 17\nput 5 391\nget 16\nget 1\nget 22\nget 30\nget 35\nget 12\nput 39 239\nput 36 871\nget 5\nget 25\nget 6\nget 5\nput 21 891\nget 17\nget 33\nput 9 736\nput 32 264\nput 31 115\nput 40 882\nput 14 551\nget 39\nget 4\nget 24\nput 24 202\nget 20\nget 38\nget 9\nget 14\nput 8 927\nget 30\nput 10 191\nput 16 547\nget 11\nput 15 332\nput 7 960\nget 10\nput 38 157\nget 3\nget 31\nget 17\nget 33\nput 8 600\nget 2\nput 40 820\nget 16\nget 21\nget 3\nput 23 424\nput 2 86\nput 22 648\nput 18 917\nget 14\nput 4 276\nget 5\nput 4 17\nput 21 306\nput 26 97\nget 20\nget 14\nget 40\nput 6 474\nput 10 278\nget 5\nget 14\nget 36\nget 39\nput 21 846\nget 29\nget 20\nput 30 450\nget 38\nget 23\nput 13 111\nget 39\nget 10\nget 2\nget 11\nput 1 727\nget 27\nput 33 17\nget 39\nget 18\n",
+        "expectedOutput": "-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 760 -1 -1 -1 -1 -1 -1 792 -1 -1 -1 -1 -1 -1 -1 -1 196 241 792 -1 -1 373 -1 -1 424 -1 172 -1 -1 -1 429 -1 -1 980 -1 -1 -1 864 424 -1 -1 -1 -1 -1 -1 -1 398 89 -1 869 -1 -1 891 980 143 539 -1 -1 -1 -1 792 -1 882 869 143 143 -1 -1 -1 -1 869 -1 427 372 -1 792 -1 980 74 -1 89 758 372 391 539 -1 391 -1 -1 -1 792 -1 427 -1 -1 -1 89 398 -1 -1 115 -1 -1 809 547 891 -1 -1 391 427 -1 -1 391 -1 -1 -1 630 427 -1 424 -1 -1 86 398 143 -1 -1\n",
+        "sample": false
+      },
+      {
+        "input": "50\n300\nget 43\nget 2\nget 19\nput 84 305\nget 112\nget 25\nget 86\nput 91 0\nput 16 299\nget 93\nget 116\nput 115 979\nput 104 162\nget 20\nput 112 195\nget 82\nput 69 295\nput 90 566\nget 31\nput 113 432\nput 97 400\nput 93 891\nget 106\nget 16\nput 72 527\nput 2 610\nget 37\nput 32 672\nput 93 185\nget 113\nput 116 120\nget 116\nput 63 782\nput 91 407\nget 79\nput 34 240\nget 13\nput 63 483\nget 47\nget 2\nput 23 872\nput 89 629\nput 23 637\nput 72 797\nput 19 252\nput 100 728\nput 111 193\nput 57 450\nput 63 491\nget 116\nput 88 75\nget 32\nput 1 640\nput 39 23\nget 18\nget 45\nput 47 537\nput 100 675\nget 28\nput 104 785\nget 84\nget 66\nget 6\nput 27 348\nget 20\nput 11 884\nget 101\nput 65 357\nget 2\nget 41\nput 80 311\nget 70\nput 113 722\nget 69\nput 27 182\nget 58\nput 72 928\nget 63\nget 102\nput 87 520\nget 80\nget 78\nput 94 223\nput 85 837\nget 35\nput 66 871\nget 61\nget 3\nget 105\nput 30 804\nget 49\nget 114\nput 100 951\nput 25 338\nput 83 173\nget 58\nget 106\nget 10\nput 89 572\nget 118\nget 8\nput 111 35\nget 104\nget 108\nput 68 360\nget 14\nput 8 350\nget 77\nget 111\nput 43 716\nget 33\nput 28 926\nget 43\nget 19\nget 30\nput 14 652\nput 59 29\nget 111\nget 22\nget 69\nput 81 600\nget 21\nget 98\nget 38\nput 12 619\nget 65\nput 32 174\nput 98 7\nget 61\nget 100\nget 48\nput 84 104\nget 106\nput 52 240\nput 54 902\nget 101\nput 19 906\nget 107\nget 44\nget 45\nput 82 789\nput 73 659\nput 66 135\nget 93\nget 8\nput 31 943\nget 16\nput 90 154\nget 23\nget 3\nget 66\nput 107 279\nput 12 981\nget 20\nget 53\nget 34\nget 68\nput 40 784\nget 27\nget 30\nput 115 496\nput 26 893\nget 27\nget 9\nget 101\nput 120 275\nget 12\nput 5 527\nget 78\nput 20 900\nput 53 385\nget 113\nput 113 180\nget 57\nget 116\nput 89 766\nget 26\nput 38 844\nput 9 3\nget 84\nput 3 6\nget 36\nget 69\nput 66 187\nget 97\nput 96 173\nget 54\nget 64\nget 99\nput 26 687\nget 111\nput 41 564\nput 62 894\nput 73 205\nput 25 561\nput 83 469\nput 73 657\nput 87 845\nget 75\nput 20 932\nget 83\nput 47 278\nput 72 726\nget 75\nput 69 242\nput 91 901\nput 59 467\nget 97\nput 3 316\nget 8\nget 47\nget 96\nget 10\nput 22 116\nget 102\nget 100\nget 85\nput 41 373\nget 77\nput 96 832\nput 112 817\nget 111\nput 7 556\nput 30 546\nget 17\nget 68\nget 93\nput 94 910\nput 6 247\nput 76 866\nput 100 488\nget 110\nget 70\nget 99\nput 73 494\nput 47 412\nget 69\nput 75 229\nput 41 14\nput 12 236\nput 72 230\nput 63 646\nget 59\nget 67\nget 119\nget 53\nget 81\nput 67 769\nput 24 912\nget 92\nput 15 36\nput 40 346\nput 11 550\nput 80 563\nget 42\nput 8 901\nget 8\nput 90 708\nput 61 19\nput 53 642\nget 76\nput 24 12\nget 7\nget 45\nget 85\nget 46\nget 19\nget 43\nget 15\nget 91\nget 64\nget 70\nget 100\nput 66 30\nget 47\nget 102\nget 120\nput 93 954\nget 2\nget 56\nget 73\nput 39 742\nput 107 924\nput 87 337\nget 105\nget 26\nput 3 373\nput 8 43\nget 114\nget 62\nget 78\nput 12 709\nget 97\nget 70\nget 57\nget 42\nput 86 809\nput 52 918\nget 46\nget 5\n",
+        "expectedOutput": "-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 299 -1 432 120 -1 -1 -1 610 120 672 -1 -1 -1 305 -1 -1 -1 -1 610 -1 -1 295 -1 491 -1 311 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 785 -1 -1 -1 35 -1 716 252 804 35 -1 295 -1 -1 -1 357 -1 951 -1 -1 -1 -1 -1 -1 185 350 299 637 -1 135 -1 -1 240 360 182 804 182 -1 -1 981 -1 722 -1 120 893 104 -1 295 -1 902 -1 -1 35 -1 469 -1 -1 350 278 173 -1 -1 951 -1 -1 35 -1 360 185 -1 -1 -1 242 467 -1 -1 -1 -1 -1 -1 901 866 556 -1 -1 -1 906 716 36 901 -1 -1 488 412 -1 -1 610 -1 494 -1 687 -1 -1 -1 -1 -1 -1 -1 -1 -1\n",
+        "sample": false
+      }
+    ],
+    "order": 86
   },
   {
     "slug": "binary-search",
@@ -6872,7 +7258,7 @@
         "sample": false
       }
     ],
-    "order": 82
+    "order": 87
   },
   {
     "slug": "search-insert-position",
@@ -6962,7 +7348,7 @@
         "sample": false
       }
     ],
-    "order": 83
+    "order": 88
   },
   {
     "slug": "sqrt-x",
@@ -7072,7 +7458,7 @@
         "sample": false
       }
     ],
-    "order": 84
+    "order": 89
   },
   {
     "slug": "lower-bound",
@@ -7147,7 +7533,7 @@
         "sample": false
       }
     ],
-    "order": 85
+    "order": 90
   },
   {
     "slug": "upper-bound",
@@ -7222,7 +7608,7 @@
         "sample": false
       }
     ],
-    "order": 86
+    "order": 91
   },
   {
     "slug": "floor-and-ceil-in-sorted-array",
@@ -7297,7 +7683,7 @@
         "sample": false
       }
     ],
-    "order": 87
+    "order": 92
   },
   {
     "slug": "count-occurrences-in-sorted-array",
@@ -7372,7 +7758,7 @@
         "sample": false
       }
     ],
-    "order": 88
+    "order": 93
   },
   {
     "slug": "row-with-maximum-ones",
@@ -7432,7 +7818,7 @@
         "sample": false
       }
     ],
-    "order": 89
+    "order": 94
   },
   {
     "slug": "kth-missing-positive-number",
@@ -7492,7 +7878,7 @@
         "sample": false
       }
     ],
-    "order": 90
+    "order": 95
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array",
@@ -7577,7 +7963,7 @@
         "sample": false
       }
     ],
-    "order": 91
+    "order": 96
   },
   {
     "slug": "search-in-rotated-sorted-array",
@@ -7683,7 +8069,7 @@
         "sample": false
       }
     ],
-    "order": 92
+    "order": 97
   },
   {
     "slug": "two-sum-ii-input-array-is-sorted",
@@ -7778,7 +8164,7 @@
         "sample": false
       }
     ],
-    "order": 93
+    "order": 98
   },
   {
     "slug": "koko-eating-bananas",
@@ -7863,7 +8249,7 @@
         "sample": false
       }
     ],
-    "order": 94
+    "order": 99
   },
   {
     "slug": "capacity-to-ship-packages",
@@ -7948,7 +8334,7 @@
         "sample": false
       }
     ],
-    "order": 95
+    "order": 100
   },
   {
     "slug": "find-the-duplicate-number",
@@ -8060,7 +8446,7 @@
         "sample": false
       }
     ],
-    "order": 96
+    "order": 101
   },
   {
     "slug": "find-first-and-last-position-of-element-in-sorted-array",
@@ -8190,7 +8576,7 @@
         "sample": false
       }
     ],
-    "order": 97
+    "order": 102
   },
   {
     "slug": "search-a-2d-matrix",
@@ -8311,7 +8697,7 @@
         "sample": false
       }
     ],
-    "order": 98
+    "order": 103
   },
   {
     "slug": "search-in-rotated-sorted-array-ii",
@@ -8376,7 +8762,7 @@
         "sample": false
       }
     ],
-    "order": 99
+    "order": 104
   },
   {
     "slug": "rotation-count-in-rotated-sorted-array",
@@ -8441,7 +8827,7 @@
         "sample": false
       }
     ],
-    "order": 100
+    "order": 105
   },
   {
     "slug": "single-element-in-a-sorted-array",
@@ -8507,7 +8893,7 @@
         "sample": false
       }
     ],
-    "order": 101
+    "order": 106
   },
   {
     "slug": "find-peak-element",
@@ -8562,7 +8948,7 @@
         "sample": false
       }
     ],
-    "order": 102
+    "order": 107
   },
   {
     "slug": "nth-root-of-an-integer",
@@ -8653,7 +9039,7 @@
         "sample": false
       }
     ],
-    "order": 103
+    "order": 108
   },
   {
     "slug": "minimum-days-to-make-m-bouquets",
@@ -8723,7 +9109,7 @@
         "sample": false
       }
     ],
-    "order": 104
+    "order": 109
   },
   {
     "slug": "smallest-divisor-given-a-threshold",
@@ -8788,7 +9174,7 @@
         "sample": false
       }
     ],
-    "order": 105
+    "order": 110
   },
   {
     "slug": "search-a-2d-matrix-ii",
@@ -8839,7 +9225,7 @@
         "sample": false
       }
     ],
-    "order": 106
+    "order": 111
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array-ii",
@@ -8904,7 +9290,7 @@
         "sample": false
       }
     ],
-    "order": 107
+    "order": 112
   },
   {
     "slug": "aggressive-cows",
@@ -8971,7 +9357,7 @@
         "sample": false
       }
     ],
-    "order": 108
+    "order": 113
   },
   {
     "slug": "kth-element-of-two-sorted-arrays",
@@ -9032,7 +9418,7 @@
         "sample": false
       }
     ],
-    "order": 109
+    "order": 114
   },
   {
     "slug": "median-in-a-row-wise-sorted-matrix",
@@ -9088,7 +9474,7 @@
         "sample": false
       }
     ],
-    "order": 110
+    "order": 115
   },
   {
     "slug": "median-of-two-sorted-arrays",
@@ -9165,7 +9551,7 @@
         "sample": false
       }
     ],
-    "order": 111
+    "order": 116
   },
   {
     "slug": "reverse-linked-list",
@@ -9265,7 +9651,7 @@
         "sample": false
       }
     ],
-    "order": 112
+    "order": 117
   },
   {
     "slug": "merge-two-sorted-lists",
@@ -9361,7 +9747,7 @@
         "sample": false
       }
     ],
-    "order": 113
+    "order": 118
   },
   {
     "slug": "middle-of-the-linked-list",
@@ -9457,7 +9843,7 @@
         "sample": false
       }
     ],
-    "order": 114
+    "order": 119
   },
   {
     "slug": "palindrome-linked-list",
@@ -9564,7 +9950,7 @@
         "sample": false
       }
     ],
-    "order": 115
+    "order": 120
   },
   {
     "slug": "remove-duplicates-from-sorted-list",
@@ -9648,7 +10034,7 @@
         "sample": false
       }
     ],
-    "order": 116
+    "order": 121
   },
   {
     "slug": "remove-linked-list-elements",
@@ -9731,7 +10117,7 @@
         "sample": false
       }
     ],
-    "order": 117
+    "order": 122
   },
   {
     "slug": "remove-nth-node-from-end-of-list",
@@ -9822,7 +10208,7 @@
         "sample": false
       }
     ],
-    "order": 118
+    "order": 123
   },
   {
     "slug": "add-two-numbers",
@@ -9913,7 +10299,7 @@
         "sample": false
       }
     ],
-    "order": 119
+    "order": 124
   },
   {
     "slug": "swap-nodes-in-pairs",
@@ -10006,7 +10392,7 @@
         "sample": false
       }
     ],
-    "order": 120
+    "order": 125
   },
   {
     "slug": "odd-even-linked-list",
@@ -10095,7 +10481,7 @@
         "sample": false
       }
     ],
-    "order": 121
+    "order": 126
   },
   {
     "slug": "sort-list",
@@ -10186,7 +10572,7 @@
         "sample": false
       }
     ],
-    "order": 122
+    "order": 127
   },
   {
     "slug": "reorder-list",
@@ -10280,7 +10666,7 @@
         "sample": false
       }
     ],
-    "order": 123
+    "order": 128
   },
   {
     "slug": "rotate-list",
@@ -10376,7 +10762,7 @@
         "sample": false
       }
     ],
-    "order": 124
+    "order": 129
   },
   {
     "slug": "partition-list",
@@ -10470,7 +10856,7 @@
         "sample": false
       }
     ],
-    "order": 125
+    "order": 130
   },
   {
     "slug": "remove-duplicates-from-sorted-list-ii",
@@ -10559,7 +10945,7 @@
         "sample": false
       }
     ],
-    "order": 126
+    "order": 131
   },
   {
     "slug": "reverse-linked-list-ii",
@@ -10652,7 +11038,7 @@
         "sample": false
       }
     ],
-    "order": 127
+    "order": 132
   },
   {
     "slug": "maximum-twin-sum-of-a-linked-list",
@@ -10741,7 +11127,7 @@
         "sample": false
       }
     ],
-    "order": 128
+    "order": 133
   },
   {
     "slug": "flatten-binary-tree-to-linked-list",
@@ -10813,7 +11199,7 @@
         "sample": false
       }
     ],
-    "order": 129
+    "order": 134
   },
   {
     "slug": "reverse-nodes-in-k-group",
@@ -10914,7 +11300,7 @@
         "sample": false
       }
     ],
-    "order": 130
+    "order": 135
   },
   {
     "slug": "maximum-depth-of-binary-tree",
@@ -11011,7 +11397,7 @@
         "sample": false
       }
     ],
-    "order": 131
+    "order": 136
   },
   {
     "slug": "invert-binary-tree",
@@ -11097,7 +11483,7 @@
         "sample": false
       }
     ],
-    "order": 132
+    "order": 137
   },
   {
     "slug": "symmetric-tree",
@@ -11194,7 +11580,7 @@
         "sample": false
       }
     ],
-    "order": 133
+    "order": 138
   },
   {
     "slug": "same-tree",
@@ -11300,7 +11686,7 @@
         "sample": false
       }
     ],
-    "order": 134
+    "order": 139
   },
   {
     "slug": "diameter-of-binary-tree",
@@ -11391,7 +11777,7 @@
         "sample": false
       }
     ],
-    "order": 135
+    "order": 140
   },
   {
     "slug": "binary-tree-inorder-traversal",
@@ -11483,7 +11869,7 @@
         "sample": false
       }
     ],
-    "order": 136
+    "order": 141
   },
   {
     "slug": "path-sum",
@@ -11602,7 +11988,7 @@
         "sample": false
       }
     ],
-    "order": 137
+    "order": 142
   },
   {
     "slug": "balanced-binary-tree",
@@ -11693,7 +12079,7 @@
         "sample": false
       }
     ],
-    "order": 138
+    "order": 143
   },
   {
     "slug": "subtree-of-another-tree",
@@ -11807,7 +12193,7 @@
         "sample": false
       }
     ],
-    "order": 139
+    "order": 144
   },
   {
     "slug": "minimum-depth-of-binary-tree",
@@ -11907,7 +12293,7 @@
         "sample": false
       }
     ],
-    "order": 140
+    "order": 145
   },
   {
     "slug": "count-complete-tree-nodes",
@@ -12004,7 +12390,7 @@
         "sample": false
       }
     ],
-    "order": 141
+    "order": 146
   },
   {
     "slug": "binary-tree-preorder-traversal",
@@ -12076,7 +12462,7 @@
         "sample": false
       }
     ],
-    "order": 142
+    "order": 147
   },
   {
     "slug": "binary-tree-postorder-traversal",
@@ -12148,7 +12534,7 @@
         "sample": false
       }
     ],
-    "order": 143
+    "order": 148
   },
   {
     "slug": "two-sum-iv-input-is-a-bst",
@@ -12275,7 +12661,7 @@
         "sample": false
       }
     ],
-    "order": 144
+    "order": 149
   },
   {
     "slug": "binary-tree-right-side-view",
@@ -12372,7 +12758,7 @@
         "sample": false
       }
     ],
-    "order": 145
+    "order": 150
   },
   {
     "slug": "validate-binary-search-tree",
@@ -12489,7 +12875,7 @@
         "sample": false
       }
     ],
-    "order": 146
+    "order": 151
   },
   {
     "slug": "kth-smallest-element-in-a-bst",
@@ -12581,7 +12967,7 @@
         "sample": false
       }
     ],
-    "order": 147
+    "order": 152
   },
   {
     "slug": "count-good-nodes-in-binary-tree",
@@ -12670,7 +13056,7 @@
         "sample": false
       }
     ],
-    "order": 148
+    "order": 153
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-search-tree",
@@ -12761,7 +13147,7 @@
         "sample": false
       }
     ],
-    "order": 149
+    "order": 154
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-tree",
@@ -12847,7 +13233,7 @@
         "sample": false
       }
     ],
-    "order": 150
+    "order": 155
   },
   {
     "slug": "binary-tree-level-order-traversal",
@@ -12948,7 +13334,7 @@
         "sample": false
       }
     ],
-    "order": 151
+    "order": 156
   },
   {
     "slug": "sum-root-to-leaf-numbers",
@@ -13047,7 +13433,7 @@
         "sample": false
       }
     ],
-    "order": 152
+    "order": 157
   },
   {
     "slug": "house-robber-iii",
@@ -13137,7 +13523,7 @@
         "sample": false
       }
     ],
-    "order": 153
+    "order": 158
   },
   {
     "slug": "path-sum-iii",
@@ -13241,7 +13627,7 @@
         "sample": false
       }
     ],
-    "order": 154
+    "order": 159
   },
   {
     "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
@@ -13337,7 +13723,7 @@
         "sample": false
       }
     ],
-    "order": 155
+    "order": 160
   },
   {
     "slug": "binary-tree-zigzag-level-order-traversal",
@@ -13433,7 +13819,7 @@
         "sample": false
       }
     ],
-    "order": 156
+    "order": 161
   },
   {
     "slug": "left-view-of-binary-tree",
@@ -13505,7 +13891,7 @@
         "sample": false
       }
     ],
-    "order": 157
+    "order": 162
   },
   {
     "slug": "top-view-of-binary-tree",
@@ -13577,7 +13963,7 @@
         "sample": false
       }
     ],
-    "order": 158
+    "order": 163
   },
   {
     "slug": "bottom-view-of-binary-tree",
@@ -13649,7 +14035,7 @@
         "sample": false
       }
     ],
-    "order": 159
+    "order": 164
   },
   {
     "slug": "root-to-node-path-in-a-binary-tree",
@@ -13716,7 +14102,7 @@
         "sample": false
       }
     ],
-    "order": 160
+    "order": 165
   },
   {
     "slug": "maximum-width-of-binary-tree",
@@ -13797,7 +14183,7 @@
         "sample": false
       }
     ],
-    "order": 161
+    "order": 166
   },
   {
     "slug": "boundary-traversal-of-binary-tree",
@@ -13883,7 +14269,7 @@
         "sample": false
       }
     ],
-    "order": 162
+    "order": 167
   },
   {
     "slug": "construct-binary-tree-from-inorder-and-postorder-traversal",
@@ -13945,7 +14331,7 @@
         "sample": false
       }
     ],
-    "order": 163
+    "order": 168
   },
   {
     "slug": "children-sum-property",
@@ -14056,7 +14442,7 @@
         "sample": false
       }
     ],
-    "order": 164
+    "order": 169
   },
   {
     "slug": "ceil-in-a-bst",
@@ -14182,7 +14568,7 @@
         "sample": false
       }
     ],
-    "order": 165
+    "order": 170
   },
   {
     "slug": "floor-in-a-bst",
@@ -14308,7 +14694,7 @@
         "sample": false
       }
     ],
-    "order": 166
+    "order": 171
   },
   {
     "slug": "inorder-successor-in-bst",
@@ -14389,7 +14775,7 @@
         "sample": false
       }
     ],
-    "order": 167
+    "order": 172
   },
   {
     "slug": "construct-binary-search-tree-from-preorder-traversal",
@@ -14471,7 +14857,7 @@
         "sample": false
       }
     ],
-    "order": 168
+    "order": 173
   },
   {
     "slug": "recover-binary-search-tree",
@@ -14543,7 +14929,7 @@
         "sample": false
       }
     ],
-    "order": 169
+    "order": 174
   },
   {
     "slug": "amount-of-time-for-binary-tree-to-be-infected",
@@ -14615,7 +15001,7 @@
         "sample": false
       }
     ],
-    "order": 170
+    "order": 175
   },
   {
     "slug": "all-nodes-distance-k-in-binary-tree",
@@ -14687,7 +15073,7 @@
         "sample": false
       }
     ],
-    "order": 171
+    "order": 176
   },
   {
     "slug": "binary-tree-maximum-path-sum",
@@ -14784,7 +15170,7 @@
         "sample": false
       }
     ],
-    "order": 172
+    "order": 177
   },
   {
     "slug": "vertical-order-traversal-of-a-binary-tree",
@@ -14862,7 +15248,7 @@
         "sample": false
       }
     ],
-    "order": 173
+    "order": 178
   },
   {
     "slug": "largest-bst-subtree",
@@ -14984,7 +15370,7 @@
         "sample": false
       }
     ],
-    "order": 174
+    "order": 179
   },
   {
     "slug": "last-stone-weight",
@@ -15078,7 +15464,7 @@
         "sample": false
       }
     ],
-    "order": 175
+    "order": 180
   },
   {
     "slug": "kth-largest-element-in-an-array",
@@ -15161,7 +15547,7 @@
         "sample": false
       }
     ],
-    "order": 176
+    "order": 181
   },
   {
     "slug": "top-k-frequent-elements",
@@ -15258,7 +15644,7 @@
         "sample": false
       }
     ],
-    "order": 177
+    "order": 182
   },
   {
     "slug": "meeting-rooms-ii",
@@ -15354,7 +15740,7 @@
         "sample": false
       }
     ],
-    "order": 178
+    "order": 183
   },
   {
     "slug": "task-scheduler",
@@ -15455,7 +15841,7 @@
         "sample": false
       }
     ],
-    "order": 179
+    "order": 184
   },
   {
     "slug": "ugly-number-ii",
@@ -15565,7 +15951,7 @@
         "sample": false
       }
     ],
-    "order": 180
+    "order": 185
   },
   {
     "slug": "kth-smallest-element-in-a-sorted-matrix",
@@ -15655,7 +16041,7 @@
         "sample": false
       }
     ],
-    "order": 181
+    "order": 186
   },
   {
     "slug": "merge-k-sorted-arrays",
@@ -15711,7 +16097,78 @@
         "sample": false
       }
     ],
-    "order": 182
+    "order": 187
+  },
+  {
+    "slug": "implement-min-heap",
+    "title": "Implement Min Heap",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "heap",
+      "design",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Build a min-heap (priority queue) and run the commands `push x`, `pop` (remove and report the smallest), `peek` (report the smallest) and `size` (report how many values are stored). Return the results of all `pop`, `peek` and `size` commands, in order.\n\n### Input\nLine 1: `m`, the number of commands.\nThen `m` lines, each one command.\n\n### Output\nThe results as space-separated integers.\n\n### Constraints\n- `1 <= m <= 250`\n- `-1000 <= x <= 1000`\n- `pop` and `peek` only run on a non-empty heap\n- At least one `pop`, `peek` or `size`\n\n### Examples\n**Example 1**\n```text\nInput:\n7\npush 5\npush 2\npush 8\npeek\npop\npop\nsize\n\nOutput:\n2 2 5 1\n```\n\n**Example 2**\n```text\nInput:\n1\nsize\n\nOutput:\n0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(String[] ops) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int opsRows = Integer.parseInt(new StringTokenizer(lines.get(pos++)).nextToken());\n        String[] ops = new String[opsRows];\n        for (int i = 0; i < opsRows; i++) ops[i] = lines.get(pos++);\n        int[] result = solve(ops);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(ops):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    ops_rows = int(lines[pos].split()[0]); pos += 1\n    ops = lines[pos:pos + ops_rows]; pos += ops_rows\n    result = solve(ops)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(ops) {\n  // Write your solution here\n}\n\nconst opsRows = parseInt(lines[pos++].trim().split(/\\s+/)[0], 10);\nconst ops = lines.slice(pos, pos + opsRows);\npos += opsRows;\nconst result = solve(ops);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<string> ops) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int opsRows = stoi(lines[pos++]);\n    vector<string> ops(lines.begin() + pos, lines.begin() + pos + opsRows);\n    pos += opsRows;\n    vector<int> result = solve(ops);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "7\npush 5\npush 2\npush 8\npeek\npop\npop\nsize\n",
+        "expectedOutput": "2 2 5 1\n",
+        "sample": true
+      },
+      {
+        "input": "1\nsize\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "5\npush 1\npush 1\npop\npop\nsize\n",
+        "expectedOutput": "1 1 0\n",
+        "sample": false
+      },
+      {
+        "input": "6\npush -3\npush 0\npeek\npush -9\npop\npeek\n",
+        "expectedOutput": "-3 -9 -3\n",
+        "sample": false
+      },
+      {
+        "input": "8\npush -297\npush 268\npeek\npush 644\npush 470\npush -28\nsize\npop\n",
+        "expectedOutput": "-297 5 -297\n",
+        "sample": false
+      },
+      {
+        "input": "20\npush 861\npeek\npop\npush 987\npush -597\npeek\npop\npush 39\npop\npush 586\nsize\npush 318\npush 166\npop\npush 727\npeek\npeek\nsize\npush -298\nsize\n",
+        "expectedOutput": "861 861 -597 -597 39 2 166 318 318 4 5\n",
+        "sample": false
+      },
+      {
+        "input": "40\nsize\nsize\nsize\npush 509\npush 2\nsize\npop\npush -610\npop\npop\nsize\npush 981\nsize\nsize\npush -131\npush -372\npush 965\npeek\npush -126\nsize\npop\npush -486\npush -658\npop\npush 112\nsize\npush -401\npush -774\nsize\npeek\npeek\npop\npush -436\npush -840\npush -288\npeek\nsize\npush 918\nsize\npush 265\n",
+        "expectedOutput": "0 0 0 2 2 -610 509 0 1 1 -372 5 -372 -658 6 8 -774 -774 -774 -840 10 11\n",
+        "sample": false
+      },
+      {
+        "input": "80\nsize\npush -271\npush 872\npush 751\npop\npush -897\npeek\nsize\npeek\npush -115\npush 495\npush -959\npeek\npush 3\npush 940\npeek\npush -77\nsize\nsize\npush -168\npush 213\npush 742\npush -515\npush -822\npush -990\npop\npush 720\npush -693\npush 740\npush -921\npush 993\npush 369\npush 947\npush 487\npush 477\npush 661\npop\npop\npush 952\npeek\npush -318\npush -80\nsize\npush 370\npush 936\npeek\npush 470\npush 587\npush 513\npush -185\npeek\npush -19\npush 27\nsize\npush 95\npeek\npeek\npush -363\nsize\npop\npush -820\npush 482\npop\npush 991\npop\nsize\npush -918\npush -987\npush -608\npeek\npeek\npeek\npeek\npush -958\npush -663\npush -572\npush -836\npop\npeek\npush 230\n",
+        "expectedOutput": "0 -271 -897 3 -897 -959 -959 9 9 -990 -959 -921 -897 25 -897 -897 33 -897 -897 35 -897 -822 -820 35 -987 -987 -987 -987 -987 -958\n",
+        "sample": false
+      },
+      {
+        "input": "150\nsize\npush -837\nsize\npush 868\npush -337\npush -914\npush -890\npeek\npush 649\npeek\nsize\npush 842\npush 120\npush -325\npush -367\npeek\npush -573\npeek\npush -818\npush 215\npush -665\npeek\npop\npeek\npush 705\npeek\npeek\npeek\npush -686\npush -336\npeek\npeek\npush -451\npush 425\nsize\npush -770\npush 864\npop\npeek\npop\npush 712\npush 19\npush -644\nsize\nsize\npush -864\npush -720\npush -7\npush -616\npush 506\npush 943\npeek\nsize\npush -462\npeek\npush 622\nsize\npush -349\npeek\npush -315\npop\nsize\npeek\npush -364\npush 739\nsize\npush 674\npeek\npeek\npush -530\npush 323\npush 296\nsize\npeek\npeek\npush -356\nsize\npush 640\npush -987\npush -582\nsize\npop\npush 795\nsize\npush 446\nsize\npush -541\npush 295\nsize\npeek\npeek\npush 194\npush 196\npush -399\nsize\nsize\npeek\npush -661\npeek\npush 565\npop\npeek\npeek\npush -928\npush 745\npush 328\npush 202\npeek\npush -624\npop\nsize\npop\npeek\npeek\npush -184\npush 74\npush 577\nsize\npop\npeek\npush -753\npeek\nsize\nsize\npop\npush -570\nsize\npeek\npush -659\npush 47\npeek\nsize\npush -517\npop\npush 782\npush 306\npop\npush -709\npush 322\npeek\nsize\nsize\npeek\npush 574\nsize\npush -997\npeek\npush 193\npush -948\npeek\n",
+        "expectedOutput": "0 1 -914 -914 6 -914 -914 -914 -914 -890 -890 -890 -890 -890 -890 18 -890 -837 -837 21 21 -864 27 -864 29 -864 -864 30 -818 32 -818 -818 36 -818 -818 37 40 -987 40 41 43 -818 -818 46 46 -818 -818 -818 -770 -770 -928 -928 51 -770 -720 -720 53 -720 -686 -753 53 53 -753 53 -686 -686 55 -686 -665 -709 58 58 -709 59 -997 -997\n",
+        "sample": false
+      },
+      {
+        "input": "250\npush -296\npush 36\npush -745\nsize\npop\npush 228\npush 749\npush -645\npush -413\nsize\npop\npeek\npush 461\nsize\npush -516\npush 6\npop\npush -273\npush 693\nsize\npeek\nsize\npush 635\npush 673\nsize\npush -785\npush 155\npush 422\npush -510\nsize\npush 820\nsize\npush -8\npeek\npeek\npush 109\npeek\nsize\npush 841\npush 476\npush -332\nsize\npop\nsize\npeek\npush -368\npush -352\npop\npop\nsize\npush 322\npush -90\npop\npush 434\npush 537\npop\npush 46\nsize\nsize\npeek\npush -700\npush 508\npush 346\npop\npush -243\nsize\nsize\npush -25\npush -622\npeek\npeek\npush -476\npeek\npush -281\npush 48\npush -418\nsize\nsize\npush -139\nsize\npeek\npush 253\npush 994\npush 377\npush -309\npeek\npeek\npeek\npush 340\npush -459\npush -845\npeek\npeek\npush 193\npush -501\npeek\npop\npush 610\npeek\npush -562\nsize\npop\npush 367\npush -824\npop\npop\npop\npush -45\npush 524\npush -570\npush -469\npop\nsize\npop\npush -109\npush 935\nsize\nsize\npeek\npop\npush -958\npeek\npush 839\npop\npop\npop\npush 84\npush 901\nsize\nsize\npush 671\npush 29\npush 420\npush -525\npeek\npush -595\nsize\npop\npop\npush -750\npeek\npush -637\npush -301\nsize\nsize\npop\npush 412\nsize\nsize\npush 528\npush -862\nsize\npeek\npush -225\npush -572\npush -671\npop\npop\npeek\npush -836\npush 33\npush -643\npush 328\npeek\npop\npush -25\npop\npush 549\npush 984\npush -239\npush -370\nsize\npush 388\npush -684\npush -883\npush 10\npush -991\npush 707\npush -627\npush 692\npush 845\npush 935\npush 89\npush -706\npush 319\npush -220\npush -437\npop\npop\npush -301\npush -717\npush -408\npop\npush 115\npeek\npush 962\npush -172\npop\npeek\npush 919\npush 35\npush -196\nsize\npop\npush -74\npop\npush -141\npush -758\npush -833\npop\npop\nsize\npeek\npop\npeek\npush -809\npush -263\npush -952\npush -113\npush -325\npeek\npush 31\npush 184\npeek\npeek\npush -544\npush 202\npush 741\npeek\npeek\nsize\npeek\npush -928\npeek\npeek\npeek\npush -44\npush -67\nsize\npush -277\nsize\npush 126\npeek\nsize\npop\npush -96\npop\nsize\npush 885\npush 65\n",
+        "expectedOutput": "3 -745 6 -645 -413 6 -516 9 -413 9 11 15 16 -785 -785 -785 18 21 -785 20 -510 -510 -413 20 -368 -352 23 23 -332 -700 26 26 -622 -622 -622 32 32 33 -622 -622 -622 -622 -845 -845 -845 -845 -622 43 -622 -824 -562 -501 -570 44 -476 45 45 -469 -469 -958 -958 -459 -418 45 45 -525 50 -595 -525 -750 51 51 -750 51 51 53 -862 -862 -671 -637 -836 -836 -643 61 -991 -883 -717 -706 -706 -684 81 -684 -637 -833 -758 81 -627 -627 -572 -952 -952 -952 -952 -952 90 -952 -952 -952 -952 93 94 -952 95 -952 -928 94\n",
+        "sample": false
+      }
+    ],
+    "order": 188
   },
   {
     "slug": "sliding-window-maximum",
@@ -15809,7 +16266,7 @@
         "sample": false
       }
     ],
-    "order": 183
+    "order": 189
   },
   {
     "slug": "k-maximum-sum-combinations",
@@ -15871,7 +16328,7 @@
         "sample": false
       }
     ],
-    "order": 184
+    "order": 190
   },
   {
     "slug": "find-median-from-data-stream",
@@ -15962,7 +16419,7 @@
         "sample": false
       }
     ],
-    "order": 185
+    "order": 191
   },
   {
     "slug": "binary-strings-without-adjacent-ones",
@@ -16022,7 +16479,7 @@
         "sample": false
       }
     ],
-    "order": 186
+    "order": 192
   },
   {
     "slug": "word-search",
@@ -16112,7 +16569,7 @@
         "sample": false
       }
     ],
-    "order": 187
+    "order": 193
   },
   {
     "slug": "count-subsets-with-sum",
@@ -16206,7 +16663,7 @@
         "sample": false
       }
     ],
-    "order": 188
+    "order": 194
   },
   {
     "slug": "distinct-permutations-count",
@@ -16271,7 +16728,7 @@
         "sample": false
       }
     ],
-    "order": 189
+    "order": 195
   },
   {
     "slug": "generate-parentheses-count",
@@ -16322,7 +16779,7 @@
         "sample": false
       }
     ],
-    "order": 190
+    "order": 196
   },
   {
     "slug": "palindrome-partitioning-count",
@@ -16419,7 +16876,7 @@
         "sample": false
       }
     ],
-    "order": 191
+    "order": 197
   },
   {
     "slug": "combination-sum-count",
@@ -16486,7 +16943,7 @@
         "sample": false
       }
     ],
-    "order": 192
+    "order": 198
   },
   {
     "slug": "subsets",
@@ -16541,7 +16998,7 @@
         "sample": false
       }
     ],
-    "order": 193
+    "order": 199
   },
   {
     "slug": "subsets-ii",
@@ -16592,7 +17049,7 @@
         "sample": false
       }
     ],
-    "order": 194
+    "order": 200
   },
   {
     "slug": "combination-sum-ii",
@@ -16648,7 +17105,7 @@
         "sample": false
       }
     ],
-    "order": 195
+    "order": 201
   },
   {
     "slug": "combination-sum-iii",
@@ -16712,7 +17169,7 @@
         "sample": false
       }
     ],
-    "order": 196
+    "order": 202
   },
   {
     "slug": "permutations",
@@ -16763,7 +17220,7 @@
         "sample": false
       }
     ],
-    "order": 197
+    "order": 203
   },
   {
     "slug": "letter-combinations-of-a-phone-number",
@@ -16823,7 +17280,7 @@
         "sample": false
       }
     ],
-    "order": 198
+    "order": 204
   },
   {
     "slug": "subset-sums",
@@ -16874,7 +17331,7 @@
         "sample": false
       }
     ],
-    "order": 199
+    "order": 205
   },
   {
     "slug": "rat-in-a-maze",
@@ -16929,7 +17386,7 @@
         "sample": false
       }
     ],
-    "order": 200
+    "order": 206
   },
   {
     "slug": "count-subsequences-with-sum-k",
@@ -16990,7 +17447,7 @@
         "sample": false
       }
     ],
-    "order": 201
+    "order": 207
   },
   {
     "slug": "subsequences-with-sum-k",
@@ -17045,7 +17502,7 @@
         "sample": false
       }
     ],
-    "order": 202
+    "order": 208
   },
   {
     "slug": "rat-in-a-maze-count",
@@ -17126,7 +17583,7 @@
         "sample": false
       }
     ],
-    "order": 203
+    "order": 209
   },
   {
     "slug": "combination-sum",
@@ -17212,7 +17669,7 @@
         "sample": false
       }
     ],
-    "order": 204
+    "order": 210
   },
   {
     "slug": "n-queens-count",
@@ -17277,7 +17734,7 @@
         "sample": false
       }
     ],
-    "order": 205
+    "order": 211
   },
   {
     "slug": "sudoku-solver",
@@ -17348,7 +17805,7 @@
         "sample": false
       }
     ],
-    "order": 206
+    "order": 212
   },
   {
     "slug": "find-if-path-exists-in-graph",
@@ -17438,7 +17895,7 @@
         "sample": false
       }
     ],
-    "order": 207
+    "order": 213
   },
   {
     "slug": "find-the-town-judge",
@@ -17518,7 +17975,7 @@
         "sample": false
       }
     ],
-    "order": 208
+    "order": 214
   },
   {
     "slug": "bfs-of-graph",
@@ -17624,7 +18081,7 @@
         "sample": false
       }
     ],
-    "order": 209
+    "order": 215
   },
   {
     "slug": "dfs-of-graph",
@@ -17730,7 +18187,7 @@
         "sample": false
       }
     ],
-    "order": 210
+    "order": 216
   },
   {
     "slug": "number-of-islands",
@@ -17826,7 +18283,7 @@
         "sample": false
       }
     ],
-    "order": 211
+    "order": 217
   },
   {
     "slug": "course-schedule",
@@ -17918,7 +18375,7 @@
         "sample": false
       }
     ],
-    "order": 212
+    "order": 218
   },
   {
     "slug": "number-of-connected-components",
@@ -18014,7 +18471,7 @@
         "sample": false
       }
     ],
-    "order": 213
+    "order": 219
   },
   {
     "slug": "rotting-oranges",
@@ -18111,7 +18568,7 @@
         "sample": false
       }
     ],
-    "order": 214
+    "order": 220
   },
   {
     "slug": "shortest-path-in-binary-matrix",
@@ -18207,7 +18664,7 @@
         "sample": false
       }
     ],
-    "order": 215
+    "order": 221
   },
   {
     "slug": "perfect-squares",
@@ -18282,7 +18739,7 @@
         "sample": false
       }
     ],
-    "order": 216
+    "order": 222
   },
   {
     "slug": "longest-consecutive-sequence",
@@ -18374,7 +18831,7 @@
         "sample": false
       }
     ],
-    "order": 217
+    "order": 223
   },
   {
     "slug": "network-delay-time",
@@ -18470,7 +18927,7 @@
         "sample": false
       }
     ],
-    "order": 218
+    "order": 224
   },
   {
     "slug": "number-of-provinces",
@@ -18556,7 +19013,7 @@
         "sample": false
       }
     ],
-    "order": 219
+    "order": 225
   },
   {
     "slug": "redundant-connection",
@@ -18647,7 +19104,7 @@
         "sample": false
       }
     ],
-    "order": 220
+    "order": 226
   },
   {
     "slug": "min-cost-to-connect-all-points",
@@ -18744,7 +19201,7 @@
         "sample": false
       }
     ],
-    "order": 221
+    "order": 227
   },
   {
     "slug": "surrounded-regions",
@@ -18826,7 +19283,7 @@
         "sample": false
       }
     ],
-    "order": 222
+    "order": 228
   },
   {
     "slug": "01-matrix",
@@ -18922,7 +19379,7 @@
         "sample": false
       }
     ],
-    "order": 223
+    "order": 229
   },
   {
     "slug": "is-graph-bipartite",
@@ -19019,7 +19476,7 @@
         "sample": false
       }
     ],
-    "order": 224
+    "order": 230
   },
   {
     "slug": "cheapest-flights-within-k-stops",
@@ -19105,7 +19562,7 @@
         "sample": false
       }
     ],
-    "order": 225
+    "order": 231
   },
   {
     "slug": "path-with-minimum-effort",
@@ -19202,7 +19659,7 @@
         "sample": false
       }
     ],
-    "order": 226
+    "order": 232
   },
   {
     "slug": "detect-cycle-in-an-undirected-graph",
@@ -19384,7 +19841,7 @@
         "sample": false
       }
     ],
-    "order": 227
+    "order": 233
   },
   {
     "slug": "detect-cycle-in-a-directed-graph",
@@ -19531,7 +19988,7 @@
         "sample": false
       }
     ],
-    "order": 228
+    "order": 234
   },
   {
     "slug": "topological-sort",
@@ -19644,7 +20101,7 @@
         "sample": false
       }
     ],
-    "order": 229
+    "order": 235
   },
   {
     "slug": "shortest-path-in-undirected-graph",
@@ -19710,7 +20167,7 @@
         "sample": false
       }
     ],
-    "order": 230
+    "order": 236
   },
   {
     "slug": "dijkstra-algorithm",
@@ -19777,7 +20234,7 @@
         "sample": false
       }
     ],
-    "order": 231
+    "order": 237
   },
   {
     "slug": "bellman-ford-algorithm",
@@ -19884,7 +20341,7 @@
         "sample": false
       }
     ],
-    "order": 232
+    "order": 238
   },
   {
     "slug": "floyd-warshall",
@@ -19956,7 +20413,7 @@
         "sample": false
       }
     ],
-    "order": 233
+    "order": 239
   },
   {
     "slug": "minimum-spanning-tree",
@@ -20024,7 +20481,7 @@
         "sample": false
       }
     ],
-    "order": 234
+    "order": 240
   },
   {
     "slug": "eventual-safe-states",
@@ -20131,7 +20588,7 @@
         "sample": false
       }
     ],
-    "order": 235
+    "order": 241
   },
   {
     "slug": "number-of-operations-to-make-network-connected",
@@ -20243,7 +20700,7 @@
         "sample": false
       }
     ],
-    "order": 236
+    "order": 242
   },
   {
     "slug": "swim-in-rising-water",
@@ -20340,7 +20797,7 @@
         "sample": false
       }
     ],
-    "order": 237
+    "order": 243
   },
   {
     "slug": "m-coloring-problem",
@@ -20396,7 +20853,7 @@
         "sample": false
       }
     ],
-    "order": 238
+    "order": 244
   },
   {
     "slug": "strongly-connected-components-kosaraju",
@@ -20502,7 +20959,7 @@
         "sample": false
       }
     ],
-    "order": 239
+    "order": 245
   },
   {
     "slug": "critical-connections-in-a-network",
@@ -20613,7 +21070,7 @@
         "sample": false
       }
     ],
-    "order": 240
+    "order": 246
   },
   {
     "slug": "articulation-point-in-graph",
@@ -20724,7 +21181,7 @@
         "sample": false
       }
     ],
-    "order": 241
+    "order": 247
   },
   {
     "slug": "best-time-to-buy-and-sell-stock",
@@ -20820,7 +21277,7 @@
         "sample": false
       }
     ],
-    "order": 242
+    "order": 248
   },
   {
     "slug": "climbing-stairs",
@@ -20920,7 +21377,7 @@
         "sample": false
       }
     ],
-    "order": 243
+    "order": 249
   },
   {
     "slug": "min-cost-climbing-stairs",
@@ -21009,7 +21466,7 @@
         "sample": false
       }
     ],
-    "order": 244
+    "order": 250
   },
   {
     "slug": "counting-bits",
@@ -21088,7 +21545,7 @@
         "sample": false
       }
     ],
-    "order": 245
+    "order": 251
   },
   {
     "slug": "is-subsequence",
@@ -21183,7 +21640,7 @@
         "sample": false
       }
     ],
-    "order": 246
+    "order": 252
   },
   {
     "slug": "pascals-triangle",
@@ -21279,7 +21736,7 @@
         "sample": false
       }
     ],
-    "order": 247
+    "order": 253
   },
   {
     "slug": "maximum-subarray",
@@ -21375,7 +21832,7 @@
         "sample": false
       }
     ],
-    "order": 248
+    "order": 254
   },
   {
     "slug": "coin-change",
@@ -21470,7 +21927,7 @@
         "sample": false
       }
     ],
-    "order": 249
+    "order": 255
   },
   {
     "slug": "house-robber",
@@ -21560,7 +22017,7 @@
         "sample": false
       }
     ],
-    "order": 250
+    "order": 256
   },
   {
     "slug": "longest-increasing-subsequence",
@@ -21647,7 +22104,7 @@
         "sample": false
       }
     ],
-    "order": 251
+    "order": 257
   },
   {
     "slug": "jump-game",
@@ -21743,7 +22200,7 @@
         "sample": false
       }
     ],
-    "order": 252
+    "order": 258
   },
   {
     "slug": "unique-paths",
@@ -21844,7 +22301,7 @@
         "sample": false
       }
     ],
-    "order": 253
+    "order": 259
   },
   {
     "slug": "maximum-product-subarray",
@@ -21935,7 +22392,7 @@
         "sample": false
       }
     ],
-    "order": 254
+    "order": 260
   },
   {
     "slug": "longest-palindromic-substring-length",
@@ -22031,7 +22488,7 @@
         "sample": false
       }
     ],
-    "order": 255
+    "order": 261
   },
   {
     "slug": "longest-common-subsequence",
@@ -22122,7 +22579,7 @@
         "sample": false
       }
     ],
-    "order": 256
+    "order": 262
   },
   {
     "slug": "partition-equal-subset-sum",
@@ -22213,7 +22670,7 @@
         "sample": false
       }
     ],
-    "order": 257
+    "order": 263
   },
   {
     "slug": "maximal-square",
@@ -22307,7 +22764,7 @@
         "sample": false
       }
     ],
-    "order": 258
+    "order": 264
   },
   {
     "slug": "decode-ways",
@@ -22406,7 +22863,7 @@
         "sample": false
       }
     ],
-    "order": 259
+    "order": 265
   },
   {
     "slug": "unique-paths-ii",
@@ -22496,7 +22953,7 @@
         "sample": false
       }
     ],
-    "order": 260
+    "order": 266
   },
   {
     "slug": "house-robber-ii",
@@ -22591,7 +23048,7 @@
         "sample": false
       }
     ],
-    "order": 261
+    "order": 267
   },
   {
     "slug": "jump-game-ii",
@@ -22682,7 +23139,7 @@
         "sample": false
       }
     ],
-    "order": 262
+    "order": 268
   },
   {
     "slug": "minimum-path-sum",
@@ -22777,7 +23234,7 @@
         "sample": false
       }
     ],
-    "order": 263
+    "order": 269
   },
   {
     "slug": "word-break",
@@ -22898,7 +23355,7 @@
         "sample": false
       }
     ],
-    "order": 264
+    "order": 270
   },
   {
     "slug": "palindromic-substrings",
@@ -23013,7 +23470,7 @@
         "sample": false
       }
     ],
-    "order": 265
+    "order": 271
   },
   {
     "slug": "target-sum",
@@ -23108,7 +23565,7 @@
         "sample": false
       }
     ],
-    "order": 266
+    "order": 272
   },
   {
     "slug": "delete-and-earn",
@@ -23212,7 +23669,7 @@
         "sample": false
       }
     ],
-    "order": 267
+    "order": 273
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
@@ -23317,7 +23774,7 @@
         "sample": false
       }
     ],
-    "order": 268
+    "order": 274
   },
   {
     "slug": "minimum-falling-path-sum",
@@ -23407,7 +23864,7 @@
         "sample": false
       }
     ],
-    "order": 269
+    "order": 275
   },
   {
     "slug": "integer-break",
@@ -23516,7 +23973,7 @@
         "sample": false
       }
     ],
-    "order": 270
+    "order": 276
   },
   {
     "slug": "coin-change-ii",
@@ -23616,7 +24073,7 @@
         "sample": false
       }
     ],
-    "order": 271
+    "order": 277
   },
   {
     "slug": "maximum-sum-circular-subarray",
@@ -23715,7 +24172,7 @@
         "sample": false
       }
     ],
-    "order": 272
+    "order": 278
   },
   {
     "slug": "zero-one-knapsack",
@@ -23806,7 +24263,7 @@
         "sample": false
       }
     ],
-    "order": 273
+    "order": 279
   },
   {
     "slug": "rod-cutting",
@@ -23887,7 +24344,7 @@
         "sample": false
       }
     ],
-    "order": 274
+    "order": 280
   },
   {
     "slug": "longest-palindromic-subsequence",
@@ -23988,7 +24445,7 @@
         "sample": false
       }
     ],
-    "order": 275
+    "order": 281
   },
   {
     "slug": "subset-sum-equal-to-target",
@@ -24079,7 +24536,7 @@
         "sample": false
       }
     ],
-    "order": 276
+    "order": 282
   },
   {
     "slug": "longest-common-substring",
@@ -24160,7 +24617,7 @@
         "sample": false
       }
     ],
-    "order": 277
+    "order": 283
   },
   {
     "slug": "maximum-sum-increasing-subsequence",
@@ -24251,7 +24708,7 @@
         "sample": false
       }
     ],
-    "order": 278
+    "order": 284
   },
   {
     "slug": "longest-bitonic-subsequence",
@@ -24342,7 +24799,7 @@
         "sample": false
       }
     ],
-    "order": 279
+    "order": 285
   },
   {
     "slug": "number-of-longest-increasing-subsequences",
@@ -24428,7 +24885,7 @@
         "sample": false
       }
     ],
-    "order": 280
+    "order": 286
   },
   {
     "slug": "edit-distance",
@@ -24524,7 +24981,7 @@
         "sample": false
       }
     ],
-    "order": 281
+    "order": 287
   },
   {
     "slug": "longest-valid-parentheses",
@@ -24629,7 +25086,7 @@
         "sample": false
       }
     ],
-    "order": 282
+    "order": 288
   },
   {
     "slug": "split-array-largest-sum",
@@ -24716,7 +25173,7 @@
         "sample": false
       }
     ],
-    "order": 283
+    "order": 289
   },
   {
     "slug": "distinct-subsequences",
@@ -24826,7 +25283,7 @@
         "sample": false
       }
     ],
-    "order": 284
+    "order": 290
   },
   {
     "slug": "regular-expression-matching",
@@ -24965,7 +25422,7 @@
         "sample": false
       }
     ],
-    "order": 285
+    "order": 291
   },
   {
     "slug": "burst-balloons",
@@ -25065,7 +25522,7 @@
         "sample": false
       }
     ],
-    "order": 286
+    "order": 292
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-iii",
@@ -25165,7 +25622,7 @@
         "sample": false
       }
     ],
-    "order": 287
+    "order": 293
   },
   {
     "slug": "interleaving-string",
@@ -25284,7 +25741,7 @@
         "sample": false
       }
     ],
-    "order": 288
+    "order": 294
   },
   {
     "slug": "wildcard-matching",
@@ -25444,7 +25901,7 @@
         "sample": false
       }
     ],
-    "order": 289
+    "order": 295
   },
   {
     "slug": "maximal-rectangle",
@@ -25542,7 +25999,7 @@
         "sample": false
       }
     ],
-    "order": 290
+    "order": 296
   },
   {
     "slug": "matrix-chain-multiplication",
@@ -25628,7 +26085,7 @@
         "sample": false
       }
     ],
-    "order": 291
+    "order": 297
   },
   {
     "slug": "palindrome-partitioning-ii",
@@ -25739,7 +26196,7 @@
         "sample": false
       }
     ],
-    "order": 292
+    "order": 298
   },
   {
     "slug": "egg-dropping-puzzle",
@@ -25861,7 +26318,7 @@
         "sample": false
       }
     ],
-    "order": 293
+    "order": 299
   },
   {
     "slug": "maximum-profit-in-job-scheduling",
@@ -25943,7 +26400,7 @@
         "sample": false
       }
     ],
-    "order": 294
+    "order": 300
   },
   {
     "slug": "minimum-insertion-steps-to-make-a-string-palindrome",
@@ -26034,7 +26491,7 @@
         "sample": false
       }
     ],
-    "order": 295
+    "order": 301
   },
   {
     "slug": "assign-cookies",
@@ -26130,7 +26587,7 @@
         "sample": false
       }
     ],
-    "order": 296
+    "order": 302
   },
   {
     "slug": "can-place-flowers",
@@ -26229,7 +26686,7 @@
         "sample": false
       }
     ],
-    "order": 297
+    "order": 303
   },
   {
     "slug": "lemonade-change",
@@ -26354,7 +26811,7 @@
         "sample": false
       }
     ],
-    "order": 298
+    "order": 304
   },
   {
     "slug": "minimum-number-of-coins",
@@ -26455,7 +26912,7 @@
         "sample": false
       }
     ],
-    "order": 299
+    "order": 305
   },
   {
     "slug": "container-with-most-water",
@@ -26545,7 +27002,7 @@
         "sample": false
       }
     ],
-    "order": 300
+    "order": 306
   },
   {
     "slug": "gas-station",
@@ -26629,7 +27086,7 @@
         "sample": false
       }
     ],
-    "order": 301
+    "order": 307
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-ii",
@@ -26719,7 +27176,7 @@
         "sample": false
       }
     ],
-    "order": 302
+    "order": 308
   },
   {
     "slug": "partition-labels",
@@ -26814,7 +27271,7 @@
         "sample": false
       }
     ],
-    "order": 303
+    "order": 309
   },
   {
     "slug": "n-meetings-in-one-room",
@@ -26886,7 +27343,7 @@
         "sample": false
       }
     ],
-    "order": 304
+    "order": 310
   },
   {
     "slug": "minimum-platforms",
@@ -26958,7 +27415,7 @@
         "sample": false
       }
     ],
-    "order": 305
+    "order": 311
   },
   {
     "slug": "job-sequencing-problem",
@@ -27030,7 +27487,7 @@
         "sample": false
       }
     ],
-    "order": 306
+    "order": 312
   },
   {
     "slug": "fractional-knapsack",
@@ -27091,7 +27548,7 @@
         "sample": false
       }
     ],
-    "order": 307
+    "order": 313
   },
   {
     "slug": "candy",
@@ -27191,7 +27648,7 @@
         "sample": false
       }
     ],
-    "order": 308
+    "order": 314
   },
   {
     "slug": "non-overlapping-intervals",
@@ -27287,7 +27744,7 @@
         "sample": false
       }
     ],
-    "order": 309
+    "order": 315
   },
   {
     "slug": "insert-interval",
@@ -27382,7 +27839,7 @@
         "sample": false
       }
     ],
-    "order": 310
+    "order": 316
   },
   {
     "slug": "minimum-number-of-arrows-to-burst-balloons",
@@ -27477,7 +27934,7 @@
         "sample": false
       }
     ],
-    "order": 311
+    "order": 317
   },
   {
     "slug": "palindrome-number",
@@ -27585,7 +28042,7 @@
         "sample": false
       }
     ],
-    "order": 312
+    "order": 318
   },
   {
     "slug": "single-number",
@@ -27680,7 +28137,7 @@
         "sample": false
       }
     ],
-    "order": 313
+    "order": 319
   },
   {
     "slug": "missing-number",
@@ -27766,7 +28223,7 @@
         "sample": false
       }
     ],
-    "order": 314
+    "order": 320
   },
   {
     "slug": "number-of-1-bits",
@@ -27860,7 +28317,7 @@
         "sample": false
       }
     ],
-    "order": 315
+    "order": 321
   },
   {
     "slug": "power-of-two",
@@ -27965,7 +28422,7 @@
         "sample": false
       }
     ],
-    "order": 316
+    "order": 322
   },
   {
     "slug": "happy-number",
@@ -28039,7 +28496,7 @@
         "sample": false
       }
     ],
-    "order": 317
+    "order": 323
   },
   {
     "slug": "roman-to-integer",
@@ -28145,7 +28602,7 @@
         "sample": false
       }
     ],
-    "order": 318
+    "order": 324
   },
   {
     "slug": "excel-sheet-column-number",
@@ -28239,7 +28696,7 @@
         "sample": false
       }
     ],
-    "order": 319
+    "order": 325
   },
   {
     "slug": "plus-one",
@@ -28333,7 +28790,7 @@
         "sample": false
       }
     ],
-    "order": 320
+    "order": 326
   },
   {
     "slug": "hamming-distance",
@@ -28436,7 +28893,7 @@
         "sample": false
       }
     ],
-    "order": 321
+    "order": 327
   },
   {
     "slug": "sum-of-two-integers",
@@ -28540,7 +28997,7 @@
         "sample": false
       }
     ],
-    "order": 322
+    "order": 328
   },
   {
     "slug": "count-digits",
@@ -28609,7 +29066,7 @@
         "sample": false
       }
     ],
-    "order": 323
+    "order": 329
   },
   {
     "slug": "gcd-of-two-numbers",
@@ -28678,7 +29135,7 @@
         "sample": false
       }
     ],
-    "order": 324
+    "order": 330
   },
   {
     "slug": "armstrong-number",
@@ -28757,7 +29214,7 @@
         "sample": false
       }
     ],
-    "order": 325
+    "order": 331
   },
   {
     "slug": "divisors-of-a-number",
@@ -28831,7 +29288,7 @@
         "sample": false
       }
     ],
-    "order": 326
+    "order": 332
   },
   {
     "slug": "check-prime-number",
@@ -28910,7 +29367,7 @@
         "sample": false
       }
     ],
-    "order": 327
+    "order": 333
   },
   {
     "slug": "largest-odd-number-in-a-string",
@@ -28980,7 +29437,7 @@
         "sample": false
       }
     ],
-    "order": 328
+    "order": 334
   },
   {
     "slug": "count-primes",
@@ -29065,7 +29522,7 @@
         "sample": false
       }
     ],
-    "order": 329
+    "order": 335
   },
   {
     "slug": "fast-power-mod",
@@ -29159,7 +29616,7 @@
         "sample": false
       }
     ],
-    "order": 330
+    "order": 336
   },
   {
     "slug": "reverse-integer",
@@ -29267,7 +29724,7 @@
         "sample": false
       }
     ],
-    "order": 331
+    "order": 337
   },
   {
     "slug": "rotate-image",
@@ -29354,7 +29811,7 @@
         "sample": false
       }
     ],
-    "order": 332
+    "order": 338
   },
   {
     "slug": "bitwise-and-of-numbers-range",
@@ -29458,7 +29915,7 @@
         "sample": false
       }
     ],
-    "order": 333
+    "order": 339
   },
   {
     "slug": "single-number-ii",
@@ -29558,7 +30015,7 @@
         "sample": false
       }
     ],
-    "order": 334
+    "order": 340
   },
   {
     "slug": "find-the-repeating-and-missing-number",
@@ -29615,7 +30072,7 @@
         "sample": false
       }
     ],
-    "order": 335
+    "order": 341
   },
   {
     "slug": "count-subarrays-with-given-xor",
@@ -29677,7 +30134,7 @@
         "sample": false
       }
     ],
-    "order": 336
+    "order": 342
   },
   {
     "slug": "string-to-integer-atoi",
@@ -29768,7 +30225,7 @@
         "sample": false
       }
     ],
-    "order": 337
+    "order": 343
   },
   {
     "slug": "integer-to-roman",
@@ -29864,7 +30321,270 @@
         "sample": false
       }
     ],
-    "order": 338
+    "order": 344
+  },
+  {
+    "slug": "maximum-xor-of-two-numbers-in-an-array",
+    "title": "Maximum XOR of Two Numbers in an Array",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "trie",
+      "bit-manipulation",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the largest value of `nums[i] XOR nums[j]` over all pairs with `i != j`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum XOR.\n\n### Constraints\n- `2 <= n <= 1500`\n- `0 <= nums[i] < 2^30`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n3 10 5 25 2 8\n\nOutput:\n28\n```\n\n**Example 2**\n```text\nInput:\n12\n14 70 53 83 49 91 36 80 92 51 66 70\n\nOutput:\n127\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(nums);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int result = solve(nums);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "6\n3 10 5 25 2 8\n",
+        "expectedOutput": "28\n",
+        "sample": true
+      },
+      {
+        "input": "12\n14 70 53 83 49 91 36 80 92 51 66 70\n",
+        "expectedOutput": "127\n",
+        "sample": true
+      },
+      {
+        "input": "2\n0 0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "2\n1 2\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "3\n8 8 8\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "2\n5 25\n",
+        "expectedOutput": "28\n",
+        "sample": false
+      },
+      {
+        "input": "5\n2 4 8 16 32\n",
+        "expectedOutput": "48\n",
+        "sample": false
+      },
+      {
+        "input": "10\n9 13 18 12 12 4 11 16 1 14\n",
+        "expectedOutput": "31\n",
+        "sample": false
+      },
+      {
+        "input": "30\n287 83 426 844 135 625 872 582 715 661 382 820 358 451 802 892 421 749 495 329 274 72 988 636 84 620 876 872 367 100\n",
+        "expectedOutput": "1023\n",
+        "sample": false
+      },
+      {
+        "input": "100\n66442 28937 75636 65722 81318 56792 97937 86696 88875 85344 8745 94641 43455 91197 72853 97799 98280 6221 41338 4991 84560 71550 85662 76142 18761 26861 71290 44982 73185 17162 8024 12068 16745 77951 25740 33896 35495 24077 61736 86881 52731 60547 54352 32679 91814 23496 58336 92350 66838 23359 24317 62295 12338 96240 43834 91858 90099 12058 92449 88562 15950 90612 24275 43700 31071 99293 69445 68813 29315 70747 7016 15259 20218 46492 97524 75387 40438 99362 75267 5601 35371 77960 38250 97498 35329 82214 57302 39048 49463 50364 92443 46740 10117 803 74445 1885 2875 49606 42208 69206\n",
+        "expectedOutput": "131020\n",
+        "sample": false
+      },
+      {
+        "input": "300\n782052 234878 877022 661379 831729 780591 706559 226146 794462 648335 442825 2046 378401 440487 38019 838162 123102 104587 947254 414595 596220 291992 105826 732622 433053 843143 944485 560469 30211 546399 665070 110437 998554 242240 524852 868354 642245 125182 425316 844456 317355 451788 239786 67717 883854 578517 311453 375857 525754 523114 314466 928484 760539 840945 617123 503849 6705 11506 788387 554645 857638 818195 510666 713370 563055 591650 43932 413306 558544 997369 201400 855114 254310 989176 195852 964934 963151 669873 903741 140026 736391 525680 929447 491930 68959 878966 871127 356272 366151 54104 226483 715106 535135 310904 786860 917862 936843 991867 995660 867002 292641 648866 675220 86579 534672 622219 357000 339200 426967 731965 890211 845519 637110 279332 595240 158173 756006 981777 137625 557342 346421 565042 299815 278181 305229 397022 907728 761528 770737 98936 279502 446640 47894 536206 399943 318563 481190 511935 305438 445363 567399 422463 43853 774932 164369 476345 381646 287135 393708 206267 635517 669849 538839 270842 837515 912046 484127 764985 876042 789126 801874 442103 123554 800306 531321 178514 693714 658430 119086 834862 538198 176149 83589 932852 197965 373675 225052 698138 591527 941282 574164 882063 949889 795991 915000 796445 624045 925637 601825 649102 117292 90796 979321 453325 946242 70032 32374 830825 105521 565366 798617 653102 371366 543412 497751 528711 372679 519860 450471 713521 800470 324828 527029 946290 723485 709859 421809 568767 591798 666852 365822 771338 221716 902795 57266 812765 950359 596749 147227 465266 901761 426091 683367 883009 842834 128769 431633 434731 224174 948585 706406 595 931026 556695 580534 987211 775265 476604 492419 428507 903042 373958 691767 266592 724613 411890 721608 131668 352402 204543 177838 808365 907858 547689 369013 916962 207668 728068 779537 61368 884386 962820 567478 354 660693 757722 557743 800452 526310 293779 619298 139309 141506 666222 484102 593434 917741 298752 179915 278524 57188 106465 516312 373496 468938 161369 517676 921105 254309 662013\n",
+        "expectedOutput": "1048563\n",
+        "sample": false
+      },
+      {
+        "input": "800\n902057845 52860832 593040576 821870617 419724767 965424311 909600733 241641901 664009154 668544341 1000411928 12822080 751066103 170835526 386143423 898442755 107322776 855216746 130782959 746977510 103440319 474789744 477276689 609427297 1030396098 1006434918 4181143 262833936 499694835 217306018 715185508 442500614 401464077 760119631 1069180972 101131961 766890625 481637298 765931574 978846386 79760271 301003433 527635031 640663575 916748103 777275369 709765834 156353268 626945478 983008231 677013702 8125779 778150516 851466434 737677249 643627040 124864159 205771453 87345850 351851815 304990878 478021547 1006500145 908324842 466546106 168998914 660515300 1024850325 760130789 638921050 1066903646 655946192 520137715 343326784 578619146 1070052111 290220080 994507619 972852059 960695126 872296788 649514732 124187324 508140355 249694133 980056410 865526289 707191064 114068 414418912 1063485144 561912384 1024958011 69715259 702719325 658982562 182712503 76143095 174032160 581443863 989178409 388231091 237417138 113992949 462982385 747674999 536534456 230874858 876487801 281819947 832687319 383488830 893214470 128035853 893731108 1069109687 180725289 473184935 471704582 932974385 558003794 780701165 1010287951 828179654 41337893 548457085 1026104645 638703246 501455283 286896294 608689816 220922700 871018098 523937529 591145743 1068769923 240324005 12065191 510257565 802487191 722042857 227062583 1042558873 610001177 409068539 485529925 650438458 186313481 843871531 119909279 528648017 343098101 941795080 950354114 856717556 314926249 985346992 672289648 3158082 723471005 122319130 46568039 888479466 436890535 684714388 919541555 655106011 750468730 737605898 459177687 796542509 947178089 651715876 576425376 310561185 234947431 580898353 239733769 850015053 196418838 595943569 844301056 342873068 1055888575 52110668 288008087 518364972 447821955 418476797 34446674 520973874 551433757 1011116901 555886889 87836422 923888724 876429354 452525584 885279953 803503049 1066177082 537142906 539381708 964360933 164564333 202622982 134809938 351046715 398065606 768036603 815149992 947698587 256104512 835704836 837473905 920370155 179099642 371525126 595989780 921044159 1055659704 54724970 291155712 946314605 630357635 595526679 189073324 924089535 948110246 660791372 487062498 696694367 60603781 185451872 1016554685 820681753 130596625 327920131 852096786 633466460 1030721289 207865671 577830751 456216621 485303491 7644618 623311910 303687800 512136902 126061962 777531375 107669869 57823695 516677216 85350954 265174885 468927033 638118526 154223913 118285077 263160857 890040140 292562378 49072997 365574574 210403790 1011477808 159236532 574650513 819791044 939277993 681659209 681971944 430802443 742711636 327966073 1067332163 200661513 294527460 1027154104 870890218 154254140 252659000 138143039 878163300 746190198 106437974 59582311 476039003 788325015 872400725 194506889 399795892 267260799 371359408 345768920 732495920 538298614 483855069 521932365 914757904 150845344 756742740 1015694944 173843375 893537575 679632925 396375267 90460894 780029498 489428560 963774762 456585174 169449723 560850794 961203310 55093787 394217139 128658819 583922055 379258268 989009570 521811977 249437135 180425141 999395306 47237430 725907492 211117252 878036782 459418373 333586232 537695795 75930921 775487885 259643650 53768436 150496494 1010270863 434578866 1031566193 219943465 823374508 928109782 374715306 713270611 192144875 756102698 654184478 926689486 956762009 354681420 599449549 836278766 615688483 960346178 736676196 664197485 359048379 211077061 848091936 382841873 521439768 148219372 323711672 492181548 758539364 952849946 994195032 186456006 954050724 599915254 649577475 382369306 738830980 788033660 255796504 5979329 566780741 321140620 147589687 517366763 415371082 1065975971 883747811 83678284 731717823 404233307 511538644 1062424145 580299151 571813732 788057001 608517797 403552997 431142218 70785891 98069980 424534206 368441089 15454103 299890355 317629125 923747794 342551361 1054612266 797952686 693619992 661411252 315981027 305583836 628616159 560962912 282351027 53429953 581863751 232677968 660999161 228856973 922246082 172042034 42413447 811080326 200850073 898972669 202132578 686264075 200098208 527622529 290537939 1036015644 346330736 991051373 413925101 7310186 1572937 250151075 470864306 720029154 1058156818 152875225 224967446 176293985 156700005 809962958 942123022 740124344 717247458 358853712 763633265 202769084 145307876 562345046 364487513 810221586 786074035 521112069 132019900 789390624 151221644 856039350 417719262 535640110 307010633 958267878 367683458 73726556 188381972 373195442 1014063976 112224579 593931043 812020869 919263444 975000584 179135242 737290494 70857857 657091395 598714089 850123348 953606222 917691969 420714116 388601677 693692218 540077390 1016032987 615873674 166939314 676571898 316979464 714402935 854143272 752032906 880512598 72261519 761601046 329181268 209268983 294933865 71413958 980115760 179758212 642728783 1063239854 973318589 271850383 593149883 774111578 980956972 716079024 761037178 1057539210 231901513 85426938 613788249 934669920 375240781 177050393 1017860785 470412750 1052833074 628630011 676281097 492562602 5286182 127090602 491992652 681516410 201698452 844094692 54807953 197341699 320711910 905458399 816711949 648606314 874874575 499765872 928416488 688086972 172214105 318512865 820607009 853045992 574246825 821031282 27622310 83905344 393825666 313615642 776780869 14212558 270092424 559067266 708994840 194363869 184581107 11872291 626668913 103659640 902139677 1068267456 676749131 266566624 20166328 588223269 988806598 690580888 813827995 679974996 739941700 596347662 1063067362 790918472 536844555 229709361 19560173 161073720 323296170 445160563 668321399 175765971 20270456 160755866 479037833 482761280 439072048 115810485 285060025 259402414 524552182 831218860 221231225 474430307 865109005 789914415 597520373 677336618 412104187 952859397 284209040 841600465 697530609 284047200 863332574 468290242 522771144 145297260 188594278 86827985 67952936 963537882 927040978 427154976 245909862 115076190 202780640 671536705 679891973 652441135 413109195 1064019598 1045315404 685230662 309652262 1072119793 722429504 583751032 364524236 632089710 186862608 556778518 516157826 763082595 540560951 528504981 252406083 181284861 233923983 929503265 672183593 508943449 951325206 325526798 225219693 610126089 190953203 416908309 541528646 41633439 122352082 951691940 74296764 384083846 215315178 1016599584 58422134 387856477 583878927 61570706 330409521 743008951 595066163 417069329 731100014 698902173 47449167 655603270 605636791 68710061 571408627 683374461 29580982 470342602 14578773 693457300 168015075 733401145 375544849 578862486 541061388 183798513 479493240 1067390141 988305334 631084566 1319072 363831542 619169345 369728340 123323337 844799672 1069468597 363742912 14110820 948247503 276436197 140553335 480624824 122095849 1024467347 434069240 985922405 1015026474 180197670 602380322 1043451977 978110801 181227626 926369138 363684935 701084994 220527417 935808273 639827359 749587809 227302961 1024862413 172723281 443699723 908050158 1065301538 51141318 228409049 519302259 131801227 979185385 26768743 787090021 708823995 127591 655466074 491431808 120529457 158387532 733776765 851142626 237506147 686413000 736455838 418635290 916704739 828058477 381073083 244096152 520146301 233643905 135058425 284977000 401045246 837220641 627590759 286587924 110627289 782919289 166144133 902240446 450280280 493424846 363120024 911550499 797203505 505525705 895225555 123478258 55673625 621583772 977842705 105110515 158235474 704027363 277162971 635242708 543753911 128786046 139174402 814722654 141629775 874066510 697370452 754259301 992857070 248415577 330851701 626573798 544334112 654242502 386329879 243604780 996512832 952910447 996856087 951642880 618175382 450252903 682736480 283239146 820365665\n",
+        "expectedOutput": "1073735952\n",
+        "sample": false
+      },
+      {
+        "input": "1500\n1014850784 96610640 56738077 925532431 858383411 940321994 340061650 766468845 823718302 116777105 134676115 656129602 464936328 62483947 671926849 369808867 343692017 501243801 316093654 406766290 372813935 297018166 1009039592 395987475 530623983 35378610 396545951 121323245 572684507 355153040 529081504 1067175182 716722885 566656693 1001480549 510744708 112595047 847659580 849077946 15093686 763924319 108570738 934209408 745843245 801271567 718868495 1039051648 320876704 728265812 612122513 574926309 719559947 190797254 728462758 343484416 514113706 28213007 448349410 960959286 555144655 786937421 930075559 371073921 950692990 962831868 246819709 910323596 728561570 453583304 718290967 416147082 533073918 134439639 142392304 428622951 877119532 741022111 747840458 500749170 629513644 827785701 792115686 1055843427 330665086 852303030 10220622 959527725 404177743 284349535 1028177850 1354149 961954047 776636722 8958473 414662252 1063536333 334295987 49643683 1040608923 1060974585 43733541 762938582 41763009 735439921 312523347 180624528 121013673 112081274 340773389 967383225 281876782 946782704 215534113 341614084 109323882 566749231 173563436 780314909 24172708 1042588828 1004186615 353689085 264414076 157274266 338480464 250671606 585927692 333801562 681999292 545806766 879342560 451549911 457672898 108505299 530766038 643008965 451335266 653887061 242566736 939134792 188874138 22238771 477928010 521222556 774827833 361571143 965310081 488943459 44105189 695043785 168757017 276673562 945359103 711562826 1005506001 509122381 334796089 948644898 297307209 802197444 215819102 378278541 627546453 164119409 1039553570 650824256 74869488 998628052 138454074 106312752 302070168 957474782 660299975 182655764 532057439 682112652 86856712 11332080 416424959 705388467 811268444 182031208 613113523 427587722 305775932 248798243 703351891 917673114 1051798642 977352233 905293199 701826382 1026732736 752384760 445720121 862302105 816338904 910303105 390611918 327938092 562354119 685329909 557026540 514982516 913082541 122645711 835580974 465725333 419169639 390055738 527363275 908978082 103869244 477739496 688268759 694248834 415567495 360696862 686745921 129783371 630104496 1033439869 153948500 558208643 565201311 138260910 756318818 870624465 733193338 838588615 421505916 467520220 2622515 594196677 865623443 835559462 650944809 1036532452 884739355 807165771 116458755 615392456 1065398018 19986317 451774995 973533071 215197418 316804327 333781986 513938637 663874178 155574385 807088579 684407699 647318507 49889068 523848186 997948880 744088061 531906318 653390092 824909368 830181419 777400264 299550706 400534743 279689180 922124086 473417568 358353199 441247805 134821513 405089245 5266078 290559545 581120387 815950360 830106881 104349635 440652343 905461599 803665659 335886986 607812416 796617475 310021187 204352133 809724056 4854470 355715153 99902996 663279191 501583906 1013027851 75806831 48719994 665188792 326402076 1055501650 373927569 641082438 699904415 906708817 112822782 734642401 642137084 928259045 84884888 973865676 977463775 918583123 303722650 64505551 560890129 532308969 711084325 60594630 294475505 1016090069 766349420 212159424 551357967 928035737 792669664 176699902 993727273 456552697 885889451 453667091 732492123 8771516 453559413 703171680 224608676 34734819 989404874 300981131 549347341 612720843 109163589 265388167 952249571 467401878 965602381 681777572 987193107 725900703 38069755 649822496 347733738 976355209 550225114 339221175 415050082 468193493 321136831 342770062 968249680 349297749 65299646 924320039 743944518 1047716461 876340688 298170760 910379769 530235668 228957435 723084663 59030981 121819074 819211587 694314922 229318138 583455741 970842804 251996110 434152067 310158924 1064095352 681388288 272798221 80231916 1037659956 553279480 670873433 473579046 675961745 584247276 657459569 234064013 86681103 120876424 1021199937 816027920 716855001 686007911 467530731 638696076 906668124 176147668 278087039 206737448 89032256 753272766 398238689 631183862 1025285273 214255046 788991146 450167638 744881394 629640003 173433960 307418184 848874201 1010724102 327753833 494964716 654736901 370737782 242114894 439735446 608920383 966511507 911315363 910272933 114885435 502171436 1010753709 559800010 875697721 103738134 540937843 481054675 435766709 112653972 944402270 600240305 89895591 738469080 484598584 498872206 112211333 186733495 253076634 424911142 201247708 231087799 338060941 1011125427 938500897 956212026 862645736 646781854 590475274 480186260 81307338 490105369 490810022 450387289 706058671 998756899 594801263 646690464 144153750 720968526 74589360 539214249 361706457 507631447 739066978 124263462 424355061 1069866713 132873904 523051762 784952937 156014186 880603319 343917360 67726798 670341975 146668078 766922588 337346612 414381473 290789851 371353716 746404131 79120754 46637107 724342545 540345723 869221902 580101676 468916642 951167778 90605006 410956323 602236103 52458288 235337338 279874461 603908849 388203291 754250943 468425556 651748819 951704873 44673797 914907924 4122328 899039944 1007807717 202254458 1042657748 481884036 940758847 551393191 141231252 768042115 802018344 215090966 976501660 598710611 337335173 724835081 510352982 765889643 456007337 867547651 1042943382 11745338 606920952 154482157 618452821 372591378 419453854 1037387720 744317798 674135865 458824096 952682919 784310035 912484236 670784905 25298057 302666948 835109993 707523788 942135834 342765643 49551219 205761921 318748269 51318801 160670885 302617312 19535680 596985523 274552167 867383667 251251134 188888695 60195050 636345458 578330009 373550539 1050168007 612669508 400670430 71014750 499848134 343981352 740528262 552959927 1059296274 489127389 236458200 704444589 49991322 734074020 749852468 195144086 28555952 581562230 260866672 1053905561 613788174 1044821465 522596439 753050865 797203717 797731762 182899395 900322920 1064685567 74051472 1067069563 947703986 681248891 557094717 433780925 910940423 731435827 794755352 294505939 25385459 344926798 811675783 211906238 670698250 359920744 239174135 135069896 731981666 166842374 554439712 332500713 489404896 811216307 878006036 63119467 433045958 573561921 518708647 697009649 426380323 606870880 508050159 867987403 156989109 324326098 423396643 834533025 172496228 219255698 169339685 749174402 565021462 1068449875 246967779 1069131825 273550285 128509941 514848362 471348874 392914578 438826410 478415480 473043508 628291185 417448176 236227019 323379144 744480923 703541749 902765222 1019894727 950368179 118266654 382490870 947769778 217684770 687772462 158235529 820529107 50371636 672069679 743889325 922719167 709643141 520471971 702078140 939130516 486289804 894848302 13924133 139341254 90307741 351196683 676073177 503953465 132041578 711057160 283018530 776711488 450822513 516761220 590068519 532319281 559286622 606061678 375916507 541302779 686476378 958597537 148070248 246244094 160909913 840609398 274959696 174996489 45179226 816946435 370976523 208050865 577417703 623582773 1030824249 227824041 278864198 701271754 225472312 995363018 540038924 565764247 33590444 120869529 110099650 868153147 279214521 891670934 775540824 534775656 607249909 59009238 181751694 674887107 159755710 262550117 91904228 561920354 412816825 348766897 91780796 82927641 864323532 453794052 77387376 255495247 708632582 437885377 997386118 179177555 573306979 85998671 835758656 338060128 331555737 568326271 261212177 49255270 531986353 55005795 327175210 391633767 455476436 263918371 166724652 522615422 739605732 526978635 897166353 625247723 556802489 335768118 110449127 200089898 1053067679 13267462 928499863 995174790 111246887 1046948504 246750057 916897828 240446804 200773249 762507552 105201017 451317336 399500317 376732871 873146884 949314610 625523762 440389357 191662631 402309659 992766014 758506201 423013537 591781634 424048317 579059357 618844218 297376839 264488860 1058948055 202291130 437722724 195347040 774237149 518986223 65314585 788835391 595185024 682121636 147710194 509695165 991988789 781062323 157253610 783563394 342179625 205384022 774783871 246345367 745559413 166124905 900562761 864947587 215010125 677562200 626240281 696453360 746874924 1030230691 166677822 954823359 655608683 28460936 74895841 117865940 427564338 93116849 1017014426 388474327 279824821 767122270 904720841 166306875 241658418 874979514 618939291 131346272 799971009 504060821 860051985 64775901 947655418 171853361 99918357 994482360 179271455 208469838 585225221 695810865 317185458 409538849 253708874 287674826 333761619 919712775 637500917 773833813 123035533 945316859 282708602 681114712 1037112123 502289512 756426366 429328001 372341628 472263361 311887635 652091192 642201887 785512362 815245970 85406252 783700928 359465857 425076065 889907128 782679811 724723718 1038395091 810998051 116507231 1043555583 802599648 41905851 65053124 564560706 714953728 484028576 590311141 524560147 1057855547 898949934 1043262920 139276647 585145836 360577267 127282114 8946922 869610486 570672354 748787021 960207928 630780226 51763917 1056453649 54638564 860918862 126341711 953625261 668948401 398370710 802913780 176890144 1058881614 150535960 288889664 479798686 547145441 265076609 965080301 636937697 646029666 998283618 84146621 376396804 48275225 1071862749 521609370 19557450 96142792 966558108 323162140 673087817 939822478 310432177 242442216 38625927 903603637 1023998546 1003756919 556348979 403791503 132679183 217355448 113361156 774408897 68459126 407859954 68454912 297671637 751765808 13530408 458599376 143517850 789711299 137859663 498830877 126999288 443770905 738059125 978607535 43527259 1058997865 132317364 220975737 653576391 719209379 922163932 862795145 851987644 212618592 327593085 784304253 759603711 693042361 607846978 484751616 300592714 545554786 795063087 323542642 518138582 890496579 655835261 582944329 361835683 908366588 370238921 469806798 349293521 482783120 294543852 1036164463 133615097 334047107 177760256 376211899 223287851 703357394 150605163 987811802 979135185 946233740 832015212 124719350 518342866 675516070 818440197 623497399 749340259 922065298 12426231 294294204 926636427 467215518 86181441 258221082 965565301 438922904 321756699 1031055300 168424535 256156830 57831867 402523276 271116372 62889926 767525220 971959825 499717118 989440778 195546992 267344457 503398904 544315700 378141789 970909515 268136626 1039713665 354954211 881479509 533573853 449081560 1068177242 846319700 951394781 672006175 98691326 175454897 321569347 207784930 602587137 547980343 798741635 129940001 981912835 59494748 102718944 934804726 140046196 513960397 243990024 1048174503 726535155 787667229 159764326 595676249 205956028 557934783 894509986 1027322372 170859261 849679636 211429102 313393445 573258847 342307884 830209397 604348610 496617812 901201770 859873349 783449079 483864544 405761265 640842823 135890922 949403691 774674057 785816738 846458538 118844674 1037931644 5315172 431261086 911271499 1063144654 505699485 546873628 517206887 104700367 623092532 113252566 885593018 52613197 946242077 568346204 201275920 729257729 622435705 275331307 582744071 444838537 455108560 539866852 411919371 820219543 762295875 326370910 429454933 137112150 635151636 227754546 447003338 452164127 724731443 1021237640 247137090 833686259 384755963 680498550 90445873 90277846 721673896 968221591 182686436 547386804 511949859 470333833 537294147 934348138 113401755 100641037 640790954 1059509547 583633865 657795142 745528650 67045530 569176380 960297356 233568252 969863613 1004576538 148723330 975413221 594134006 1004509107 775847372 993870527 978070050 51360510 285725600 126265807 933111383 447282696 365825588 316823222 911700139 720357088 279405451 551319105 741824879 757178896 458108960 897877331 36210868 247396726 232381068 185064671 567699143 438838782 737222554 255825035 975043773 563892496 422694575 810220512 785432638 90557337 360821111 796734866 745621525 52329042 563267990 233133703 600994937 681669227 278281285 722794799 393020900 171807217 5078044 524584074 359281068 33473087 596266628 652904140 590780973 986821044 804047749 1022009323 182541748 629543241 534898747 720023844 1064950560 487442575 532376241 665114174 885183465 489009541 812592688 252234306 610481164 670509179 905373691 64245166 210178394 777105428 756086896 239355761 731062313 355997306 336584707 311653479 212821219 923706480 910845987 1062477363 794436784 614519058 794145954 522741825 743815820 987242696 586500220 982267755 77368982 876339571 510224843 747955791 702691730 634237651 594404991 838611535 215990358 921747363 394293072 124005193 895881754 256105517 1043613612 742400013 557231841 609087455 542388367 969764833 417384167 601166433 63657290 113381578 480314346 673378541 15996676 109206380 757538118 554553259 537318872 88903723 1000980281 373359435 518948850 806965307 452673913 369027073 354394832 274205711 536487227 140111527 268090714 1043991630 88731380 99718709 49815251 801493477 734149079 326488894 196495231 160998958 718478130 582952074 201371115 164884969 494119118 554086356 1066721786 692276112 881697931 371948865 776635097 2524377 259509289 1045305521 705860656 438568994 46272339 193994263 699311540 747285384 78340600 844608600 771336094 272064738 491823598 236960732 541696921 572300856 620225403 387948250 183321859 1024560010 417792085 502551208 1068405702 255339087 61921899 358029261 139878939 342662409 935019203 207343876 425135993 956206879 38321834 10908423 862021427 551821939 1044253732 576304761 588242340 491438903 733110951 699152035 277804714 627705775 50624917 190533486 121555859 76549583 582859087 452156620 56448223 103726755 481786916 441682260 604136874 976574446 851041828 91413189 1062267021 545046183 699672351 836773206 797512644 924860293 395126727 808402786 513319377 903910773 104412089 273982554 960186609 975573189 694992443 1033994280 362485107 915503352 990529328 257081965 565766247 766744072 713248633 1032254395 998088131 1062750908 33357194 487135014 877118376 238426981 982473121 50896400 597674048 483701455 652829286 120243697 433377624 350440531 889981439 421056125 31487441 301326884 397501228 53046254 441007708 914954259 644897237 688471570 919419402 238655585 852692317 270180997 870232555 508687239 950864339 719200181 962416304 944625977 668130724 605462292 999167472 216147804 622005350 568518942 1071426210 912372677 160578076 128612539 90438057 723992139 474855945 506306028 910657532 747218526 717838393 110016656 1058125414 205937680 750194754 245657846 224692752 983503723 994027029 824675477 524995678 111668602 486415543 43826404 985598552 517973142 608522384 778294113 290128324 1043173601 249767598 128218501 970887232 122096150 665398532 957031426 350306142 148655734 952015534 924291583 686425243 310288641 75398081 781525889 583371467 1036218026 378207748 912377825 857151942 18933263 872788601 680318204 592630483 234022813\n",
+        "expectedOutput": "1073740086\n",
+        "sample": false
+      }
+    ],
+    "order": 345
+  },
+  {
+    "slug": "divide-two-integers",
+    "title": "Divide Two Integers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "math",
+      "bit-manipulation",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Divide `dividend` by `divisor` without using multiplication, division or the modulo operator. The result is truncated toward zero. If it falls outside the 32-bit signed range, return the nearest bound: `2147483647` or `-2147483648`.\n\n### Input\nLine 1: `dividend`.\nLine 2: `divisor`.\n\n### Output\nThe truncated quotient, clamped to 32 bits.\n\n### Constraints\n- `-2^31 <= dividend, divisor <= 2^31 - 1`\n- `divisor != 0`\n\n### Examples\n**Example 1**\n```text\nInput:\n10\n3\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n7\n-3\n\nOutput:\n-2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int dividend, int divisor) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int dividend = Integer.parseInt(lines.get(pos++).trim());\n        int divisor = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(dividend, divisor);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(dividend, divisor):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    dividend = int(lines[pos]); pos += 1\n    divisor = int(lines[pos]); pos += 1\n    result = solve(dividend, divisor)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(dividend, divisor) {\n  // Write your solution here\n}\n\nconst dividend = parseInt(lines[pos++], 10);\nconst divisor = parseInt(lines[pos++], 10);\nconst result = solve(dividend, divisor);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(int dividend, int divisor) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int dividend = stoi(lines[pos++]);\n    int divisor = stoi(lines[pos++]);\n    int result = solve(dividend, divisor);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "10\n3\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "7\n-3\n",
+        "expectedOutput": "-2\n",
+        "sample": true
+      },
+      {
+        "input": "-7\n3\n",
+        "expectedOutput": "-2\n",
+        "sample": false
+      },
+      {
+        "input": "-7\n-3\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "0\n5\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n-1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n7\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "-5\n7\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "-2147483648\n-1\n",
+        "expectedOutput": "2147483647\n",
+        "sample": false
+      },
+      {
+        "input": "-2147483648\n1\n",
+        "expectedOutput": "-2147483648\n",
+        "sample": false
+      },
+      {
+        "input": "2147483647\n1\n",
+        "expectedOutput": "2147483647\n",
+        "sample": false
+      },
+      {
+        "input": "2147483647\n2\n",
+        "expectedOutput": "1073741823\n",
+        "sample": false
+      },
+      {
+        "input": "-2147483648\n2\n",
+        "expectedOutput": "-1073741824\n",
+        "sample": false
+      },
+      {
+        "input": "-2147483648\n-2\n",
+        "expectedOutput": "1073741824\n",
+        "sample": false
+      },
+      {
+        "input": "2147483647\n-1\n",
+        "expectedOutput": "-2147483647\n",
+        "sample": false
+      },
+      {
+        "input": "-2147483648\n2147483647\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "1073741824\n3\n",
+        "expectedOutput": "357913941\n",
+        "sample": false
+      },
+      {
+        "input": "-1073741824\n7\n",
+        "expectedOutput": "-153391689\n",
+        "sample": false
+      },
+      {
+        "input": "100\n100\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "99\n100\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "-848119365\n-68\n",
+        "expectedOutput": "12472343\n",
+        "sample": false
+      },
+      {
+        "input": "600854751\n-8481550\n",
+        "expectedOutput": "-70\n",
+        "sample": false
+      },
+      {
+        "input": "1077368170\n-55369548\n",
+        "expectedOutput": "-19\n",
+        "sample": false
+      },
+      {
+        "input": "-632772163\n-3549\n",
+        "expectedOutput": "178295\n",
+        "sample": false
+      },
+      {
+        "input": "1045406803\n4728\n",
+        "expectedOutput": "221109\n",
+        "sample": false
+      },
+      {
+        "input": "-1350681152\n-844300\n",
+        "expectedOutput": "1599\n",
+        "sample": false
+      },
+      {
+        "input": "-1393444751\n73526468\n",
+        "expectedOutput": "-18\n",
+        "sample": false
+      },
+      {
+        "input": "-339845472\n51798568\n",
+        "expectedOutput": "-6\n",
+        "sample": false
+      },
+      {
+        "input": "1516064718\n-350354\n",
+        "expectedOutput": "-4327\n",
+        "sample": false
+      },
+      {
+        "input": "1547091371\n809075\n",
+        "expectedOutput": "1912\n",
+        "sample": false
+      }
+    ],
+    "order": 346
   },
   {
     "slug": "permutation-sequence",
@@ -29930,7 +30650,7 @@
         "sample": false
       }
     ],
-    "order": 339
+    "order": 347
   },
   {
     "slug": "island-perimeter",
@@ -30019,7 +30739,7 @@
         "sample": false
       }
     ],
-    "order": 340
+    "order": 348
   },
   {
     "slug": "max-area-of-island",
@@ -30108,7 +30828,7 @@
         "sample": false
       }
     ],
-    "order": 341
+    "order": 349
   },
   {
     "slug": "spiral-matrix",
@@ -30218,7 +30938,7 @@
         "sample": false
       }
     ],
-    "order": 342
+    "order": 350
   },
   {
     "slug": "set-matrix-zeroes",
@@ -30305,7 +31025,7 @@
         "sample": false
       }
     ],
-    "order": 343
+    "order": 351
   },
   {
     "slug": "valid-sudoku",
@@ -30409,7 +31129,7 @@
         "sample": false
       }
     ],
-    "order": 344
+    "order": 352
   },
   {
     "slug": "game-of-life",
@@ -30503,6 +31223,6 @@
         "sample": false
       }
     ],
-    "order": 345
+    "order": 353
   }
 ]

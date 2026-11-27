@@ -3237,5 +3237,85 @@
     "approach": "Two parallel stacks: values and running minimums, where mins[i] = min(value, mins[i - 1]). getMin reads the top of mins.",
     "time": "O(1) per command",
     "space": "O(n)"
+  },
+  "lfu-cache": {
+    "hints": [
+      "You need to find the least frequently used key fast, and break ties by recency.",
+      "Keep a bucket (linked list) of keys for every use count, newest at the front.",
+      "Track the smallest count in use so eviction is O(1)."
+    ],
+    "approach": "Hash map key -> (value, count, list position) plus buckets count -> keys. A use moves the key to bucket count + 1; eviction removes the tail of the minimum-count bucket.",
+    "time": "O(1) per command",
+    "space": "O(capacity)"
+  },
+  "implement-queue-using-stacks": {
+    "hints": [
+      "A stack reverses order; two reversals restore it.",
+      "Push onto an input stack; serve from an output stack.",
+      "Only move input to output when the output is empty."
+    ],
+    "approach": "Two stacks: push goes to `in`; pop/peek first refill `out` from `in` if `out` is empty, then use the top of `out`. Each element moves at most once.",
+    "time": "O(1) amortised per command",
+    "space": "O(n)"
+  },
+  "implement-stack-using-queues": {
+    "hints": [
+      "A queue serves the oldest element first, but a stack needs the newest.",
+      "After pushing, rotate the older elements behind the new one.",
+      "Then the front of the queue is always the top of the stack."
+    ],
+    "approach": "One queue: push the value, then move the other size - 1 elements from the front to the back so the new value is at the front.",
+    "time": "push O(n), others O(1)",
+    "space": "O(n)"
+  },
+  "implement-min-heap": {
+    "hints": [
+      "Store the heap in an array: children of i are 2i + 1 and 2i + 2.",
+      "Push at the end and sift up while it is smaller than its parent.",
+      "Pop by moving the last element to the root and sifting down."
+    ],
+    "approach": "Array-based binary heap with siftUp for push and siftDown for pop; peek reads index 0.",
+    "time": "O(log n) push and pop, O(1) peek",
+    "space": "O(n)"
+  },
+  "longest-word-with-all-prefixes": {
+    "hints": [
+      "Put every word in a set.",
+      "A word qualifies when all its shorter prefixes are in the set.",
+      "Among qualifying words prefer the longest, then the smallest alphabetically."
+    ],
+    "approach": "Hash set (or trie) of the words; check every prefix of each word; keep the best by (length, then lexicographic order).",
+    "time": "O(total letters squared) with a set, O(total letters) with a trie",
+    "space": "O(total letters)"
+  },
+  "maximum-xor-of-two-numbers-in-an-array": {
+    "hints": [
+      "XOR is largest when the high bits differ.",
+      "Store the numbers in a binary trie, from the top bit down.",
+      "For each number walk the trie choosing the opposite bit whenever it exists."
+    ],
+    "approach": "Binary trie over 30 bits: insert numbers one by one; for each new number greedily take the opposite bit at every level and build the XOR; keep the maximum.",
+    "time": "O(30 * n)",
+    "space": "O(30 * n)"
+  },
+  "count-distinct-substrings": {
+    "hints": [
+      "Every substring is a prefix of some suffix.",
+      "Insert all suffixes into a trie.",
+      "Each new trie node is one new distinct substring."
+    ],
+    "approach": "Insert every suffix of s into a trie; the number of nodes (without the root) equals the number of distinct non-empty substrings.",
+    "time": "O(n^2)",
+    "space": "O(n^2)"
+  },
+  "divide-two-integers": {
+    "hints": [
+      "Work with absolute values in 64 bits.",
+      "Any quotient is a sum of powers of two times the divisor.",
+      "Subtract divisor * 2^i from the biggest i down to 0 whenever it still fits."
+    ],
+    "approach": "Bit-shifting long division: for i from 31 down to 0, if (a >> i) >= b then a -= b << i and add 2^i to the answer; fix the sign and handle INT_MIN / -1.",
+    "time": "O(32)",
+    "space": "O(1)"
   }
 }

@@ -1,0 +1,172 @@
+=== lfu-cache
+--- cpp
+vector<int> solve(int capacity, vector<string> ops) {
+    struct Entry { int value, freq; list<int>::iterator pos; };
+    unordered_map<int, Entry> info;                        // key -> its value, use count and place in its bucket
+    unordered_map<int, list<int>> bucket;                  // use count -> keys, front = most recently used
+    int minFreq = 0;
+    vector<int> out;
+    auto touch = [&](int k) {                              // one more use of key k
+        Entry &e = info[k];
+        bucket[e.freq].erase(e.pos);
+        if (bucket[e.freq].empty()) { bucket.erase(e.freq); if (minFreq == e.freq) minFreq++; }
+        e.freq++;
+        bucket[e.freq].push_front(k);
+        e.pos = bucket[e.freq].begin();
+    };
+    for (auto &line : ops) {
+        istringstream in(line);
+        string cmd; int k, v;
+        in >> cmd >> k;
+        if (cmd == "get") {
+            if (!info.count(k)) { out.push_back(-1); continue; }
+            touch(k);
+            out.push_back(info[k].value);
+        } else {
+            in >> v;
+            if (info.count(k)) { info[k].value = v; touch(k); continue; }
+            if ((int)info.size() == capacity) {            // evict: lowest count, least recently used among them
+                int victim = bucket[minFreq].back();
+                bucket[minFreq].pop_back();
+                if (bucket[minFreq].empty()) bucket.erase(minFreq);
+                info.erase(victim);
+            }
+            bucket[1].push_front(k);
+            info[k] = {v, 1, bucket[1].begin()};
+            minFreq = 1;
+        }
+    }
+    return out;
+}
+=== implement-queue-using-stacks
+--- cpp
+vector<int> solve(vector<string> ops) {
+    stack<int> in, out;                                    // push onto `in`; take from `out`, refilled (reversed) only when empty
+    vector<int> res;
+    auto refill = [&]() { if (out.empty()) while (!in.empty()) { out.push(in.top()); in.pop(); } };
+    for (auto &line : ops) {
+        istringstream ss(line);
+        string cmd; ss >> cmd;
+        if (cmd == "push") { int x; ss >> x; in.push(x); }
+        else if (cmd == "pop") { refill(); res.push_back(out.top()); out.pop(); }
+        else if (cmd == "peek") { refill(); res.push_back(out.top()); }
+        else res.push_back(in.empty() && out.empty() ? 1 : 0);
+    }
+    return res;
+}
+=== implement-stack-using-queues
+--- cpp
+vector<int> solve(vector<string> ops) {
+    queue<int> q;                                          // after every push, rotate so the newest value is at the front
+    vector<int> res;
+    for (auto &line : ops) {
+        istringstream ss(line);
+        string cmd; ss >> cmd;
+        if (cmd == "push") {
+            int x; ss >> x;
+            q.push(x);
+            for (size_t i = 1; i < q.size(); i++) { q.push(q.front()); q.pop(); }
+        } else if (cmd == "pop") { res.push_back(q.front()); q.pop(); }
+        else if (cmd == "top") res.push_back(q.front());
+        else res.push_back(q.empty() ? 1 : 0);
+    }
+    return res;
+}
+=== implement-min-heap
+--- cpp
+vector<int> solve(vector<string> ops) {
+    vector<int> h;                                         // array heap: children of i are 2i+1 and 2i+2
+    vector<int> res;
+    auto siftUp = [&](int i) {
+        while (i > 0 && h[(i - 1) / 2] > h[i]) { swap(h[(i - 1) / 2], h[i]); i = (i - 1) / 2; }
+    };
+    auto siftDown = [&](int i) {
+        int n = h.size();
+        while (true) {
+            int l = 2 * i + 1, r = l + 1, m = i;
+            if (l < n && h[l] < h[m]) m = l;
+            if (r < n && h[r] < h[m]) m = r;
+            if (m == i) break;
+            swap(h[i], h[m]); i = m;
+        }
+    };
+    for (auto &line : ops) {
+        istringstream ss(line);
+        string cmd; ss >> cmd;
+        if (cmd == "push") { int x; ss >> x; h.push_back(x); siftUp(h.size() - 1); }
+        else if (cmd == "pop") {
+            res.push_back(h[0]);
+            h[0] = h.back(); h.pop_back();
+            if (!h.empty()) siftDown(0);
+        }
+        else if (cmd == "peek") res.push_back(h[0]);
+        else res.push_back(h.size());
+    }
+    return res;
+}
+=== longest-word-with-all-prefixes
+--- cpp
+string solve(vector<string> words) {
+    unordered_set<string> have(words.begin(), words.end());
+    string best = "None";
+    for (auto &w : have) {
+        bool ok = true;
+        for (size_t len = 1; len < w.size() && ok; len++) ok = have.count(w.substr(0, len)) > 0;
+        if (!ok) continue;
+        if (best == "None" || w.size() > best.size() || (w.size() == best.size() && w < best)) best = w;
+    }
+    return best;
+}
+=== maximum-xor-of-two-numbers-in-an-array
+--- cpp
+int solve(vector<int> nums) {
+    // binary trie of the numbers, 30 bits from the top; for each number walk the opposite bit whenever possible
+    vector<array<int, 2>> t(1, {-1, -1});
+    auto insert = [&](int x) {
+        int node = 0;
+        for (int b = 29; b >= 0; b--) {
+            int bit = x >> b & 1;
+            if (t[node][bit] == -1) { t[node][bit] = t.size(); t.push_back({-1, -1}); }
+            node = t[node][bit];
+        }
+    };
+    int best = 0;
+    insert(nums[0]);
+    for (size_t i = 1; i < nums.size(); i++) {
+        int node = 0, cur = 0;
+        for (int b = 29; b >= 0; b--) {
+            int want = (nums[i] >> b & 1) ^ 1;
+            if (t[node][want] != -1) { cur |= 1 << b; node = t[node][want]; }
+            else node = t[node][want ^ 1];
+        }
+        best = max(best, cur);
+        insert(nums[i]);
+    }
+    return best;
+}
+=== count-distinct-substrings
+--- cpp
+int solve(string s) {
+    // every substring is a prefix of some suffix: insert all suffixes into a trie, every new node is a new substring
+    vector<array<int, 26>> t(1);
+    t[0].fill(-1);
+    int n = s.size();
+    for (int i = 0; i < n; i++) {
+        int node = 0;
+        for (int j = i; j < n; j++) {
+            int c = s[j] - 'a';
+            if (t[node][c] == -1) { t[node][c] = t.size(); t.emplace_back(); t.back().fill(-1); }
+            node = t[node][c];
+        }
+    }
+    return (int)t.size() - 1;
+}
+=== divide-two-integers
+--- cpp
+int solve(int dividend, int divisor) {
+    if (dividend == INT_MIN && divisor == -1) return INT_MAX;      // the only overflowing case
+    long long a = llabs((long long)dividend), b = llabs((long long)divisor), q = 0;
+    for (int i = 31; i >= 0; i--)                                  // subtract divisor * 2^i whenever it still fits
+        if ((a >> i) >= b) { a -= b << i; q += 1LL << i; }
+    return (dividend < 0) != (divisor < 0) ? (int)-q : (int)q;
+}
