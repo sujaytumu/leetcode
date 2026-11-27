@@ -1,3 +1,4 @@
+import { failureMessage, isClientId } from "./apierr";
 import { authHeaders, authToken, expireSession } from "./auth";
 import { loading } from "./loading";
 
@@ -101,7 +102,8 @@ export class ApiError extends Error {
 
 export function clientId(): string {
   let id = localStorage.getItem("lc-client-id");
-  if (!id) { id = crypto.randomUUID(); localStorage.setItem("lc-client-id", id); }
+  // A stored id that is not a UUID is rejected with HTTP 400 on every call, so replace it.
+  if (!isClientId(id)) { id = crypto.randomUUID(); localStorage.setItem("lc-client-id", id); }
   return id;
 }
 
@@ -138,8 +140,7 @@ async function request<T>(path: string, init: RequestInit, timeoutMs: number): P
     let msg = "";
     try { const j = await res.json(); msg = j.detail || j.message || j.title || ""; } catch {}
     const transient = res.status === 502 || res.status === 503 || res.status === 504;
-    if (!msg) msg = transient ? "The server is starting up." : `Request failed (HTTP ${res.status}).`;
-    throw new ApiError(msg, res.status, transient);
+    throw new ApiError(failureMessage(res.status, msg, path), res.status, transient);
   }
   return res.status === 204 ? (undefined as T) : res.json();
 }
