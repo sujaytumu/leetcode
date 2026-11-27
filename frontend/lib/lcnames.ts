@@ -353,6 +353,21 @@ export const LC_METHODS: Record<string, string> = {
   "maximum-xor-of-two-numbers-in-an-array": "findMaximumXOR",
   "count-distinct-substrings": "countDistinctSubstrings",
   "divide-two-integers": "divide",
+  "subarrays-with-k-different-integers": "subarraysWithKDistinct",
+  "count-number-of-nice-subarrays": "numberOfSubarrays",
+  "fruit-into-baskets": "totalFruit",
+  "max-consecutive-ones-iii": "longestOnes",
+  "maximum-points-you-can-obtain-from-cards": "maxScore",
+  "number-of-substrings-containing-all-three-characters": "numberOfSubstrings",
+  "remove-k-digits": "removeKdigits",
+  "asteroid-collision": "asteroidCollision",
+  "sum-of-subarray-ranges": "subArrayRanges",
+  "3sum": "threeSum",
+  "4sum": "fourSum",
+  "allocate-books": "findPages",
+  "0-1-knapsack": "knapSack",
+  "unbounded-knapsack": "unboundedKnapsack",
+  "minimum-bit-flips-to-convert-number": "minBitFlips",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

@@ -3317,5 +3317,140 @@
     "approach": "Bit-shifting long division: for i from 31 down to 0, if (a >> i) >= b then a -= b << i and add 2^i to the answer; fix the sign and handle INT_MIN / -1.",
     "time": "O(32)",
     "space": "O(1)"
+  },
+  "subarrays-with-k-different-integers": {
+    "hints": [
+      "Counting exactly k is awkward; counting at most k is easy with a window.",
+      "exactly(k) = atMost(k) - atMost(k-1)."
+    ],
+    "approach": "Run a sliding window that keeps at most k distinct values and adds window-length subarrays for each right end. Subtract the at-most-(k-1) count to leave exactly k.",
+    "time": "O(n)",
+    "space": "O(k)"
+  },
+  "count-number-of-nice-subarrays": {
+    "hints": [
+      "Turn each number into 1 (odd) or 0 (even).",
+      "Count subarrays whose sum is k with prefix counts."
+    ],
+    "approach": "Track how many odd numbers each prefix holds. For the current prefix with c odds, add how many earlier prefixes held c - k odds.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "fruit-into-baskets": {
+    "hints": [
+      "It is the longest subarray with at most two distinct values.",
+      "Shrink from the left when a third type appears."
+    ],
+    "approach": "Sliding window with a frequency map. Grow the right end, and while the map has more than two types move the left end and drop counts to zero. Track the longest window.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "max-consecutive-ones-iii": {
+    "hints": [
+      "Longest window that contains at most k zeros.",
+      "Move the left end only when the zero count exceeds k."
+    ],
+    "approach": "Sliding window counting zeros. Expand right; when zeros exceed k, advance left until it is valid again. The best window length is the answer.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "maximum-points-you-can-obtain-from-cards": {
+    "hints": [
+      "Taking k cards from the ends leaves a contiguous block in the middle.",
+      "Start with all k from the left and swap one at a time."
+    ],
+    "approach": "Sum the first k cards, then in k steps replace the last left card with the next right card, keeping the best total.",
+    "time": "O(k)",
+    "space": "O(1)"
+  },
+  "number-of-substrings-containing-all-three-characters": {
+    "hints": [
+      "For each end index, how far left can a valid start be?",
+      "Remember the last position of a, b and c."
+    ],
+    "approach": "For every end i, the substring is valid when it starts at or before the smallest of the last positions of the three letters. Add that minimum plus one for each i.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "remove-k-digits": {
+    "hints": [
+      "Removing a digit that is larger than its right neighbour helps most.",
+      "A monotonic stack does that in one pass."
+    ],
+    "approach": "Push digits on a stack, popping while the top is larger than the current digit and removals remain. Trim leftover removals from the end, strip leading zeros and return 0 if empty.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "asteroid-collision": {
+    "hints": [
+      "Only a right-mover followed by a left-mover collides.",
+      "Keep surviving asteroids on a stack."
+    ],
+    "approach": "For each left-mover, pop smaller right-movers off the stack, pop one equal and destroy both, or stop if the top is larger. Otherwise push the asteroid.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "sum-of-subarray-ranges": {
+    "hints": [
+      "range = max - min, so sum the maximums and the minimums separately.",
+      "Count in how many subarrays each element is the maximum."
+    ],
+    "approach": "With a monotonic stack find the previous and next boundary where each element stops being the maximum; it contributes value x left span x right span. Do the same for minimums via negation.",
+    "time": "O(n)",
+    "space": "O(n)"
+  },
+  "3sum": {
+    "hints": [
+      "Sort first so duplicates sit together.",
+      "Fix one number and use two pointers for the rest."
+    ],
+    "approach": "Sort, fix i, and move lo/hi inward looking for the sum -nums[i]. Skip repeated values for i and after each hit so no triplet repeats.",
+    "time": "O(n^2)",
+    "space": "O(1) extra"
+  },
+  "4sum": {
+    "hints": [
+      "Same idea as 3Sum with one more fixed element.",
+      "Use long long for the sum."
+    ],
+    "approach": "Sort, fix i and j with duplicate skipping, then run two pointers on the rest to reach target - nums[i] - nums[j].",
+    "time": "O(n^3)",
+    "space": "O(1) extra"
+  },
+  "allocate-books": {
+    "hints": [
+      "If m > n some student has no book, so return -1.",
+      "Binary search the largest allowed load."
+    ],
+    "approach": "The answer lies between the biggest book and the total pages. Binary search a limit and greedily count students needed; shrink the limit when m students suffice.",
+    "time": "O(n log S)",
+    "space": "O(1)"
+  },
+  "0-1-knapsack": {
+    "hints": [
+      "Each item is either taken or not.",
+      "A 1D table works if capacity loops downwards."
+    ],
+    "approach": "best[w] is the top value for weight w. For each item iterate w from capacity down to its weight and take max(best[w], best[w - weight] + value).",
+    "time": "O(n x W)",
+    "space": "O(W)"
+  },
+  "unbounded-knapsack": {
+    "hints": [
+      "Items can repeat, so allow reuse in the same pass.",
+      "Loop capacity upwards."
+    ],
+    "approach": "Same table as 0/1 knapsack, but iterate w upwards so best[w - weight] may already include the item.",
+    "time": "O(n x W)",
+    "space": "O(W)"
+  },
+  "minimum-bit-flips-to-convert-number": {
+    "hints": [
+      "Only the bits where the numbers differ need flipping.",
+      "XOR marks those bits."
+    ],
+    "approach": "Compute start XOR goal and count its set bits.",
+    "time": "O(1)",
+    "space": "O(1)"
   }
 }

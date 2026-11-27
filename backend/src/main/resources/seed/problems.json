@@ -4843,6 +4843,170 @@
     "order": 58
   },
   {
+    "slug": "3sum",
+    "title": "3Sum",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "two-pointers",
+      "sorting",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return every unique triplet `[a, b, c]` of `nums` (taken at different positions) with `a + b + c = 0`. Sort each triplet in increasing order and list the triplets in increasing lexicographic order, with no repeats.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nOne triplet per line, numbers separated by spaces. Print nothing if there is none.\n\n### Constraints\n- `3 <= n <= 100`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n10 -12 -8\n\nOutput:\n\n```\n\n**Example 2**\n```text\nInput:\n5\n-1 -9 4 5 0\n\nOutput:\n-9 4 5\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[][] solve(int[] nums) {\n        // Write your solution here\n        return new int[0][];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[][] result = solve(nums);\n        for (int[] row : result) {\n            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n        }\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    for row in result:\n        print(\" \".join(map(str, row)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(result.map((r) => r.join(\" \")).join(\"\\n\"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<vector<int>> solve(vector<int> nums) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    vector<vector<int>> result = solve(nums);\n    for (auto &row : result) {\n        for (size_t j = 0; j < row.size(); j++) {\n            if (j) cout << \" \";\n            cout << row[j];\n        }\n        cout << \"\\n\";\n    }\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "3\n10 -12 -8\n",
+        "expectedOutput": "\n",
+        "sample": true
+      },
+      {
+        "input": "5\n-1 -9 4 5 0\n",
+        "expectedOutput": "-9 4 5\n",
+        "sample": true
+      },
+      {
+        "input": "8\n7 9 4 1 12 0 -12 -2\n",
+        "expectedOutput": "-12 0 12\n",
+        "sample": false
+      },
+      {
+        "input": "12\n4 -5 -12 6 -2 -12 -10 -7 -12 -6 -9 6\n",
+        "expectedOutput": "-12 6 6\n-10 4 6\n",
+        "sample": false
+      },
+      {
+        "input": "25\n11 5 -5 -7 4 -5 2 -8 2 -11 9 -11 -7 -4 8 10 9 -8 0 -8 11 -11 10 -12 -12\n",
+        "expectedOutput": "-12 2 10\n-12 4 8\n-11 0 11\n-11 2 9\n-8 0 8\n-7 -4 11\n-7 2 5\n-5 -5 10\n-5 -4 9\n-5 0 5\n-4 0 4\n-4 2 2\n",
+        "sample": false
+      },
+      {
+        "input": "50\n12 2 11 10 -4 -11 -9 -12 -5 0 -11 9 7 0 -6 7 0 9 -11 2 -7 -6 11 -11 4 -6 -1 8 12 -12 -5 10 4 -10 3 -9 -2 -2 -9 1 2 -12 0 7 -3 -4 10 -3 1 1\n",
+        "expectedOutput": "-12 0 12\n-12 1 11\n-12 2 10\n-12 3 9\n-12 4 8\n-11 -1 12\n-11 0 11\n-11 1 10\n-11 2 9\n-11 3 8\n-11 4 7\n-10 -2 12\n-10 -1 11\n-10 0 10\n-10 1 9\n-10 2 8\n-10 3 7\n-9 -3 12\n-9 -2 11\n-9 -1 10\n-9 0 9\n-9 1 8\n-9 2 7\n-7 -5 12\n-7 -4 11\n-7 -3 10\n-7 -2 9\n-7 -1 8\n-7 0 7\n-7 3 4\n-6 -6 12\n-6 -5 11\n-6 -4 10\n-6 -3 9\n-6 -2 8\n-6 -1 7\n-6 2 4\n-5 -5 10\n-5 -4 9\n-5 -3 8\n-5 -2 7\n-5 1 4\n-5 2 3\n-4 -4 8\n-4 -3 7\n-4 0 4\n-4 1 3\n-4 2 2\n-3 -1 4\n-3 0 3\n-3 1 2\n-2 -2 4\n-2 -1 3\n-2 0 2\n-2 1 1\n-1 0 1\n0 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "90\n12 5 11 -11 -7 -1 -6 3 -1 -10 -7 6 3 8 -2 -11 -1 3 -2 3 -3 -2 12 -8 -4 11 -12 -10 0 -2 -3 -11 -5 -4 -9 6 -11 -2 -12 8 -7 -4 9 3 10 7 -4 12 4 -9 -8 4 -7 8 4 11 2 12 -2 11 -10 -12 0 -5 -8 4 -5 -12 -7 7 -5 -3 0 -4 12 -11 -6 -6 -8 11 -7 -8 4 -4 8 -1 -11 3 2 7\n",
+        "expectedOutput": "-12 0 12\n-12 2 10\n-12 3 9\n-12 4 8\n-12 5 7\n-12 6 6\n-11 -1 12\n-11 0 11\n-11 2 9\n-11 3 8\n-11 4 7\n-11 5 6\n-10 -2 12\n-10 -1 11\n-10 0 10\n-10 2 8\n-10 3 7\n-10 4 6\n-9 -3 12\n-9 -2 11\n-9 -1 10\n-9 0 9\n-9 2 7\n-9 3 6\n-9 4 5\n-8 -4 12\n-8 -3 11\n-8 -2 10\n-8 -1 9\n-8 0 8\n-8 2 6\n-8 3 5\n-8 4 4\n-7 -5 12\n-7 -4 11\n-7 -3 10\n-7 -2 9\n-7 -1 8\n-7 0 7\n-7 2 5\n-7 3 4\n-6 -6 12\n-6 -5 11\n-6 -4 10\n-6 -3 9\n-6 -2 8\n-6 -1 7\n-6 0 6\n-6 2 4\n-6 3 3\n-5 -5 10\n-5 -4 9\n-5 -3 8\n-5 -2 7\n-5 -1 6\n-5 0 5\n-5 2 3\n-4 -4 8\n-4 -3 7\n-4 -2 6\n-4 -1 5\n-4 0 4\n-4 2 2\n-3 -3 6\n-3 -2 5\n-3 -1 4\n-3 0 3\n-2 -2 4\n-2 -1 3\n-2 0 2\n-1 -1 2\n0 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "6\n-1 0 1 2 -1 -4\n",
+        "expectedOutput": "-1 -1 2\n-1 0 1\n",
+        "sample": false
+      },
+      {
+        "input": "4\n0 0 0 0\n",
+        "expectedOutput": "0 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n",
+        "expectedOutput": "\n",
+        "sample": false
+      },
+      {
+        "input": "3\n0 0 0\n",
+        "expectedOutput": "0 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "5\n-2 0 1 1 2\n",
+        "expectedOutput": "-2 0 2\n-2 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "15\n-4 -2 -2 -2 0 1 2 2 2 3 3 4 4 6 6\n",
+        "expectedOutput": "-4 -2 6\n-4 0 4\n-4 1 3\n-4 2 2\n-2 -2 4\n-2 0 2\n",
+        "sample": false
+      }
+    ],
+    "order": 59
+  },
+  {
+    "slug": "4sum",
+    "title": "4Sum",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "two-pointers",
+      "sorting",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return every unique quadruplet of `nums` (taken at different positions) that adds up to `target`. Sort each quadruplet in increasing order and list them in increasing lexicographic order, with no repeats.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.\n\n### Output\nOne quadruplet per line, numbers separated by spaces. Print nothing if there is none.\n\n### Constraints\n- `4 <= n <= 40`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n-1 2 2 7\n3\n\nOutput:\n\n```\n\n**Example 2**\n```text\nInput:\n6\n1 -5 -10 4 -5 10\n-6\n\nOutput:\n\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[][] solve(int[] nums, int target) {\n        // Write your solution here\n        return new int[0][];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int target = Integer.parseInt(lines.get(pos++).trim());\n        int[][] result = solve(nums, target);\n        for (int[] row : result) {\n            System.out.println(Arrays.stream(row).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n        }\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, target):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    target = int(lines[pos]); pos += 1\n    result = solve(nums, target)\n    for row in result:\n        print(\" \".join(map(str, row)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, target) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst target = parseInt(lines[pos++], 10);\nconst result = solve(nums, target);\nconsole.log(result.map((r) => r.join(\" \")).join(\"\\n\"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<vector<int>> solve(vector<int> nums, int target) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int target = stoi(lines[pos++]);\n    vector<vector<int>> result = solve(nums, target);\n    for (auto &row : result) {\n        for (size_t j = 0; j < row.size(); j++) {\n            if (j) cout << \" \";\n            cout << row[j];\n        }\n        cout << \"\\n\";\n    }\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n-1 2 2 7\n3\n",
+        "expectedOutput": "\n",
+        "sample": true
+      },
+      {
+        "input": "6\n1 -5 -10 4 -5 10\n-6\n",
+        "expectedOutput": "\n",
+        "sample": true
+      },
+      {
+        "input": "9\n9 2 0 -8 -4 1 -6 -1 9\n2\n",
+        "expectedOutput": "-8 -1 2 9\n-8 0 1 9\n-6 -1 0 9\n-1 0 1 2\n",
+        "sample": false
+      },
+      {
+        "input": "14\n-7 4 0 -9 1 5 -6 -5 -10 -5 3 1 -8 3\n5\n",
+        "expectedOutput": "-7 3 4 5\n-6 3 3 5\n-5 1 4 5\n-5 3 3 4\n0 1 1 3\n",
+        "sample": false
+      },
+      {
+        "input": "20\n-9 1 8 1 9 1 -1 6 -5 1 -6 1 2 -2 1 10 -4 9 -2 -9\n1\n",
+        "expectedOutput": "-9 -9 9 10\n-9 -6 6 10\n-9 -5 6 9\n-9 -4 6 8\n-9 -2 2 10\n-9 -1 1 10\n-9 -1 2 9\n-9 1 1 8\n-6 -5 2 10\n-6 -4 1 10\n-6 -4 2 9\n-6 -2 -1 10\n-6 -2 1 8\n-6 -1 2 6\n-5 -4 1 9\n-5 -4 2 8\n-5 -2 -2 10\n-5 -2 -1 9\n-5 -2 2 6\n-5 -1 1 6\n-4 -2 -2 9\n-4 -2 -1 8\n-4 -2 1 6\n-2 -2 -1 6\n-2 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "30\n7 7 -9 -10 -5 5 8 8 10 6 -6 -6 0 9 5 -9 1 -7 -5 -1 0 0 4 -8 1 -4 -6 -9 7 -6\n-5\n",
+        "expectedOutput": "-10 -9 4 10\n-10 -9 5 9\n-10 -9 6 8\n-10 -9 7 7\n-10 -8 4 9\n-10 -8 5 8\n-10 -8 6 7\n-10 -7 4 8\n-10 -7 5 7\n-10 -6 1 10\n-10 -6 4 7\n-10 -6 5 6\n-10 -5 0 10\n-10 -5 1 9\n-10 -5 4 6\n-10 -5 5 5\n-10 -4 -1 10\n-10 -4 0 9\n-10 -4 1 8\n-10 -4 4 5\n-10 -1 0 6\n-10 -1 1 5\n-10 0 0 5\n-10 0 1 4\n-9 -9 4 9\n-9 -9 5 8\n-9 -9 6 7\n-9 -8 4 8\n-9 -8 5 7\n-9 -7 1 10\n-9 -7 4 7\n-9 -7 5 6\n-9 -6 0 10\n-9 -6 1 9\n-9 -6 4 6\n-9 -6 5 5\n-9 -5 -1 10\n-9 -5 0 9\n-9 -5 1 8\n-9 -5 4 5\n-9 -4 -1 9\n-9 -4 0 8\n-9 -4 1 7\n-9 -1 0 5\n-9 -1 1 4\n-9 0 0 4\n-8 -7 0 10\n-8 -7 1 9\n-8 -7 4 6\n-8 -7 5 5\n-8 -6 -1 10\n-8 -6 0 9\n-8 -6 1 8\n-8 -6 4 5\n-8 -5 -1 9\n-8 -5 0 8\n-8 -5 1 7\n-8 -4 -1 8\n-8 -4 0 7\n-8 -4 1 6\n-8 -1 0 4\n-7 -6 -1 9\n-7 -6 0 8\n-7 -6 1 7\n-7 -5 -1 8\n-7 -5 0 7\n-7 -5 1 6\n-7 -4 -1 7\n-7 -4 0 6\n-7 -4 1 5\n-7 0 1 1\n-6 -6 -1 8\n-6 -6 0 7\n-6 -6 1 6\n-6 -5 -4 10\n-6 -5 -1 7\n-6 -5 0 6\n-6 -5 1 5\n-6 -4 -1 6\n-6 -4 0 5\n-6 -4 1 4\n-6 -1 1 1\n-6 0 0 1\n-5 -5 -4 9\n-5 -5 -1 6\n-5 -5 0 5\n-5 -5 1 4\n-5 -4 -1 5\n-5 -4 0 4\n-5 -1 0 1\n-5 0 0 0\n-4 -1 0 0\n",
+        "sample": false
+      },
+      {
+        "input": "40\n-3 9 5 -9 4 2 -7 -7 10 -8 -4 2 -3 -3 1 2 10 -7 -7 3 3 7 3 -4 -6 9 8 1 4 1 1 5 5 2 -1 -1 5 2 -3 3\n6\n",
+        "expectedOutput": "-9 -4 9 10\n-9 -3 8 10\n-9 -3 9 9\n-9 -1 7 9\n-9 1 4 10\n-9 1 5 9\n-9 2 3 10\n-9 2 4 9\n-9 2 5 8\n-9 3 3 9\n-9 3 4 8\n-9 3 5 7\n-9 4 4 7\n-9 5 5 5\n-8 -6 10 10\n-8 -4 8 10\n-8 -4 9 9\n-8 -3 7 10\n-8 -3 8 9\n-8 -1 5 10\n-8 -1 7 8\n-8 1 3 10\n-8 1 4 9\n-8 1 5 8\n-8 2 2 10\n-8 2 3 9\n-8 2 4 8\n-8 2 5 7\n-8 3 3 8\n-8 3 4 7\n-8 4 5 5\n-7 -7 10 10\n-7 -6 9 10\n-7 -4 7 10\n-7 -4 8 9\n-7 -3 7 9\n-7 -1 4 10\n-7 -1 5 9\n-7 1 2 10\n-7 1 3 9\n-7 1 4 8\n-7 1 5 7\n-7 2 2 9\n-7 2 3 8\n-7 2 4 7\n-7 3 3 7\n-7 3 5 5\n-7 4 4 5\n-6 -4 7 9\n-6 -3 5 10\n-6 -3 7 8\n-6 -1 3 10\n-6 -1 4 9\n-6 -1 5 8\n-6 1 1 10\n-6 1 2 9\n-6 1 3 8\n-6 1 4 7\n-6 2 2 8\n-6 2 3 7\n-6 2 5 5\n-6 3 4 5\n-4 -4 4 10\n-4 -4 5 9\n-4 -3 3 10\n-4 -3 4 9\n-4 -3 5 8\n-4 -1 1 10\n-4 -1 2 9\n-4 -1 3 8\n-4 -1 4 7\n-4 1 1 8\n-4 1 2 7\n-4 1 4 5\n-4 2 3 5\n-4 2 4 4\n-4 3 3 4\n-3 -3 2 10\n-3 -3 3 9\n-3 -3 4 8\n-3 -3 5 7\n-3 -1 1 9\n-3 -1 2 8\n-3 -1 3 7\n-3 -1 5 5\n-3 1 1 7\n-3 1 3 5\n-3 1 4 4\n-3 2 2 5\n-3 2 3 4\n-3 3 3 3\n-1 -1 1 7\n-1 -1 3 5\n-1 -1 4 4\n-1 1 1 5\n-1 1 2 4\n-1 1 3 3\n-1 2 2 3\n1 1 1 3\n1 1 2 2\n",
+        "sample": false
+      },
+      {
+        "input": "6\n1 0 -1 0 -2 2\n0\n",
+        "expectedOutput": "-2 -1 1 2\n-2 0 0 2\n-1 0 0 1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n2 2 2 2 2\n8\n",
+        "expectedOutput": "2 2 2 2\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 1 1 1\n4\n",
+        "expectedOutput": "1 1 1 1\n",
+        "sample": false
+      },
+      {
+        "input": "6\n-3 -1 0 2 4 5\n2\n",
+        "expectedOutput": "-3 -1 2 4\n",
+        "sample": false
+      }
+    ],
+    "order": 60
+  },
+  {
     "slug": "longest-substring-without-repeating-characters",
     "title": "Longest Substring Without Repeating Characters",
     "difficulty": "MEDIUM",
@@ -4947,7 +5111,7 @@
         "sample": false
       }
     ],
-    "order": 59
+    "order": 61
   },
   {
     "slug": "minimum-size-subarray-sum",
@@ -5042,7 +5206,7 @@
         "sample": false
       }
     ],
-    "order": 60
+    "order": 62
   },
   {
     "slug": "longest-repeating-character-replacement",
@@ -5138,7 +5302,7 @@
         "sample": false
       }
     ],
-    "order": 61
+    "order": 63
   },
   {
     "slug": "permutation-in-string",
@@ -5228,7 +5392,7 @@
         "sample": false
       }
     ],
-    "order": 62
+    "order": 64
   },
   {
     "slug": "longest-substring-with-at-most-k-distinct-characters",
@@ -5329,7 +5493,405 @@
         "sample": false
       }
     ],
-    "order": 63
+    "order": 65
+  },
+  {
+    "slug": "count-number-of-nice-subarrays",
+    "title": "Count Number of Nice Subarrays",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "sliding-window",
+      "prefix-sum",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "A subarray is nice if it contains exactly `k` odd numbers. Return how many nice subarrays `nums` has.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe number of nice subarrays.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= nums[i] <= 10^5`\n- `1 <= k <= n`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n3 2\n1\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums, int k) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int k = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(nums, k);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, k):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    k = int(lines[pos]); pos += 1\n    result = solve(nums, k)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, k) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst k = parseInt(lines[pos++], 10);\nconst result = solve(nums, k);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums, int k) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int k = stoi(lines[pos++]);\n    int result = solve(nums, k);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n3 2\n1\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n4 3 5 1 4\n4\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "12\n4 3 6 5 8 4 5 1 7 6 2 2\n3\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "40\n5 1 6 7 8 1 7 8 5 5 8 5 4 7 7 3 2 7 7 4 2 6 7 1 9 4 5 3 5 8 4 5 1 1 6 5 3 8 6 3\n1\n",
+        "expectedOutput": "57\n",
+        "sample": false
+      },
+      {
+        "input": "150\n2 5 9 2 8 1 4 8 1 8 1 1 5 1 9 6 7 2 6 3 3 5 4 2 8 4 1 9 4 2 9 2 8 4 1 6 5 1 5 6 4 3 6 9 5 2 9 3 5 3 9 6 8 3 7 4 4 6 8 4 6 6 8 6 3 5 4 2 8 4 4 2 4 1 3 5 6 3 3 1 8 5 8 2 8 1 5 7 9 9 3 9 3 9 9 8 6 8 1 5 8 6 6 2 3 1 2 3 1 5 4 8 3 7 7 6 6 2 5 9 9 7 7 7 2 5 7 3 2 9 8 9 6 8 7 8 2 3 7 2 9 3 9 8 9 4 3 1 6 6\n3\n",
+        "expectedOutput": "263\n",
+        "sample": false
+      },
+      {
+        "input": "300\n3 1 3 6 8 1 3 9 7 1 5 8 3 9 6 6 8 6 9 7 7 1 5 2 4 2 2 8 4 8 6 6 3 1 1 9 7 1 6 6 7 8 6 8 4 7 1 5 8 9 7 4 1 3 2 8 4 2 2 7 5 9 2 1 4 1 6 8 5 8 9 3 2 7 5 8 2 9 1 6 2 9 3 4 6 6 1 3 7 2 7 4 1 9 6 3 1 8 7 8 1 4 9 1 8 8 4 7 8 6 2 3 1 1 3 8 8 3 8 2 7 5 4 2 1 4 9 6 6 6 1 1 5 4 2 5 2 2 3 8 7 8 7 2 8 6 3 2 5 5 1 6 1 9 9 6 6 7 4 4 4 9 6 6 3 3 2 1 6 3 7 6 5 1 6 9 9 2 8 8 4 8 2 2 2 6 6 7 3 8 2 2 4 8 4 1 9 9 7 9 3 1 7 6 4 6 9 4 6 7 4 3 4 5 1 6 2 1 8 9 2 9 5 7 9 8 2 9 7 8 7 1 9 4 1 7 6 1 9 5 4 4 1 6 6 7 4 7 5 6 7 7 8 5 4 8 7 3 2 9 9 4 5 2 6 9 1 4 7 4 2 2 2 8 6 2 8 8 2 7 5 9 7 1 2 1 3 2 4 5 3 1 8 5 1 1 5 5 1 9\n3\n",
+        "expectedOutput": "536\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 1 2 1 1\n3\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 4 6\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "10\n2 2 2 1 2 2 1 2 2 2\n2\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 66
+  },
+  {
+    "slug": "fruit-into-baskets",
+    "title": "Fruit Into Baskets",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "sliding-window",
+      "hash-table",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "`fruits[i]` is the type of fruit on tree `i`. You walk right from any starting tree, picking one fruit from every tree, and own two baskets that each hold a single fruit type. Stop when a tree has a third type. Return the maximum number of fruits you can pick.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum number of fruits.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= fruits[i] < n`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n3 0\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] fruits) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int fruitsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] fruits = new int[fruitsLen];\n        if (fruitsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < fruitsLen; i++) fruits[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(fruits);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(fruits):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    fruits_len = int(lines[pos]); pos += 1\n    fruits = list(map(int, lines[pos].split())) if fruits_len > 0 else []; pos += 1\n    result = solve(fruits)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(fruits) {\n  // Write your solution here\n}\n\nconst fruitsLen = parseInt(lines[pos++], 10);\nconst fruits = fruitsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(fruits);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> fruits) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int fruitsLen = stoi(lines[pos++]);\n    vector<int> fruits(fruitsLen);\n    if (fruitsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : fruits) iss >> v;\n    }\n    pos++;\n    int result = solve(fruits);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n3 0\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 0 1 0 0\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "12\n1 1 2 2 1 3 2 3 1 1 0 1\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "40\n1 2 3 2 0 3 1 2 3 2 2 0 0 3 3 3 0 2 2 1 0 0 0 1 2 2 1 2 0 1 2 3 1 3 3 1 3 2 2 1\n",
+        "expectedOutput": "6\n",
+        "sample": false
+      },
+      {
+        "input": "120\n4 3 3 1 0 1 4 1 3 0 0 2 3 2 2 0 1 0 4 3 4 2 3 1 1 0 2 2 4 2 2 3 1 1 4 4 2 3 2 4 2 2 1 4 4 0 2 4 0 0 0 2 4 2 0 2 1 3 0 1 0 2 1 1 2 1 2 0 4 4 0 4 0 1 4 3 0 3 2 2 4 1 2 4 1 0 0 0 1 3 0 1 2 2 3 2 2 1 4 2 0 1 1 2 1 0 1 0 4 2 0 2 2 4 3 1 1 4 4 0\n",
+        "expectedOutput": "6\n",
+        "sample": false
+      },
+      {
+        "input": "300\n2 0 2 2 0 0 1 1 2 0 2 2 1 0 1 2 1 2 0 0 1 2 1 0 2 2 0 2 2 1 1 1 0 2 2 2 0 2 2 2 2 2 0 1 2 0 1 0 0 1 0 2 0 0 0 1 0 1 2 0 1 0 1 0 0 2 1 0 2 1 1 1 1 1 0 1 2 2 2 0 2 2 1 1 0 1 0 2 1 1 1 1 2 2 2 0 0 0 0 1 1 0 1 1 0 0 1 2 2 2 1 0 2 1 0 2 1 2 1 0 1 2 1 2 0 1 0 1 1 1 2 1 0 2 1 1 0 2 1 2 2 2 2 0 0 0 0 1 2 1 0 0 1 2 2 2 2 0 1 0 0 0 1 2 0 1 1 0 0 1 0 1 2 2 2 1 0 2 1 1 2 2 0 0 1 2 1 2 1 2 2 0 1 0 1 1 0 1 0 2 0 1 2 2 0 0 2 0 1 0 1 2 0 1 1 1 1 2 0 2 0 1 0 0 2 2 2 0 2 2 2 2 0 1 0 0 1 2 1 0 0 2 1 2 0 1 0 1 0 0 1 0 2 1 2 1 2 1 2 0 1 0 1 0 1 0 1 1 0 0 1 2 1 2 0 0 0 1 1 2 2 0 1 0 1 1 2 2 2 2 2 0 1 0 0 2 0 2 0 0\n",
+        "expectedOutput": "12\n",
+        "sample": false
+      },
+      {
+        "input": "300\n2 5 3 0 0 4 3 4 6 5 3 6 1 0 0 1 1 2 6 6 5 2 5 5 3 5 1 6 1 3 0 5 1 0 3 4 3 0 1 1 0 0 6 1 4 3 3 4 3 5 1 4 5 5 1 4 2 2 4 0 3 3 5 5 2 2 6 1 0 0 3 4 0 6 1 6 0 4 2 0 4 0 5 0 3 1 3 3 1 2 0 2 4 5 1 3 0 4 1 2 3 3 5 6 6 3 2 0 3 1 1 6 6 5 1 5 1 4 6 4 2 2 4 6 0 5 5 6 5 6 0 1 4 1 5 5 4 2 4 3 3 0 2 2 6 5 4 0 5 3 5 2 1 2 5 0 3 3 6 0 1 4 4 5 2 0 1 4 3 5 0 3 3 2 0 6 1 3 6 3 6 2 1 0 2 4 5 3 6 1 1 3 3 0 5 0 0 2 3 4 4 2 5 0 6 3 3 1 4 2 5 2 0 4 3 5 6 0 1 5 4 0 3 2 6 5 4 4 3 6 4 5 0 0 0 3 2 6 4 2 0 2 6 6 4 0 5 5 6 5 5 5 6 3 3 5 1 3 2 4 5 5 1 3 2 5 5 5 2 2 1 0 5 5 6 3 6 3 3 6 5 3 0 4 5 2 4 6 6 3 6 1 2 2 4 2 3 3 0 3\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 1\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "4\n0 1 2 2\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 3 2 2\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "11\n3 3 3 1 2 1 1 2 3 3 4\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "1\n7\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 67
+  },
+  {
+    "slug": "max-consecutive-ones-iii",
+    "title": "Max Consecutive Ones III",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "sliding-window",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "`nums` holds only `0` and `1`. You may flip at most `k` zeros to ones. Return the length of the longest run of consecutive ones you can get.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe longest run.\n\n### Constraints\n- `1 <= n <= 1000`\n- `nums[i]` is `0` or `1`\n- `0 <= k <= n`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n0 0\n2\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums, int k) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int k = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(nums, k);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, k):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    k = int(lines[pos]); pos += 1\n    result = solve(nums, k)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, k) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst k = parseInt(lines[pos++], 10);\nconst result = solve(nums, k);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums, int k) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int k = stoi(lines[pos++]);\n    int result = solve(nums, k);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n0 0\n2\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 1 1 0 0\n4\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "12\n0 1 0 0 1 1 1 0 1 1 1 1\n1\n",
+        "expectedOutput": "8\n",
+        "sample": false
+      },
+      {
+        "input": "40\n1 1 1 1 0 1 0 0 1 0 0 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 0 0 1 1 1 0 1 1 1 0 1 0 1 0\n1\n",
+        "expectedOutput": "11\n",
+        "sample": false
+      },
+      {
+        "input": "150\n0 0 0 0 1 1 0 0 0 1 0 0 0 1 1 0 0 1 1 1 0 1 1 0 1 1 1 0 0 1 0 0 1 0 1 0 1 0 0 1 1 1 0 1 1 1 0 1 1 1 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 0 1 0 0 1 0 1 0 1 0 1 0 0 0 0 1 0 1 1 1 1 0 0 1 0 0 0 1 1 1 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0 0 1 0 0 0 1 0 0 1 1 1 1 1 0 0 1 1 1 1 1 1 0 1 1 1 0 0 0 0 1 1 0 1 0 0 1 0 0 1 1\n3\n",
+        "expectedOutput": "17\n",
+        "sample": false
+      },
+      {
+        "input": "300\n0 0 1 1 0 1 0 1 1 1 0 0 0 0 0 0 1 1 0 0 1 1 1 1 1 1 0 1 0 1 0 0 1 1 1 1 1 1 0 0 1 1 1 0 1 0 1 0 1 1 0 0 0 1 1 1 1 1 0 1 1 1 0 1 1 0 1 0 0 0 1 0 1 1 0 1 0 1 1 0 1 1 0 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 0 1 0 0 1 1 1 1 1 0 0 1 0 1 1 0 0 0 1 1 0 0 1 0 1 1 1 0 0 0 0 1 0 0 0 1 1 0 1 0 0 1 1 0 0 1 1 1 1 1 1 0 0 1 1 1 1 1 1 0 1 0 1 1 1 1 0 1 1 0 1 1 0 0 0 1 1 1 1 1 0 1 1 0 0 0 0 0 1 1 1 1 1 0 1 0 0 1 0 1 1 1 1 0 0 0 0 1 1 0 0 1 0 1 1 0 1 0 1 0 1 1 0 0 0 1 0 0 0 1 0 1 1 1 0 0 0 1 1 0 0 1 0 0 0 0 1 1 0 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 0 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 1 1 1 1 0 0 1 0 1 1 0 1 0 0 0\n1\n",
+        "expectedOutput": "15\n",
+        "sample": false
+      },
+      {
+        "input": "11\n1 1 1 0 0 0 1 1 1 1 0\n2\n",
+        "expectedOutput": "6\n",
+        "sample": false
+      },
+      {
+        "input": "3\n0 0 0\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n0 0 0\n3\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 1 1\n0\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      }
+    ],
+    "order": 68
+  },
+  {
+    "slug": "maximum-points-you-can-obtain-from-cards",
+    "title": "Maximum Points You Can Obtain from Cards",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "sliding-window",
+      "prefix-sum",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Cards lie in a row with points `cardPoints[i]`. In each of `k` steps you take one card from either the left end or the right end. Return the maximum total points.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe maximum score.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= cardPoints[i] <= 10^4`\n- `1 <= k <= n`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n62\n1\n\nOutput:\n62\n```\n\n**Example 2**\n```text\nInput:\n3\n37 66 42\n2\n\nOutput:\n108\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] cardPoints, int k) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int cardPointsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] cardPoints = new int[cardPointsLen];\n        if (cardPointsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < cardPointsLen; i++) cardPoints[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int k = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(cardPoints, k);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(cardPoints, k):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    cardPoints_len = int(lines[pos]); pos += 1\n    cardPoints = list(map(int, lines[pos].split())) if cardPoints_len > 0 else []; pos += 1\n    k = int(lines[pos]); pos += 1\n    result = solve(cardPoints, k)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(cardPoints, k) {\n  // Write your solution here\n}\n\nconst cardPointsLen = parseInt(lines[pos++], 10);\nconst cardPoints = cardPointsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst k = parseInt(lines[pos++], 10);\nconst result = solve(cardPoints, k);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> cardPoints, int k) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int cardPointsLen = stoi(lines[pos++]);\n    vector<int> cardPoints(cardPointsLen);\n    if (cardPointsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : cardPoints) iss >> v;\n    }\n    pos++;\n    int k = stoi(lines[pos++]);\n    int result = solve(cardPoints, k);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n62\n1\n",
+        "expectedOutput": "62\n",
+        "sample": true
+      },
+      {
+        "input": "3\n37 66 42\n2\n",
+        "expectedOutput": "108\n",
+        "sample": true
+      },
+      {
+        "input": "6\n6 35 18 7 93 83\n5\n",
+        "expectedOutput": "236\n",
+        "sample": false
+      },
+      {
+        "input": "12\n77 18 19 5 97 65 60 37 88 66 54 44\n9\n",
+        "expectedOutput": "588\n",
+        "sample": false
+      },
+      {
+        "input": "40\n64 82 33 66 44 83 29 60 43 72 31 73 92 43 89 43 58 65 30 55 25 10 59 37 93 64 71 82 15 81 72 17 44 81 40 82 6 41 17 53\n34\n",
+        "expectedOutput": "1929\n",
+        "sample": false
+      },
+      {
+        "input": "150\n54 98 88 48 43 47 20 64 12 80 47 92 27 71 24 24 78 47 83 40 77 65 8 76 13 16 50 36 70 95 5 24 21 82 98 66 81 80 98 37 59 79 49 9 93 6 97 54 81 59 58 59 47 94 71 2 1 79 19 42 14 93 6 11 8 69 9 42 48 47 10 7 46 88 9 12 61 86 57 4 11 40 74 66 32 39 80 18 12 81 94 97 88 40 18 87 98 61 32 4 51 14 92 8 86 15 27 30 2 26 64 95 45 62 36 28 56 50 79 74 66 98 72 59 100 89 62 34 33 90 76 89 30 75 57 2 34 20 13 67 44 87 66 63 25 74 48 2 52 13\n9\n",
+        "expectedOutput": "477\n",
+        "sample": false
+      },
+      {
+        "input": "300\n36 34 70 60 64 47 2 2 47 67 17 46 43 10 19 9 9 7 49 31 70 97 33 59 41 12 70 3 7 64 83 60 55 82 75 67 64 76 69 17 37 1 53 5 52 43 56 66 72 21 39 93 85 60 45 45 49 51 96 57 46 84 95 65 70 84 61 66 44 59 78 11 8 30 67 96 11 63 76 53 53 56 35 64 46 34 24 7 17 33 54 32 37 8 74 27 26 3 89 52 7 97 28 19 30 14 80 24 3 63 93 17 95 100 23 89 24 33 12 22 11 18 18 75 13 78 69 4 92 22 6 3 28 33 45 98 51 35 13 30 63 75 6 58 73 92 79 70 28 42 14 67 93 51 82 43 1 31 17 7 58 91 28 49 19 96 81 3 37 35 95 71 64 36 1 43 65 50 91 85 97 90 24 52 38 88 63 86 62 99 5 85 35 96 12 84 87 39 3 22 29 50 52 58 60 87 3 82 5 85 100 25 72 57 98 31 2 52 13 36 15 35 53 76 65 53 98 67 76 21 94 9 77 28 42 48 51 84 92 98 78 36 31 93 14 92 22 97 85 99 86 45 14 57 29 82 39 66 80 40 58 72 67 94 37 15 77 23 87 50 81 85 30 30 16 30 99 40 65 35 84 78 29 20 99 40 98 48 89 84 79 6 84 13 6 35 13 68 82 89\n171\n",
+        "expectedOutput": "9394\n",
+        "sample": false
+      },
+      {
+        "input": "7\n1 2 3 4 5 6 1\n3\n",
+        "expectedOutput": "12\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 2 2\n2\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "7\n9 7 7 9 7 7 9\n7\n",
+        "expectedOutput": "55\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 1000 1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 69
+  },
+  {
+    "slug": "number-of-substrings-containing-all-three-characters",
+    "title": "Number of Substrings Containing All Three Characters",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "sliding-window",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "`s` only has the letters `a`, `b` and `c`. Return the number of substrings that contain at least one of each of the three letters.\n\n### Input\nLine 1: `s`.\n\n### Output\nThe number of substrings.\n\n### Constraints\n- `3 <= s.length <= 1000`\n- Only `a`, `b` and `c`\n\n### Examples\n**Example 1**\n```text\nInput:\ncca\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\nbcab\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(String s) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String s = lines.get(pos++);\n        int result = solve(s);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(s):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    s = lines[pos]; pos += 1\n    result = solve(s)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(s) {\n  // Write your solution here\n}\n\nconst s = lines[pos++];\nconst result = solve(s);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(string s) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string s = lines[pos++];\n    int result = solve(s);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "cca\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "bcab\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "aacabbac\n",
+        "expectedOutput": "15\n",
+        "sample": false
+      },
+      {
+        "input": "cacbaaacaaaaaac\n",
+        "expectedOutput": "43\n",
+        "sample": false
+      },
+      {
+        "input": "baccbaaccbcaccbbacbcbbcccaacccbabbbbcacb\n",
+        "expectedOutput": "668\n",
+        "sample": false
+      },
+      {
+        "input": "ccccbcacbbacccbcabbccbbccaaabccbbcacabbcccbbabcabaaaaabcbbaabbbbacbaaaabcccbcbbbccbaacaababcbabaaaaabacbabcbbcccccaabbac\n",
+        "expectedOutput": "6727\n",
+        "sample": false
+      },
+      {
+        "input": "aacbccabbaaacacbacbcccabbaaaabaacaaccbaabcbccbacacccacacccaaacbcbabbccaaaabaccaaaaacbbbaaacbbaabbcaabcbbbcbabcbcbbccaaaacabacabacbacacccbcacaccabbacccbababccbcccaccaaaabccaabbaacabbaabacbcabcbcbabaabcaacbcacbcacbabcccaabbcaaaaaaaccabcbacacccbcbabcacacababcabccbaabbcbcacbaabbaacbbabbbbbccaabbbccaaaaa\n",
+        "expectedOutput": "43869\n",
+        "sample": false
+      },
+      {
+        "input": "abcabc\n",
+        "expectedOutput": "10\n",
+        "sample": false
+      },
+      {
+        "input": "aaacb\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "abc\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "aaaabbbbcccc\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "cbacba\n",
+        "expectedOutput": "10\n",
+        "sample": false
+      }
+    ],
+    "order": 70
   },
   {
     "slug": "minimum-window-substring-length",
@@ -5385,7 +5947,84 @@
         "sample": false
       }
     ],
-    "order": 64
+    "order": 71
+  },
+  {
+    "slug": "subarrays-with-k-different-integers",
+    "title": "Subarrays with K Different Integers",
+    "difficulty": "HARD",
+    "tags": [
+      "array",
+      "sliding-window",
+      "hash-table",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the number of contiguous subarrays of `nums` that contain exactly `k` different integers.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe number of subarrays.\n\n### Constraints\n- `1 <= n <= 150`\n- `1 <= nums[i] <= n`\n- `1 <= k <= n`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n2\n\nOutput:\n1\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums, int k) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int k = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(nums, k);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums, k):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    k = int(lines[pos]); pos += 1\n    result = solve(nums, k)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums, k) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst k = parseInt(lines[pos++], 10);\nconst result = solve(nums, k);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums, int k) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int k = stoi(lines[pos++]);\n    int result = solve(nums, k);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 2\n2\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 2 2 1 2\n2\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": "12\n3 4 3 3 2 1 1 2 2 3 4 2\n2\n",
+        "expectedOutput": "19\n",
+        "sample": false
+      },
+      {
+        "input": "40\n8 4 4 8 7 13 13 11 4 5 2 7 9 5 9 10 7 5 1 6 10 2 10 13 7 11 7 10 1 13 6 10 7 6 4 10 8 9 11 5\n1\n",
+        "expectedOutput": "42\n",
+        "sample": false
+      },
+      {
+        "input": "100\n24 5 3 1 15 11 7 4 6 26 3 9 1 29 21 18 27 29 15 16 22 5 27 13 21 9 7 2 33 32 13 24 18 30 18 29 14 1 9 30 24 29 30 29 8 12 1 8 5 30 6 32 27 7 18 28 15 4 11 1 14 19 29 10 6 20 32 24 27 23 9 15 33 3 31 17 21 10 30 31 14 12 24 28 25 16 17 19 30 20 13 2 6 11 12 5 25 26 23 10\n2\n",
+        "expectedOutput": "101\n",
+        "sample": false
+      },
+      {
+        "input": "150\n35 7 1 39 39 44 46 47 47 25 20 27 7 24 28 21 34 28 37 13 23 13 19 28 20 49 22 12 7 17 20 11 50 18 2 19 3 2 13 48 49 23 18 45 13 30 15 25 47 30 2 32 34 22 34 7 21 26 21 47 31 19 40 39 20 21 48 25 12 10 10 1 33 18 23 18 25 28 31 27 39 22 12 21 44 21 37 17 22 42 7 33 14 20 5 32 31 30 35 16 32 46 20 6 48 10 29 23 25 10 21 36 5 7 13 47 3 50 33 43 28 26 30 46 3 3 9 20 50 28 5 15 46 42 21 41 30 19 34 11 47 38 23 47 39 20 31 25 14 3\n3\n",
+        "expectedOutput": "160\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 1 2 3\n2\n",
+        "expectedOutput": "7\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 1 3 4\n3\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 2 2\n1\n",
+        "expectedOutput": "6\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 2 3 4\n4\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      }
+    ],
+    "order": 72
   },
   {
     "slug": "valid-parentheses",
@@ -5486,7 +6125,7 @@
         "sample": false
       }
     ],
-    "order": 65
+    "order": 73
   },
   {
     "slug": "remove-outermost-parentheses",
@@ -5546,7 +6185,7 @@
         "sample": false
       }
     ],
-    "order": 66
+    "order": 74
   },
   {
     "slug": "maximum-nesting-depth-of-the-parentheses",
@@ -5606,7 +6245,7 @@
         "sample": false
       }
     ],
-    "order": 67
+    "order": 75
   },
   {
     "slug": "implement-queue-using-stacks",
@@ -5677,7 +6316,7 @@
         "sample": false
       }
     ],
-    "order": 68
+    "order": 76
   },
   {
     "slug": "implement-stack-using-queues",
@@ -5748,7 +6387,7 @@
         "sample": false
       }
     ],
-    "order": 69
+    "order": 77
   },
   {
     "slug": "daily-temperatures",
@@ -5839,7 +6478,7 @@
         "sample": false
       }
     ],
-    "order": 70
+    "order": 78
   },
   {
     "slug": "evaluate-reverse-polish-notation",
@@ -5954,7 +6593,7 @@
         "sample": false
       }
     ],
-    "order": 71
+    "order": 79
   },
   {
     "slug": "next-greater-element-ii",
@@ -6046,7 +6685,7 @@
         "sample": false
       }
     ],
-    "order": 72
+    "order": 80
   },
   {
     "slug": "car-fleet",
@@ -6136,7 +6775,7 @@
         "sample": false
       }
     ],
-    "order": 73
+    "order": 81
   },
   {
     "slug": "sum-of-subarray-minimums",
@@ -6242,7 +6881,7 @@
         "sample": false
       }
     ],
-    "order": 74
+    "order": 82
   },
   {
     "slug": "minimum-add-to-make-parentheses-valid",
@@ -6342,7 +6981,7 @@
         "sample": false
       }
     ],
-    "order": 75
+    "order": 83
   },
   {
     "slug": "next-smaller-element",
@@ -6419,7 +7058,7 @@
         "sample": false
       }
     ],
-    "order": 76
+    "order": 84
   },
   {
     "slug": "stock-span-problem",
@@ -6491,7 +7130,7 @@
         "sample": false
       }
     ],
-    "order": 77
+    "order": 85
   },
   {
     "slug": "celebrity-problem",
@@ -6548,7 +7187,7 @@
         "sample": false
       }
     ],
-    "order": 78
+    "order": 86
   },
   {
     "slug": "next-greater-element",
@@ -6620,7 +7259,7 @@
         "sample": false
       }
     ],
-    "order": 79
+    "order": 87
   },
   {
     "slug": "sort-a-stack",
@@ -6687,7 +7326,7 @@
         "sample": false
       }
     ],
-    "order": 80
+    "order": 88
   },
   {
     "slug": "lru-cache",
@@ -6759,7 +7398,7 @@
         "sample": false
       }
     ],
-    "order": 81
+    "order": 89
   },
   {
     "slug": "min-stack",
@@ -6825,7 +7464,268 @@
         "sample": false
       }
     ],
-    "order": 82
+    "order": 90
+  },
+  {
+    "slug": "remove-k-digits",
+    "title": "Remove K Digits",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "string",
+      "stack",
+      "greedy",
+      "monotonic-stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Remove exactly `k` digits from the number `num` so that the remaining number is as small as possible. Return it without leading zeros, or `0` if nothing is left.\n\n### Input\nLine 1: `num`.\nLine 2: `k`.\n\n### Output\nThe smallest possible number.\n\n### Constraints\n- `1 <= num.length <= 1000`\n- `0 <= k <= num.length`\n- `num` has no leading zeros\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n1\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\n37416\n3\n\nOutput:\n16\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static String solve(String num, int k) {\n        // Write your solution here\n        return \"\";\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        String num = lines.get(pos++);\n        int k = Integer.parseInt(lines.get(pos++).trim());\n        String result = solve(num, k);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(num, k):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    num = lines[pos]; pos += 1\n    k = int(lines[pos]); pos += 1\n    result = solve(num, k)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(num, k) {\n  // Write your solution here\n}\n\nconst num = lines[pos++];\nconst k = parseInt(lines[pos++], 10);\nconst result = solve(num, k);\nconsole.log(result);\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstring solve(string num, int k) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    string num = lines[pos++];\n    int k = stoi(lines[pos++]);\n    string result = solve(num, k);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2\n1\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "37416\n3\n",
+        "expectedOutput": "16\n",
+        "sample": true
+      },
+      {
+        "input": "166011879\n4\n",
+        "expectedOutput": "1179\n",
+        "sample": false
+      },
+      {
+        "input": "29492647256448781534\n13\n",
+        "expectedOutput": "2221534\n",
+        "sample": false
+      },
+      {
+        "input": "427532208477760156464783925070102978071665722953444389559493\n24\n",
+        "expectedOutput": "1070102978071665722953444389559493\n",
+        "sample": false
+      },
+      {
+        "input": "33629911004362958618226506681483757646765206190747997531168354612185750847374579334717623911933184890405376013275592721576103090649047272474777963215033716539985380516036772638611491090527923835364957\n123\n",
+        "expectedOutput": "2244777963215033716539985380516036772638611491090527923835364957\n",
+        "sample": false
+      },
+      {
+        "input": "1432219\n3\n",
+        "expectedOutput": "1219\n",
+        "sample": false
+      },
+      {
+        "input": "10200\n1\n",
+        "expectedOutput": "200\n",
+        "sample": false
+      },
+      {
+        "input": "10\n2\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "9\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "112\n1\n",
+        "expectedOutput": "11\n",
+        "sample": false
+      },
+      {
+        "input": "1234567890\n9\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "100\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "5337\n2\n",
+        "expectedOutput": "33\n",
+        "sample": false
+      },
+      {
+        "input": "1173\n2\n",
+        "expectedOutput": "11\n",
+        "sample": false
+      }
+    ],
+    "order": 91
+  },
+  {
+    "slug": "asteroid-collision",
+    "title": "Asteroid Collision",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Each asteroid moves at the same speed: positive values move right, negative values move left, and the absolute value is its size. When two meet, the smaller one explodes, and both explode if equal. Asteroids moving the same way never meet. Return what is left after all collisions.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe surviving asteroids, left to right.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= |asteroids[i]| <= 1000`\n- At least one asteroid survives\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n-25\n\nOutput:\n-25\n```\n\n**Example 2**\n```text\nInput:\n2\n-12 -17\n\nOutput:\n-12 -17\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int[] solve(int[] asteroids) {\n        // Write your solution here\n        return new int[0];\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int asteroidsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] asteroids = new int[asteroidsLen];\n        if (asteroidsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < asteroidsLen; i++) asteroids[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int[] result = solve(asteroids);\n        System.out.println(Arrays.stream(result).mapToObj(String::valueOf).collect(Collectors.joining(\" \")));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(asteroids):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    asteroids_len = int(lines[pos]); pos += 1\n    asteroids = list(map(int, lines[pos].split())) if asteroids_len > 0 else []; pos += 1\n    result = solve(asteroids)\n    print(\" \".join(map(str, result)))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(asteroids) {\n  // Write your solution here\n}\n\nconst asteroidsLen = parseInt(lines[pos++], 10);\nconst asteroids = asteroidsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(asteroids);\nconsole.log(result.join(\" \"));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(vector<int> asteroids) {\n    // Write your solution here\n    return {};\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int asteroidsLen = stoi(lines[pos++]);\n    vector<int> asteroids(asteroidsLen);\n    if (asteroidsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : asteroids) iss >> v;\n    }\n    pos++;\n    vector<int> result = solve(asteroids);\n    for (size_t i = 0; i < result.size(); i++) {\n        if (i) cout << \" \";\n        cout << result[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n-25\n",
+        "expectedOutput": "-25\n",
+        "sample": true
+      },
+      {
+        "input": "2\n-12 -17\n",
+        "expectedOutput": "-12 -17\n",
+        "sample": true
+      },
+      {
+        "input": "5\n-29 17 12 17 -18\n",
+        "expectedOutput": "-29 -18\n",
+        "sample": false
+      },
+      {
+        "input": "8\n26 -1 28 25 -13 -25 3 1\n",
+        "expectedOutput": "26 28 3 1\n",
+        "sample": false
+      },
+      {
+        "input": "12\n20 19 -5 10 -20 24 12 -18 8 -22 1 -3\n",
+        "expectedOutput": "24\n",
+        "sample": false
+      },
+      {
+        "input": "40\n-19 18 18 -16 6 -1 -27 -9 3 16 -3 19 16 -2 11 22 8 13 -4 -22 24 -20 1 16 28 -15 24 25 -25 -12 -11 -19 28 -28 -26 -21 19 -10 18 7\n",
+        "expectedOutput": "-19 -27 -9 3 16 19 16 11 24 1 16 28 19 18 7\n",
+        "sample": false
+      },
+      {
+        "input": "100\n23 8 -24 -26 19 -6 6 -13 20 26 19 -13 14 -19 -27 -28 5 2 2 -18 -21 -12 20 20 -9 6 8 -27 -16 -18 27 27 8 -28 6 -27 9 -20 -13 13 20 17 -19 27 21 23 18 28 -29 7 -9 -19 11 5 -27 19 -17 9 13 5 21 15 22 -2 26 -11 11 28 13 -22 -7 27 22 -13 18 18 -17 5 11 -11 10 -28 -1 -30 3 2 -26 2 4 26 13 18 -6 -22 -14 -19 16 19 19 24\n",
+        "expectedOutput": "-24 -26 -27 -28 -18 -21 -12 -27 -16 -18 -28 -27 -20 -13 -29 -9 -19 -27 -30 -26 2 4 26 16 19 19 24\n",
+        "sample": false
+      },
+      {
+        "input": "3\n5 10 -5\n",
+        "expectedOutput": "5 10\n",
+        "sample": false
+      },
+      {
+        "input": "3\n10 2 -5\n",
+        "expectedOutput": "10\n",
+        "sample": false
+      },
+      {
+        "input": "4\n-2 -1 1 2\n",
+        "expectedOutput": "-2 -1 1 2\n",
+        "sample": false
+      },
+      {
+        "input": "3\n8 -8 3\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 -2 -2 -2\n",
+        "expectedOutput": "-2 -2 -2\n",
+        "sample": false
+      },
+      {
+        "input": "4\n-3 4 -4 -5\n",
+        "expectedOutput": "-3 -5\n",
+        "sample": false
+      }
+    ],
+    "order": 92
+  },
+  {
+    "slug": "sum-of-subarray-ranges",
+    "title": "Sum of Subarray Ranges",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "array",
+      "stack",
+      "monotonic-stack",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "The range of a subarray is its largest element minus its smallest. Return the sum of the ranges of all subarrays of `nums`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe sum of all ranges.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-100 <= nums[i] <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n-18\n\nOutput:\n0\n```\n\n**Example 2**\n```text\nInput:\n2\n4 24\n\nOutput:\n20\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] nums) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int numsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] nums = new int[numsLen];\n        if (numsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < numsLen; i++) nums[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int result = solve(nums);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(nums):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    nums_len = int(lines[pos]); pos += 1\n    nums = list(map(int, lines[pos].split())) if nums_len > 0 else []; pos += 1\n    result = solve(nums)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(nums) {\n  // Write your solution here\n}\n\nconst numsLen = parseInt(lines[pos++], 10);\nconst nums = numsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst result = solve(nums);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> nums) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int numsLen = stoi(lines[pos++]);\n    vector<int> nums(numsLen);\n    if (numsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : nums) iss >> v;\n    }\n    pos++;\n    int result = solve(nums);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n-18\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "2\n4 24\n",
+        "expectedOutput": "20\n",
+        "sample": true
+      },
+      {
+        "input": "5\n9 43 31 55 38\n",
+        "expectedOutput": "285\n",
+        "sample": false
+      },
+      {
+        "input": "12\n-20 20 33 30 27 16 9 23 38 22 -10 3\n",
+        "expectedOutput": "2149\n",
+        "sample": false
+      },
+      {
+        "input": "40\n-18 -7 -10 -17 54 -3 15 17 27 55 21 9 60 18 5 26 0 -13 57 1 -17 -9 57 -1 -13 17 8 18 42 36 5 -11 -12 16 4 32 -10 24 58 42\n",
+        "expectedOutput": "51994\n",
+        "sample": false
+      },
+      {
+        "input": "120\n32 13 11 24 16 -2 7 -3 17 27 6 38 29 53 -20 -19 7 5 6 29 19 37 33 11 -9 -10 -16 32 -14 52 -17 45 23 50 -1 42 54 -8 6 60 18 30 -11 16 -13 52 48 30 47 16 -9 45 24 21 46 57 -20 55 31 -13 8 53 -2 55 25 8 1 46 48 12 10 60 58 32 56 53 1 24 48 2 48 5 49 54 16 -10 53 0 -15 21 16 -4 29 57 36 5 19 40 26 -9 39 -14 -8 56 32 -17 6 16 29 30 -19 30 26 15 45 16 26 6 34 32\n",
+        "expectedOutput": "527567\n",
+        "sample": false
+      },
+      {
+        "input": "300\n8 38 49 50 51 5 -10 53 43 1 56 5 -15 46 49 14 1 -16 -1 41 34 47 19 26 21 47 16 -3 -19 58 60 0 10 47 12 -17 -2 58 4 53 -9 3 -12 34 54 7 27 13 47 33 14 32 -18 27 43 34 16 58 -11 -6 -20 44 -3 53 -2 33 7 14 2 -12 59 5 28 41 45 45 49 32 26 53 57 2 5 52 16 57 46 23 -1 54 27 26 58 6 46 24 31 27 38 59 11 28 -17 11 50 54 58 1 58 -14 -3 21 24 23 51 -2 58 25 31 25 30 -5 46 45 47 -6 42 59 19 37 46 -19 10 3 -13 33 48 24 57 -2 41 10 -17 56 -15 15 -6 0 55 58 30 -8 -18 36 31 49 -3 5 18 -12 -13 48 44 28 -5 13 34 -19 38 26 25 60 47 51 28 24 55 38 -7 -3 11 27 -4 49 11 56 60 25 26 -16 46 10 -15 30 -17 50 53 21 46 57 -16 29 19 2 -3 -17 58 -8 43 -4 -6 -17 4 32 45 2 -13 22 22 -12 42 50 24 53 51 12 51 -8 -4 -11 60 23 58 26 15 -9 -11 53 39 -2 20 -7 -8 10 23 37 24 54 15 11 32 53 16 43 48 49 -16 55 45 -14 27 -2 29 22 25 55 10 -18 42 25 34 5 -20 46 -10 48 10 47 13 18 56 12 -7 51 12 -13 -20 60 46 29 6 4 10 26 52 55 8 40 36 48\n",
+        "expectedOutput": "3460583\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "5\n4 -2 -3 4 1\n",
+        "expectedOutput": "59\n",
+        "sample": false
+      },
+      {
+        "input": "3\n5 5 5\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n7\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      }
+    ],
+    "order": 93
   },
   {
     "slug": "trapping-rain-water",
@@ -6922,7 +7822,7 @@
         "sample": false
       }
     ],
-    "order": 83
+    "order": 94
   },
   {
     "slug": "largest-rectangle-in-histogram",
@@ -7019,7 +7919,7 @@
         "sample": false
       }
     ],
-    "order": 84
+    "order": 95
   },
   {
     "slug": "maximum-of-minimums-for-every-window-size",
@@ -7091,7 +7991,7 @@
         "sample": false
       }
     ],
-    "order": 85
+    "order": 96
   },
   {
     "slug": "lfu-cache",
@@ -7163,7 +8063,7 @@
         "sample": false
       }
     ],
-    "order": 86
+    "order": 97
   },
   {
     "slug": "binary-search",
@@ -7258,7 +8158,7 @@
         "sample": false
       }
     ],
-    "order": 87
+    "order": 98
   },
   {
     "slug": "search-insert-position",
@@ -7348,7 +8248,7 @@
         "sample": false
       }
     ],
-    "order": 88
+    "order": 99
   },
   {
     "slug": "sqrt-x",
@@ -7458,7 +8358,7 @@
         "sample": false
       }
     ],
-    "order": 89
+    "order": 100
   },
   {
     "slug": "lower-bound",
@@ -7533,7 +8433,7 @@
         "sample": false
       }
     ],
-    "order": 90
+    "order": 101
   },
   {
     "slug": "upper-bound",
@@ -7608,7 +8508,7 @@
         "sample": false
       }
     ],
-    "order": 91
+    "order": 102
   },
   {
     "slug": "floor-and-ceil-in-sorted-array",
@@ -7683,7 +8583,7 @@
         "sample": false
       }
     ],
-    "order": 92
+    "order": 103
   },
   {
     "slug": "count-occurrences-in-sorted-array",
@@ -7758,7 +8658,7 @@
         "sample": false
       }
     ],
-    "order": 93
+    "order": 104
   },
   {
     "slug": "row-with-maximum-ones",
@@ -7818,7 +8718,7 @@
         "sample": false
       }
     ],
-    "order": 94
+    "order": 105
   },
   {
     "slug": "kth-missing-positive-number",
@@ -7878,7 +8778,7 @@
         "sample": false
       }
     ],
-    "order": 95
+    "order": 106
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array",
@@ -7963,7 +8863,7 @@
         "sample": false
       }
     ],
-    "order": 96
+    "order": 107
   },
   {
     "slug": "search-in-rotated-sorted-array",
@@ -8069,7 +8969,7 @@
         "sample": false
       }
     ],
-    "order": 97
+    "order": 108
   },
   {
     "slug": "two-sum-ii-input-array-is-sorted",
@@ -8164,7 +9064,7 @@
         "sample": false
       }
     ],
-    "order": 98
+    "order": 109
   },
   {
     "slug": "koko-eating-bananas",
@@ -8249,7 +9149,7 @@
         "sample": false
       }
     ],
-    "order": 99
+    "order": 110
   },
   {
     "slug": "capacity-to-ship-packages",
@@ -8334,7 +9234,7 @@
         "sample": false
       }
     ],
-    "order": 100
+    "order": 111
   },
   {
     "slug": "find-the-duplicate-number",
@@ -8446,7 +9346,7 @@
         "sample": false
       }
     ],
-    "order": 101
+    "order": 112
   },
   {
     "slug": "find-first-and-last-position-of-element-in-sorted-array",
@@ -8576,7 +9476,7 @@
         "sample": false
       }
     ],
-    "order": 102
+    "order": 113
   },
   {
     "slug": "search-a-2d-matrix",
@@ -8697,7 +9597,7 @@
         "sample": false
       }
     ],
-    "order": 103
+    "order": 114
   },
   {
     "slug": "search-in-rotated-sorted-array-ii",
@@ -8762,7 +9662,7 @@
         "sample": false
       }
     ],
-    "order": 104
+    "order": 115
   },
   {
     "slug": "rotation-count-in-rotated-sorted-array",
@@ -8827,7 +9727,7 @@
         "sample": false
       }
     ],
-    "order": 105
+    "order": 116
   },
   {
     "slug": "single-element-in-a-sorted-array",
@@ -8893,7 +9793,7 @@
         "sample": false
       }
     ],
-    "order": 106
+    "order": 117
   },
   {
     "slug": "find-peak-element",
@@ -8948,7 +9848,7 @@
         "sample": false
       }
     ],
-    "order": 107
+    "order": 118
   },
   {
     "slug": "nth-root-of-an-integer",
@@ -9039,7 +9939,7 @@
         "sample": false
       }
     ],
-    "order": 108
+    "order": 119
   },
   {
     "slug": "minimum-days-to-make-m-bouquets",
@@ -9109,7 +10009,7 @@
         "sample": false
       }
     ],
-    "order": 109
+    "order": 120
   },
   {
     "slug": "smallest-divisor-given-a-threshold",
@@ -9174,7 +10074,7 @@
         "sample": false
       }
     ],
-    "order": 110
+    "order": 121
   },
   {
     "slug": "search-a-2d-matrix-ii",
@@ -9225,7 +10125,7 @@
         "sample": false
       }
     ],
-    "order": 111
+    "order": 122
   },
   {
     "slug": "find-minimum-in-rotated-sorted-array-ii",
@@ -9290,7 +10190,7 @@
         "sample": false
       }
     ],
-    "order": 112
+    "order": 123
   },
   {
     "slug": "aggressive-cows",
@@ -9357,7 +10257,7 @@
         "sample": false
       }
     ],
-    "order": 113
+    "order": 124
   },
   {
     "slug": "kth-element-of-two-sorted-arrays",
@@ -9418,7 +10318,7 @@
         "sample": false
       }
     ],
-    "order": 114
+    "order": 125
   },
   {
     "slug": "median-in-a-row-wise-sorted-matrix",
@@ -9474,7 +10374,7 @@
         "sample": false
       }
     ],
-    "order": 115
+    "order": 126
   },
   {
     "slug": "median-of-two-sorted-arrays",
@@ -9551,7 +10451,88 @@
         "sample": false
       }
     ],
-    "order": 116
+    "order": 127
+  },
+  {
+    "slug": "allocate-books",
+    "title": "Allocate Books",
+    "difficulty": "HARD",
+    "tags": [
+      "array",
+      "binary-search",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Book `i` has `pages[i]` pages. Give the books, in order, to `m` students so that each student gets a contiguous block of at least one book. Minimise the largest number of pages any student reads and return it, or `-1` if it is impossible.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `m`.\n\n### Output\nThe minimised maximum, or `-1`.\n\n### Constraints\n- `1 <= n <= 1000`\n- `1 <= pages[i] <= 10^4`\n- `1 <= m <= 1000`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n37\n1\n\nOutput:\n37\n```\n\n**Example 2**\n```text\nInput:\n2\n36 24\n2\n\nOutput:\n36\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] pages, int m) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int pagesLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] pages = new int[pagesLen];\n        if (pagesLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < pagesLen; i++) pages[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int m = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(pages, m);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(pages, m):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    pages_len = int(lines[pos]); pos += 1\n    pages = list(map(int, lines[pos].split())) if pages_len > 0 else []; pos += 1\n    m = int(lines[pos]); pos += 1\n    result = solve(pages, m)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(pages, m) {\n  // Write your solution here\n}\n\nconst pagesLen = parseInt(lines[pos++], 10);\nconst pages = pagesLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst m = parseInt(lines[pos++], 10);\nconst result = solve(pages, m);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> pages, int m) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int pagesLen = stoi(lines[pos++]);\n    vector<int> pages(pagesLen);\n    if (pagesLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : pages) iss >> v;\n    }\n    pos++;\n    int m = stoi(lines[pos++]);\n    int result = solve(pages, m);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n37\n1\n",
+        "expectedOutput": "37\n",
+        "sample": true
+      },
+      {
+        "input": "2\n36 24\n2\n",
+        "expectedOutput": "36\n",
+        "sample": true
+      },
+      {
+        "input": "4\n25 7 61 27\n2\n",
+        "expectedOutput": "88\n",
+        "sample": false
+      },
+      {
+        "input": "7\n37 85 44 68 82 87 61\n4\n",
+        "expectedOutput": "148\n",
+        "sample": false
+      },
+      {
+        "input": "12\n84 57 74 17 20 24 34 18 52 7 10 84\n3\n",
+        "expectedOutput": "171\n",
+        "sample": false
+      },
+      {
+        "input": "25\n2 36 46 64 2 24 52 22 13 15 87 67 44 51 35 48 18 69 47 24 67 83 28 29 16\n2\n",
+        "expectedOutput": "515\n",
+        "sample": false
+      },
+      {
+        "input": "40\n9 27 53 32 31 1 6 84 78 20 10 60 38 38 24 81 30 33 45 7 62 44 83 45 84 18 63 65 21 79 9 86 22 14 12 29 26 49 33 47\n1\n",
+        "expectedOutput": "1598\n",
+        "sample": false
+      },
+      {
+        "input": "4\n12 34 67 90\n2\n",
+        "expectedOutput": "113\n",
+        "sample": false
+      },
+      {
+        "input": "4\n10 20 30 40\n2\n",
+        "expectedOutput": "60\n",
+        "sample": false
+      },
+      {
+        "input": "2\n5 5\n3\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n100\n1\n",
+        "expectedOutput": "100\n",
+        "sample": false
+      },
+      {
+        "input": "5\n7 2 5 10 8\n2\n",
+        "expectedOutput": "18\n",
+        "sample": false
+      }
+    ],
+    "order": 128
   },
   {
     "slug": "reverse-linked-list",
@@ -9651,7 +10632,7 @@
         "sample": false
       }
     ],
-    "order": 117
+    "order": 129
   },
   {
     "slug": "merge-two-sorted-lists",
@@ -9747,7 +10728,7 @@
         "sample": false
       }
     ],
-    "order": 118
+    "order": 130
   },
   {
     "slug": "middle-of-the-linked-list",
@@ -9843,7 +10824,7 @@
         "sample": false
       }
     ],
-    "order": 119
+    "order": 131
   },
   {
     "slug": "palindrome-linked-list",
@@ -9950,7 +10931,7 @@
         "sample": false
       }
     ],
-    "order": 120
+    "order": 132
   },
   {
     "slug": "remove-duplicates-from-sorted-list",
@@ -10034,7 +11015,7 @@
         "sample": false
       }
     ],
-    "order": 121
+    "order": 133
   },
   {
     "slug": "remove-linked-list-elements",
@@ -10117,7 +11098,7 @@
         "sample": false
       }
     ],
-    "order": 122
+    "order": 134
   },
   {
     "slug": "remove-nth-node-from-end-of-list",
@@ -10208,7 +11189,7 @@
         "sample": false
       }
     ],
-    "order": 123
+    "order": 135
   },
   {
     "slug": "add-two-numbers",
@@ -10299,7 +11280,7 @@
         "sample": false
       }
     ],
-    "order": 124
+    "order": 136
   },
   {
     "slug": "swap-nodes-in-pairs",
@@ -10392,7 +11373,7 @@
         "sample": false
       }
     ],
-    "order": 125
+    "order": 137
   },
   {
     "slug": "odd-even-linked-list",
@@ -10481,7 +11462,7 @@
         "sample": false
       }
     ],
-    "order": 126
+    "order": 138
   },
   {
     "slug": "sort-list",
@@ -10572,7 +11553,7 @@
         "sample": false
       }
     ],
-    "order": 127
+    "order": 139
   },
   {
     "slug": "reorder-list",
@@ -10666,7 +11647,7 @@
         "sample": false
       }
     ],
-    "order": 128
+    "order": 140
   },
   {
     "slug": "rotate-list",
@@ -10762,7 +11743,7 @@
         "sample": false
       }
     ],
-    "order": 129
+    "order": 141
   },
   {
     "slug": "partition-list",
@@ -10856,7 +11837,7 @@
         "sample": false
       }
     ],
-    "order": 130
+    "order": 142
   },
   {
     "slug": "remove-duplicates-from-sorted-list-ii",
@@ -10945,7 +11926,7 @@
         "sample": false
       }
     ],
-    "order": 131
+    "order": 143
   },
   {
     "slug": "reverse-linked-list-ii",
@@ -11038,7 +12019,7 @@
         "sample": false
       }
     ],
-    "order": 132
+    "order": 144
   },
   {
     "slug": "maximum-twin-sum-of-a-linked-list",
@@ -11127,7 +12108,7 @@
         "sample": false
       }
     ],
-    "order": 133
+    "order": 145
   },
   {
     "slug": "flatten-binary-tree-to-linked-list",
@@ -11199,7 +12180,7 @@
         "sample": false
       }
     ],
-    "order": 134
+    "order": 146
   },
   {
     "slug": "reverse-nodes-in-k-group",
@@ -11300,7 +12281,7 @@
         "sample": false
       }
     ],
-    "order": 135
+    "order": 147
   },
   {
     "slug": "maximum-depth-of-binary-tree",
@@ -11397,7 +12378,7 @@
         "sample": false
       }
     ],
-    "order": 136
+    "order": 148
   },
   {
     "slug": "invert-binary-tree",
@@ -11483,7 +12464,7 @@
         "sample": false
       }
     ],
-    "order": 137
+    "order": 149
   },
   {
     "slug": "symmetric-tree",
@@ -11580,7 +12561,7 @@
         "sample": false
       }
     ],
-    "order": 138
+    "order": 150
   },
   {
     "slug": "same-tree",
@@ -11686,7 +12667,7 @@
         "sample": false
       }
     ],
-    "order": 139
+    "order": 151
   },
   {
     "slug": "diameter-of-binary-tree",
@@ -11777,7 +12758,7 @@
         "sample": false
       }
     ],
-    "order": 140
+    "order": 152
   },
   {
     "slug": "binary-tree-inorder-traversal",
@@ -11869,7 +12850,7 @@
         "sample": false
       }
     ],
-    "order": 141
+    "order": 153
   },
   {
     "slug": "path-sum",
@@ -11988,7 +12969,7 @@
         "sample": false
       }
     ],
-    "order": 142
+    "order": 154
   },
   {
     "slug": "balanced-binary-tree",
@@ -12079,7 +13060,7 @@
         "sample": false
       }
     ],
-    "order": 143
+    "order": 155
   },
   {
     "slug": "subtree-of-another-tree",
@@ -12193,7 +13174,7 @@
         "sample": false
       }
     ],
-    "order": 144
+    "order": 156
   },
   {
     "slug": "minimum-depth-of-binary-tree",
@@ -12293,7 +13274,7 @@
         "sample": false
       }
     ],
-    "order": 145
+    "order": 157
   },
   {
     "slug": "count-complete-tree-nodes",
@@ -12390,7 +13371,7 @@
         "sample": false
       }
     ],
-    "order": 146
+    "order": 158
   },
   {
     "slug": "binary-tree-preorder-traversal",
@@ -12462,7 +13443,7 @@
         "sample": false
       }
     ],
-    "order": 147
+    "order": 159
   },
   {
     "slug": "binary-tree-postorder-traversal",
@@ -12534,7 +13515,7 @@
         "sample": false
       }
     ],
-    "order": 148
+    "order": 160
   },
   {
     "slug": "two-sum-iv-input-is-a-bst",
@@ -12661,7 +13642,7 @@
         "sample": false
       }
     ],
-    "order": 149
+    "order": 161
   },
   {
     "slug": "binary-tree-right-side-view",
@@ -12758,7 +13739,7 @@
         "sample": false
       }
     ],
-    "order": 150
+    "order": 162
   },
   {
     "slug": "validate-binary-search-tree",
@@ -12875,7 +13856,7 @@
         "sample": false
       }
     ],
-    "order": 151
+    "order": 163
   },
   {
     "slug": "kth-smallest-element-in-a-bst",
@@ -12967,7 +13948,7 @@
         "sample": false
       }
     ],
-    "order": 152
+    "order": 164
   },
   {
     "slug": "count-good-nodes-in-binary-tree",
@@ -13056,7 +14037,7 @@
         "sample": false
       }
     ],
-    "order": 153
+    "order": 165
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-search-tree",
@@ -13147,7 +14128,7 @@
         "sample": false
       }
     ],
-    "order": 154
+    "order": 166
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-tree",
@@ -13233,7 +14214,7 @@
         "sample": false
       }
     ],
-    "order": 155
+    "order": 167
   },
   {
     "slug": "binary-tree-level-order-traversal",
@@ -13334,7 +14315,7 @@
         "sample": false
       }
     ],
-    "order": 156
+    "order": 168
   },
   {
     "slug": "sum-root-to-leaf-numbers",
@@ -13433,7 +14414,7 @@
         "sample": false
       }
     ],
-    "order": 157
+    "order": 169
   },
   {
     "slug": "house-robber-iii",
@@ -13523,7 +14504,7 @@
         "sample": false
       }
     ],
-    "order": 158
+    "order": 170
   },
   {
     "slug": "path-sum-iii",
@@ -13627,7 +14608,7 @@
         "sample": false
       }
     ],
-    "order": 159
+    "order": 171
   },
   {
     "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
@@ -13723,7 +14704,7 @@
         "sample": false
       }
     ],
-    "order": 160
+    "order": 172
   },
   {
     "slug": "binary-tree-zigzag-level-order-traversal",
@@ -13819,7 +14800,7 @@
         "sample": false
       }
     ],
-    "order": 161
+    "order": 173
   },
   {
     "slug": "left-view-of-binary-tree",
@@ -13891,7 +14872,7 @@
         "sample": false
       }
     ],
-    "order": 162
+    "order": 174
   },
   {
     "slug": "top-view-of-binary-tree",
@@ -13963,7 +14944,7 @@
         "sample": false
       }
     ],
-    "order": 163
+    "order": 175
   },
   {
     "slug": "bottom-view-of-binary-tree",
@@ -14035,7 +15016,7 @@
         "sample": false
       }
     ],
-    "order": 164
+    "order": 176
   },
   {
     "slug": "root-to-node-path-in-a-binary-tree",
@@ -14102,7 +15083,7 @@
         "sample": false
       }
     ],
-    "order": 165
+    "order": 177
   },
   {
     "slug": "maximum-width-of-binary-tree",
@@ -14183,7 +15164,7 @@
         "sample": false
       }
     ],
-    "order": 166
+    "order": 178
   },
   {
     "slug": "boundary-traversal-of-binary-tree",
@@ -14269,7 +15250,7 @@
         "sample": false
       }
     ],
-    "order": 167
+    "order": 179
   },
   {
     "slug": "construct-binary-tree-from-inorder-and-postorder-traversal",
@@ -14331,7 +15312,7 @@
         "sample": false
       }
     ],
-    "order": 168
+    "order": 180
   },
   {
     "slug": "children-sum-property",
@@ -14442,7 +15423,7 @@
         "sample": false
       }
     ],
-    "order": 169
+    "order": 181
   },
   {
     "slug": "ceil-in-a-bst",
@@ -14568,7 +15549,7 @@
         "sample": false
       }
     ],
-    "order": 170
+    "order": 182
   },
   {
     "slug": "floor-in-a-bst",
@@ -14694,7 +15675,7 @@
         "sample": false
       }
     ],
-    "order": 171
+    "order": 183
   },
   {
     "slug": "inorder-successor-in-bst",
@@ -14775,7 +15756,7 @@
         "sample": false
       }
     ],
-    "order": 172
+    "order": 184
   },
   {
     "slug": "construct-binary-search-tree-from-preorder-traversal",
@@ -14857,7 +15838,7 @@
         "sample": false
       }
     ],
-    "order": 173
+    "order": 185
   },
   {
     "slug": "recover-binary-search-tree",
@@ -14929,7 +15910,7 @@
         "sample": false
       }
     ],
-    "order": 174
+    "order": 186
   },
   {
     "slug": "amount-of-time-for-binary-tree-to-be-infected",
@@ -15001,7 +15982,7 @@
         "sample": false
       }
     ],
-    "order": 175
+    "order": 187
   },
   {
     "slug": "all-nodes-distance-k-in-binary-tree",
@@ -15073,7 +16054,7 @@
         "sample": false
       }
     ],
-    "order": 176
+    "order": 188
   },
   {
     "slug": "binary-tree-maximum-path-sum",
@@ -15170,7 +16151,7 @@
         "sample": false
       }
     ],
-    "order": 177
+    "order": 189
   },
   {
     "slug": "vertical-order-traversal-of-a-binary-tree",
@@ -15248,7 +16229,7 @@
         "sample": false
       }
     ],
-    "order": 178
+    "order": 190
   },
   {
     "slug": "largest-bst-subtree",
@@ -15370,7 +16351,7 @@
         "sample": false
       }
     ],
-    "order": 179
+    "order": 191
   },
   {
     "slug": "last-stone-weight",
@@ -15464,7 +16445,7 @@
         "sample": false
       }
     ],
-    "order": 180
+    "order": 192
   },
   {
     "slug": "kth-largest-element-in-an-array",
@@ -15547,7 +16528,7 @@
         "sample": false
       }
     ],
-    "order": 181
+    "order": 193
   },
   {
     "slug": "top-k-frequent-elements",
@@ -15644,7 +16625,7 @@
         "sample": false
       }
     ],
-    "order": 182
+    "order": 194
   },
   {
     "slug": "meeting-rooms-ii",
@@ -15740,7 +16721,7 @@
         "sample": false
       }
     ],
-    "order": 183
+    "order": 195
   },
   {
     "slug": "task-scheduler",
@@ -15841,7 +16822,7 @@
         "sample": false
       }
     ],
-    "order": 184
+    "order": 196
   },
   {
     "slug": "ugly-number-ii",
@@ -15951,7 +16932,7 @@
         "sample": false
       }
     ],
-    "order": 185
+    "order": 197
   },
   {
     "slug": "kth-smallest-element-in-a-sorted-matrix",
@@ -16041,7 +17022,7 @@
         "sample": false
       }
     ],
-    "order": 186
+    "order": 198
   },
   {
     "slug": "merge-k-sorted-arrays",
@@ -16097,7 +17078,7 @@
         "sample": false
       }
     ],
-    "order": 187
+    "order": 199
   },
   {
     "slug": "implement-min-heap",
@@ -16168,7 +17149,7 @@
         "sample": false
       }
     ],
-    "order": 188
+    "order": 200
   },
   {
     "slug": "sliding-window-maximum",
@@ -16266,7 +17247,7 @@
         "sample": false
       }
     ],
-    "order": 189
+    "order": 201
   },
   {
     "slug": "k-maximum-sum-combinations",
@@ -16328,7 +17309,7 @@
         "sample": false
       }
     ],
-    "order": 190
+    "order": 202
   },
   {
     "slug": "find-median-from-data-stream",
@@ -16419,7 +17400,7 @@
         "sample": false
       }
     ],
-    "order": 191
+    "order": 203
   },
   {
     "slug": "binary-strings-without-adjacent-ones",
@@ -16479,7 +17460,7 @@
         "sample": false
       }
     ],
-    "order": 192
+    "order": 204
   },
   {
     "slug": "word-search",
@@ -16569,7 +17550,7 @@
         "sample": false
       }
     ],
-    "order": 193
+    "order": 205
   },
   {
     "slug": "count-subsets-with-sum",
@@ -16663,7 +17644,7 @@
         "sample": false
       }
     ],
-    "order": 194
+    "order": 206
   },
   {
     "slug": "distinct-permutations-count",
@@ -16728,7 +17709,7 @@
         "sample": false
       }
     ],
-    "order": 195
+    "order": 207
   },
   {
     "slug": "generate-parentheses-count",
@@ -16779,7 +17760,7 @@
         "sample": false
       }
     ],
-    "order": 196
+    "order": 208
   },
   {
     "slug": "palindrome-partitioning-count",
@@ -16876,7 +17857,7 @@
         "sample": false
       }
     ],
-    "order": 197
+    "order": 209
   },
   {
     "slug": "combination-sum-count",
@@ -16943,7 +17924,7 @@
         "sample": false
       }
     ],
-    "order": 198
+    "order": 210
   },
   {
     "slug": "subsets",
@@ -16998,7 +17979,7 @@
         "sample": false
       }
     ],
-    "order": 199
+    "order": 211
   },
   {
     "slug": "subsets-ii",
@@ -17049,7 +18030,7 @@
         "sample": false
       }
     ],
-    "order": 200
+    "order": 212
   },
   {
     "slug": "combination-sum-ii",
@@ -17105,7 +18086,7 @@
         "sample": false
       }
     ],
-    "order": 201
+    "order": 213
   },
   {
     "slug": "combination-sum-iii",
@@ -17169,7 +18150,7 @@
         "sample": false
       }
     ],
-    "order": 202
+    "order": 214
   },
   {
     "slug": "permutations",
@@ -17220,7 +18201,7 @@
         "sample": false
       }
     ],
-    "order": 203
+    "order": 215
   },
   {
     "slug": "letter-combinations-of-a-phone-number",
@@ -17280,7 +18261,7 @@
         "sample": false
       }
     ],
-    "order": 204
+    "order": 216
   },
   {
     "slug": "subset-sums",
@@ -17331,7 +18312,7 @@
         "sample": false
       }
     ],
-    "order": 205
+    "order": 217
   },
   {
     "slug": "rat-in-a-maze",
@@ -17386,7 +18367,7 @@
         "sample": false
       }
     ],
-    "order": 206
+    "order": 218
   },
   {
     "slug": "count-subsequences-with-sum-k",
@@ -17447,7 +18428,7 @@
         "sample": false
       }
     ],
-    "order": 207
+    "order": 219
   },
   {
     "slug": "subsequences-with-sum-k",
@@ -17502,7 +18483,7 @@
         "sample": false
       }
     ],
-    "order": 208
+    "order": 220
   },
   {
     "slug": "rat-in-a-maze-count",
@@ -17583,7 +18564,7 @@
         "sample": false
       }
     ],
-    "order": 209
+    "order": 221
   },
   {
     "slug": "combination-sum",
@@ -17669,7 +18650,7 @@
         "sample": false
       }
     ],
-    "order": 210
+    "order": 222
   },
   {
     "slug": "n-queens-count",
@@ -17734,7 +18715,7 @@
         "sample": false
       }
     ],
-    "order": 211
+    "order": 223
   },
   {
     "slug": "sudoku-solver",
@@ -17805,7 +18786,7 @@
         "sample": false
       }
     ],
-    "order": 212
+    "order": 224
   },
   {
     "slug": "find-if-path-exists-in-graph",
@@ -17895,7 +18876,7 @@
         "sample": false
       }
     ],
-    "order": 213
+    "order": 225
   },
   {
     "slug": "find-the-town-judge",
@@ -17975,7 +18956,7 @@
         "sample": false
       }
     ],
-    "order": 214
+    "order": 226
   },
   {
     "slug": "bfs-of-graph",
@@ -18081,7 +19062,7 @@
         "sample": false
       }
     ],
-    "order": 215
+    "order": 227
   },
   {
     "slug": "dfs-of-graph",
@@ -18187,7 +19168,7 @@
         "sample": false
       }
     ],
-    "order": 216
+    "order": 228
   },
   {
     "slug": "number-of-islands",
@@ -18283,7 +19264,7 @@
         "sample": false
       }
     ],
-    "order": 217
+    "order": 229
   },
   {
     "slug": "course-schedule",
@@ -18375,7 +19356,7 @@
         "sample": false
       }
     ],
-    "order": 218
+    "order": 230
   },
   {
     "slug": "number-of-connected-components",
@@ -18471,7 +19452,7 @@
         "sample": false
       }
     ],
-    "order": 219
+    "order": 231
   },
   {
     "slug": "rotting-oranges",
@@ -18568,7 +19549,7 @@
         "sample": false
       }
     ],
-    "order": 220
+    "order": 232
   },
   {
     "slug": "shortest-path-in-binary-matrix",
@@ -18664,7 +19645,7 @@
         "sample": false
       }
     ],
-    "order": 221
+    "order": 233
   },
   {
     "slug": "perfect-squares",
@@ -18739,7 +19720,7 @@
         "sample": false
       }
     ],
-    "order": 222
+    "order": 234
   },
   {
     "slug": "longest-consecutive-sequence",
@@ -18831,7 +19812,7 @@
         "sample": false
       }
     ],
-    "order": 223
+    "order": 235
   },
   {
     "slug": "network-delay-time",
@@ -18927,7 +19908,7 @@
         "sample": false
       }
     ],
-    "order": 224
+    "order": 236
   },
   {
     "slug": "number-of-provinces",
@@ -19013,7 +19994,7 @@
         "sample": false
       }
     ],
-    "order": 225
+    "order": 237
   },
   {
     "slug": "redundant-connection",
@@ -19104,7 +20085,7 @@
         "sample": false
       }
     ],
-    "order": 226
+    "order": 238
   },
   {
     "slug": "min-cost-to-connect-all-points",
@@ -19201,7 +20182,7 @@
         "sample": false
       }
     ],
-    "order": 227
+    "order": 239
   },
   {
     "slug": "surrounded-regions",
@@ -19283,7 +20264,7 @@
         "sample": false
       }
     ],
-    "order": 228
+    "order": 240
   },
   {
     "slug": "01-matrix",
@@ -19379,7 +20360,7 @@
         "sample": false
       }
     ],
-    "order": 229
+    "order": 241
   },
   {
     "slug": "is-graph-bipartite",
@@ -19476,7 +20457,7 @@
         "sample": false
       }
     ],
-    "order": 230
+    "order": 242
   },
   {
     "slug": "cheapest-flights-within-k-stops",
@@ -19562,7 +20543,7 @@
         "sample": false
       }
     ],
-    "order": 231
+    "order": 243
   },
   {
     "slug": "path-with-minimum-effort",
@@ -19659,7 +20640,7 @@
         "sample": false
       }
     ],
-    "order": 232
+    "order": 244
   },
   {
     "slug": "detect-cycle-in-an-undirected-graph",
@@ -19841,7 +20822,7 @@
         "sample": false
       }
     ],
-    "order": 233
+    "order": 245
   },
   {
     "slug": "detect-cycle-in-a-directed-graph",
@@ -19988,7 +20969,7 @@
         "sample": false
       }
     ],
-    "order": 234
+    "order": 246
   },
   {
     "slug": "topological-sort",
@@ -20101,7 +21082,7 @@
         "sample": false
       }
     ],
-    "order": 235
+    "order": 247
   },
   {
     "slug": "shortest-path-in-undirected-graph",
@@ -20167,7 +21148,7 @@
         "sample": false
       }
     ],
-    "order": 236
+    "order": 248
   },
   {
     "slug": "dijkstra-algorithm",
@@ -20234,7 +21215,7 @@
         "sample": false
       }
     ],
-    "order": 237
+    "order": 249
   },
   {
     "slug": "bellman-ford-algorithm",
@@ -20341,7 +21322,7 @@
         "sample": false
       }
     ],
-    "order": 238
+    "order": 250
   },
   {
     "slug": "floyd-warshall",
@@ -20413,7 +21394,7 @@
         "sample": false
       }
     ],
-    "order": 239
+    "order": 251
   },
   {
     "slug": "minimum-spanning-tree",
@@ -20481,7 +21462,7 @@
         "sample": false
       }
     ],
-    "order": 240
+    "order": 252
   },
   {
     "slug": "eventual-safe-states",
@@ -20588,7 +21569,7 @@
         "sample": false
       }
     ],
-    "order": 241
+    "order": 253
   },
   {
     "slug": "number-of-operations-to-make-network-connected",
@@ -20700,7 +21681,7 @@
         "sample": false
       }
     ],
-    "order": 242
+    "order": 254
   },
   {
     "slug": "swim-in-rising-water",
@@ -20797,7 +21778,7 @@
         "sample": false
       }
     ],
-    "order": 243
+    "order": 255
   },
   {
     "slug": "m-coloring-problem",
@@ -20853,7 +21834,7 @@
         "sample": false
       }
     ],
-    "order": 244
+    "order": 256
   },
   {
     "slug": "strongly-connected-components-kosaraju",
@@ -20959,7 +21940,7 @@
         "sample": false
       }
     ],
-    "order": 245
+    "order": 257
   },
   {
     "slug": "critical-connections-in-a-network",
@@ -21070,7 +22051,7 @@
         "sample": false
       }
     ],
-    "order": 246
+    "order": 258
   },
   {
     "slug": "articulation-point-in-graph",
@@ -21181,7 +22162,7 @@
         "sample": false
       }
     ],
-    "order": 247
+    "order": 259
   },
   {
     "slug": "best-time-to-buy-and-sell-stock",
@@ -21277,7 +22258,7 @@
         "sample": false
       }
     ],
-    "order": 248
+    "order": 260
   },
   {
     "slug": "climbing-stairs",
@@ -21377,7 +22358,7 @@
         "sample": false
       }
     ],
-    "order": 249
+    "order": 261
   },
   {
     "slug": "min-cost-climbing-stairs",
@@ -21466,7 +22447,7 @@
         "sample": false
       }
     ],
-    "order": 250
+    "order": 262
   },
   {
     "slug": "counting-bits",
@@ -21545,7 +22526,7 @@
         "sample": false
       }
     ],
-    "order": 251
+    "order": 263
   },
   {
     "slug": "is-subsequence",
@@ -21640,7 +22621,7 @@
         "sample": false
       }
     ],
-    "order": 252
+    "order": 264
   },
   {
     "slug": "pascals-triangle",
@@ -21736,7 +22717,7 @@
         "sample": false
       }
     ],
-    "order": 253
+    "order": 265
   },
   {
     "slug": "maximum-subarray",
@@ -21832,7 +22813,7 @@
         "sample": false
       }
     ],
-    "order": 254
+    "order": 266
   },
   {
     "slug": "coin-change",
@@ -21927,7 +22908,7 @@
         "sample": false
       }
     ],
-    "order": 255
+    "order": 267
   },
   {
     "slug": "house-robber",
@@ -22017,7 +22998,7 @@
         "sample": false
       }
     ],
-    "order": 256
+    "order": 268
   },
   {
     "slug": "longest-increasing-subsequence",
@@ -22104,7 +23085,7 @@
         "sample": false
       }
     ],
-    "order": 257
+    "order": 269
   },
   {
     "slug": "jump-game",
@@ -22200,7 +23181,7 @@
         "sample": false
       }
     ],
-    "order": 258
+    "order": 270
   },
   {
     "slug": "unique-paths",
@@ -22301,7 +23282,7 @@
         "sample": false
       }
     ],
-    "order": 259
+    "order": 271
   },
   {
     "slug": "maximum-product-subarray",
@@ -22392,7 +23373,7 @@
         "sample": false
       }
     ],
-    "order": 260
+    "order": 272
   },
   {
     "slug": "longest-palindromic-substring-length",
@@ -22488,7 +23469,7 @@
         "sample": false
       }
     ],
-    "order": 261
+    "order": 273
   },
   {
     "slug": "longest-common-subsequence",
@@ -22579,7 +23560,7 @@
         "sample": false
       }
     ],
-    "order": 262
+    "order": 274
   },
   {
     "slug": "partition-equal-subset-sum",
@@ -22670,7 +23651,7 @@
         "sample": false
       }
     ],
-    "order": 263
+    "order": 275
   },
   {
     "slug": "maximal-square",
@@ -22764,7 +23745,7 @@
         "sample": false
       }
     ],
-    "order": 264
+    "order": 276
   },
   {
     "slug": "decode-ways",
@@ -22863,7 +23844,7 @@
         "sample": false
       }
     ],
-    "order": 265
+    "order": 277
   },
   {
     "slug": "unique-paths-ii",
@@ -22953,7 +23934,7 @@
         "sample": false
       }
     ],
-    "order": 266
+    "order": 278
   },
   {
     "slug": "house-robber-ii",
@@ -23048,7 +24029,7 @@
         "sample": false
       }
     ],
-    "order": 267
+    "order": 279
   },
   {
     "slug": "jump-game-ii",
@@ -23139,7 +24120,7 @@
         "sample": false
       }
     ],
-    "order": 268
+    "order": 280
   },
   {
     "slug": "minimum-path-sum",
@@ -23234,7 +24215,7 @@
         "sample": false
       }
     ],
-    "order": 269
+    "order": 281
   },
   {
     "slug": "word-break",
@@ -23355,7 +24336,7 @@
         "sample": false
       }
     ],
-    "order": 270
+    "order": 282
   },
   {
     "slug": "palindromic-substrings",
@@ -23470,7 +24451,7 @@
         "sample": false
       }
     ],
-    "order": 271
+    "order": 283
   },
   {
     "slug": "target-sum",
@@ -23565,7 +24546,7 @@
         "sample": false
       }
     ],
-    "order": 272
+    "order": 284
   },
   {
     "slug": "delete-and-earn",
@@ -23669,7 +24650,7 @@
         "sample": false
       }
     ],
-    "order": 273
+    "order": 285
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
@@ -23774,7 +24755,7 @@
         "sample": false
       }
     ],
-    "order": 274
+    "order": 286
   },
   {
     "slug": "minimum-falling-path-sum",
@@ -23864,7 +24845,7 @@
         "sample": false
       }
     ],
-    "order": 275
+    "order": 287
   },
   {
     "slug": "integer-break",
@@ -23973,7 +24954,7 @@
         "sample": false
       }
     ],
-    "order": 276
+    "order": 288
   },
   {
     "slug": "coin-change-ii",
@@ -24073,7 +25054,7 @@
         "sample": false
       }
     ],
-    "order": 277
+    "order": 289
   },
   {
     "slug": "maximum-sum-circular-subarray",
@@ -24172,7 +25153,7 @@
         "sample": false
       }
     ],
-    "order": 278
+    "order": 290
   },
   {
     "slug": "zero-one-knapsack",
@@ -24263,7 +25244,7 @@
         "sample": false
       }
     ],
-    "order": 279
+    "order": 291
   },
   {
     "slug": "rod-cutting",
@@ -24344,7 +25325,7 @@
         "sample": false
       }
     ],
-    "order": 280
+    "order": 292
   },
   {
     "slug": "longest-palindromic-subsequence",
@@ -24445,7 +25426,7 @@
         "sample": false
       }
     ],
-    "order": 281
+    "order": 293
   },
   {
     "slug": "subset-sum-equal-to-target",
@@ -24536,7 +25517,7 @@
         "sample": false
       }
     ],
-    "order": 282
+    "order": 294
   },
   {
     "slug": "longest-common-substring",
@@ -24617,7 +25598,7 @@
         "sample": false
       }
     ],
-    "order": 283
+    "order": 295
   },
   {
     "slug": "maximum-sum-increasing-subsequence",
@@ -24708,7 +25689,7 @@
         "sample": false
       }
     ],
-    "order": 284
+    "order": 296
   },
   {
     "slug": "longest-bitonic-subsequence",
@@ -24799,7 +25780,7 @@
         "sample": false
       }
     ],
-    "order": 285
+    "order": 297
   },
   {
     "slug": "number-of-longest-increasing-subsequences",
@@ -24885,7 +25866,157 @@
         "sample": false
       }
     ],
-    "order": 286
+    "order": 298
+  },
+  {
+    "slug": "0-1-knapsack",
+    "title": "0/1 Knapsack",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "dynamic-programming",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Item `i` weighs `weights[i]` and is worth `values[i]`. Each item can be taken at most once and the total weight must not exceed `capacity`. Return the maximum total value.\n\n### Input\nLine 1: `n`.\nLine 2: `n` weights.\nLine 3: `n`.\nLine 4: `n` values.\nLine 5: `capacity`.\n\n### Output\nThe maximum value.\n\n### Constraints\n- `1 <= n <= 100`\n- `1 <= weights[i] <= 100`\n- `1 <= values[i] <= 1000`\n- `1 <= capacity <= 1000`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n2\n1\n36\n5\n\nOutput:\n36\n```\n\n**Example 2**\n```text\nInput:\n2\n2 2\n2\n73 47\n6\n\nOutput:\n120\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] weights, int[] values, int capacity) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int weightsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] weights = new int[weightsLen];\n        if (weightsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < weightsLen; i++) weights[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int valuesLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] values = new int[valuesLen];\n        if (valuesLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < valuesLen; i++) values[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int capacity = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(weights, values, capacity);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(weights, values, capacity):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    weights_len = int(lines[pos]); pos += 1\n    weights = list(map(int, lines[pos].split())) if weights_len > 0 else []; pos += 1\n    values_len = int(lines[pos]); pos += 1\n    values = list(map(int, lines[pos].split())) if values_len > 0 else []; pos += 1\n    capacity = int(lines[pos]); pos += 1\n    result = solve(weights, values, capacity)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(weights, values, capacity) {\n  // Write your solution here\n}\n\nconst weightsLen = parseInt(lines[pos++], 10);\nconst weights = weightsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst valuesLen = parseInt(lines[pos++], 10);\nconst values = valuesLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst capacity = parseInt(lines[pos++], 10);\nconst result = solve(weights, values, capacity);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> weights, vector<int> values, int capacity) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int weightsLen = stoi(lines[pos++]);\n    vector<int> weights(weightsLen);\n    if (weightsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : weights) iss >> v;\n    }\n    pos++;\n    int valuesLen = stoi(lines[pos++]);\n    vector<int> values(valuesLen);\n    if (valuesLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : values) iss >> v;\n    }\n    pos++;\n    int capacity = stoi(lines[pos++]);\n    int result = solve(weights, values, capacity);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n2\n1\n36\n5\n",
+        "expectedOutput": "36\n",
+        "sample": true
+      },
+      {
+        "input": "2\n2 2\n2\n73 47\n6\n",
+        "expectedOutput": "120\n",
+        "sample": true
+      },
+      {
+        "input": "4\n1 4 4 4\n4\n97 73 95 59\n10\n",
+        "expectedOutput": "265\n",
+        "sample": false
+      },
+      {
+        "input": "6\n3 6 7 1 2 4\n6\n58 68 88 84 50 38\n15\n",
+        "expectedOutput": "280\n",
+        "sample": false
+      },
+      {
+        "input": "10\n1 9 12 2 1 9 1 13 5 3\n10\n100 71 37 1 83 28 10 81 76 38\n30\n",
+        "expectedOutput": "421\n",
+        "sample": false
+      },
+      {
+        "input": "20\n21 18 30 28 30 14 21 20 25 10 20 8 4 23 4 4 8 23 5 2\n20\n16 63 9 19 30 34 8 8 49 47 31 37 68 88 15 32 7 40 39 30\n60\n",
+        "expectedOutput": "356\n",
+        "sample": false
+      },
+      {
+        "input": "30\n25 5 24 39 34 16 35 23 15 43 49 44 29 3 14 22 27 28 1 6 47 28 34 26 32 29 34 43 10 19\n30\n96 31 49 8 15 91 85 27 100 40 94 71 80 26 59 61 57 1 21 98 6 57 27 83 36 96 75 88 74 76\n100\n",
+        "expectedOutput": "613\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 3 4 5\n4\n1 4 5 7\n7\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": "2\n2 3\n2\n10 20\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n1\n50\n5\n",
+        "expectedOutput": "50\n",
+        "sample": false
+      }
+    ],
+    "order": 299
+  },
+  {
+    "slug": "unbounded-knapsack",
+    "title": "Unbounded Knapsack",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "dynamic-programming",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Like the 0/1 knapsack, but every item can be taken any number of times. Return the maximum total value whose weight does not exceed `capacity`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` weights.\nLine 3: `n`.\nLine 4: `n` values.\nLine 5: `capacity`.\n\n### Output\nThe maximum value.\n\n### Constraints\n- `1 <= n <= 100`\n- `1 <= weights[i] <= 100`\n- `1 <= values[i] <= 1000`\n- `1 <= capacity <= 1000`\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n1\n87\n5\n\nOutput:\n435\n```\n\n**Example 2**\n```text\nInput:\n2\n3 1\n2\n40 58\n6\n\nOutput:\n348\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int[] weights, int[] values, int capacity) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int weightsLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] weights = new int[weightsLen];\n        if (weightsLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < weightsLen; i++) weights[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int valuesLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] values = new int[valuesLen];\n        if (valuesLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < valuesLen; i++) values[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int capacity = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(weights, values, capacity);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(weights, values, capacity):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    weights_len = int(lines[pos]); pos += 1\n    weights = list(map(int, lines[pos].split())) if weights_len > 0 else []; pos += 1\n    values_len = int(lines[pos]); pos += 1\n    values = list(map(int, lines[pos].split())) if values_len > 0 else []; pos += 1\n    capacity = int(lines[pos]); pos += 1\n    result = solve(weights, values, capacity)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(weights, values, capacity) {\n  // Write your solution here\n}\n\nconst weightsLen = parseInt(lines[pos++], 10);\nconst weights = weightsLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst valuesLen = parseInt(lines[pos++], 10);\nconst values = valuesLen > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : [];\npos++;\nconst capacity = parseInt(lines[pos++], 10);\nconst result = solve(weights, values, capacity);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int> weights, vector<int> values, int capacity) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int weightsLen = stoi(lines[pos++]);\n    vector<int> weights(weightsLen);\n    if (weightsLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : weights) iss >> v;\n    }\n    pos++;\n    int valuesLen = stoi(lines[pos++]);\n    vector<int> values(valuesLen);\n    if (valuesLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : values) iss >> v;\n    }\n    pos++;\n    int capacity = stoi(lines[pos++]);\n    int result = solve(weights, values, capacity);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "1\n1\n1\n87\n5\n",
+        "expectedOutput": "435\n",
+        "sample": true
+      },
+      {
+        "input": "2\n3 1\n2\n40 58\n6\n",
+        "expectedOutput": "348\n",
+        "sample": true
+      },
+      {
+        "input": "4\n3 5 5 3\n4\n63 90 95 76\n10\n",
+        "expectedOutput": "228\n",
+        "sample": false
+      },
+      {
+        "input": "6\n2 6 7 1 3 6\n6\n46 97 6 18 15 71\n15\n",
+        "expectedOutput": "340\n",
+        "sample": false
+      },
+      {
+        "input": "10\n12 9 15 11 12 9 13 10 7 9\n10\n18 20 70 1 47 65 32 41 37 8\n30\n",
+        "expectedOutput": "195\n",
+        "sample": false
+      },
+      {
+        "input": "20\n18 12 26 15 3 16 5 20 14 6 26 12 28 19 5 9 13 17 2 2\n20\n58 73 58 38 60 2 55 28 57 65 16 89 53 80 27 100 63 21 73 53\n60\n",
+        "expectedOutput": "2190\n",
+        "sample": false
+      },
+      {
+        "input": "30\n44 27 17 49 43 12 45 23 7 2 3 28 6 41 6 37 4 8 46 43 17 8 12 38 7 28 34 15 20 8\n30\n4 23 7 52 11 95 41 77 84 95 88 13 47 37 41 80 100 15 95 20 91 97 38 89 12 36 15 40 85 65\n100\n",
+        "expectedOutput": "4750\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 3 4 5\n4\n1 4 5 7\n7\n",
+        "expectedOutput": "9\n",
+        "sample": false
+      },
+      {
+        "input": "2\n2 3\n2\n10 20\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n5\n1\n50\n5\n",
+        "expectedOutput": "50\n",
+        "sample": false
+      },
+      {
+        "input": "3\n2 4 6\n3\n5 11 13\n16\n",
+        "expectedOutput": "44\n",
+        "sample": false
+      },
+      {
+        "input": "1\n3\n1\n4\n10\n",
+        "expectedOutput": "12\n",
+        "sample": false
+      }
+    ],
+    "order": 300
   },
   {
     "slug": "edit-distance",
@@ -24981,7 +26112,7 @@
         "sample": false
       }
     ],
-    "order": 287
+    "order": 301
   },
   {
     "slug": "longest-valid-parentheses",
@@ -25086,7 +26217,7 @@
         "sample": false
       }
     ],
-    "order": 288
+    "order": 302
   },
   {
     "slug": "split-array-largest-sum",
@@ -25173,7 +26304,7 @@
         "sample": false
       }
     ],
-    "order": 289
+    "order": 303
   },
   {
     "slug": "distinct-subsequences",
@@ -25283,7 +26414,7 @@
         "sample": false
       }
     ],
-    "order": 290
+    "order": 304
   },
   {
     "slug": "regular-expression-matching",
@@ -25422,7 +26553,7 @@
         "sample": false
       }
     ],
-    "order": 291
+    "order": 305
   },
   {
     "slug": "burst-balloons",
@@ -25522,7 +26653,7 @@
         "sample": false
       }
     ],
-    "order": 292
+    "order": 306
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-iii",
@@ -25622,7 +26753,7 @@
         "sample": false
       }
     ],
-    "order": 293
+    "order": 307
   },
   {
     "slug": "interleaving-string",
@@ -25741,7 +26872,7 @@
         "sample": false
       }
     ],
-    "order": 294
+    "order": 308
   },
   {
     "slug": "wildcard-matching",
@@ -25901,7 +27032,7 @@
         "sample": false
       }
     ],
-    "order": 295
+    "order": 309
   },
   {
     "slug": "maximal-rectangle",
@@ -25999,7 +27130,7 @@
         "sample": false
       }
     ],
-    "order": 296
+    "order": 310
   },
   {
     "slug": "matrix-chain-multiplication",
@@ -26085,7 +27216,7 @@
         "sample": false
       }
     ],
-    "order": 297
+    "order": 311
   },
   {
     "slug": "palindrome-partitioning-ii",
@@ -26196,7 +27327,7 @@
         "sample": false
       }
     ],
-    "order": 298
+    "order": 312
   },
   {
     "slug": "egg-dropping-puzzle",
@@ -26318,7 +27449,7 @@
         "sample": false
       }
     ],
-    "order": 299
+    "order": 313
   },
   {
     "slug": "maximum-profit-in-job-scheduling",
@@ -26400,7 +27531,7 @@
         "sample": false
       }
     ],
-    "order": 300
+    "order": 314
   },
   {
     "slug": "minimum-insertion-steps-to-make-a-string-palindrome",
@@ -26491,7 +27622,7 @@
         "sample": false
       }
     ],
-    "order": 301
+    "order": 315
   },
   {
     "slug": "assign-cookies",
@@ -26587,7 +27718,7 @@
         "sample": false
       }
     ],
-    "order": 302
+    "order": 316
   },
   {
     "slug": "can-place-flowers",
@@ -26686,7 +27817,7 @@
         "sample": false
       }
     ],
-    "order": 303
+    "order": 317
   },
   {
     "slug": "lemonade-change",
@@ -26811,7 +27942,7 @@
         "sample": false
       }
     ],
-    "order": 304
+    "order": 318
   },
   {
     "slug": "minimum-number-of-coins",
@@ -26912,7 +28043,7 @@
         "sample": false
       }
     ],
-    "order": 305
+    "order": 319
   },
   {
     "slug": "container-with-most-water",
@@ -27002,7 +28133,7 @@
         "sample": false
       }
     ],
-    "order": 306
+    "order": 320
   },
   {
     "slug": "gas-station",
@@ -27086,7 +28217,7 @@
         "sample": false
       }
     ],
-    "order": 307
+    "order": 321
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-ii",
@@ -27176,7 +28307,7 @@
         "sample": false
       }
     ],
-    "order": 308
+    "order": 322
   },
   {
     "slug": "partition-labels",
@@ -27271,7 +28402,7 @@
         "sample": false
       }
     ],
-    "order": 309
+    "order": 323
   },
   {
     "slug": "n-meetings-in-one-room",
@@ -27343,7 +28474,7 @@
         "sample": false
       }
     ],
-    "order": 310
+    "order": 324
   },
   {
     "slug": "minimum-platforms",
@@ -27415,7 +28546,7 @@
         "sample": false
       }
     ],
-    "order": 311
+    "order": 325
   },
   {
     "slug": "job-sequencing-problem",
@@ -27487,7 +28618,7 @@
         "sample": false
       }
     ],
-    "order": 312
+    "order": 326
   },
   {
     "slug": "fractional-knapsack",
@@ -27548,7 +28679,7 @@
         "sample": false
       }
     ],
-    "order": 313
+    "order": 327
   },
   {
     "slug": "candy",
@@ -27648,7 +28779,7 @@
         "sample": false
       }
     ],
-    "order": 314
+    "order": 328
   },
   {
     "slug": "non-overlapping-intervals",
@@ -27744,7 +28875,7 @@
         "sample": false
       }
     ],
-    "order": 315
+    "order": 329
   },
   {
     "slug": "insert-interval",
@@ -27839,7 +28970,7 @@
         "sample": false
       }
     ],
-    "order": 316
+    "order": 330
   },
   {
     "slug": "minimum-number-of-arrows-to-burst-balloons",
@@ -27934,7 +29065,7 @@
         "sample": false
       }
     ],
-    "order": 317
+    "order": 331
   },
   {
     "slug": "palindrome-number",
@@ -28042,7 +29173,7 @@
         "sample": false
       }
     ],
-    "order": 318
+    "order": 332
   },
   {
     "slug": "single-number",
@@ -28137,7 +29268,7 @@
         "sample": false
       }
     ],
-    "order": 319
+    "order": 333
   },
   {
     "slug": "missing-number",
@@ -28223,7 +29354,7 @@
         "sample": false
       }
     ],
-    "order": 320
+    "order": 334
   },
   {
     "slug": "number-of-1-bits",
@@ -28317,7 +29448,7 @@
         "sample": false
       }
     ],
-    "order": 321
+    "order": 335
   },
   {
     "slug": "power-of-two",
@@ -28422,7 +29553,7 @@
         "sample": false
       }
     ],
-    "order": 322
+    "order": 336
   },
   {
     "slug": "happy-number",
@@ -28496,7 +29627,7 @@
         "sample": false
       }
     ],
-    "order": 323
+    "order": 337
   },
   {
     "slug": "roman-to-integer",
@@ -28602,7 +29733,7 @@
         "sample": false
       }
     ],
-    "order": 324
+    "order": 338
   },
   {
     "slug": "excel-sheet-column-number",
@@ -28696,7 +29827,7 @@
         "sample": false
       }
     ],
-    "order": 325
+    "order": 339
   },
   {
     "slug": "plus-one",
@@ -28790,7 +29921,7 @@
         "sample": false
       }
     ],
-    "order": 326
+    "order": 340
   },
   {
     "slug": "hamming-distance",
@@ -28893,7 +30024,7 @@
         "sample": false
       }
     ],
-    "order": 327
+    "order": 341
   },
   {
     "slug": "sum-of-two-integers",
@@ -28997,7 +30128,7 @@
         "sample": false
       }
     ],
-    "order": 328
+    "order": 342
   },
   {
     "slug": "count-digits",
@@ -29066,7 +30197,7 @@
         "sample": false
       }
     ],
-    "order": 329
+    "order": 343
   },
   {
     "slug": "gcd-of-two-numbers",
@@ -29135,7 +30266,7 @@
         "sample": false
       }
     ],
-    "order": 330
+    "order": 344
   },
   {
     "slug": "armstrong-number",
@@ -29214,7 +30345,7 @@
         "sample": false
       }
     ],
-    "order": 331
+    "order": 345
   },
   {
     "slug": "divisors-of-a-number",
@@ -29288,7 +30419,7 @@
         "sample": false
       }
     ],
-    "order": 332
+    "order": 346
   },
   {
     "slug": "check-prime-number",
@@ -29367,7 +30498,7 @@
         "sample": false
       }
     ],
-    "order": 333
+    "order": 347
   },
   {
     "slug": "largest-odd-number-in-a-string",
@@ -29437,7 +30568,97 @@
         "sample": false
       }
     ],
-    "order": 334
+    "order": 348
+  },
+  {
+    "slug": "minimum-bit-flips-to-convert-number",
+    "title": "Minimum Bit Flips to Convert Number",
+    "difficulty": "EASY",
+    "tags": [
+      "bit-manipulation",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "A bit flip turns one bit of a number from `0` to `1` or from `1` to `0`. Return the minimum number of flips needed to turn `start` into `goal`.\n\n### Input\nLine 1: `start`.\nLine 2: `goal`.\n\n### Output\nThe number of flips.\n\n### Constraints\n- `0 <= start, goal <= 2^31 - 1`\n\n### Examples\n**Example 1**\n```text\nInput:\n10\n7\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n3\n4\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static int solve(int start, int goal) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int start = Integer.parseInt(lines.get(pos++).trim());\n        int goal = Integer.parseInt(lines.get(pos++).trim());\n        int result = solve(start, goal);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(start, goal):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    start = int(lines[pos]); pos += 1\n    goal = int(lines[pos]); pos += 1\n    result = solve(start, goal)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(start, goal) {\n  // Write your solution here\n}\n\nconst start = parseInt(lines[pos++], 10);\nconst goal = parseInt(lines[pos++], 10);\nconst result = solve(start, goal);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(int start, int goal) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int start = stoi(lines[pos++]);\n    int goal = stoi(lines[pos++]);\n    int result = solve(start, goal);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "10\n7\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "3\n4\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "0\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1073741824\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "2147483647\n0\n",
+        "expectedOutput": "31\n",
+        "sample": false
+      },
+      {
+        "input": "29\n15\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "7\n7\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "0\n2147483647\n",
+        "expectedOutput": "31\n",
+        "sample": false
+      },
+      {
+        "input": "1120349408\n1679747972\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "1383069806\n462082838\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "893307156\n1204974335\n",
+        "expectedOutput": "21\n",
+        "sample": false
+      },
+      {
+        "input": "846644575\n1315604834\n",
+        "expectedOutput": "16\n",
+        "sample": false
+      },
+      {
+        "input": "1046433367\n1947608583\n",
+        "expectedOutput": "11\n",
+        "sample": false
+      },
+      {
+        "input": "238181839\n54164192\n",
+        "expectedOutput": "13\n",
+        "sample": false
+      }
+    ],
+    "order": 349
   },
   {
     "slug": "count-primes",
@@ -29522,7 +30743,7 @@
         "sample": false
       }
     ],
-    "order": 335
+    "order": 350
   },
   {
     "slug": "fast-power-mod",
@@ -29616,7 +30837,7 @@
         "sample": false
       }
     ],
-    "order": 336
+    "order": 351
   },
   {
     "slug": "reverse-integer",
@@ -29724,7 +30945,7 @@
         "sample": false
       }
     ],
-    "order": 337
+    "order": 352
   },
   {
     "slug": "rotate-image",
@@ -29811,7 +31032,7 @@
         "sample": false
       }
     ],
-    "order": 338
+    "order": 353
   },
   {
     "slug": "bitwise-and-of-numbers-range",
@@ -29915,7 +31136,7 @@
         "sample": false
       }
     ],
-    "order": 339
+    "order": 354
   },
   {
     "slug": "single-number-ii",
@@ -30015,7 +31236,7 @@
         "sample": false
       }
     ],
-    "order": 340
+    "order": 355
   },
   {
     "slug": "find-the-repeating-and-missing-number",
@@ -30072,7 +31293,7 @@
         "sample": false
       }
     ],
-    "order": 341
+    "order": 356
   },
   {
     "slug": "count-subarrays-with-given-xor",
@@ -30134,7 +31355,7 @@
         "sample": false
       }
     ],
-    "order": 342
+    "order": 357
   },
   {
     "slug": "string-to-integer-atoi",
@@ -30225,7 +31446,7 @@
         "sample": false
       }
     ],
-    "order": 343
+    "order": 358
   },
   {
     "slug": "integer-to-roman",
@@ -30321,7 +31542,7 @@
         "sample": false
       }
     ],
-    "order": 344
+    "order": 359
   },
   {
     "slug": "maximum-xor-of-two-numbers-in-an-array",
@@ -30408,7 +31629,7 @@
         "sample": false
       }
     ],
-    "order": 345
+    "order": 360
   },
   {
     "slug": "divide-two-integers",
@@ -30584,7 +31805,7 @@
         "sample": false
       }
     ],
-    "order": 346
+    "order": 361
   },
   {
     "slug": "permutation-sequence",
@@ -30650,7 +31871,7 @@
         "sample": false
       }
     ],
-    "order": 347
+    "order": 362
   },
   {
     "slug": "island-perimeter",
@@ -30739,7 +31960,7 @@
         "sample": false
       }
     ],
-    "order": 348
+    "order": 363
   },
   {
     "slug": "max-area-of-island",
@@ -30828,7 +32049,7 @@
         "sample": false
       }
     ],
-    "order": 349
+    "order": 364
   },
   {
     "slug": "spiral-matrix",
@@ -30938,7 +32159,7 @@
         "sample": false
       }
     ],
-    "order": 350
+    "order": 365
   },
   {
     "slug": "set-matrix-zeroes",
@@ -31025,7 +32246,7 @@
         "sample": false
       }
     ],
-    "order": 351
+    "order": 366
   },
   {
     "slug": "valid-sudoku",
@@ -31129,7 +32350,7 @@
         "sample": false
       }
     ],
-    "order": 352
+    "order": 367
   },
   {
     "slug": "game-of-life",
@@ -31223,6 +32444,6 @@
         "sample": false
       }
     ],
-    "order": 353
+    "order": 368
   }
 ]

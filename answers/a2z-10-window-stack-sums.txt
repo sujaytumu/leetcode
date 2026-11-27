@@ -1,0 +1,248 @@
+=== subarrays-with-k-different-integers
+--- cpp
+int solve(vector<int> nums, int k) {
+    // exactly k = (at most k) - (at most k - 1)
+    auto atMost = [&](int limit) {
+        unordered_map<int, int> freq;
+        int left = 0, count = 0;
+        for (int right = 0; right < (int)nums.size(); right++) {
+            if (freq[nums[right]]++ == 0) limit--;
+            while (limit < 0) {
+                if (--freq[nums[left++]] == 0) limit++;
+            }
+            count += right - left + 1;      // every subarray ending at right and starting in [left, right]
+        }
+        return count;
+    };
+    return atMost(k) - atMost(k - 1);
+}
+=== count-number-of-nice-subarrays
+--- cpp
+int solve(vector<int> nums, int k) {
+    vector<int> seen(nums.size() + 1, 0);   // seen[c] = prefixes holding exactly c odd numbers
+    seen[0] = 1;
+    int odd = 0, answer = 0;
+    for (int x : nums) {
+        odd += x & 1;
+        if (odd >= k) answer += seen[odd - k];
+        seen[odd]++;
+    }
+    return answer;
+}
+=== fruit-into-baskets
+--- cpp
+int solve(vector<int> fruits) {
+    unordered_map<int, int> basket;
+    int left = 0, best = 0;
+    for (int right = 0; right < (int)fruits.size(); right++) {
+        basket[fruits[right]]++;
+        while (basket.size() > 2) {
+            if (--basket[fruits[left]] == 0) basket.erase(fruits[left]);
+            left++;
+        }
+        best = max(best, right - left + 1);
+    }
+    return best;
+}
+=== max-consecutive-ones-iii
+--- cpp
+int solve(vector<int> nums, int k) {
+    int left = 0, zeros = 0, best = 0;
+    for (int right = 0; right < (int)nums.size(); right++) {
+        if (nums[right] == 0) zeros++;
+        while (zeros > k) {
+            if (nums[left++] == 0) zeros--;
+        }
+        best = max(best, right - left + 1);
+    }
+    return best;
+}
+=== maximum-points-you-can-obtain-from-cards
+--- cpp
+int solve(vector<int> cardPoints, int k) {
+    int n = cardPoints.size(), current = 0;
+    for (int i = 0; i < k; i++) current += cardPoints[i];     // all k from the left
+    int best = current;
+    for (int i = 1; i <= k; i++) {                            // swap one left card for one right card
+        current += cardPoints[n - i] - cardPoints[k - i];
+        best = max(best, current);
+    }
+    return best;
+}
+=== number-of-substrings-containing-all-three-characters
+--- cpp
+int solve(string s) {
+    int last[3] = {-1, -1, -1};
+    int answer = 0;
+    for (int i = 0; i < (int)s.size(); i++) {
+        last[s[i] - 'a'] = i;
+        // a valid substring ending at i may start at or before the oldest of the three last positions
+        answer += min({last[0], last[1], last[2]}) + 1;
+    }
+    return answer;
+}
+=== remove-k-digits
+--- cpp
+string solve(string num, int k) {
+    string stack;
+    for (char c : num) {
+        while (k > 0 && !stack.empty() && stack.back() > c) {
+            stack.pop_back();
+            k--;
+        }
+        stack.push_back(c);
+    }
+    while (k > 0 && !stack.empty()) {                         // digits were non-decreasing: trim the end
+        stack.pop_back();
+        k--;
+    }
+    size_t start = 0;
+    while (start < stack.size() && stack[start] == '0') start++;
+    stack = stack.substr(start);
+    return stack.empty() ? "0" : stack;
+}
+=== asteroid-collision
+--- cpp
+vector<int> solve(vector<int> asteroids) {
+    vector<int> stack;
+    for (int a : asteroids) {
+        bool alive = true;
+        while (alive && a < 0 && !stack.empty() && stack.back() > 0) {
+            if (stack.back() < -a) {
+                stack.pop_back();                             // the right-mover is smaller, it explodes
+            } else {
+                if (stack.back() == -a) stack.pop_back();     // equal sizes: both explode
+                alive = false;
+            }
+        }
+        if (alive) stack.push_back(a);
+    }
+    return stack;
+}
+=== sum-of-subarray-ranges
+--- cpp
+int solve(vector<int> nums) {
+    int n = nums.size();
+    // sum of subarray maximums via "how many subarrays is each element the maximum of"
+    auto sumOfMaximums = [&](const vector<int>& v) {
+        vector<int> left(n), right(n), stack;
+        for (int i = 0; i < n; i++) {
+            while (!stack.empty() && v[stack.back()] <= v[i]) stack.pop_back();
+            left[i] = stack.empty() ? -1 : stack.back();      // previous strictly greater
+            stack.push_back(i);
+        }
+        stack.clear();
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.empty() && v[stack.back()] < v[i]) stack.pop_back();
+            right[i] = stack.empty() ? n : stack.back();      // next greater or equal
+            stack.push_back(i);
+        }
+        long long total = 0;
+        for (int i = 0; i < n; i++) total += (long long)v[i] * (i - left[i]) * (right[i] - i);
+        return total;
+    };
+    vector<int> negated(n);
+    for (int i = 0; i < n; i++) negated[i] = -nums[i];         // maximum of -x is minus the minimum of x
+    return (int)(sumOfMaximums(nums) + sumOfMaximums(negated));
+}
+=== 3sum
+--- cpp
+vector<vector<int>> solve(vector<int> nums) {
+    sort(nums.begin(), nums.end());
+    int n = nums.size();
+    vector<vector<int>> result;
+    for (int i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        int lo = i + 1, hi = n - 1;
+        while (lo < hi) {
+            int sum = nums[i] + nums[lo] + nums[hi];
+            if (sum < 0) lo++;
+            else if (sum > 0) hi--;
+            else {
+                result.push_back({nums[i], nums[lo], nums[hi]});
+                lo++;
+                hi--;
+                while (lo < hi && nums[lo] == nums[lo - 1]) lo++;
+                while (lo < hi && nums[hi] == nums[hi + 1]) hi--;
+            }
+        }
+    }
+    return result;
+}
+=== 4sum
+--- cpp
+vector<vector<int>> solve(vector<int> nums, int target) {
+    sort(nums.begin(), nums.end());
+    int n = nums.size();
+    vector<vector<int>> result;
+    for (int i = 0; i < n - 3; i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        for (int j = i + 1; j < n - 2; j++) {
+            if (j > i + 1 && nums[j] == nums[j - 1]) continue;
+            int lo = j + 1, hi = n - 1;
+            while (lo < hi) {
+                long long sum = (long long)nums[i] + nums[j] + nums[lo] + nums[hi];
+                if (sum < target) lo++;
+                else if (sum > target) hi--;
+                else {
+                    result.push_back({nums[i], nums[j], nums[lo], nums[hi]});
+                    lo++;
+                    hi--;
+                    while (lo < hi && nums[lo] == nums[lo - 1]) lo++;
+                    while (lo < hi && nums[hi] == nums[hi + 1]) hi--;
+                }
+            }
+        }
+    }
+    return result;
+}
+=== allocate-books
+--- cpp
+int solve(vector<int> pages, int m) {
+    int n = pages.size();
+    if (m > n) return -1;
+    long long lo = *max_element(pages.begin(), pages.end());  // nobody can read less than the biggest book
+    long long hi = accumulate(pages.begin(), pages.end(), 0LL);
+    auto studentsNeeded = [&](long long limit) {
+        int students = 1;
+        long long load = 0;
+        for (int p : pages) {
+            if (load + p > limit) {
+                students++;
+                load = p;
+            } else {
+                load += p;
+            }
+        }
+        return students;
+    };
+    while (lo < hi) {                                         // smallest limit that needs at most m students
+        long long mid = (lo + hi) / 2;
+        if (studentsNeeded(mid) <= m) hi = mid;
+        else lo = mid + 1;
+    }
+    return (int)lo;
+}
+=== 0-1-knapsack
+--- cpp
+int solve(vector<int> weights, vector<int> values, int capacity) {
+    vector<int> best(capacity + 1, 0);
+    for (size_t i = 0; i < weights.size(); i++)
+        for (int w = capacity; w >= weights[i]; w--)          // downwards so each item is used once
+            best[w] = max(best[w], best[w - weights[i]] + values[i]);
+    return best[capacity];
+}
+=== unbounded-knapsack
+--- cpp
+int solve(vector<int> weights, vector<int> values, int capacity) {
+    vector<int> best(capacity + 1, 0);
+    for (size_t i = 0; i < weights.size(); i++)
+        for (int w = weights[i]; w <= capacity; w++)          // upwards so an item can be reused
+            best[w] = max(best[w], best[w - weights[i]] + values[i]);
+    return best[capacity];
+}
+=== minimum-bit-flips-to-convert-number
+--- cpp
+int solve(int start, int goal) {
+    return __builtin_popcount((unsigned)(start ^ goal));      // each differing bit needs one flip
+}
