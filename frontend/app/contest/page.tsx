@@ -79,7 +79,7 @@ export default function ContestPage() {
       {overview && (
         <div className="chips">
           {tabs.map((t) => (
-            <button key={t.id} className={selected === t.id ? "on" : ""} onClick={() => { picked.current = true; setSelected(t.id); }}>
+            <button key={t.id} data-state={t.state} className={selected === t.id ? "on" : ""} onClick={() => { picked.current = true; setSelected(t.id); }}>
               {t.title}{t.state === "RUNNING" ? " · live" : t.state === "UPCOMING" ? " · next" : ""}
             </button>
           ))}
@@ -110,12 +110,12 @@ export default function ContestPage() {
           )}
           {c.problems && c.state === "FINISHED" && <VirtualContest key={c.id} contestId={c.id} problems={c.problems} />}
           {c.problems ? (
-            <table style={{ marginTop: 12 }}>
+            <table className="contest-table" style={{ marginTop: 12 }}>
               <thead><tr><th style={{ width: 40 }}></th><th>Problem</th><th>Difficulty</th><th className="th-num">Points</th></tr></thead>
               <tbody>
                 {c.problems.map((p, i) => (
                   <tr key={p.slug}>
-                    <td className="ok-tick">{mine[i] ? "✔" : ""}</td>
+                    <td className="ok-tick">{mine[i] ? <span className="tickdot" title="Solved">✓</span> : <span className="tickdot off" aria-hidden="true" />}</td>
                     <td><Link href={`/problems/${p.slug}`}>Q{i + 1}. {p.title}</Link> <span className="mute" style={{ fontSize: 12 }}>({p.points})</span></td>
                     <td className={p.difficulty}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</td>
                     <td className="th-num">{p.points}</td>

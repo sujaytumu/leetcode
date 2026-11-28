@@ -40,3 +40,34 @@ main > .bar { gap:10px; flex-wrap:wrap; }
   input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], select { min-height:42px; }
 }
 @media (prefers-reduced-motion:reduce) { button:active:not(:disabled), .btn, .backbtn, .backbtn svg, button.primary { transition:none; transform:none !important; } }
+
+/* ---- problem list: pager, shuffle, topic chips (phone) ---- */
+.pager { display:flex; align-items:center; justify-content:center; gap:14px; margin:18px 0 10px; font-size:13px; }
+.pager button { min-height:36px; padding:0 18px; border-radius:999px; font-weight:700; }
+.pager button:hover:not(:disabled) { transform:translateY(-1px); border-color:var(--accent); }
+.shufflebtn { border-radius:12px; }
+.shufflebtn:hover:not(:disabled) { color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, var(--cell)); }
+.shufflebtn svg { transition:transform .25s; }
+.shufflebtn:hover:not(:disabled) svg { transform:rotate(-12deg) scale(1.08); }
+.ftoggle:hover { border-color:var(--accent); }
+@media (max-width:900px) {
+  .lcchips button { border-radius:999px; font-weight:600; }
+  .lcchips button.on { color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--panel)); border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+}
+
+/* ---- contest ---- */
+.chips button[data-state="RUNNING"]::before { content:""; display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; background:var(--ok, #2cbb5d); animation:livePulse 1.4s ease-in-out infinite; vertical-align:middle; }
+@keyframes livePulse { 0%,100% { box-shadow:0 0 0 0 color-mix(in srgb, var(--ok, #2cbb5d) 60%, transparent); } 50% { box-shadow:0 0 0 5px transparent; } }
+.contest-me { gap:10px; }
+.contest-me > div { flex:1 1 120px; padding:10px 16px; border-radius:12px; background:var(--cell); border:1px solid var(--line); }
+.contest-me b { font-weight:800; letter-spacing:-.3px; }
+.contest-table { border-collapse:separate; border-spacing:0 6px; }
+.contest-table tbody tr { background:var(--panel); }
+.contest-table tbody td { padding:12px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.contest-table tbody td:first-child { border-left:1px solid var(--line); border-radius:12px 0 0 12px; }
+.contest-table tbody td:last-child { border-right:1px solid var(--line); border-radius:0 12px 12px 0; }
+.contest-table td a { font-weight:600; }
+.contest-table td.EASY, .contest-table td.MEDIUM, .contest-table td.HARD { font-weight:700; }
+.tickdot { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; font-size:12px; font-weight:800; color:#fff; background:var(--ok, #2cbb5d); box-shadow:0 4px 10px -4px color-mix(in srgb, var(--ok, #2cbb5d) 70%, transparent); }
+.tickdot.off { background:none; box-shadow:none; border:2px solid var(--line); }
+@media (prefers-reduced-motion:reduce) { .chips button[data-state="RUNNING"]::before { animation:none; } }
