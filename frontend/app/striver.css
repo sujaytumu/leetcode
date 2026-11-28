@@ -5,8 +5,9 @@
 .sheetpill { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.3px; line-height:1; padding:4px 8px; border-radius:999px; margin:0 3px; border:1px solid transparent; text-decoration:none; }
 .sheetpill.A2Z { color:#ffa116; background:color-mix(in srgb, #ffa116 16%, transparent); border-color:color-mix(in srgb, #ffa116 40%, transparent); }
 .sheetpill.SDE { color:#2cbb5d; background:color-mix(in srgb, #2cbb5d 16%, transparent); border-color:color-mix(in srgb, #2cbb5d 40%, transparent); }
+.sheetpill.M50 { color:#a78bfa; background:color-mix(in srgb, #a78bfa 16%, transparent); border-color:color-mix(in srgb, #a78bfa 40%, transparent); }
 .sheetpill:hover { filter:brightness(1.15); }
-.col-sheet { width:110px; white-space:nowrap; }
+.col-sheet { width:150px; white-space:nowrap; }
 .home .show-sm .sheetpill { margin:0; flex:none; }
 
 /* ---- explore bar above the topics on the problem list ---- */
@@ -296,3 +297,8 @@
   .sh-ring-mid small { font-size:11px; margin-top:1px; }
   .sh-ring-mid em { display:none; }
 }
+
+/* three sheet tabs: keep them on one row, even on a phone */
+.sh-tabs button { min-width:0; }
+.sh-tabs button b { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+@media (max-width:480px) { .sh-tabs { gap:4px; } .sh-tabs button { padding:5px 6px; font-size:12.5px; gap:5px; } .sh-n { padding:1px 6px; font-size:11px; } }

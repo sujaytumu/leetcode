@@ -6866,6 +6866,34 @@ STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_10}
 STRIVER_SDE |= set(['count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'count-subarrays-with-given-xor', 'find-the-repeating-and-missing-number', 'search-a-2d-matrix-ii', 'nth-root-of-an-integer', 'single-element-in-a-sorted-array', 'kth-element-of-two-sorted-arrays', 'aggressive-cows', 'median-in-a-row-wise-sorted-matrix', 'split-array-largest-sum', 'subset-sums', 'subsets-ii', 'combination-sum-ii', 'combination-sum-count', 'palindrome-partitioning-count', 'permutation-sequence', 'permutations', 'n-queens-count', 'm-coloring-problem', 'next-greater-element-ii', 'reverse-words-in-a-string', 'string-to-integer-atoi', 'longest-common-prefix', 'count-and-say', 'longest-palindromic-substring-length', 'binary-tree-right-side-view', 'count-complete-tree-nodes'])
 
 
+# Magic 50: the 50 questions that cover the most interview ground (hand-picked, one pass over every core pattern).
+MAGIC_50 = set([
+    # arrays, hashing, two pointers
+    "two-sum", "best-time-to-buy-and-sell-stock", "maximum-subarray", "product-of-array-except-self", "merge-intervals",
+    "subarray-sum-equals-k", "longest-consecutive-sequence", "3sum", "container-with-most-water", "trapping-rain-water",
+    # sliding window, stack, binary search
+    "longest-substring-without-repeating-characters", "minimum-window-substring-length", "valid-parentheses",
+    "daily-temperatures", "largest-rectangle-in-histogram", "sliding-window-maximum", "search-in-rotated-sorted-array",
+    "koko-eating-bananas", "median-of-two-sorted-arrays",
+    # linked list and design
+    "reverse-linked-list", "merge-two-sorted-lists", "linked-list-cycle", "remove-nth-node-from-end-of-list",
+    "add-two-numbers", "lru-cache",
+    # trees
+    "maximum-depth-of-binary-tree", "invert-binary-tree", "validate-binary-search-tree",
+    "binary-tree-level-order-traversal", "lowest-common-ancestor-of-a-binary-tree", "binary-tree-maximum-path-sum",
+    # heap, backtracking, graphs
+    "kth-largest-element-in-an-array", "top-k-frequent-elements", "find-median-from-data-stream", "subsets",
+    "permutations", "combination-sum", "word-search", "number-of-islands", "course-schedule", "rotting-oranges",
+    "network-delay-time",
+    # dynamic programming and greedy
+    "climbing-stairs", "house-robber", "coin-change", "longest-increasing-subsequence", "longest-common-subsequence",
+    "word-break", "edit-distance", "jump-game",
+])
+assert len(MAGIC_50) == 50, len(MAGIC_50)
+_missing = MAGIC_50 - {p["slug"] for p in PROBLEMS}
+assert not _missing, f"Magic 50 problems not in the bank: {sorted(_missing)}"
+SHEET_TAGS = SHEET_TAGS + (("magic-50", MAGIC_50),)
+
 MAX_CASE_CHARS = 40000  # keep well under the 50,000-character test_cases columns
 
 

@@ -181,7 +181,7 @@ export default function ProblemsPage() {
         <div className="home-main">
           <Link href="/striver" className="striverbar">
             <span className="striverbar-ico" aria-hidden="true">📘</span>
-            <span className="striverbar-text"><b>Striver Sheet</b><small>A2Z and SDE sheets, grouped by topic, with your progress</small></span>
+            <span className="striverbar-text"><b>Striver Sheet</b><small>A2Z, SDE and Magic 50 sheets, grouped by topic, with your progress</small></span>
             <span className="striverbar-go">Explore →</span>
           </Link>
           <section className="topicpanel" aria-label="Topics">

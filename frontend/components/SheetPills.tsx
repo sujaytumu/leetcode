@@ -2,7 +2,7 @@ import Link from "next/link";
 import { sheetsOf } from "@/lib/sheets";
 import "@/app/striver.css";
 
-/** "A2Z" / "SDE" pills for the Striver sheets a problem is on; renders nothing for any other problem. */
+/** "A2Z" / "SDE" / "M50" pills for the sheets a problem is on; renders nothing for any other problem. */
 export default function SheetPills({ tags }: { tags: readonly string[] }) {
   return (
     <>

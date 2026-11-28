@@ -8,6 +8,8 @@ export const SHEETS: Sheet[] = [
     blurb: "Step by step from arrays to DP. Each problem opens with its optimal C++ solution." },
   { tag: "striver-sde", short: "SDE", label: "SDE Sheet", full: "Striver's SDE Sheet",
     blurb: "The classic interview-prep list, arrays to DP." },
+  { tag: "magic-50", short: "M50", label: "Magic 50", full: "Magic 50",
+    blurb: "50 hand-picked questions that cover the patterns interviews ask most: arrays, windows, trees, graphs and DP." },
 ];
 
 export const SHEET_TAGS: string[] = SHEETS.map((s) => s.tag);
@@ -42,5 +44,5 @@ export const compareTopics = (a: string, b: string): number => topicRank(a) - to
 /** Sheet from a `?sheet=` value such as "a2z", "sde" or the full tag. */
 export const sheetFromParam = (v: string | null | undefined): Sheet | undefined => {
   const x = (v ?? "").toLowerCase();
-  return SHEETS.find((s) => s.short.toLowerCase() === x || s.tag === x);
+  return SHEETS.find((s) => s.short.toLowerCase() === x || s.tag === x || s.tag.replace("-", "") === x);
 };

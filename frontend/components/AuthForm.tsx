@@ -95,7 +95,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         <h2>Practice. Solve. Get hired.</h2>
         <ul>
           <li><b>240+ problems</b> with optimal C++ solutions and editorials</li>
-          <li><b>Striver A2Z &amp; SDE sheets</b> with progress tracking</li>
+          <li><b>Striver A2Z, SDE &amp; Magic 50 sheets</b> with progress tracking</li>
           <li><b>Run &amp; Submit</b> in C++, Java, Python and JavaScript</li>
           <li><b>Streaks, contests</b> and spaced-repetition review</li>
         </ul>

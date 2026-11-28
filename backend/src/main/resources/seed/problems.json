@@ -7,7 +7,8 @@
       "array",
       "hash-table",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given an array of integers `nums` and an integer `target`, find the two numbers that add up to `target`. Each input has **exactly one** solution and you may not use the same element twice.\n\n### Input\nLine 1: `n`, the length of `nums`.\nLine 2: `n` space-separated integers.\nLine 3: `target`.\n\n### Output\nThe two indices, smaller first, separated by a space.\n\n### Constraints\n- `2 <= n <= 200`\n- `-10^4 <= nums[i], target <= 10^4`\n- Exactly one valid pair exists\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n2 7 11 15\n9\n\nOutput:\n0 1\n```\n\n**Example 2**\n```text\nInput:\n3\n3 2 4\n6\n\nOutput:\n1 2\n```\n",
     "starterCode": {
@@ -1550,7 +1551,8 @@
     "difficulty": "MEDIUM",
     "tags": [
       "array",
-      "prefix-sum"
+      "prefix-sum",
+      "magic-50"
     ],
     "description": "Return an array `answer` where `answer[i]` is the product of every element of `nums` except `nums[i]`. Do it without using division, in `O(n)` time. The product always fits in a 32-bit signed integer.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`n` space-separated integers.\n\n### Constraints\n- `2 <= n <= 20`\n- `-30 <= nums[i] <= 30`\n- Every prefix/suffix product fits in a 32-bit integer\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 2 3 4\n\nOutput:\n24 12 8 6\n```\n\n**Example 2**\n```text\nInput:\n5\n-1 1 0 -3 3\n\nOutput:\n0 0 9 0 0\n```\n",
     "starterCode": {
@@ -1646,7 +1648,8 @@
       "array",
       "sorting",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Merge all overlapping intervals (touching intervals such as `[1,4]` and `[4,5]` overlap) and return the non-overlapping intervals that cover the input, sorted by start.\n\n### Input\nLine 1: `n`, the number of intervals.\nNext `n` lines: `start end`.\n\n### Output\nThe merged intervals, one `start end` pair per line, sorted by start.\n\n### Constraints\n- `1 <= n <= 200`\n- `0 <= start <= end <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 3\n2 6\n8 10\n15 18\n\nOutput:\n1 6\n8 10\n15 18\n```\n\n**Example 2**\n```text\nInput:\n2\n1 4\n4 5\n\nOutput:\n1 5\n```\n",
     "starterCode": {
@@ -1742,7 +1745,8 @@
       "array",
       "hash-table",
       "prefix-sum",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the number of contiguous, non-empty subarrays whose sum equals `k`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe number of subarrays.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n- `-10^7 <= k <= 10^7`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n1 1 1\n2\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n3\n1 2 3\n3\n\nOutput:\n2\n```\n",
     "starterCode": {
@@ -4851,7 +4855,8 @@
       "two-pointers",
       "sorting",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return every unique triplet `[a, b, c]` of `nums` (taken at different positions) with `a + b + c = 0`. Sort each triplet in increasing order and list the triplets in increasing lexicographic order, with no repeats.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nOne triplet per line, numbers separated by spaces. Print nothing if there is none.\n\n### Constraints\n- `3 <= n <= 100`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n10 -12 -8\n\nOutput:\n\n```\n\n**Example 2**\n```text\nInput:\n5\n-1 -9 4 5 0\n\nOutput:\n-9 4 5\n```\n",
     "starterCode": {
@@ -5015,7 +5020,8 @@
       "sliding-window",
       "hash-table",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the length of the longest substring of `s` that contains no repeated characters.\n\n### Input\nA single line containing `s` (it may contain spaces).\n\n### Output\nThe length of the longest such substring.\n\n### Constraints\n- `1 <= s.length <= 1000`\n- `s` contains letters and spaces\n\n### Examples\n**Example 1**\n```text\nInput:\nabcabcbb\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\nbbbbb\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -5901,7 +5907,8 @@
       "string",
       "sliding-window",
       "hash-table",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the minimum window **substring** of `s` such that every character in `t` (including duplicates) is included in the window, or the empty string if there is none. The test data always has a unique answer.\n\n### Input\nLine 1: `s`.\nLine 2: `t`.\n\n### Output\nThe window, or an empty line.\n\n### Constraints\n- `1 <= s.length <= 300`\n- `1 <= t.length <= 300`\n- Uppercase and lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nADOBECODEBANC\nABC\n\nOutput:\nBANC\n```\n\n**Example 2**\n```text\nInput:\na\na\n\nOutput:\na\n```\n",
     "starterCode": {
@@ -6034,7 +6041,8 @@
       "string",
       "stack",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given a string `s` containing only `()[]{}`, determine whether it is valid. Brackets must close in the correct order and every close bracket needs a matching open bracket of the same type.\n\n### Input\nA single line containing the string `s`.\n\n### Output\n`true` if `s` is valid, otherwise `false`.\n\n### Constraints\n- `1 <= s.length <= 1000`\n- `s` consists only of `()[]{}`\n\n### Examples\n**Example 1**\n```text\nInput:\n()\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n()[]{}\n\nOutput:\ntrue\n```\n",
     "starterCode": {
@@ -6397,7 +6405,8 @@
       "array",
       "stack",
       "monotonic-stack",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "For each day, return how many days you must wait for a warmer temperature, or `0` if none is coming.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`n` space-separated integers, one per day.\n\n### Constraints\n- `1 <= n <= 1000`\n- `30 <= temperatures[i] <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n8\n73 74 75 71 69 72 76 73\n\nOutput:\n1 1 4 2 1 1 0 0\n```\n\n**Example 2**\n```text\nInput:\n4\n30 40 50 60\n\nOutput:\n1 1 1 0\n```\n",
     "starterCode": {
@@ -7337,7 +7346,8 @@
       "design",
       "hash-table",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Simulate a Least Recently Used cache with the given `capacity` by running the commands in order. `put k v` stores or updates a key (and makes it the most recently used); if the cache then holds more than `capacity` keys, the least recently used key is removed. `get k` returns its value (or `-1` if absent) and makes it the most recently used. Return the result of every `get`, in order.\n\n### Input\nLine 1: `capacity`.\nLine 2: `m`, the number of commands.\nThen `m` lines, each `put k v` or `get k`.\n\n### Output\nThe results of the `get` commands as space-separated integers.\n\n### Constraints\n- `1 <= capacity <= 50`\n- `1 <= m <= 300`\n- `1 <= k <= 120`, `0 <= v <= 1000`\n- At least one `get`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n9\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 1\nget 3\nget 4\n\nOutput:\n1 -1 -1 3 4\n```\n\n**Example 2**\n```text\nInput:\n1\n5\nput 2 1\nget 2\nput 3 2\nget 2\nget 3\n\nOutput:\n1 -1 2\n```\n",
     "starterCode": {
@@ -7736,7 +7746,8 @@
       "two-pointers",
       "stack",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given `n` non-negative integers representing an elevation map where each bar has width 1, compute how much water it can trap after raining.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated heights.\n\n### Output\nThe total units of trapped water.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= height[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n12\n0 1 0 2 1 0 1 3 2 1 2 1\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\n6\n4 2 0 3 2 5\n\nOutput:\n9\n```\n",
     "starterCode": {
@@ -7833,7 +7844,8 @@
       "stack",
       "monotonic-stack",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Bars of width 1 and the given heights form a histogram. Return the area of the largest rectangle that fits inside it.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe largest area.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= heights[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n2 1 5 6 2 3\n\nOutput:\n10\n```\n\n**Example 2**\n```text\nInput:\n2\n2 4\n\nOutput:\n4\n```\n",
     "starterCode": {
@@ -8873,7 +8885,8 @@
       "array",
       "binary-search",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "A sorted array of distinct integers was rotated at an unknown pivot. Return the index of `target`, or `-1` if it is absent. Use `O(log n)` time.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `target`.\n\n### Output\nThe index of `target`, or `-1`.\n\n### Constraints\n- `1 <= n <= 1000`\n- All values are distinct\n\n### Examples\n**Example 1**\n```text\nInput:\n7\n4 5 6 7 0 1 2\n0\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n7\n4 5 6 7 0 1 2\n3\n\nOutput:\n-1\n```\n",
     "starterCode": {
@@ -9073,7 +9086,8 @@
     "tags": [
       "array",
       "binary-search",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Koko has banana piles and `h` hours. Each hour she picks one pile and eats up to `k` bananas from it (finishing early wastes the rest of that hour). Return the smallest integer `k` that lets her finish within `h` hours.\n\n### Input\nLine 1: `n`.\nLine 2: the piles.\nLine 3: `h`.\n\n### Output\nThe minimum speed `k`.\n\n### Constraints\n- `1 <= n <= 1000`\n- `n <= h`\n- `1 <= piles[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n3 6 7 11\n8\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n5\n30 11 23 4 20\n5\n\nOutput:\n30\n```\n",
     "starterCode": {
@@ -10546,7 +10560,8 @@
       "binary-search",
       "divide-and-conquer",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Two sorted arrays are given. Return the median of all their values together. A median is either an integer or ends in `.5`, so return it as text with no trailing zeros, for example `3` or `2.5` (negative example `-1.5`). Aim for `O(log(min(m, n)))`.\n\n### Input\nLine 1: `m`.\nLine 2: `nums1`.\nLine 3: `n`.\nLine 4: `nums2`.\n\n### Output\nThe median as text.\n\n### Constraints\n- `1 <= m, n <= 400`\n- `-100 <= value <= 100`\n- Both arrays are sorted ascending\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n61\n1\n44\n\nOutput:\n52.5\n```\n\n**Example 2**\n```text\nInput:\n1\n75\n2\n-92 93\n\nOutput:\n75\n```\n",
     "starterCode": {
@@ -10702,7 +10717,8 @@
     "tags": [
       "linked-list",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given the `head` of a singly linked list, reverse the list and return the new head. Try both an iterative and a recursive solution.\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values, space separated (blank when `n = 0`).\n\n### Output\nThe resulting list's values, space separated (a blank line for an empty list).\n\n### Constraints\n- `0 <= n <= 100` nodes\n- `-100 <= val <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n5\n1 2 3 4 5\n\nOutput:\n5 4 3 2 1\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n\nOutput:\n2 1\n```\n",
     "starterCode": {
@@ -10803,7 +10819,8 @@
       "linked-list",
       "two-pointers",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Merge two sorted linked lists into one sorted list by splicing together the nodes of the two lists, and return its head.\n\n### Input\nThe first list in the format below, then the second list in the same format.\n\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values, space separated (blank when `n = 0`).\n\n### Output\nThe resulting list's values, space separated (a blank line for an empty list).\n\n### Constraints\n- Each list has `0 <= n <= 50` nodes\n- Both lists are sorted in non-decreasing order\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n1 2 4\n3\n1 3 4\n\nOutput:\n1 1 2 3 4 4\n```\n\n**Example 2**\n```text\nInput:\n0\n\n0\n\nOutput:\n\n```\n",
     "starterCode": {
@@ -11269,7 +11286,8 @@
       "linked-list",
       "two-pointers",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return `true` if the linked list has a cycle, meaning some node can be reached again by following `next` pointers. The input gives the node values and `pos`, the index the last node's `next` points to (`-1` means no cycle). Try it in `O(1)` extra space.\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values.\nLine 3: `pos`, the index of the node that the last node points back to, or `-1` if there is no cycle.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `0 <= n <= 1000`\n- `-1000 <= value <= 1000`\n- `pos` is `-1` or a valid index\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n3 2 0 -4\n1\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n0\n\nOutput:\ntrue\n```\n",
     "starterCode": {
@@ -11476,7 +11494,8 @@
       "linked-list",
       "two-pointers",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Remove the `n`-th node from the end of the list and return its head. Can you do it in one pass?\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values, space separated (blank when `n = 0`).\nLine 3: `n`.\n\n### Output\nThe resulting list's values, space separated (a blank line for an empty list).\n\n### Constraints\n- `1 <= size <= 100`\n- `1 <= n <= size`\n\n### Examples\n**Example 1**\n```text\nInput:\n5\n1 2 3 4 5\n2\n\nOutput:\n1 2 3 5\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n1\n\nOutput:\n\n```\n",
     "starterCode": {
@@ -11567,7 +11586,8 @@
       "linked-list",
       "math",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Two non-empty lists represent non-negative integers with the digits stored in **reverse order** (the head is the ones digit). Add the numbers and return the sum as a list in the same form.\n\n### Input\nThe first list in the format below, then the second list in the same format.\n\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values, space separated (blank when `n = 0`).\n\n### Output\nThe resulting list's values, space separated (a blank line for an empty list).\n\n### Constraints\n- `1 <= n <= 30` nodes per list\n- `0 <= digit <= 9`\n- No leading zeros except the number 0 itself\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n2 4 3\n3\n5 6 4\n\nOutput:\n7 0 8\n```\n\n**Example 2**\n```text\nInput:\n1\n0\n1\n0\n\nOutput:\n0\n```\n",
     "starterCode": {
@@ -12862,7 +12882,8 @@
       "dfs",
       "bfs",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the maximum depth of a binary tree: the number of nodes on the longest path from the root down to a leaf.\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\n\n### Output\nThe maximum depth (`0` for the empty tree).\n\n### Constraints\n- `0 <= n <= 100` nodes\n- `-100 <= val <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n7\n3 9 20 null null 15 7\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n3\n1 null 2\n\nOutput:\n2\n```\n",
     "starterCode": {
@@ -12958,7 +12979,8 @@
       "tree",
       "dfs",
       "bfs",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Invert the binary tree (swap every node's left and right child) and return its root.\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\n\n### Output\nThe resulting tree in the same level-order format.\n\n### Constraints\n- `0 <= n <= 100` nodes\n- `-100 <= val <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n7\n4 2 7 1 3 6 9\n\nOutput:\n4 7 2 9 6 3 1\n```\n\n**Example 2**\n```text\nInput:\n3\n2 1 3\n\nOutput:\n2 3 1\n```\n",
     "starterCode": {
@@ -14320,7 +14342,8 @@
       "bst",
       "dfs",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return `true` if the tree is a valid binary search tree: for every node, all values in its left subtree are **strictly less** and all in its right subtree are **strictly greater**.\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `0 <= n <= 100` nodes\n- `-2^31 <= val <= 2^31 - 1`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n2 1 3\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n7\n5 1 4 null null 3 6\n\nOutput:\nfalse\n```\n",
     "starterCode": {
@@ -14708,7 +14731,8 @@
       "tree",
       "dfs",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given a binary tree and the values of two nodes `p` and `q` that are in it, return the value of their lowest common ancestor (a node may be its own descendant).\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\nLine 3: `p`.\nLine 4: `q`.\n\n### Output\nThe value of the LCA.\n\n### Constraints\n- `2 <= n <= 100` nodes\n- All values are unique\n- `p != q` and both exist in the tree\n\n### Examples\n**Example 1**\n```text\nInput:\n11\n3 5 1 6 2 0 8 null null 7 4\n5\n1\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n11\n3 5 1 6 2 0 8 null null 7 4\n5\n4\n\nOutput:\n5\n```\n",
     "starterCode": {
@@ -14794,7 +14818,8 @@
       "tree",
       "bfs",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the values of the tree level by level, from left to right.\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\n\n### Output\nOne line per level, values space separated (a blank line for the empty tree).\n\n### Constraints\n- `0 <= n <= 100` nodes\n- `-20 <= val <= 50`\n\n### Examples\n**Example 1**\n```text\nInput:\n7\n3 9 20 null null 15 7\n\nOutput:\n3\n9 20\n15 7\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -16635,7 +16660,8 @@
       "dfs",
       "dp",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "A path is any sequence of nodes in which consecutive nodes are connected by an edge, visiting each node at most once; it need not pass through the root. Return the maximum sum of node values over all non-empty paths.\n\n### Input\nLine 1: `n`, the number of tokens.\nLine 2: the tree in level order, space separated. A missing child is written `null` and trailing `null`s are omitted (blank when `n = 0`, the empty tree).\n\n### Output\nThe maximum path sum.\n\n### Constraints\n- `1 <= n <= 100` nodes\n- `-1000 <= val <= 1000`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n1 2 3\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\n7\n-10 9 20 null null 15 7\n\nOutput:\n42\n```\n",
     "starterCode": {
@@ -17027,7 +17053,8 @@
       "sorting",
       "quickselect",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the `k`-th largest element in sorted order (duplicates count separately), not the `k`-th distinct element.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\nThe `k`-th largest element.\n\n### Constraints\n- `1 <= k <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n3 2 1 5 6 4\n2\n\nOutput:\n5\n```\n\n**Example 2**\n```text\nInput:\n9\n3 2 3 1 2 4 5 5 6\n4\n\nOutput:\n4\n```\n",
     "starterCode": {
@@ -17109,7 +17136,8 @@
       "hash-table",
       "sorting",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the `k` most frequent values. Order them by frequency (highest first); break ties by the smaller value first.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\n`k` integers separated by spaces.\n\n### Constraints\n- `1 <= n <= 500`\n- `1 <= k <=` the number of distinct values\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n1 1 1 2 2 3\n2\n\nOutput:\n1 2\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n1\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -17731,7 +17759,8 @@
       "heap",
       "monotonic-stack",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "A window of size `k` slides from the left of `nums` to the right, one position at a time. Print the maximum of every window.\n\n### Input\nLine 1: `n`.\nLine 2: `n` integers.\nLine 3: `k`.\n\n### Output\n`n - k + 1` window maximums separated by spaces.\n\n### Constraints\n- `1 <= k <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n8\n1 3 -1 -3 5 3 6 7\n3\n\nOutput:\n3 3 5 5 6 7\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n1\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -17889,7 +17918,8 @@
       "heap",
       "design",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Numbers arrive one at a time. After each arrival, report the median of all numbers seen so far. When the count is even, the median is the average of the two middle values **rounded down**.\n\n### Input\nLine 1: `n`.\nLine 2: the `n` numbers in arrival order.\n\n### Output\n`n` space-separated medians, one per arrival.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= nums[i] <= 100000`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n2 3 4\n\nOutput:\n2 2 3\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n\nOutput:\n1 1\n```\n",
     "starterCode": {
@@ -18039,7 +18069,8 @@
     "tags": [
       "backtracking",
       "matrix",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return `true` if `word` can be traced through the grid by moving up, down, left or right between adjacent cells without using any cell twice.\n\n### Input\nLine 1: `rows cols`.\nNext `rows` lines: a string of `cols` characters.\nLast line: the `word`.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `1 <= rows, cols <= 6`\n- `1 <= word.length <= 9`\n- Uppercase letters\n\n### Examples\n**Example 1**\n```text\nInput:\n3 4\nABCE\nSFCS\nADEE\nABCCED\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n3 4\nABCE\nSFCS\nADEE\nSEE\n\nOutput:\ntrue\n```\n",
     "starterCode": {
@@ -18503,7 +18534,8 @@
     "tags": [
       "array",
       "backtracking",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "`nums` holds distinct integers. Return all possible subsets (the power set), including the empty one, in any order.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nOne subset per line, numbers separated by spaces (an empty line for the empty subset). The starter code sorts the lines, so any order is accepted.\n\n### Constraints\n- `1 <= n <= 10`\n- All values are distinct\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n0\n\nOutput:\n\n0\n```\n\n**Example 2**\n```text\nInput:\n2\n5 -1\n\nOutput:\n\n-1\n-1 5\n5\n```\n",
     "starterCode": {
@@ -18730,7 +18762,8 @@
       "array",
       "backtracking",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "`nums` holds distinct integers. Return all permutations, in any order.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nOne permutation per line; the starter code sorts the lines.\n\n### Constraints\n- `1 <= n <= 7`\n- All values are distinct\n\n### Examples\n**Example 1**\n```text\nInput:\n1\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n-9 -2\n\nOutput:\n-9 -2\n-2 -9\n```\n",
     "starterCode": {
@@ -19144,7 +19177,8 @@
       "array",
       "backtracking",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given distinct positive integers `candidates` and a `target`, return every unique combination of candidates that adds up to `target`. The same number may be used any number of times; two combinations are different if the count of some number differs.\n\n### Input\nLine 1: `n`.\nLine 2: the `n` candidates.\nLine 3: `target`.\n\n### Output\nOne combination per line, numbers ascending, lines sorted. The starter code prints the rows for you; an empty output means there is none.\n\n### Constraints\n- `1 <= n <= 6`\n- `2 <= candidates[i] <= 20`, all distinct\n- `1 <= target <= 40`\n- At most 150 combinations\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n2 3 6 7\n7\n\nOutput:\n2 2 3\n7\n```\n\n**Example 2**\n```text\nInput:\n3\n2 3 5\n8\n\nOutput:\n2 2 2 2\n2 3 3\n3 5\n```\n",
     "starterCode": {
@@ -19748,7 +19782,8 @@
       "matrix",
       "graph",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given a grid of `1` (land) and `0` (water), count the islands. An island is a group of land cells connected horizontally or vertically.\n\n### Input\nLine 1: `rows cols`.\nNext `rows` lines: a string of `cols` characters, each `0` or `1`.\n\n### Output\nThe number of islands.\n\n### Constraints\n- `1 <= rows, cols <= 50`\n\n### Examples\n**Example 1**\n```text\nInput:\n4 5\n11110\n11010\n11000\n00000\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n4 5\n11000\n11000\n00100\n00011\n\nOutput:\n3\n```\n",
     "starterCode": {
@@ -19845,7 +19880,8 @@
       "topological-sort",
       "bfs",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "There are `numCourses` courses labelled `0..numCourses-1`. Each pair `[a, b]` means you must take course `b` before `a`. Return whether all courses can be finished.\n\n### Input\nLine 1: `numCourses`.\nLine 2: `m`, the number of prerequisites.\nNext `m` lines: `a b`.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `1 <= numCourses <= 150`\n- `1 <= m <= 400`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n1\n1 0\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n2\n2\n1 0\n0 1\n\nOutput:\nfalse\n```\n",
     "starterCode": {
@@ -20033,7 +20069,8 @@
       "bfs",
       "matrix",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Each cell is `0` (empty), `1` (fresh orange) or `2` (rotten orange). Every minute, fresh oranges next to a rotten one (up, down, left, right) rot. Return the minutes until none are fresh, or `-1` if that is impossible.\n\n### Input\nLine 1: `rows cols`.\nNext `rows` lines: a string of `cols` characters.\n\n### Output\nThe minutes, or `-1`.\n\n### Constraints\n- `1 <= rows, cols <= 20`\n\n### Examples\n**Example 1**\n```text\nInput:\n3 3\n211\n110\n011\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n3 3\n211\n011\n101\n\nOutput:\n-1\n```\n",
     "starterCode": {
@@ -20301,7 +20338,8 @@
       "hash-table",
       "union-find",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the length of the longest run of consecutive integers (such as `3, 4, 5, 6`) that can be formed from the values of `nums`, in any order. Aim for `O(n)` time.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe length of the longest run.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n100 4 200 1 3 2\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n10\n0 3 7 2 5 8 4 6 0 1\n\nOutput:\n9\n```\n",
     "starterCode": {
@@ -20392,7 +20430,8 @@
       "graph",
       "heap",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "A signal is sent from node `k` of a directed, weighted network with nodes `1..n`. Each row `u v w` of `times` is an edge from `u` to `v` taking `w` time. Return the time for all nodes to receive the signal, or `-1` if some node never does.\n\n### Input\nLines 1+: the number of edges, then one `u v w` row per edge.\nNext line: `n`.\nLast line: `k`.\n\n### Output\nThe minimum time, or `-1`.\n\n### Constraints\n- `1 <= n <= 100`\n- `1 <= edges <= 6000`\n- `1 <= w <= 100`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n2 1 1\n2 3 1\n3 4 1\n4\n2\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n1\n1 2 1\n2\n1\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -22742,7 +22781,8 @@
       "array",
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "`prices[i]` is the price of a stock on day `i`. Buy on one day and sell on a later day to maximise profit. Return the maximum profit, or `0` if no profit is possible.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated prices.\n\n### Output\nThe maximum profit.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= prices[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n6\n7 1 5 3 6 4\n\nOutput:\n5\n```\n\n**Example 2**\n```text\nInput:\n5\n7 6 4 3 1\n\nOutput:\n0\n```\n",
     "starterCode": {
@@ -22837,7 +22877,8 @@
     "tags": [
       "math",
       "dynamic-programming",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "You are climbing a staircase with `n` steps. Each move climbs 1 or 2 steps. How many distinct ways can you reach the top?\n\n### Input\nA single integer `n`.\n\n### Output\nThe number of distinct ways.\n\n### Constraints\n- `1 <= n <= 45`\n\n### Examples\n**Example 1**\n```text\nInput:\n2\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n3\n\nOutput:\n3\n```\n",
     "starterCode": {
@@ -23297,7 +23338,8 @@
       "array",
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Find the contiguous, non-empty subarray with the largest sum and return that sum.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum subarray sum.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n9\n-2 1 -3 4 -1 2 1 -5 4\n\nOutput:\n6\n```\n\n**Example 2**\n```text\nInput:\n1\n1\n\nOutput:\n1\n```\n",
     "starterCode": {
@@ -23392,7 +23434,8 @@
     "tags": [
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Given coin denominations and a target `amount`, return the fewest coins needed to make that amount, or `-1` if it is impossible. You have an unlimited supply of each coin.\n\n### Input\nLine 1: number of coin types.\nLine 2: the coin values.\nLine 3: `amount`.\n\n### Output\nThe minimum number of coins, or `-1`.\n\n### Constraints\n- `1 <= coins.length <= 12`\n- `1 <= coins[i] <= 10^4`\n- `0 <= amount <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n3\n1 2 5\n11\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n1\n2\n3\n\nOutput:\n-1\n```\n",
     "starterCode": {
@@ -23487,7 +23530,8 @@
     "tags": [
       "array",
       "dynamic-programming",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Houses are in a row and each holds some money. Robbing two adjacent houses triggers an alarm. Return the maximum you can rob in one night.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum amount.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= nums[i] <= 400`\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n1 2 3 1\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n5\n2 7 9 3 1\n\nOutput:\n12\n```\n",
     "starterCode": {
@@ -23579,7 +23623,8 @@
       "binary-search",
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the length of the longest strictly increasing subsequence of `nums`.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe length.\n\n### Constraints\n- `1 <= n <= 1000`\n- `-10^4 <= nums[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n8\n10 9 2 5 3 7 101 18\n\nOutput:\n4\n```\n\n**Example 2**\n```text\nInput:\n6\n0 1 0 3 2 3\n\nOutput:\n4\n```\n",
     "starterCode": {
@@ -23665,7 +23710,8 @@
       "array",
       "greedy",
       "dynamic-programming",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "You start at index `0`; `nums[i]` is the maximum jump length from index `i`. Return whether you can reach the last index.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `1 <= n <= 1000`\n- `0 <= nums[i] <= 1000`\n\n### Examples\n**Example 1**\n```text\nInput:\n5\n2 3 1 1 4\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n5\n3 2 1 0 4\n\nOutput:\nfalse\n```\n",
     "starterCode": {
@@ -24049,7 +24095,8 @@
       "string",
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the length of the longest common subsequence of two strings. A subsequence keeps relative order but may skip characters.\n\n### Input\nLine 1: `text1`.\nLine 2: `text2`.\n\n### Output\nThe length.\n\n### Constraints\n- `1 <= length <= 300`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nabcde\nace\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\nabc\nabc\n\nOutput:\n3\n```\n",
     "starterCode": {
@@ -24795,7 +24842,8 @@
       "string",
       "dynamic-programming",
       "hash-table",
-      "striver-sde"
+      "striver-sde",
+      "magic-50"
     ],
     "description": "Return `true` if `s` can be split into a sequence of one or more words from the dictionary. A word may be reused any number of times.\n\n### Input\nLine 1: `s`.\nLine 2: the dictionary words, separated by single spaces.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `1 <= s.length <= 300`\n- Lowercase English letters\n- Dictionary words are non-empty and distinct\n\n### Examples\n**Example 1**\n```text\nInput:\nleetcode\nleet code\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\napplepenapple\napple pen\n\nOutput:\ntrue\n```\n",
     "starterCode": {
@@ -26596,7 +26644,8 @@
       "string",
       "dynamic-programming",
       "striver-sde",
-      "striver-a2z"
+      "striver-a2z",
+      "magic-50"
     ],
     "description": "Return the minimum number of operations to convert `word1` into `word2`. Allowed operations are insert a character, delete a character, or replace a character.\n\n### Input\nLine 1: `word1`.\nLine 2: `word2`.\n\n### Output\nThe minimum number of operations.\n\n### Constraints\n- `1 <= word1.length, word2.length <= 120`\n- Lowercase English letters\n\n### Examples\n**Example 1**\n```text\nInput:\nhorse\nros\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\nintention\nexecution\n\nOutput:\n5\n```\n",
     "starterCode": {
@@ -28622,7 +28671,8 @@
     "tags": [
       "array",
       "two-pointers",
-      "greedy"
+      "greedy",
+      "magic-50"
     ],
     "description": "Vertical lines stand at positions `0..n-1` with the given heights. Pick two lines that, together with the x-axis, hold the most water, and return that amount.\n\n### Input\nLine 1: `n`.\nLine 2: `n` space-separated integers.\n\n### Output\nThe maximum area.\n\n### Constraints\n- `2 <= n <= 1000`\n- `0 <= height[i] <= 10^4`\n\n### Examples\n**Example 1**\n```text\nInput:\n9\n1 8 6 2 5 4 8 3 7\n\nOutput:\n49\n```\n\n**Example 2**\n```text\nInput:\n2\n1 1\n\nOutput:\n1\n```\n",
     "starterCode": {

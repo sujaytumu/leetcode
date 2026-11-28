@@ -160,7 +160,7 @@ export default function StriverPage() {
     <div className="sh">
       <header className="sh-head">
         <h1>Striver Sheets</h1>
-        <p className="mute">Striver&apos;s sheets, topic by topic. Tick a problem when you are done, open the question to solve it in C++, and the answer shows the optimal C++ solution.</p>
+        <p className="mute">Striver&apos;s A2Z and SDE sheets, plus Magic 50, topic by topic. Tick a problem when you are done, open the question to solve it in C++, and the answer shows the optimal C++ solution.</p>
       </header>
 
       <div className="sh-tabs" role="tablist" aria-label="Choose a sheet">
