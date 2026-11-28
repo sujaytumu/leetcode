@@ -51,6 +51,7 @@ const Editor = dynamic<EditorProps>(
   ssr: false, loading: () => <p className="mute" style={{ padding: 16 }}>Loading editor…</p>,
 });
 const ANSWER_ORDER = ["cpp", "java", "python", "javascript"];
+const VERDICT_ICON: Record<string, string> = { ACCEPTED: "✓", WRONG_ANSWER: "✕", RUNTIME_ERROR: "!", TIME_LIMIT_EXCEEDED: "⏱", MEMORY_LIMIT_EXCEEDED: "⏱", COMPILE_ERROR: "{ }" };
 const LANG_LABEL: Record<string, string> = { cpp: "C++", java: "Java", python: "Python", javascript: "JavaScript" };
 type AnswerState = { status: "idle" | "loading" | "ready" | "none" | "error"; data?: Answer; error?: string };
 const title = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
@@ -653,8 +654,8 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
                 <tbody>
                   {history.map((s) => (
                     <tr key={s.id} className="subrow" onClick={() => setOpenSub(s)} title="Open details">
-                      <td className={s.verdict}>
-                        <b>{title(s.verdict)}</b>
+                      <td>
+                        <span className={`vbadge ${s.verdict}`}><i aria-hidden="true">{VERDICT_ICON[s.verdict] ?? "!"}</i>{title(s.verdict)}</span>
                         <div className="mute subdate" title={new Date(s.createdAt).toLocaleString()}>
                           {new Date(s.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                         </div>

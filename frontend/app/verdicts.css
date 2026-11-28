@@ -1,0 +1,92 @@
+/* ---- verdicts (greens and reds), cute buttons, submissions page ---- */
+:root { --v-ok:var(--ok, #2cbb5d); --v-wa:var(--bad, #ef4743); --v-re:#ff7a45; --v-tle:#f5a524; --v-ce:#f0568a; }
+
+/* verdict badge: a coloured pill with a round icon */
+.vbadge { --vc:var(--v-wa); display:inline-flex; align-items:center; gap:7px; padding:3px 11px 3px 4px; border-radius:999px; font-size:13px; font-weight:700; line-height:1.2; white-space:nowrap;
+  color:var(--vc); background:color-mix(in srgb, var(--vc) 13%, transparent); border:1px solid color-mix(in srgb, var(--vc) 30%, transparent); }
+.vbadge i { flex:none; display:grid; place-items:center; width:20px; height:20px; border-radius:50%; background:var(--vc); color:#fff; font-style:normal; font-size:11px; font-weight:800; }
+.vbadge.ACCEPTED, .sb-chips .ACCEPTED { --vc:var(--v-ok); }
+.vbadge.WRONG_ANSWER, .sb-chips .WRONG_ANSWER { --vc:var(--v-wa); }
+.vbadge.RUNTIME_ERROR, .sb-chips .RUNTIME_ERROR { --vc:var(--v-re); }
+.vbadge.TIME_LIMIT_EXCEEDED, .vbadge.MEMORY_LIMIT_EXCEEDED, .sb-chips .TIME_LIMIT_EXCEEDED { --vc:var(--v-tle); }
+.vbadge.COMPILE_ERROR, .sb-chips .COMPILE_ERROR { --vc:var(--v-ce); }
+
+/* the big verdict heading in the result panel gets the same round icon */
+h3.verdict::before { content:"!"; display:inline-grid; place-items:center; width:28px; height:28px; margin-right:10px; border-radius:50%; vertical-align:middle; position:relative; top:-2px;
+  font-size:14px; font-weight:800; color:#fff; background:var(--v-wa); box-shadow:0 4px 12px -4px color-mix(in srgb, var(--v-wa) 70%, transparent); }
+h3.verdict.ACCEPTED::before { content:"✓"; background:var(--v-ok); box-shadow:0 4px 12px -4px color-mix(in srgb, var(--v-ok) 70%, transparent); }
+h3.verdict.WRONG_ANSWER::before { content:"✕"; }
+h3.verdict.RUNTIME_ERROR::before { background:var(--v-re); }
+h3.verdict.TIME_LIMIT_EXCEEDED::before, h3.verdict.MEMORY_LIMIT_EXCEEDED::before { content:"⏱"; background:var(--v-tle); font-size:13px; }
+h3.verdict.COMPILE_ERROR::before { content:"{ }"; background:var(--v-ce); font-size:10px; letter-spacing:-.5px; }
+
+/* page header + status chips */
+.sb-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:2px 0 12px; }
+.sb-head h2 { margin:0; font-size:26px; font-weight:800; letter-spacing:-.4px; }
+.sb-head p { margin:3px 0 0; font-size:13px; }
+.sb-back { flex:none; padding:7px 14px; border-radius:999px; font-size:13px; font-weight:600; color:var(--text); background:var(--cell); border:1px solid var(--line); text-decoration:none; transition:transform .12s, border-color .15s; }
+.sb-back:hover { transform:translateX(-2px); border-color:var(--v-ok); }
+.sb-chips { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
+.sb-chips button { --vc:var(--text); display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 14px 0 8px; border-radius:999px; font-size:13px; font-weight:600; color:var(--text);
+  background:var(--cell); border:1px solid var(--line); cursor:pointer; transition:transform .12s, background .15s, border-color .15s, box-shadow .15s; }
+.sb-chips button:first-child { padding-left:14px; }
+.sb-chips button i { display:grid; place-items:center; width:20px; height:20px; border-radius:50%; font-style:normal; font-size:10.5px; font-weight:800; color:#fff; background:var(--vc); }
+.sb-chips button:hover { transform:translateY(-1px); border-color:color-mix(in srgb, var(--vc) 55%, var(--line)); }
+.sb-chips button:active { transform:scale(.96); }
+.sb-chips button.on { color:var(--vc); background:color-mix(in srgb, var(--vc) 14%, var(--panel)); border-color:var(--vc); box-shadow:0 0 0 3px color-mix(in srgb, var(--vc) 16%, transparent); }
+.sb-chips button:first-child.on { --vc:var(--accent, #ffa116); }
+
+/* table */
+.subcute { border-collapse:separate; border-spacing:0 6px; }
+.subcute thead th { padding:2px 14px 4px; font-size:12px; font-weight:600; letter-spacing:.3px; color:var(--mute); }
+.subcute tbody tr { background:var(--panel); transition:transform .12s, box-shadow .15s; }
+.subcute tbody td { padding:12px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); vertical-align:middle; }
+.subcute tbody td:first-child { border-left:1px solid var(--line); border-radius:12px 0 0 12px; }
+.subcute tbody td:last-child { border-right:1px solid var(--line); border-radius:0 12px 12px 0; }
+.subcute tbody tr:hover { box-shadow:0 8px 22px -14px rgba(0,0,0,.6); }
+.subcute tbody tr:hover td { background:color-mix(in srgb, var(--v-ok) 4%, var(--panel)); }
+.subcute td a { font-weight:600; color:var(--text); text-decoration:none; }
+.subcute td a:hover { color:var(--v-ok); }
+.metric { display:inline-block; padding:2px 9px; border-radius:8px; font-size:12.5px; font-weight:600; font-variant-numeric:tabular-nums; background:var(--cell); }
+.vpass { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; }
+.vpass-bar { flex:none; width:70px; height:5px; border-radius:999px; overflow:hidden; background:color-mix(in srgb, var(--v-wa) 22%, transparent); }
+.vpass-bar i { display:block; height:100%; border-radius:999px; background:var(--v-ok); }
+.sb-empty td { padding:34px 14px !important; text-align:center; color:var(--mute); border-radius:12px !important; border-left:1px solid var(--line) !important; border-right:1px solid var(--line) !important; }
+
+.sb-pager { display:flex; align-items:center; justify-content:center; gap:12px; margin:14px 0 6px; font-size:13px; }
+.sb-pager button { height:34px; padding:0 16px; border-radius:999px; font-weight:600; transition:transform .12s, background .15s, border-color .15s; }
+.sb-pager button:hover:not(:disabled) { transform:translateY(-1px); border-color:var(--v-ok); }
+.sb-pager button:active:not(:disabled) { transform:scale(.96); }
+
+/* phone: each submission becomes a small card */
+@media (max-width:700px) {
+  .subcute, .subcute tbody { display:block; border-spacing:0; overflow:visible; white-space:normal; }
+  .subcute thead { display:none; }
+  .subcute tbody tr { display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 10px; padding:12px 14px; border:1px solid var(--line); border-radius:16px; }
+  .subcute tbody td { padding:0; border:0 !important; border-radius:0 !important; background:none !important; }
+  .subcute tbody td:nth-child(2) { order:1; flex:1 1 100%; font-size:15.5px; }
+  .subcute tbody td:nth-child(3) { order:2; flex:1 1 auto; }
+  .subcute tbody td:nth-child(1) { order:3; font-size:12px; margin-left:auto; }
+  .subcute tbody td:nth-child(4), .subcute tbody td:nth-child(5), .subcute tbody td:nth-child(6) { order:4; text-align:left; }
+  .sb-empty { display:block !important; }
+  .sb-head h2 { font-size:22px; }
+  .sb-chips { flex-wrap:nowrap; overflow-x:auto; margin-inline:-4px; padding:2px 4px 6px; scrollbar-width:none; }
+  .sb-chips::-webkit-scrollbar { display:none; }
+  .sb-chips button { flex:none; }
+}
+
+/* ---- cute Run / Submit ---- */
+.runbar button { border-radius:999px !important; font-weight:700; letter-spacing:.1px; transition:transform .12s, box-shadow .18s, filter .15s, background .15s; }
+.runbar button:active:not(:disabled) { transform:scale(.94); }
+.runbar button:not(.primary) { background:var(--cell) !important; border:1px solid var(--line); }
+.runbar button:not(.primary):hover:not(:disabled) { box-shadow:0 4px 14px -6px rgba(0,0,0,.5); transform:translateY(-1px); }
+.runbar button.primary { color:#fff !important; border:1px solid color-mix(in srgb, var(--v-ok) 70%, #000) !important;
+  background:linear-gradient(135deg, #3ed171, var(--v-ok)) !important; box-shadow:0 6px 16px -6px color-mix(in srgb, var(--v-ok) 75%, transparent); }
+.runbar button.primary:hover:not(:disabled) { transform:translateY(-1px); filter:brightness(1.07); box-shadow:0 10px 22px -8px color-mix(in srgb, var(--v-ok) 80%, transparent); }
+.runbar button.primary:not(:disabled)::before { content:"✓ " !important; font-weight:800; }
+.runbar button:disabled { opacity:.7; cursor:progress; }
+@media (min-width:901px) {
+  .runbar { background:none !important; padding:0 !important; gap:8px !important; }
+  .runbar button { height:36px !important; padding:0 18px !important; }
+}
+@media (prefers-reduced-motion:reduce) { .runbar button, .sb-chips button, .sb-pager button, .sb-back, .subcute tbody tr { transition:none; } }

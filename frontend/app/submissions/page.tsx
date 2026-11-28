@@ -13,6 +13,7 @@ interface Item {
 }
 
 const VERDICTS = ["ACCEPTED", "WRONG_ANSWER", "RUNTIME_ERROR", "TIME_LIMIT_EXCEEDED", "COMPILE_ERROR"];
+const ICON: Record<string, string> = { ACCEPTED: "✓", WRONG_ANSWER: "✕", RUNTIME_ERROR: "!", TIME_LIMIT_EXCEEDED: "⏱", MEMORY_LIMIT_EXCEEDED: "⏱", COMPILE_ERROR: "{ }" };
 const label = (v: string) => v.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function SubmissionsPage() {
@@ -35,40 +36,51 @@ export default function SubmissionsPage() {
   return (
     <>
       <span className="narrowmark" hidden />
-      <h2 style={{ marginBottom: 4 }}>My submissions</h2>
-      <div className="filters" style={{ margin: "8px 0" }}>
-        <select value={verdict} aria-label="Filter by status" onChange={(e) => { setVerdict(e.target.value); setPage(0); }}>
-          <option value="">All statuses</option>
-          {VERDICTS.map((v) => <option key={v} value={v}>{label(v)}</option>)}
-        </select>
-        <span className="grow" />
-        <Link href="/profile">← Profile</Link>
+      <div className="sb-head">
+        <div>
+          <h2>My submissions</h2>
+          {data && <p className="mute">{data.totalElements} {verdict ? label(verdict).toLowerCase() : "in total"}</p>}
+        </div>
+        <Link className="sb-back" href="/profile">← Profile</Link>
+      </div>
+      <div className="sb-chips" role="tablist" aria-label="Filter by status">
+        <button type="button" role="tab" aria-selected={verdict === ""} className={verdict === "" ? "on" : ""} onClick={() => { setVerdict(""); setPage(0); }}>All</button>
+        {VERDICTS.map((v) => (
+          <button key={v} type="button" role="tab" aria-selected={verdict === v} className={`${v} ${verdict === v ? "on" : ""}`} onClick={() => { setVerdict(v); setPage(0); }}>
+            <i aria-hidden="true">{ICON[v]}</i>{label(v)}
+          </button>
+        ))}
       </div>
       {error && <div className="banner err">{error}</div>}
       {!data && !error && <Skeleton />}
       {data && (
         <>
-          <table className="subtable">
+          <table className="subtable subcute">
             <thead><tr><th>Time Submitted</th><th>Question</th><th>Status</th><th className="th-num">Runtime</th><th className="th-num">Memory</th><th>Language</th></tr></thead>
             <tbody>
               {data.items.map((s) => (
                 <tr key={s.id}>
                   <td className="mute" title={new Date(s.createdAt).toLocaleString()}>{timeAgo(s.createdAt)}</td>
                   <td>{s.slug ? <Link href={`/problems/${s.slug}`}>{s.title}</Link> : s.title}</td>
-                  <td className={s.verdict === "ACCEPTED" ? "ACCEPTED" : "REJECTED"}>
-                    <b>{label(s.verdict)}</b>
-                    {s.verdict !== "ACCEPTED" && s.total > 0 && <div className="mute" style={{ fontSize: 12, fontWeight: 400 }}>{s.passed}/{s.total} testcases passed</div>}
+                  <td>
+                    <span className={`vbadge ${s.verdict}`}><i aria-hidden="true">{ICON[s.verdict] ?? "!"}</i>{label(s.verdict)}</span>
+                    {s.verdict !== "ACCEPTED" && s.total > 0 && (
+                      <div className="vpass" title={`${s.passed} of ${s.total} testcases passed`}>
+                        <span className="vpass-bar"><i style={{ width: `${(s.passed / s.total) * 100}%` }} /></span>
+                        <span className="mute">{s.passed}/{s.total} passed</span>
+                      </div>
+                    )}
                   </td>
-                  <td className="th-num">{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</td>
-                  <td className="th-num">{s.memoryKb != null ? `${(s.memoryKb / 1024).toFixed(1)} MB` : "N/A"}</td>
+                  <td className="th-num"><span className="metric">{s.runtimeMs != null ? `${s.runtimeMs} ms` : "N/A"}</span></td>
+                  <td className="th-num"><span className="metric">{s.memoryKb != null ? `${(s.memoryKb / 1024).toFixed(1)} MB` : "N/A"}</span></td>
                   <td><span className="langpill">{s.language}</span></td>
                 </tr>
               ))}
-              {data.items.length === 0 && <tr><td colSpan={6} className="mute">No submissions yet.</td></tr>}
+              {data.items.length === 0 && <tr className="sb-empty"><td colSpan={6}>{verdict ? "Nothing with this status yet." : "No submissions yet. Solve a problem and it shows up here."}</td></tr>}
             </tbody>
           </table>
           {data.totalPages > 1 && (
-            <div className="bar" style={{ marginTop: 8 }}>
+            <div className="sb-pager">
               <button disabled={page === 0} onClick={() => setPage(page - 1)}>← Prev</button>
               <span className="mute">Page {page + 1} of {data.totalPages}</span>
               <button disabled={page + 1 >= data.totalPages} onClick={() => setPage(page + 1)}>Next →</button>
