@@ -123,3 +123,13 @@ a.daycell:hover { box-shadow:0 8px 18px -12px rgba(0,0,0,.6); }
 button.backbtn { padding:0 14px; }
 .subhead { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
 .subhead b { font-size:16px; font-weight:800; }
+
+/* ---- topics, for-you, leaderboard ---- */
+.card.topic, .card.rec { border-radius:16px; transition:transform .15s, border-color .15s, box-shadow .2s; }
+.card.topic:hover, .card.rec:hover { transform:translateY(-3px); border-color:var(--accent); box-shadow:0 16px 30px -20px rgba(0,0,0,.75); }
+.card.topic:active, .card.rec:active { transform:scale(.99); }
+.card.topic .bar b { font-size:16px; font-weight:800; letter-spacing:-.2px; }
+.me-row td { background:color-mix(in srgb, var(--accent) 11%, var(--panel)) !important; font-weight:700; }
+.me-row td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
+.tscroll table tbody tr:nth-child(-n+3) td:first-child { font-weight:800; color:var(--accent); }
+@media (prefers-reduced-motion:reduce) { .card.topic, .card.rec { transition:none; } .card.topic:hover, .card.rec:hover { transform:none; } }
