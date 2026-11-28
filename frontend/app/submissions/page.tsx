@@ -2,8 +2,9 @@
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type Page } from "@/lib/api";
+import { type Page } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { swr } from "@/lib/local";
 import { timeAgo } from "@/lib/timeago";
 
 interface Item {
@@ -25,7 +26,10 @@ export default function SubmissionsPage() {
     setData(null); setError("");
     const q = new URLSearchParams({ page: String(page), size: "20" });
     if (verdict) q.set("verdict", verdict);
-    api<Page<Item>>(`/api/submissions?${q}`).then(setData).catch((e: Error) => setError(e.message));
+    let current = true; // a slow answer for an earlier filter or page must not replace this one
+    swr<Page<Item>>(`/api/submissions?${q}`, (d) => { if (current) setData(d); }, () => {})
+      .catch((e: Error) => { if (current) setError(e.message); });
+    return () => { current = false; };
   }, [verdict, page]);
 
   return (

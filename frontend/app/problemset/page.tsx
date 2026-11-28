@@ -246,7 +246,7 @@ export default function ProblemsPage() {
               {data?.items.map((p, i) => (
                 <tr key={p.id} className={i === cursor ? "kbrow" : undefined}>
                   <td className={p.status === "ATTEMPTED" ? "MEDIUM" : "EASY"}>{ICON[p.status]}</td>
-                  <td><Link prefetch={false} href={`/problems/${p.slug}`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
+                  <td><Link prefetch={false} href={`/problems/${p.slug}`} onPointerEnter={() => { prefetchProblem(p.slug); router.prefetch(`/problems/${p.slug}`); }} onTouchStart={() => { prefetchProblem(p.slug); router.prefetch(`/problems/${p.slug}`); }}>{p.number ?? p.id}. {p.title}{p.bookmarked ? " ★" : ""}</Link>
                     <div className="show-sm"><span className={`${p.difficulty} sm-diff`}>{p.difficulty[0] + p.difficulty.slice(1).toLowerCase()}</span>{p.acceptance != null && <span className="mute sm-acc">{p.acceptance.toFixed(1)}%</span>}<SheetPills tags={p.tags} />{p.tags.filter((t) => !isSheetTag(t)).slice(0, 3).map((t) => <span className="tag" key={t}>{tagLabel(t)}</span>)}</div></td>
                   <td className="hide-sm" style={{ textAlign: "center" }}>
                     <Link href={`/problems/${p.slug}?tab=solutions`} className="solico" title="Solutions" aria-label={`Solutions for ${p.title}`}>

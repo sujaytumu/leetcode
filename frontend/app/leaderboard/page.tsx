@@ -1,8 +1,8 @@
 "use client";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { swr } from "@/lib/local";
 
 interface Entry { rank: number; name: string; easy: number; medium: number; hard: number; solved: number; points: number; you: boolean }
 interface Community { accounts: number; coders: number; submissions: number }
@@ -17,8 +17,8 @@ export default function LeaderboardPage() {
   const [community, setCommunity] = useState<Community | null>(null);
 
   useEffect(() => {
-    api<Board>("/api/leaderboard?limit=50").then(setBoard).catch((e: Error) => setError(e.message));
-    api<Community>("/api/community").then(setCommunity).catch(() => undefined);
+    swr<Board>("/api/leaderboard?limit=50", setBoard, () => {}).catch((e: Error) => setError(e.message));
+    swr<Community>("/api/community", setCommunity, () => {}).catch(() => undefined);
   }, []);
 
   const row = (e: Entry) => (

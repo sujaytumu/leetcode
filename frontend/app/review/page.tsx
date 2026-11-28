@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, type Page } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { cacheGet, cacheSet } from "@/lib/local";
 import { daysUntil, dueAt, loadReviews, markReviewed, ReviewState, STEPS } from "@/lib/review";
 
 interface Item { id: number; slug: string; title: string; verdict: string; createdAt: string }
@@ -28,13 +29,16 @@ export default function ReviewPage() {
 
   useEffect(() => {
     setStates(loadReviews());
+    const saved = cacheGet<Row[]>("review-rows");
+    if (saved) setRows(saved);
     loadAccepted().then((items) => {
       const first = new Map<string, Row>();
       for (const i of items) { // newest first, so keep overwriting to end on the oldest accepted solve
         if (i.slug) first.set(i.slug, { slug: i.slug, title: i.title, firstSolve: i.createdAt });
       }
+      cacheSet("review-rows", [...first.values()]);
       setRows([...first.values()]);
-    }).catch((e: Error) => setError(e.message));
+    }).catch((e: Error) => { if (!saved) setError(e.message); });
   }, []);
 
   const done = useCallback((r: Row, remembered: boolean) => {

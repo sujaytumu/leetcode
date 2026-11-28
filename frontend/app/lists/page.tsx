@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, type Status } from "@/lib/api";
 import { type ListDetail, type ListSummary, MAX_LISTS } from "@/lib/lists";
 import Skeleton from "@/components/Skeleton";
+import { cacheGet, cacheSet } from "@/lib/local";
 
 const ICON: Record<Status, string> = { SOLVED: "✔", ATTEMPTED: "◐", TODO: "○" };
 
@@ -14,7 +15,9 @@ function ListCard({ list, onChange }: { list: ListSummary; onChange: () => void 
   const [error, setError] = useState("");
 
   const load = useCallback(() => {
-    api<ListDetail>(`/api/lists/${list.id}`).then(setDetail).catch((e) => setError((e as Error).message));
+    const path = `/api/lists/${list.id}`;
+    setDetail((d) => d ?? cacheGet<ListDetail>(path));
+    api<ListDetail>(path).then((d) => { cacheSet(path, d); setDetail(d); }).catch((e) => setError((e as Error).message));
   }, [list.id]);
   useEffect(() => { if (open) load(); }, [open, load, list.count]);
 
@@ -61,7 +64,8 @@ export default function ListsPage() {
   const [error, setError] = useState("");
 
   const load = useCallback(() => {
-    api<ListSummary[]>("/api/lists").then(setLists).catch((e) => setError((e as Error).message));
+    setLists((l) => l ?? cacheGet<ListSummary[]>("/api/lists"));
+    api<ListSummary[]>("/api/lists").then((l) => { cacheSet("/api/lists", l); setLists(l); }).catch((e) => setError((e as Error).message));
   }, []);
   useEffect(load, [load]);
 

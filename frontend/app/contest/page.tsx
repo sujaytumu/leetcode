@@ -1,9 +1,10 @@
 "use client";
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api, type Difficulty } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
+import { cacheGet, cacheSet, swr } from "@/lib/local";
 import CountdownTiles from "@/components/CountdownTiles";
 import VirtualContest from "@/components/VirtualContest";
 
@@ -21,24 +22,32 @@ export default function ContestPage() {
   usePageTitle("Contests");
   const [overview, setOverview] = useState<Overview | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const picked = useRef(false); // true once a contest tab was tapped
+  const wanted = useRef<number | null>(null);
   const [standings, setStandings] = useState<Standings | null>(null);
   const [error, setError] = useState("");
   const [now, setNow] = useState(() => Date.now());
   const [skew, setSkew] = useState(0); // server time minus browser time, so the countdown follows the server's clock
 
   useEffect(() => {
-    api<Overview>("/api/contests")
-      .then((o) => { setOverview(o); setSkew(new Date(o.now).getTime() - Date.now()); setSelected((s) => s ?? o.current.id); })
+    // Saved copy first; only the live answer may set the clock difference.
+    swr<Overview>("/api/contests", (o, saved) => {
+      setOverview(o);
+      if (!saved) setSkew(new Date(o.now).getTime() - Date.now());
+      if (!picked.current) setSelected(o.current.id);
+    }, () => {})
       .catch((e: Error) => setError(e.message));
   }, []);
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
 
   const loadStandings = useCallback((id: number) => {
-    api<Standings>(`/api/contests/${id}`).then((s) => { setStandings(s); setError(""); }).catch((e: Error) => setError(e.message));
+    const path = `/api/contests/${id}`;
+    api<Standings>(path).then((s) => { cacheSet(path, s); if (wanted.current === id) { setStandings(s); setError(""); } }).catch((e: Error) => setError(e.message));
   }, []);
   useEffect(() => {
     if (selected == null) return;
-    setStandings(null);
+    wanted.current = selected;
+    setStandings(cacheGet<Standings>(`/api/contests/${selected}`));
     loadStandings(selected);
   }, [selected, loadStandings]);
   // keep a running contest fresh, and refetch when its start time passes so the problems appear
@@ -70,7 +79,7 @@ export default function ContestPage() {
       {overview && (
         <div className="chips">
           {tabs.map((t) => (
-            <button key={t.id} className={selected === t.id ? "on" : ""} onClick={() => setSelected(t.id)}>
+            <button key={t.id} className={selected === t.id ? "on" : ""} onClick={() => { picked.current = true; setSelected(t.id); }}>
               {t.title}{t.state === "RUNNING" ? " · live" : t.state === "UPCOMING" ? " · next" : ""}
             </button>
           ))}

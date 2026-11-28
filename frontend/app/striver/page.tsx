@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Page, ProblemSummary, tagLabel } from "@/lib/api";
 import { prefetchProblem, swr } from "@/lib/local";
@@ -18,13 +19,15 @@ const cap = (d: string) => d[0] + d.slice(1).toLowerCase();
 
 /** One row of the sheet. Memoised so ticking a problem re-renders that row only, not the whole sheet. */
 const SheetRow = memo(function SheetRow({ p, d, done, ticked, onToggle }: { p: ProblemSummary; d: string; done: boolean; ticked: boolean; onToggle: (slug: string) => void }) {
+  const router = useRouter();
+  const warm = (slug: string) => { prefetchProblem(slug); router.prefetch(`/problems/${slug}?lang=cpp`); };
   return (
     <li className={`sh-row ${d}`}>
                           <label className={`sh-check${p.status === "ATTEMPTED" && !done ? " att" : ""}`} title={p.status === "SOLVED" ? "Solved by a submission" : ticked ? "Marked done (tap to undo)" : "Mark as done"}>
                             <input type="checkbox" checked={done} disabled={p.status === "SOLVED"} onChange={() => onToggle(p.slug)} aria-label={`Mark ${p.title} as done`} />
                             <i aria-hidden="true" />
                           </label>
-                          <Link prefetch={false} className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => prefetchProblem(p.slug)} onTouchStart={() => prefetchProblem(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
+                          <Link prefetch={false} className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => warm(p.slug)} onTouchStart={() => warm(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
                           <span className={`sh-diff ${p.difficulty}`}>{cap(p.difficulty)}</span>
                           <Link prefetch={false} href={`/problems/${p.slug}?lang=cpp`} className="sh-btn sh-solve" aria-label={`Solve ${p.title}`}>Solve</Link>
                           <Link prefetch={false} href={`/problems/${p.slug}?tab=solutions&lang=cpp`} className="sh-btn sh-sol" title="C++ solution" aria-label={`C++ solution for ${p.title}`}>

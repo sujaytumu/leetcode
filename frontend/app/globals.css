@@ -2154,3 +2154,6 @@ a, button, summary, label, select, [role="button"], [role="tab"] { touch-action:
   .card b { font-size:19px; }
   .md h1, .md h2, .md h3 { margin:12px 0 5px; }
 }
+
+/* A tap shows at once, before the next page is ready. */
+header.nav a:active, .mtabs a:active, .mtabs button:active, .msheet a:active, .chips button:active, a.sh-btn:active, .sh-title:active, td a:active, .acct-pop a:active { opacity:.55; }
