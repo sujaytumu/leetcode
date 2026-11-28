@@ -93,3 +93,18 @@ a.daycell:hover { box-shadow:0 8px 18px -12px rgba(0,0,0,.6); }
 .planbtn:active { transform:scale(.97); }
 .planbtn.done { color:var(--ok, #2cbb5d); background:color-mix(in srgb, var(--ok, #2cbb5d) 14%, var(--cell)); box-shadow:none; border:1px solid color-mix(in srgb, var(--ok, #2cbb5d) 35%, transparent); }
 @media (prefers-reduced-motion:reduce) { .plangrid > *, .daycell, .planbtn { transition:none; } }
+
+/* ---- good / bad / danger actions ---- */
+.okbtn, .badbtn, .dangerbtn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:0 16px; font-weight:700; cursor:pointer; transition:transform .12s, background .15s, border-color .15s, box-shadow .15s; }
+.okbtn { color:var(--ok, #2cbb5d); background:color-mix(in srgb, var(--ok, #2cbb5d) 13%, var(--panel)); border:1px solid color-mix(in srgb, var(--ok, #2cbb5d) 38%, transparent); }
+.okbtn:hover:not(:disabled) { background:var(--ok, #2cbb5d); color:#fff; border-color:var(--ok, #2cbb5d); transform:translateY(-1px); box-shadow:0 8px 18px -10px var(--ok, #2cbb5d); }
+.badbtn, .dangerbtn { color:var(--bad, #ef4743); background:color-mix(in srgb, var(--bad, #ef4743) 11%, var(--panel)); border:1px solid color-mix(in srgb, var(--bad, #ef4743) 36%, transparent); }
+.badbtn:hover:not(:disabled), .dangerbtn:hover:not(:disabled) { background:var(--bad, #ef4743); color:#fff; border-color:var(--bad, #ef4743); transform:translateY(-1px); box-shadow:0 8px 18px -10px var(--bad, #ef4743); }
+.okbtn span, .badbtn span { font-size:12px; font-weight:800; }
+.revrow { border-radius:14px; }
+.revrow .bar, .revrow { gap:10px; }
+
+/* ---- practice / filter chips ---- */
+.chip { border-radius:999px; padding:5px 13px; font-size:13px; font-weight:600; background:var(--cell); border:1px solid var(--line); cursor:pointer; transition:transform .12s, background .15s, border-color .15s, box-shadow .15s; }
+.chip:hover { border-color:var(--accent); transform:translateY(-1px); }
+.chip.on { color:var(--accent); border-color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--panel)); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }

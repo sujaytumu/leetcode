@@ -59,7 +59,7 @@ export default function MockPage() {
           <ul className="mockresult">
             {session.slugs.map((s, i) => <li key={s}><Link href={`/problems/${s}`}>Problem {i + 1}: {items.find((p) => p.slug === s)?.title ?? s}</Link></li>)}
           </ul>
-          <button onClick={() => { if (confirm("End the mock interview now?")) endSession(); }}>End session</button>
+          <button className="dangerbtn" onClick={() => { if (confirm("End the mock interview now?")) endSession(); }}>End session</button>
         </div>
       )}
 

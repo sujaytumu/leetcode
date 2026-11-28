@@ -71,8 +71,8 @@ export default function ReviewPage() {
         <div key={r.slug} className="card revrow">
           <Link href={`/problems/${r.slug}`} className="grow"><b style={{ display: "inline", fontSize: 15 }}>{r.title}</b>
             <span className="mute" style={{ fontSize: 12 }}> · review #{stage + 1}</span></Link>
-          <button onClick={() => done(r, true)}>Remembered</button>
-          <button onClick={() => done(r, false)}>Forgot</button>
+          <button className="okbtn" onClick={() => done(r, true)}><span aria-hidden="true">✓</span> Remembered</button>
+          <button className="badbtn" onClick={() => done(r, false)}><span aria-hidden="true">✕</span> Forgot</button>
         </div>
       ))}
       <h3 style={{ marginTop: 18 }}>Coming up ({view.later.length})</h3>

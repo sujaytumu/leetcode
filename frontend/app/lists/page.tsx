@@ -52,7 +52,7 @@ function ListCard({ list, onChange }: { list: ListSummary; onChange: () => void 
           </li>
         ))}
       </ul>
-      <div style={{ marginTop: 8 }}><button onClick={destroy}>Delete list</button></div>
+      <div style={{ marginTop: 8 }}><button className="dangerbtn" onClick={destroy}>Delete list</button></div>
     </details>
   );
 }
@@ -82,7 +82,7 @@ export default function ListsPage() {
       <h2 style={{ marginTop: 0 }}>My lists</h2>
       <form onSubmit={create} className="filters" style={{ marginBottom: 14 }}>
         <input className="grow" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Name a new list, e.g. “Revise before interview”" aria-label="New list name" />
-        <button disabled={!name.trim() || (lists?.length ?? 0) >= MAX_LISTS}>Create list</button>
+        <button className="primary" disabled={!name.trim() || (lists?.length ?? 0) >= MAX_LISTS}>Create list</button>
       </form>
       {error && <div className="banner err">{error}</div>}
       {!lists && !error && <Skeleton lines={5} />}
