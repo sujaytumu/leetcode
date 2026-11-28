@@ -1,0 +1,63 @@
+=== pow-x-n
+--- cpp
+double solve(double x, int n) {
+    long long e = n;                               // long long: -n overflows int when n is INT_MIN
+    if (e < 0) { x = 1 / x; e = -e; }
+    double result = 1;
+    for (; e > 0; e >>= 1) {                       // binary exponentiation: square x, multiply in when the bit is set
+        if (e & 1) result *= x;
+        x *= x;
+    }
+    return result;
+}
+=== linked-list-cycle
+--- cpp
+bool solve(ListNode *head) {
+    ListNode *slow = head, *fast = head;           // fast moves two steps, slow one: they meet only inside a cycle
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+=== starting-point-of-loop-in-a-linked-list
+--- cpp
+ListNode *solve(ListNode *head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {                        // met inside the cycle; a walker from the head now meets slow at the entry
+            ListNode *entry = head;
+            while (entry != slow) { entry = entry->next; slow = slow->next; }
+            return entry;
+        }
+    }
+    return nullptr;
+}
+=== length-of-loop-in-a-linked-list
+--- cpp
+int solve(ListNode *head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {                        // walk once around the cycle and count the steps
+            int len = 1;
+            for (ListNode *cur = slow->next; cur != slow; cur = cur->next) len++;
+            return len;
+        }
+    }
+    return 0;
+}
+=== intersection-of-two-linked-lists
+--- cpp
+ListNode *solve(ListNode *headA, ListNode *headB) {
+    ListNode *a = headA, *b = headB;               // each walker continues on the other list; both travel n + m steps
+    while (a != b) {
+        a = a ? a->next : headB;
+        b = b ? b->next : headA;
+    }
+    return a;                                      // the shared node, or nullptr when both reach the end together
+}

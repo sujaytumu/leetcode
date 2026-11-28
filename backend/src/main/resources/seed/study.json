@@ -3452,5 +3452,55 @@
     "approach": "Compute start XOR goal and count its set bits.",
     "time": "O(1)",
     "space": "O(1)"
+  },
+  "pow-x-n": {
+    "hints": [
+      "Multiplying x by itself n times is too slow when n is huge.",
+      "x^n = (x^(n/2))^2, times one extra x when n is odd.",
+      "For a negative n compute with 1/x and -n (use a 64-bit exponent: -INT_MIN overflows an int)."
+    ],
+    "approach": "Binary exponentiation: walk the bits of n, squaring x each step and multiplying it into the result whenever the bit is set.",
+    "time": "O(log n)",
+    "space": "O(1)"
+  },
+  "linked-list-cycle": {
+    "hints": [
+      "Think of two runners on a circular track.",
+      "Move one pointer one step and another two steps at a time.",
+      "If they ever meet there is a cycle; if the fast one reaches the end there is none."
+    ],
+    "approach": "Floyd's tortoise and hare: slow moves 1 step, fast moves 2; a meeting means a cycle, reaching null means no cycle.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "starting-point-of-loop-in-a-linked-list": {
+    "hints": [
+      "First detect the cycle with slow and fast pointers.",
+      "When they meet, start a new pointer at the head.",
+      "Move it and slow one step at a time: they meet exactly at the cycle's entry."
+    ],
+    "approach": "Floyd phase 2: after slow and fast meet inside the cycle, the distance from the head to the entry equals the distance from the meeting point to the entry, so step both until they coincide.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "length-of-loop-in-a-linked-list": {
+    "hints": [
+      "Detect the cycle first (slow and fast pointers).",
+      "Once they meet, you are inside the cycle.",
+      "Walk once around until you are back and count the steps."
+    ],
+    "approach": "Find a meeting node with Floyd's algorithm, then count nodes while walking from it until it is reached again.",
+    "time": "O(n)",
+    "space": "O(1)"
+  },
+  "intersection-of-two-linked-lists": {
+    "hints": [
+      "Compare nodes, not values: equal values do not mean the same node.",
+      "Lists may have different lengths before they merge.",
+      "Let each pointer continue on the other list after reaching its end; both then travel n + m steps."
+    ],
+    "approach": "Two pointers: when one reaches the end it jumps to the other list's head. After at most n + m steps they point at the same node (the intersection) or both at null.",
+    "time": "O(n + m)",
+    "space": "O(1)"
   }
 }

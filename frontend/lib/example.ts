@@ -7,7 +7,7 @@
 type Stmt =
   | { kind: "count" }
   | { kind: "rowcount" }
-  | { kind: "ints" | "int" | "str" | "strs" | "matrix" | "tree" | "list"; name: string };
+  | { kind: "ints" | "int" | "dbl" | "str" | "strs" | "matrix" | "tree" | "list"; name: string };
 
 function mainBody(python: string): string[] | null {
   const m = /def main\(\):\n([\s\S]*?)\n\s*\nif __name__/.exec(python);
@@ -26,12 +26,19 @@ export function parseInputSpec(python: string): Stmt[] | null {
     if ((m = /^(\w+)_len = int\(lines\[pos\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "count" }); continue; }
     if (/^\w+_rows = int\(lines\[pos\]\.split\(\)\[0\]\); pos \+= 1$/.test(l)) { out.push({ kind: "rowcount" }); continue; }
     if ((m = /^(\w+) = list\(map\(int, lines\[pos\]\.split\(\)\)\) if \1_len > 0 else \[\]; pos \+= 1$/.exec(l))) { out.push({ kind: "ints", name: m[1] }); continue; }
+    if (/^\w+_loop = int\(lines\[pos\]\); pos \+= 1$/.test(l)) { out.push({ kind: "int", name: "pos" }); continue; }
+    if (/^\w+_shared = int\(lines\[pos\]\); pos \+= 1$/.test(l)) { out.push({ kind: "int", name: "shared" }); continue; }
     if ((m = /^(\w+) = int\(lines\[pos\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "int", name: m[1] }); continue; }
     if ((m = /^(\w+) = lines\[pos\]; pos \+= 1$/.exec(l))) { out.push({ kind: "str", name: m[1] }); continue; }
     if ((m = /^(\w+) = lines\[pos:pos \+ \1_rows\]; pos \+= \1_rows$/.exec(l))) { out.push({ kind: "strs", name: m[1] }); continue; }
     if ((m = /^(\w+) = \[list\(map\(int, lines\[pos \+ i\]\.split\(\)\)\) for i in range\(\1_len\)\]; pos \+= \1_len$/.exec(l))) { out.push({ kind: "matrix", name: m[1] }); continue; }
     if ((m = /^(\w+) = build_tree\(lines\[pos\]\.split\(\) if \1_len > 0 else \[\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "tree", name: m[1] }); continue; }
     if ((m = /^(\w+) = build_list\(list\(map\(int, lines\[pos\]\.split\(\)\)\) if \1_len > 0 else \[\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "list", name: m[1] }); continue; }
+    // Linked-list kinds: a list given as values plus a loop position, or two lists that share a tail.
+    if ((m = /^(\w+)_vals = list\(map\(int, lines\[pos\]\.split\(\)\)\) if \1_len > 0 else \[\]; pos \+= 1$/.exec(l))) { out.push({ kind: "ints", name: m[1] }); continue; }
+    if (/^\w+ = (build_cycle_list\(\w+_vals, \w+_loop\)|build_shared\(\w+_vals, \w+_vals, \w+_shared\)|_SECOND\[0\])$/.test(l)) continue; // builds nodes, reads no input
+    // A decimal number such as x = 2.00000
+    if ((m = /^(\w+) = float\(lines\[pos\]\); pos \+= 1$/.exec(l))) { out.push({ kind: "dbl", name: m[1] }); continue; }
     return null; // a statement this formatter does not know
   }
   return out.length ? out : null;
@@ -62,7 +69,7 @@ export function formatInputParts(python: string, input: string): { name: string;
       case "ints": case "list": case "tree":
         parts.push({ name: s.name, value: arr(count > 0 ? words(lines[pos]).map(literal) : []) });
         pos += 1; break;
-      case "int":
+      case "int": case "dbl":
         if (!NUM.test((lines[pos] ?? "").trim())) return null;
         parts.push({ name: s.name, value: lines[pos].trim() }); pos += 1; break;
       case "str":
@@ -96,6 +103,7 @@ export function formatOutput(python: string, expected: string): string | null {
   if (tail.includes("for s in sorted(result):")) return arr(lines.map((l) => JSON.stringify(l)));
   if (/" "\.join\(map\(str, (list_values\(result\)|result)\)\)|tree_tokens\(result\)/.test(tail)) return arr(words(lines.join(" ")).map(literal));
   if (tail.includes('"true" if result else "false"')) return lines.join("").trim();
+  if (/^print\((node_index\(result\)|f"\{result:\.5f\}")\)$/.test(tail.trim())) return lines.join("").trim(); // a node's position, or a 5-decimal number
   if (/^print\(result\)$/.test(tail.trim())) {
     const v = lines.join("\n").trim();
     return NUM.test(v) || v === "true" || v === "false" || v === "null" ? v : JSON.stringify(v);
@@ -134,6 +142,9 @@ export function buildInput(python: string, parts: { name: string; value: string 
         case "int":
           if (typeof v !== "number") return null;
           lines.push(String(v)); break;
+        case "dbl":
+          if (typeof v !== "number") return null;
+          lines.push(v.toFixed(5)); break;
         case "str":
           if (typeof v !== "string") return null;
           lines.push(v); break;

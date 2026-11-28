@@ -1,0 +1,177 @@
+=== pow-x-n
+--- py
+def solve(x, n):
+    e = n
+    if e < 0:
+        x = 1 / x
+        e = -e
+    result = 1.0
+    while e > 0:
+        if e & 1:
+            result *= x
+        x *= x
+        e >>= 1
+    return result
+--- js
+function solve(x, n) {
+  let e = n;
+  if (e < 0) { x = 1 / x; e = -e; }
+  let result = 1;
+  while (e > 0) {
+    if (e % 2 === 1) result *= x;
+    x *= x;
+    e = Math.floor(e / 2);
+  }
+  return result;
+}
+--- java
+    static double solve(double x, int n) {
+        long e = n;
+        if (e < 0) { x = 1 / x; e = -e; }
+        double result = 1;
+        for (; e > 0; e >>= 1) {
+            if ((e & 1) == 1) result *= x;
+            x *= x;
+        }
+        return result;
+    }
+=== linked-list-cycle
+--- py
+def solve(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False
+--- js
+function solve(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) return true;
+  }
+  return false;
+}
+--- java
+    static boolean solve(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) return true;
+        }
+        return false;
+    }
+=== starting-point-of-loop-in-a-linked-list
+--- py
+def solve(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            entry = head
+            while entry is not slow:
+                entry = entry.next
+                slow = slow.next
+            return entry
+    return None
+--- js
+function solve(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) {
+      let entry = head;
+      while (entry !== slow) { entry = entry.next; slow = slow.next; }
+      return entry;
+    }
+  }
+  return null;
+}
+--- java
+    static ListNode solve(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                ListNode entry = head;
+                while (entry != slow) { entry = entry.next; slow = slow.next; }
+                return entry;
+            }
+        }
+        return null;
+    }
+=== length-of-loop-in-a-linked-list
+--- py
+def solve(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            n, cur = 1, slow.next
+            while cur is not slow:
+                n += 1
+                cur = cur.next
+            return n
+    return 0
+--- js
+function solve(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) {
+      let n = 1;
+      for (let cur = slow.next; cur !== slow; cur = cur.next) n++;
+      return n;
+    }
+  }
+  return 0;
+}
+--- java
+    static int solve(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                int n = 1;
+                for (ListNode cur = slow.next; cur != slow; cur = cur.next) n++;
+                return n;
+            }
+        }
+        return 0;
+    }
+=== intersection-of-two-linked-lists
+--- py
+def solve(headA, headB):
+    a, b = headA, headB
+    while a is not b:
+        a = a.next if a else headB
+        b = b.next if b else headA
+    return a
+--- js
+function solve(headA, headB) {
+  let a = headA, b = headB;
+  while (a !== b) {
+    a = a ? a.next : headB;
+    b = b ? b.next : headA;
+  }
+  return a;
+}
+--- java
+    static ListNode solve(ListNode headA, ListNode headB) {
+        ListNode a = headA, b = headB;
+        while (a != b) {
+            a = a != null ? a.next : headB;
+            b = b != null ? b.next : headA;
+        }
+        return a;
+    }

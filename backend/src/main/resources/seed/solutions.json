@@ -3355,5 +3355,50 @@
   "solutions": {
    "cpp": "// Optimised: O(1) time, O(1) space\n\nclass Solution {\npublic:\n    int minBitFlips(int start, int goal) {\n        return __builtin_popcount((unsigned)(start ^ goal));      // each differing bit needs one flip\n    }\n};\n"
   }
+ },
+ "pow-x-n": {
+  "editorial": "## Approach\n\nBinary exponentiation: walk the bits of n, squaring x each step and multiplying it into the result whenever the bit is set.\n\n**Complexity:** O(log n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(log n) time, O(1) space\n\nclass Solution {\npublic:\n    double myPow(double x, int n) {\n        long long e = n;                               // long long: -n overflows int when n is INT_MIN\n        if (e < 0) { x = 1 / x; e = -e; }\n        double result = 1;\n        for (; e > 0; e >>= 1) {                       // binary exponentiation: square x, multiply in when the bit is set\n            if (e & 1) result *= x;\n            x *= x;\n        }\n        return result;\n    }\n};\n",
+   "java": "    static double solve(double x, int n) {\n        long e = n;\n        if (e < 0) { x = 1 / x; e = -e; }\n        double result = 1;\n        for (; e > 0; e >>= 1) {\n            if ((e & 1) == 1) result *= x;\n            x *= x;\n        }\n        return result;\n    }\n",
+   "python": "def solve(x, n):\n    e = n\n    if e < 0:\n        x = 1 / x\n        e = -e\n    result = 1.0\n    while e > 0:\n        if e & 1:\n            result *= x\n        x *= x\n        e >>= 1\n    return result\n",
+   "javascript": "function solve(x, n) {\n  let e = n;\n  if (e < 0) { x = 1 / x; e = -e; }\n  let result = 1;\n  while (e > 0) {\n    if (e % 2 === 1) result *= x;\n    x *= x;\n    e = Math.floor(e / 2);\n  }\n  return result;\n}\n"
+  }
+ },
+ "linked-list-cycle": {
+  "editorial": "## Approach\n\nFloyd's tortoise and hare: slow moves 1 step, fast moves 2; a meeting means a cycle, reaching null means no cycle.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\n\nclass Solution {\npublic:\n    bool hasCycle(ListNode* head) {\n        ListNode *slow = head, *fast = head;           // fast moves two steps, slow one: they meet only inside a cycle\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n            if (slow == fast) return true;\n        }\n        return false;\n    }\n};\n",
+   "java": "    static boolean solve(ListNode head) {\n        ListNode slow = head, fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            if (slow == fast) return true;\n        }\n        return false;\n    }\n",
+   "python": "def solve(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            return True\n    return False\n",
+   "javascript": "function solve(head) {\n  let slow = head, fast = head;\n  while (fast && fast.next) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow === fast) return true;\n  }\n  return false;\n}\n"
+  }
+ },
+ "starting-point-of-loop-in-a-linked-list": {
+  "editorial": "## Approach\n\nFloyd phase 2: after slow and fast meet inside the cycle, the distance from the head to the entry equals the distance from the meeting point to the entry, so step both until they coincide.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\n\nclass Solution {\npublic:\n    ListNode* detectCycle(ListNode* head) {\n        ListNode *slow = head, *fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n            if (slow == fast) {                        // met inside the cycle; a walker from the head now meets slow at the entry\n                ListNode *entry = head;\n                while (entry != slow) { entry = entry->next; slow = slow->next; }\n                return entry;\n            }\n        }\n        return nullptr;\n    }\n};\n",
+   "java": "    static ListNode solve(ListNode head) {\n        ListNode slow = head, fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            if (slow == fast) {\n                ListNode entry = head;\n                while (entry != slow) { entry = entry.next; slow = slow.next; }\n                return entry;\n            }\n        }\n        return null;\n    }\n",
+   "python": "def solve(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            entry = head\n            while entry is not slow:\n                entry = entry.next\n                slow = slow.next\n            return entry\n    return None\n",
+   "javascript": "function solve(head) {\n  let slow = head, fast = head;\n  while (fast && fast.next) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow === fast) {\n      let entry = head;\n      while (entry !== slow) { entry = entry.next; slow = slow.next; }\n      return entry;\n    }\n  }\n  return null;\n}\n"
+  }
+ },
+ "length-of-loop-in-a-linked-list": {
+  "editorial": "## Approach\n\nFind a meeting node with Floyd's algorithm, then count nodes while walking from it until it is reached again.\n\n**Complexity:** O(n) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n) time, O(1) space\n\nclass Solution {\npublic:\n    int lengthOfLoop(ListNode* head) {\n        ListNode *slow = head, *fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n            if (slow == fast) {                        // walk once around the cycle and count the steps\n                int len = 1;\n                for (ListNode *cur = slow->next; cur != slow; cur = cur->next) len++;\n                return len;\n            }\n        }\n        return 0;\n    }\n};\n",
+   "java": "    static int solve(ListNode head) {\n        ListNode slow = head, fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            if (slow == fast) {\n                int n = 1;\n                for (ListNode cur = slow.next; cur != slow; cur = cur.next) n++;\n                return n;\n            }\n        }\n        return 0;\n    }\n",
+   "python": "def solve(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            n, cur = 1, slow.next\n            while cur is not slow:\n                n += 1\n                cur = cur.next\n            return n\n    return 0\n",
+   "javascript": "function solve(head) {\n  let slow = head, fast = head;\n  while (fast && fast.next) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow === fast) {\n      let n = 1;\n      for (let cur = slow.next; cur !== slow; cur = cur.next) n++;\n      return n;\n    }\n  }\n  return 0;\n}\n"
+  }
+ },
+ "intersection-of-two-linked-lists": {
+  "editorial": "## Approach\n\nTwo pointers: when one reaches the end it jumps to the other list's head. After at most n + m steps they point at the same node (the intersection) or both at null.\n\n**Complexity:** O(n + m) time, O(1) space.",
+  "solutions": {
+   "cpp": "// Optimised: O(n + m) time, O(1) space\n\nclass Solution {\npublic:\n    ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {\n        ListNode *a = headA, *b = headB;               // each walker continues on the other list; both travel n + m steps\n        while (a != b) {\n            a = a ? a->next : headB;\n            b = b ? b->next : headA;\n        }\n        return a;                                      // the shared node, or nullptr when both reach the end together\n    }\n};\n",
+   "java": "    static ListNode solve(ListNode headA, ListNode headB) {\n        ListNode a = headA, b = headB;\n        while (a != b) {\n            a = a != null ? a.next : headB;\n            b = b != null ? b.next : headA;\n        }\n        return a;\n    }\n",
+   "python": "def solve(headA, headB):\n    a, b = headA, headB\n    while a is not b:\n        a = a.next if a else headB\n        b = b.next if b else headA\n    return a\n",
+   "javascript": "function solve(headA, headB) {\n  let a = headA, b = headB;\n  while (a !== b) {\n    a = a ? a.next : headB;\n    b = b ? b.next : headA;\n  }\n  return a;\n}\n"
+  }
  }
 }

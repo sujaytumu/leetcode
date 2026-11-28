@@ -368,6 +368,11 @@ export const LC_METHODS: Record<string, string> = {
   "0-1-knapsack": "knapSack",
   "unbounded-knapsack": "unboundedKnapsack",
   "minimum-bit-flips-to-convert-number": "minBitFlips",
+  "pow-x-n": "myPow",
+  "linked-list-cycle": "hasCycle",
+  "starting-point-of-loop-in-a-linked-list": "detectCycle",
+  "length-of-loop-in-a-linked-list": "lengthOfLoop",
+  "intersection-of-two-linked-lists": "getIntersectionNode",
 };
 
 /** Problems that LeetCode solves in place (`void`): the judge prints the first argument afterwards. */

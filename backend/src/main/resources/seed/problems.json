@@ -10128,6 +10128,167 @@
     "order": 122
   },
   {
+    "slug": "pow-x-n",
+    "title": "Pow(x, n)",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "math",
+      "binary-search",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return `x` raised to the power `n`. The result is printed rounded to 5 decimal places, so a small floating point error is fine. Aim for `O(log n)` multiplications.\n\n### Input\nLine 1: `x` with 5 decimals.\nLine 2: `n`.\n\n### Output\n`x^n` with exactly 5 decimals.\n\n### Constraints\n- `-100.0 < x < 100.0`\n- `-2^31 <= n <= 2^31 - 1`\n- `x` is not `0` when `n` is negative\n- The result fits in `[-10^6, 10^6]`\n\n### Examples\n**Example 1**\n```text\nInput:\n2.00000\n10\n\nOutput:\n1024.00000\n```\n\n**Example 2**\n```text\nInput:\n2.10000\n3\n\nOutput:\n9.26100\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static double solve(double x, int n) {\n        // Write your solution here\n        return 0.0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        double x = Double.parseDouble(lines.get(pos++).trim());\n        int n = Integer.parseInt(lines.get(pos++).trim());\n        double result = solve(x, n);\n        System.out.println(String.format(Locale.ROOT, \"%.5f\", result));\n    }\n}\n",
+      "python": "import sys\n\n\ndef solve(x, n):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    x = float(lines[pos]); pos += 1\n    n = int(lines[pos]); pos += 1\n    result = solve(x, n)\n    print(f\"{result:.5f}\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nfunction solve(x, n) {\n  // Write your solution here\n}\n\nconst x = parseFloat(lines[pos++]);\nconst n = parseInt(lines[pos++], 10);\nconst result = solve(x, n);\nconsole.log(result.toFixed(5));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\ndouble solve(double x, int n) {\n    // Write your solution here\n    return 0.0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    double x = stod(lines[pos++]);\n    int n = stoi(lines[pos++]);\n    double result = solve(x, n);\n    cout << fixed << setprecision(5) << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "2.00000\n10\n",
+        "expectedOutput": "1024.00000\n",
+        "sample": true
+      },
+      {
+        "input": "2.10000\n3\n",
+        "expectedOutput": "9.26100\n",
+        "sample": true
+      },
+      {
+        "input": "2.00000\n-2\n",
+        "expectedOutput": "0.25000\n",
+        "sample": false
+      },
+      {
+        "input": "1.00000\n2147483647\n",
+        "expectedOutput": "1.00000\n",
+        "sample": false
+      },
+      {
+        "input": "-1.00000\n2147483647\n",
+        "expectedOutput": "-1.00000\n",
+        "sample": false
+      },
+      {
+        "input": "-1.00000\n-2147483648\n",
+        "expectedOutput": "1.00000\n",
+        "sample": false
+      },
+      {
+        "input": "0.50000\n8\n",
+        "expectedOutput": "0.00391\n",
+        "sample": false
+      },
+      {
+        "input": "3.00000\n0\n",
+        "expectedOutput": "1.00000\n",
+        "sample": false
+      },
+      {
+        "input": "-2.00000\n3\n",
+        "expectedOutput": "-8.00000\n",
+        "sample": false
+      },
+      {
+        "input": "2.00000\n-2147483648\n",
+        "expectedOutput": "0.00000\n",
+        "sample": false
+      },
+      {
+        "input": "0.00000\n5\n",
+        "expectedOutput": "0.00000\n",
+        "sample": false
+      },
+      {
+        "input": "1.00001\n100000\n",
+        "expectedOutput": "2.71827\n",
+        "sample": false
+      },
+      {
+        "input": "0.99999\n100000\n",
+        "expectedOutput": "0.36788\n",
+        "sample": false
+      },
+      {
+        "input": "-2.00000\n10\n",
+        "expectedOutput": "1024.00000\n",
+        "sample": false
+      },
+      {
+        "input": "10.00000\n-3\n",
+        "expectedOutput": "0.00100\n",
+        "sample": false
+      },
+      {
+        "input": "-0.50000\n5\n",
+        "expectedOutput": "-0.03125\n",
+        "sample": false
+      },
+      {
+        "input": "0.00927\n1\n",
+        "expectedOutput": "0.00927\n",
+        "sample": false
+      },
+      {
+        "input": "-0.61485\n11\n",
+        "expectedOutput": "-0.00475\n",
+        "sample": false
+      },
+      {
+        "input": "0.72972\n11\n",
+        "expectedOutput": "0.03124\n",
+        "sample": false
+      },
+      {
+        "input": "2.20468\n-12\n",
+        "expectedOutput": "0.00008\n",
+        "sample": false
+      },
+      {
+        "input": "-0.91018\n-5\n",
+        "expectedOutput": "-1.60090\n",
+        "sample": false
+      },
+      {
+        "input": "-2.86413\n1\n",
+        "expectedOutput": "-2.86413\n",
+        "sample": false
+      },
+      {
+        "input": "0.96995\n1\n",
+        "expectedOutput": "0.96995\n",
+        "sample": false
+      },
+      {
+        "input": "-1.47331\n-1\n",
+        "expectedOutput": "-0.67874\n",
+        "sample": false
+      },
+      {
+        "input": "-0.18391\n-5\n",
+        "expectedOutput": "-4753.05980\n",
+        "sample": false
+      },
+      {
+        "input": "2.65529\n-2\n",
+        "expectedOutput": "0.14183\n",
+        "sample": false
+      },
+      {
+        "input": "1.05613\n11\n",
+        "expectedOutput": "1.82344\n",
+        "sample": false
+      },
+      {
+        "input": "2.26483\n-9\n",
+        "expectedOutput": "0.00064\n",
+        "sample": false
+      }
+    ],
+    "order": 123
+  },
+  {
     "slug": "find-minimum-in-rotated-sorted-array-ii",
     "title": "Find Minimum in Rotated Sorted Array II",
     "difficulty": "HARD",
@@ -10190,7 +10351,7 @@
         "sample": false
       }
     ],
-    "order": 123
+    "order": 124
   },
   {
     "slug": "aggressive-cows",
@@ -10257,7 +10418,7 @@
         "sample": false
       }
     ],
-    "order": 124
+    "order": 125
   },
   {
     "slug": "kth-element-of-two-sorted-arrays",
@@ -10318,7 +10479,7 @@
         "sample": false
       }
     ],
-    "order": 125
+    "order": 126
   },
   {
     "slug": "median-in-a-row-wise-sorted-matrix",
@@ -10374,7 +10535,7 @@
         "sample": false
       }
     ],
-    "order": 126
+    "order": 127
   },
   {
     "slug": "median-of-two-sorted-arrays",
@@ -10451,7 +10612,7 @@
         "sample": false
       }
     ],
-    "order": 127
+    "order": 128
   },
   {
     "slug": "allocate-books",
@@ -10532,7 +10693,7 @@
         "sample": false
       }
     ],
-    "order": 128
+    "order": 129
   },
   {
     "slug": "reverse-linked-list",
@@ -10632,7 +10793,7 @@
         "sample": false
       }
     ],
-    "order": 129
+    "order": 130
   },
   {
     "slug": "merge-two-sorted-lists",
@@ -10728,7 +10889,7 @@
         "sample": false
       }
     ],
-    "order": 130
+    "order": 131
   },
   {
     "slug": "middle-of-the-linked-list",
@@ -10824,7 +10985,7 @@
         "sample": false
       }
     ],
-    "order": 131
+    "order": 132
   },
   {
     "slug": "palindrome-linked-list",
@@ -10931,7 +11092,7 @@
         "sample": false
       }
     ],
-    "order": 132
+    "order": 133
   },
   {
     "slug": "remove-duplicates-from-sorted-list",
@@ -11015,7 +11176,7 @@
         "sample": false
       }
     ],
-    "order": 133
+    "order": 134
   },
   {
     "slug": "remove-linked-list-elements",
@@ -11098,7 +11259,214 @@
         "sample": false
       }
     ],
-    "order": 134
+    "order": 135
+  },
+  {
+    "slug": "linked-list-cycle",
+    "title": "Linked List Cycle",
+    "difficulty": "EASY",
+    "tags": [
+      "linked-list",
+      "two-pointers",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return `true` if the linked list has a cycle, meaning some node can be reached again by following `next` pointers. The input gives the node values and `pos`, the index the last node's `next` points to (`-1` means no cycle). Try it in `O(1)` extra space.\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values.\nLine 3: `pos`, the index of the node that the last node points back to, or `-1` if there is no cycle.\n\n### Output\n`true` or `false`.\n\n### Constraints\n- `0 <= n <= 1000`\n- `-1000 <= value <= 1000`\n- `pos` is `-1` or a valid index\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n3 2 0 -4\n1\n\nOutput:\ntrue\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n0\n\nOutput:\ntrue\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static class ListNode {\n        int val;\n        ListNode next;\n        ListNode(int val) { this.val = val; }\n    }\n\n    static ListNode buildList(int[] vals) {\n        ListNode dummy = new ListNode(0), tail = dummy;\n        for (int v : vals) { tail.next = new ListNode(v); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static String listString(ListNode node) {\n        StringBuilder sb = new StringBuilder();\n        for (; node != null; node = node.next) { if (sb.length() > 0) sb.append(' '); sb.append(node.val); }\n        return sb.toString();\n    }\n\n\n    static ArrayList<ListNode> NODES = new ArrayList<>();\n    static ListNode SECOND = null;\n\n    static int nodeIndex(ListNode node) {\n        for (int i = 0; i < NODES.size(); i++) if (NODES.get(i) == node) return i;\n        return -1;\n    }\n\n    static ListNode buildCycleList(int[] vals, int loop) {\n        ListNode head = buildList(vals);\n        List<ListNode> nodes = new ArrayList<>();\n        for (ListNode cur = head; cur != null; cur = cur.next) nodes.add(cur);\n        NODES.addAll(nodes);\n        if (loop >= 0 && !nodes.isEmpty()) nodes.get(nodes.size() - 1).next = nodes.get(loop);\n        return head;\n    }\n\n    static ListNode buildShared(int[] a, int[] b, int k) {\n        ListNode tail = null;\n        for (int i = a.length - 1; i >= a.length - k; i--) { ListNode n = new ListNode(a[i]); n.next = tail; tail = n; }\n        ListNode headA = tail, headB = tail;\n        for (int i = a.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(a[i]); n.next = headA; headA = n; }\n        for (int i = b.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(b[i]); n.next = headB; headB = n; }\n        for (ListNode cur = headA; cur != null; cur = cur.next) NODES.add(cur);\n        for (ListNode cur = headB; cur != tail; cur = cur.next) NODES.add(cur);\n        SECOND = headB;\n        return headA;\n    }\n\n\n    static boolean solve(ListNode head) {\n        // Write your solution here\n        return false;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int headLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] headVals = new int[headLen];\n        if (headLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < headLen; i++) headVals[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int headLoop = Integer.parseInt(lines.get(pos++).trim());\n        ListNode head = buildCycleList(headVals, headLoop);\n        boolean result = solve(head);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\ndef build_list(vals):\n    head = None\n    for v in reversed(vals):\n        head = ListNode(v, head)\n    return head\n\n\ndef list_values(node):\n    out = []\n    while node:\n        out.append(node.val)\n        node = node.next\n    return out\n\n\n\n_NODES = []\n_SECOND = [None]\n\n\ndef node_index(node):\n    for i, n in enumerate(_NODES):\n        if n is node:\n            return i\n    return -1\n\n\ndef build_cycle_list(vals, loop):\n    head = build_list(vals)\n    nodes = []\n    cur = head\n    while cur:\n        nodes.append(cur)\n        cur = cur.next\n    _NODES.extend(nodes)\n    if loop >= 0 and nodes:\n        nodes[-1].next = nodes[loop]\n    return head\n\n\ndef build_shared(a_vals, b_vals, k):\n    tail = build_list(a_vals[len(a_vals) - k:]) if k > 0 else None\n    head_a, head_b = tail, tail\n    for v in reversed(a_vals[:len(a_vals) - k]):\n        head_a = ListNode(v, head_a)\n    for v in reversed(b_vals[:len(b_vals) - k]):\n        head_b = ListNode(v, head_b)\n    cur = head_a\n    while cur:\n        _NODES.append(cur)\n        cur = cur.next\n    cur = head_b\n    while cur is not tail:\n        _NODES.append(cur)\n        cur = cur.next\n    _SECOND[0] = head_b\n    return head_a\n\n\n\ndef solve(head):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    head_len = int(lines[pos]); pos += 1\n    head_vals = list(map(int, lines[pos].split())) if head_len > 0 else []; pos += 1\n    head_loop = int(lines[pos]); pos += 1\n    head = build_cycle_list(head_vals, head_loop)\n    result = solve(head)\n    print(\"true\" if result else \"false\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nclass ListNode {\n  constructor(val = 0, next = null) {\n    this.val = val;\n    this.next = next;\n  }\n}\n\nfunction buildList(vals) {\n  let head = null;\n  for (let i = vals.length - 1; i >= 0; i--) head = new ListNode(vals[i], head);\n  return head;\n}\n\nfunction listString(node) {\n  const out = [];\n  for (; node; node = node.next) out.push(node.val);\n  return out.join(\" \");\n}\n\n\nconst NODES = [];\nlet SECOND = null;\n\nfunction nodeIndex(node) {\n  return NODES.indexOf(node);\n}\n\nfunction buildCycleList(vals, loop) {\n  const head = buildList(vals);\n  const nodes = [];\n  for (let c = head; c; c = c.next) nodes.push(c);\n  NODES.push(...nodes);\n  if (loop >= 0 && nodes.length) nodes[nodes.length - 1].next = nodes[loop];\n  return head;\n}\n\nfunction buildShared(a, b, k) {\n  const tail = buildList(a.slice(a.length - k));\n  let headA = tail, headB = tail;\n  for (let i = a.length - k - 1; i >= 0; i--) headA = new ListNode(a[i], headA);\n  for (let i = b.length - k - 1; i >= 0; i--) headB = new ListNode(b[i], headB);\n  for (let c = headA; c; c = c.next) NODES.push(c);\n  for (let c = headB; c !== tail; c = c.next) NODES.push(c);\n  SECOND = headB;\n  return headA;\n}\n\n\nfunction solve(head) {\n  // Write your solution here\n}\n\nconst headLen = parseInt(lines[pos++], 10);\nconst headVals = headLen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];\npos++;\nconst headLoop = parseInt(lines[pos++], 10);\nconst head = buildCycleList(headVals, headLoop);\nconst result = solve(head);\nconsole.log(result ? \"true\" : \"false\");\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int v) : val(v), next(nullptr) {}\n};\n\nListNode *buildList(const vector<int> &vals) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    for (int v : vals) { tail->next = new ListNode(v); tail = tail->next; }\n    return dummy.next;\n}\n\nstring listString(ListNode *node) {\n    string out;\n    for (; node; node = node->next) {\n        if (!out.empty()) out += \" \";\n        out += to_string(node->val);\n    }\n    return out;\n}\n\n\nvector<ListNode *> NODES;\nListNode *SECOND = nullptr;\n\nint nodeIndex(ListNode *node) {\n    for (size_t i = 0; i < NODES.size(); i++) if (NODES[i] == node) return (int)i;\n    return -1;\n}\n\nListNode *buildCycleList(const vector<int> &vals, int loop) {\n    ListNode *head = buildList(vals);\n    vector<ListNode *> nodes;\n    for (ListNode *cur = head; cur; cur = cur->next) nodes.push_back(cur);\n    NODES.insert(NODES.end(), nodes.begin(), nodes.end());\n    if (loop >= 0 && !nodes.empty()) nodes.back()->next = nodes[loop];\n    return head;\n}\n\nListNode *buildShared(const vector<int> &a, const vector<int> &b, int k) {\n    ListNode *tail = nullptr;\n    for (int i = (int)a.size() - 1; i >= (int)a.size() - k; i--) { ListNode *n = new ListNode(a[i]); n->next = tail; tail = n; }\n    ListNode *headA = tail, *headB = tail;\n    for (int i = (int)a.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(a[i]); n->next = headA; headA = n; }\n    for (int i = (int)b.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(b[i]); n->next = headB; headB = n; }\n    for (ListNode *cur = headA; cur; cur = cur->next) NODES.push_back(cur);\n    for (ListNode *cur = headB; cur != tail; cur = cur->next) NODES.push_back(cur);\n    SECOND = headB;\n    return headA;\n}\n\n\nbool solve(ListNode * head) {\n    // Write your solution here\n    return false;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int headLen = stoi(lines[pos++]);\n    vector<int> headVals(headLen);\n    if (headLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : headVals) iss >> v;\n    }\n    pos++;\n    int headLoop = stoi(lines[pos++]);\n    ListNode *head = buildCycleList(headVals, headLoop);\n    bool result = solve(head);\n    cout << (result ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n3 2 0 -4\n1\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 2\n0\n",
+        "expectedOutput": "true\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "0\n\n-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 3 4 5\n-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "4\n1 1 1 1\n3\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "6\n6 8 8 7 7 2\n0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "15\n18 45 6 20 30 45 17 20 40 29 46 30 48 33 3\n0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "40\n95 91 30 79 65 96 42 22 70 95 28 93 69 15 7 77 99 84 90 82 25 98 65 12 60 38 52 24 40 12 94 12 100 61 74 21 59 83 11 54\n39\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "100\n51 93 93 69 58 58 61 22 39 12 18 64 25 92 88 96 44 62 84 35 83 10 14 63 91 98 80 90 71 54 44 57 95 41 83 54 89 27 56 80 42 4 39 83 86 28 84 86 83 15 89 2 30 47 50 7 78 23 41 99 3 29 86 29 67 61 24 90 24 93 9 35 48 98 1 81 45 39 1 54 68 30 44 66 11 97 37 44 3 88 23 24 64 92 17 35 79 81 22 18\n0\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "500\n753 238 100 135 892 617 311 616 380 768 877 479 221 24 715 385 148 984 737 257 152 660 782 70 643 846 686 120 399 803 810 145 768 336 987 433 968 270 87 636 716 82 406 565 5 536 142 334 490 223 647 715 95 709 245 54 818 734 900 974 344 518 110 696 419 31 548 341 726 873 138 40 664 4 349 764 195 484 389 950 111 719 976 900 854 631 32 306 957 406 365 99 896 522 827 807 926 224 877 900 33 959 896 519 613 126 466 705 719 332 575 44 567 73 223 260 256 603 752 807 217 33 794 810 682 884 763 916 645 26 534 472 884 583 512 134 166 410 511 123 820 284 507 82 724 161 179 441 737 161 247 711 117 181 861 295 567 967 748 208 641 601 519 886 161 682 1 596 97 380 52 297 576 585 498 5 949 940 527 897 295 961 490 343 425 372 69 210 10 953 696 274 109 590 88 709 738 74 854 735 759 119 221 781 760 532 459 521 532 397 820 891 974 517 623 495 904 431 941 291 650 111 516 350 290 140 343 518 792 836 127 730 961 701 955 157 26 218 646 715 340 703 240 73 891 939 464 833 90 365 461 382 692 736 693 735 890 879 646 192 332 891 751 869 692 96 431 239 901 539 303 435 837 850 628 23 952 606 385 39 13 810 649 181 561 231 246 276 826 705 842 358 850 513 603 51 688 683 218 662 157 434 885 446 784 907 606 32 990 535 149 9 629 171 545 156 440 851 185 453 327 702 761 996 964 438 318 675 481 606 854 198 653 955 986 701 116 560 234 895 184 712 346 974 286 350 696 371 717 284 1 246 413 350 809 44 18 182 512 752 454 30 79 723 35 760 790 412 272 789 553 665 643 984 487 151 302 698 538 253 76 613 204 825 658 377 735 212 405 258 497 107 322 906 42 627 181 149 551 132 299 442 942 85 643 607 415 352 920 140 650 772 343 5 47 82 353 867 764 361 248 58 767 288 619 722 131 815 393 111 412 59 919 700 656 617 711 481 895 91 534 181 734 955 509 277 560 161 880 238 338 386 945 18 401 597 243 145 176 574 450 524 806 58 234 809 713 582 27 943 362 668 112 801 644 673 838 294 715 103 21 138 394 288 148 794 242 254 764 514 481 712 644 373 953 606 495 658 447 125\n496\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n608 290 61 89 761 292 970 954 8 277 373 45 411 780 255 233 15 698 63 491 767 516 934 750 724 690 223 7 241 385 216 294 595 877 208 780 83 232 7 195 932 793 237 653 52 918 814 261 603 5 214 727 187 784 28 552 861 426 478 462 680 575 975 302 81 957 859 360 294 905 472 411 635 422 956 666 599 28 971 822 961 722 606 864 880 430 743 230 59 384 65 494 2 392 692 18 678 339 856 581 247 243 168 790 25 452 525 503 760 13 426 801 452 608 45 682 575 213 979 185 643 588 474 953 563 847 644 613 729 606 482 281 158 402 705 607 536 491 915 436 626 159 375 897 348 589 452 145 451 551 822 99 412 745 72 804 275 56 301 279 870 397 764 649 631 644 841 893 625 907 693 548 505 716 820 732 812 376 84 709 632 281 263 878 204 370 927 603 707 539 584 580 633 989 197 561 791 153 338 556 582 13 827 815 471 572 947 755 51 758 645 101 735 460 122 727 833 600 731 967 58 822 789 474 363 15 863 785 161 270 492 786 407 609 219 966 182 705 397 494 473 374 309 943 641 791 28 713 397 988 217 727 363 315 385 538 532 512 53 122 386 227 956 571 867 437 19 130 650 752 282 235 693 881 578 181 955 833 260 674 675 620 352 836 207 20 929 796 755 698 168 692 980 167 176 312 273 956 836 720 856 392 200 539 767 303 990 824 398 643 415 910 12 472 159 186 527 538 641 23 475 18 828 43 856 447 302 778 159 563 40 433 915 498 404 133 199 654 817 780 748 864 282 92 552 258 323 948 474 934 963 332 260 906 312 432 616 144 591 656 289 572 82 176 180 911 18 396 508 708 548 663 56 843 983 229 348 615 747 624 935 125 521 143 506 237 827 512 299 715 153 484 261 331 832 755 914 951 408 279 67 978 641 651 743 392 510 27 906 73 755 862 395 5 740 905 149 412 53 174 637 149 478 419 909 351 693 114 450 460 66 881 554 144 62 469 295 526 138 889 251 282 905 239 223 924 928 976 847 447 107 920 78 277 616 479 895 580 923 993 17 254 895 835 748 673 520 557 836 738 47 164 646 369 342 426 507 150 394 421 617 434 353 740 154 841 358 928 637 71 229 66 329 315 724 314 699 594 850 196 69 586 566 475 812 962 535 174 993 425 187 3 90 984 368 12 981 477 757 192 583 1000 727 953 657 955 683 865 298 581 40 838 856 73 381 145 278 808 898 621 487 143 686 75 673 625 140 631 732 474 233 210 836 271 668 663 726 950 514 341 811 757 693 975 853 304 713 742 991 937 817 615 218 722 808 887 192 737 419 246 575 990 645 807 766 518 760 375 357 475 790 160 787 691 237 67 31 939 572 713 948 986 220 491 406 944 615 951 227 366 953 683 111 284 593 586 181 447 40 951 948 166 480 600 705 75 633 503 786 515 328 689 558 845 441 684 657 492 438 641 349 906 481 667 740 789 358 453 108 708 862 375 117 592 51 597 724 36 522 85 838 550 706 82 64 675 15 832 60 3 810 99 291 588 32 318 66 506 778 48 999 312 460 915 622 963 159 990 250 541 892 412 811 951 393 879 498 620 440 151 384 677 63 292 477 669 569 91 295 199 16 334 682 197 231 99 47 120 635 455 482 431 75 494 846 855 809 606 686 352 942 854 149 174 246 603 476 986 122 311 88 627 99 437 132 47 314 160 964 747 173 729 534 857 977 223 530 144 791 151 72 820 80 736 891 879 82 3 295 970 808 187 482 372 495 236 232 345 943 617 483 727 534 46 431 105 940 544 980 24 473 194 390 663 377 322 580 423 829 944 916 701 294 868 682 883 92 181 358 860 759 812 521 109 787 782 103 869 566 755 376 519 228 638 923 247 44 895 345 193 56 506 970 714 389 501 243 339 341 830 567 307 326 70 784 16 65 952 107 874 346 466 445 631 730 767 37 344 37 663 666 447 542 303 307 549 392 344 767 505 639 498 4 546 757 992 378 587 232 284 480 6 982 780 992 121 749 633 1 753 77 48 424 367 513 26 790 698 848 210 599 952 797 383 190 548 967 354 321 619 688 535 422 781 202 125 335 826 124 154 344 456 749 302 837 716 260 241 322 694 795 32 248 464 558 376 14 660 204 607 15 83 105 133 6 93 416 248 105 309 971 903 594 415 958 256 752 255 186 395 32 757 776 438 726 708 500 602 539 241 24 418 449 37 787 986 656 81 380 306 671 907 635 468 887 306 312 824 56 886 992 396 578 482 626 390 931 155 455 45\n-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "300\n2 5 2 4 2 1 5 1 2 2 3 0 4 5 0 2 2 2 0 4 0 1 2 5 3 1 0 0 2 2 2 0 5 2 0 1 3 5 0 4 4 5 2 0 0 0 5 1 0 3 5 0 1 4 0 1 0 2 1 1 0 4 3 3 3 4 2 4 2 5 2 3 1 0 5 1 1 4 5 4 2 5 2 1 3 4 0 4 2 5 5 2 5 4 3 4 1 2 0 0 2 4 1 3 1 0 4 1 2 0 5 0 4 1 3 3 2 2 4 0 5 4 3 0 3 1 2 4 0 4 0 4 4 2 1 0 0 0 4 1 5 4 5 3 0 5 2 5 0 1 0 0 1 5 5 0 0 2 5 1 2 2 3 0 5 4 1 2 5 5 3 0 0 0 5 1 4 1 4 5 0 3 2 5 5 1 3 0 1 2 3 5 0 1 3 4 4 5 0 4 5 1 3 0 1 1 4 1 2 5 3 3 3 4 2 0 5 4 2 2 2 5 2 3 2 3 0 3 4 0 3 3 0 2 5 3 3 1 1 5 0 0 0 2 4 2 5 0 3 3 5 0 4 5 4 0 2 5 5 1 2 5 2 3 3 3 4 1 0 1 0 3 4 3 1 2 0 2 2 1 4 5 3 2 5 4 0 5 3 5 2 2 2 4 1 5 2 0 0 1\n-1\n",
+        "expectedOutput": "false\n",
+        "sample": false
+      },
+      {
+        "input": "300\n5 0 1 2 2 2 3 3 5 0 4 5 2 2 0 3 2 2 2 5 2 0 1 1 0 5 4 5 0 5 4 2 0 0 5 0 3 4 5 1 4 5 4 3 0 0 1 2 0 5 3 4 2 4 0 5 0 3 2 3 0 3 2 2 3 5 4 3 4 4 3 2 2 3 2 4 0 4 0 3 2 2 5 5 5 4 1 2 5 1 0 5 4 0 3 4 2 2 1 2 3 2 1 2 4 4 3 3 2 1 3 0 0 1 2 1 1 0 3 3 4 3 5 5 3 4 3 2 4 4 3 4 2 1 3 1 5 3 2 1 1 1 2 2 5 5 1 3 5 5 4 0 0 1 5 5 2 4 1 0 4 4 5 3 4 0 1 5 5 4 2 5 3 3 3 2 5 2 5 5 4 4 5 3 1 1 4 0 1 0 2 3 0 2 2 0 5 0 2 5 1 1 4 4 1 1 5 5 4 1 3 4 3 2 3 5 1 0 2 3 5 3 5 4 0 3 0 0 5 0 0 2 1 0 2 1 3 3 5 2 0 4 3 3 0 5 4 4 0 3 5 2 1 0 0 0 2 4 4 5 0 5 5 3 0 4 0 0 3 2 3 5 4 4 2 0 5 1 3 4 5 0 4 0 5 5 2 5 0 2 3 2 3 0 1 2 5 2 0 1\n150\n",
+        "expectedOutput": "true\n",
+        "sample": false
+      }
+    ],
+    "order": 136
+  },
+  {
+    "slug": "intersection-of-two-linked-lists",
+    "title": "Intersection of Two Linked Lists",
+    "difficulty": "EASY",
+    "tags": [
+      "linked-list",
+      "two-pointers",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Two singly linked lists may merge into the same nodes (a shared tail); equal **values** do not mean the same **node**. Return the node where they first meet, or `null` if they never do. The result is printed as that node's **index in list A** (`0` is its head), or `-1` for `null`. Do not change the lists. Try `O(n + m)` time and `O(1)` extra space.\n\n### Input\nLine 1: `n`, the length of list A.\nLine 2: the `n` values of list A.\nLine 3: `m`, the length of list B.\nLine 4: the `m` values of list B.\nLine 5: `k`, how many nodes at the end of both lists are shared (`0` means the lists never meet).\n\n### Output\nThe index in list A of the first shared node, or `-1`.\n\n### Constraints\n- `0 <= n, m <= 1000`\n- `0 <= k <= min(n, m)`\n- The last `k` values of both lists are the same nodes\n\n### Examples\n**Example 1**\n```text\nInput:\n5\n4 1 8 4 5\n6\n5 6 1 8 4 5\n3\n\nOutput:\n2\n```\n\n**Example 2**\n```text\nInput:\n5\n1 9 1 2 4\n3\n3 2 4\n2\n\nOutput:\n3\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static class ListNode {\n        int val;\n        ListNode next;\n        ListNode(int val) { this.val = val; }\n    }\n\n    static ListNode buildList(int[] vals) {\n        ListNode dummy = new ListNode(0), tail = dummy;\n        for (int v : vals) { tail.next = new ListNode(v); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static String listString(ListNode node) {\n        StringBuilder sb = new StringBuilder();\n        for (; node != null; node = node.next) { if (sb.length() > 0) sb.append(' '); sb.append(node.val); }\n        return sb.toString();\n    }\n\n\n    static ArrayList<ListNode> NODES = new ArrayList<>();\n    static ListNode SECOND = null;\n\n    static int nodeIndex(ListNode node) {\n        for (int i = 0; i < NODES.size(); i++) if (NODES.get(i) == node) return i;\n        return -1;\n    }\n\n    static ListNode buildCycleList(int[] vals, int loop) {\n        ListNode head = buildList(vals);\n        List<ListNode> nodes = new ArrayList<>();\n        for (ListNode cur = head; cur != null; cur = cur.next) nodes.add(cur);\n        NODES.addAll(nodes);\n        if (loop >= 0 && !nodes.isEmpty()) nodes.get(nodes.size() - 1).next = nodes.get(loop);\n        return head;\n    }\n\n    static ListNode buildShared(int[] a, int[] b, int k) {\n        ListNode tail = null;\n        for (int i = a.length - 1; i >= a.length - k; i--) { ListNode n = new ListNode(a[i]); n.next = tail; tail = n; }\n        ListNode headA = tail, headB = tail;\n        for (int i = a.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(a[i]); n.next = headA; headA = n; }\n        for (int i = b.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(b[i]); n.next = headB; headB = n; }\n        for (ListNode cur = headA; cur != null; cur = cur.next) NODES.add(cur);\n        for (ListNode cur = headB; cur != tail; cur = cur.next) NODES.add(cur);\n        SECOND = headB;\n        return headA;\n    }\n\n\n    static ListNode solve(ListNode headA, ListNode headB) {\n        // Write your solution here\n        return null;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int headAALen = Integer.parseInt(lines.get(pos++).trim());\n        int[] headAAVals = new int[headAALen];\n        if (headAALen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < headAALen; i++) headAAVals[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int headABLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] headABVals = new int[headABLen];\n        if (headABLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < headABLen; i++) headABVals[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int headAShared = Integer.parseInt(lines.get(pos++).trim());\n        ListNode headA = buildShared(headAAVals, headABVals, headAShared);\n        ListNode headB = SECOND;\n        ListNode result = solve(headA, headB);\n        System.out.println(nodeIndex(result));\n    }\n}\n",
+      "python": "import sys\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\ndef build_list(vals):\n    head = None\n    for v in reversed(vals):\n        head = ListNode(v, head)\n    return head\n\n\ndef list_values(node):\n    out = []\n    while node:\n        out.append(node.val)\n        node = node.next\n    return out\n\n\n\n_NODES = []\n_SECOND = [None]\n\n\ndef node_index(node):\n    for i, n in enumerate(_NODES):\n        if n is node:\n            return i\n    return -1\n\n\ndef build_cycle_list(vals, loop):\n    head = build_list(vals)\n    nodes = []\n    cur = head\n    while cur:\n        nodes.append(cur)\n        cur = cur.next\n    _NODES.extend(nodes)\n    if loop >= 0 and nodes:\n        nodes[-1].next = nodes[loop]\n    return head\n\n\ndef build_shared(a_vals, b_vals, k):\n    tail = build_list(a_vals[len(a_vals) - k:]) if k > 0 else None\n    head_a, head_b = tail, tail\n    for v in reversed(a_vals[:len(a_vals) - k]):\n        head_a = ListNode(v, head_a)\n    for v in reversed(b_vals[:len(b_vals) - k]):\n        head_b = ListNode(v, head_b)\n    cur = head_a\n    while cur:\n        _NODES.append(cur)\n        cur = cur.next\n    cur = head_b\n    while cur is not tail:\n        _NODES.append(cur)\n        cur = cur.next\n    _SECOND[0] = head_b\n    return head_a\n\n\n\ndef solve(headA, headB):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    headA_len = int(lines[pos]); pos += 1\n    headA_vals = list(map(int, lines[pos].split())) if headA_len > 0 else []; pos += 1\n    headB_len = int(lines[pos]); pos += 1\n    headB_vals = list(map(int, lines[pos].split())) if headB_len > 0 else []; pos += 1\n    headB_shared = int(lines[pos]); pos += 1\n    headA = build_shared(headA_vals, headB_vals, headB_shared)\n    headB = _SECOND[0]\n    result = solve(headA, headB)\n    print(node_index(result))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nclass ListNode {\n  constructor(val = 0, next = null) {\n    this.val = val;\n    this.next = next;\n  }\n}\n\nfunction buildList(vals) {\n  let head = null;\n  for (let i = vals.length - 1; i >= 0; i--) head = new ListNode(vals[i], head);\n  return head;\n}\n\nfunction listString(node) {\n  const out = [];\n  for (; node; node = node.next) out.push(node.val);\n  return out.join(\" \");\n}\n\n\nconst NODES = [];\nlet SECOND = null;\n\nfunction nodeIndex(node) {\n  return NODES.indexOf(node);\n}\n\nfunction buildCycleList(vals, loop) {\n  const head = buildList(vals);\n  const nodes = [];\n  for (let c = head; c; c = c.next) nodes.push(c);\n  NODES.push(...nodes);\n  if (loop >= 0 && nodes.length) nodes[nodes.length - 1].next = nodes[loop];\n  return head;\n}\n\nfunction buildShared(a, b, k) {\n  const tail = buildList(a.slice(a.length - k));\n  let headA = tail, headB = tail;\n  for (let i = a.length - k - 1; i >= 0; i--) headA = new ListNode(a[i], headA);\n  for (let i = b.length - k - 1; i >= 0; i--) headB = new ListNode(b[i], headB);\n  for (let c = headA; c; c = c.next) NODES.push(c);\n  for (let c = headB; c !== tail; c = c.next) NODES.push(c);\n  SECOND = headB;\n  return headA;\n}\n\n\nfunction solve(headA, headB) {\n  // Write your solution here\n}\n\nconst headAALen = parseInt(lines[pos++], 10);\nconst headAAVals = headAALen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];\npos++;\nconst headABLen = parseInt(lines[pos++], 10);\nconst headABVals = headABLen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];\npos++;\nconst headAShared = parseInt(lines[pos++], 10);\nconst headA = buildShared(headAAVals, headABVals, headAShared);\nconst headB = SECOND;\nconst result = solve(headA, headB);\nconsole.log(String(nodeIndex(result)));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int v) : val(v), next(nullptr) {}\n};\n\nListNode *buildList(const vector<int> &vals) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    for (int v : vals) { tail->next = new ListNode(v); tail = tail->next; }\n    return dummy.next;\n}\n\nstring listString(ListNode *node) {\n    string out;\n    for (; node; node = node->next) {\n        if (!out.empty()) out += \" \";\n        out += to_string(node->val);\n    }\n    return out;\n}\n\n\nvector<ListNode *> NODES;\nListNode *SECOND = nullptr;\n\nint nodeIndex(ListNode *node) {\n    for (size_t i = 0; i < NODES.size(); i++) if (NODES[i] == node) return (int)i;\n    return -1;\n}\n\nListNode *buildCycleList(const vector<int> &vals, int loop) {\n    ListNode *head = buildList(vals);\n    vector<ListNode *> nodes;\n    for (ListNode *cur = head; cur; cur = cur->next) nodes.push_back(cur);\n    NODES.insert(NODES.end(), nodes.begin(), nodes.end());\n    if (loop >= 0 && !nodes.empty()) nodes.back()->next = nodes[loop];\n    return head;\n}\n\nListNode *buildShared(const vector<int> &a, const vector<int> &b, int k) {\n    ListNode *tail = nullptr;\n    for (int i = (int)a.size() - 1; i >= (int)a.size() - k; i--) { ListNode *n = new ListNode(a[i]); n->next = tail; tail = n; }\n    ListNode *headA = tail, *headB = tail;\n    for (int i = (int)a.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(a[i]); n->next = headA; headA = n; }\n    for (int i = (int)b.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(b[i]); n->next = headB; headB = n; }\n    for (ListNode *cur = headA; cur; cur = cur->next) NODES.push_back(cur);\n    for (ListNode *cur = headB; cur != tail; cur = cur->next) NODES.push_back(cur);\n    SECOND = headB;\n    return headA;\n}\n\n\nListNode * solve(ListNode * headA, ListNode * headB) {\n    // Write your solution here\n    return nullptr;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int headAALen = stoi(lines[pos++]);\n    vector<int> headAAVals(headAALen);\n    if (headAALen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : headAAVals) iss >> v;\n    }\n    pos++;\n    int headABLen = stoi(lines[pos++]);\n    vector<int> headABVals(headABLen);\n    if (headABLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : headABVals) iss >> v;\n    }\n    pos++;\n    int headAShared = stoi(lines[pos++]);\n    ListNode *headA = buildShared(headAAVals, headABVals, headAShared);\n    ListNode *headB = SECOND;\n    ListNode * result = solve(headA, headB);\n    cout << nodeIndex(result) << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "5\n4 1 8 4 5\n6\n5 6 1 8 4 5\n3\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "5\n1 9 1 2 4\n3\n3 2 4\n2\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "3\n2 6 4\n2\n1 5\n0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n1\n1\n0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n7\n1\n7\n1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "2\n3 4\n4\n1 2 3 4\n2\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n1\n3\n1\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "5\n5 5 5 5 5\n4\n5 5 5 5\n3\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n3\n1 2 3\n0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "7\n7 1 2 3 4 5 6\n7\n7 1 2 3 4 5 6\n6\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "9\n0 1 4 6 4 1 2 8 4\n11\n2 2 3 6 4 3 1 1 2 8 4\n4\n",
+        "expectedOutput": "5\n",
+        "sample": false
+      },
+      {
+        "input": "30\n3 1 5 5 9 5 0 6 3 3 8 0 4 7 4 1 8 5 5 3 0 8 2 1 0 9 2 3 1 7\n25\n8 4 1 7 0 4 6 0 0 6 4 6 6 0 5 0 8 2 1 0 9 2 3 1 7\n10\n",
+        "expectedOutput": "20\n",
+        "sample": false
+      },
+      {
+        "input": "80\n6 3 1 2 5 1 9 8 5 2 9 5 2 5 1 8 1 1 4 0 0 5 8 2 4 5 2 3 5 1 6 8 6 6 9 7 4 6 1 4 3 4 6 2 1 8 8 5 3 0 2 5 5 0 8 0 7 4 2 2 8 2 1 0 7 2 7 4 2 3 9 0 7 6 7 4 2 7 5 1\n110\n4 9 1 8 6 6 9 0 4 0 2 2 2 4 8 2 5 3 7 8 7 2 0 0 9 5 6 2 6 2 0 4 9 6 6 1 0 5 5 3 8 0 2 3 7 0 4 1 7 5 3 2 4 7 7 8 0 3 9 4 9 9 7 1 7 2 9 2 7 2 7 1 4 3 7 5 9 0 0 6 2 5 5 0 8 0 7 4 2 2 8 2 1 0 7 2 7 4 2 3 9 0 7 6 7 4 2 7 5 1\n30\n",
+        "expectedOutput": "50\n",
+        "sample": false
+      },
+      {
+        "input": "270\n6 3 9 4 4 3 5 5 0 7 1 3 4 9 3 4 3 8 8 5 6 8 9 7 0 0 1 1 9 1 1 9 7 1 6 9 9 7 2 7 2 2 6 2 1 2 0 4 6 1 4 8 2 9 7 0 8 5 0 0 9 1 6 0 9 6 7 1 7 7 6 1 5 2 1 2 5 5 7 4 4 9 3 4 5 3 8 4 6 8 6 0 2 4 9 0 6 2 0 3 9 9 6 8 7 9 0 9 2 5 6 4 2 8 6 6 4 7 7 9 1 5 9 3 7 4 5 9 3 3 4 2 6 8 4 0 1 5 1 3 3 2 0 9 9 6 3 9 6 0 7 7 7 3 5 1 7 6 0 3 7 2 7 1 7 6 6 2 4 3 7 9 5 9 2 4 4 9 7 2 7 9 4 8 1 0 9 7 4 6 3 3 0 5 1 5 5 8 9 7 8 2 1 2 5 2 0 6 6 5 2 5 2 3 8 4 1 8 3 5 6 9 6 4 1 6 8 1 4 1 7 7 7 2 2 8 8 8 0 3 8 6 4 0 1 8 5 7 0 0 1 6 6 7 6 4 5 2 7 9 7 1 0 9 4 8 9 1 6 0\n220\n4 0 3 7 2 1 5 5 2 7 7 1 9 5 8 3 2 6 4 2 3 9 9 0 6 2 8 0 4 1 5 6 0 3 0 0 1 7 8 8 5 5 2 3 5 3 8 7 1 0 9 9 4 8 9 1 2 1 6 1 6 1 6 8 2 7 9 3 6 9 4 1 2 7 0 7 1 0 8 0 8 8 7 4 9 3 8 1 7 5 6 9 1 6 6 4 3 0 5 8 7 7 7 3 5 1 7 6 0 3 7 2 7 1 7 6 6 2 4 3 7 9 5 9 2 4 4 9 7 2 7 9 4 8 1 0 9 7 4 6 3 3 0 5 1 5 5 8 9 7 8 2 1 2 5 2 0 6 6 5 2 5 2 3 8 4 1 8 3 5 6 9 6 4 1 6 8 1 4 1 7 7 7 2 2 8 8 8 0 3 8 6 4 0 1 8 5 7 0 0 1 6 6 7 6 4 5 2 7 9 7 1 0 9 4 8 9 1 6 0\n120\n",
+        "expectedOutput": "150\n",
+        "sample": false
+      },
+      {
+        "input": "301\n5 4 0 6 6 1 7 9 5 6 4 9 7 3 4 4 8 6 4 8 4 0 4 9 9 9 5 5 7 7 7 3 6 6 9 4 8 9 7 4 3 3 8 4 3 1 7 3 0 1 4 9 8 0 4 8 2 8 7 3 9 0 1 9 8 0 1 9 4 4 0 7 3 0 6 1 5 9 8 7 7 7 3 6 5 3 4 8 8 1 5 6 5 9 0 1 9 6 0 9 8 2 2 2 9 1 0 0 3 7 6 2 6 3 2 7 3 4 4 5 8 5 9 2 4 3 2 5 2 3 8 0 9 7 7 1 0 1 0 9 6 1 6 8 5 0 4 6 5 1 1 8 4 7 6 1 2 1 2 3 4 4 2 2 2 9 4 7 9 6 3 4 9 2 8 0 8 1 1 6 8 8 5 8 1 8 4 2 5 3 2 0 4 1 2 2 4 0 8 7 2 8 0 9 0 9 7 9 5 8 8 6 5 6 2 3 8 7 6 5 6 2 0 4 0 4 3 5 1 6 1 6 7 3 8 0 2 2 6 8 9 2 9 5 4 3 3 6 7 2 1 2 5 3 6 4 1 5 6 5 1 4 5 5 2 1 8 7 3 2 1 1 1 3 1 5 2 4 2 7 9 7 0 7 5 2 2 7 4 9 4 4 4 8 8 0 2 5 2 5 8\n301\n1 9 6 6 9 7 1 7 1 5 6 5 4 1 7 7 5 8 3 2 2 4 3 5 3 1 6 2 5 9 5 1 7 5 5 1 1 2 0 1 2 2 9 8 0 9 9 5 4 0 0 5 0 4 4 8 5 2 9 9 2 8 1 9 9 1 0 8 7 4 9 7 6 3 8 9 0 8 8 3 9 3 2 1 7 1 4 5 8 7 2 6 1 6 7 1 1 7 0 8 3 1 6 6 6 7 4 7 6 6 5 3 2 7 0 8 4 8 0 5 8 7 5 3 9 1 1 3 9 7 5 1 3 8 9 7 5 2 0 1 0 3 4 6 8 1 0 8 0 7 6 6 0 8 3 2 6 2 6 7 3 1 5 4 9 8 4 5 9 8 4 3 5 2 0 5 7 3 4 2 2 7 3 0 9 1 4 0 8 2 4 7 4 4 8 3 0 1 5 2 1 7 6 1 2 3 1 7 7 8 0 4 9 0 9 4 1 3 7 3 8 1 9 4 6 4 8 8 1 3 9 4 2 0 4 3 4 2 3 9 7 1 8 1 3 9 1 1 0 1 6 9 9 9 2 1 5 6 2 1 5 5 4 0 9 9 4 8 1 8 5 1 5 7 1 1 8 3 6 8 2 4 1 0 7 0 1 8 1 9 2 2 3 7 8 5 4 2 3 0 8\n1\n",
+        "expectedOutput": "300\n",
+        "sample": false
+      },
+      {
+        "input": "900\n0 3 2 5 1 7 1 5 9 3 1 9 7 2 2 1 3 2 5 5 6 4 4 3 2 9 5 4 4 5 5 1 4 5 8 8 6 1 2 7 3 2 7 6 9 4 0 2 2 4 1 1 6 1 5 5 8 5 2 4 4 0 3 5 1 8 1 5 1 0 1 2 2 4 1 9 6 6 6 7 8 2 6 7 7 3 5 9 6 7 8 5 4 6 7 0 5 7 2 9 3 3 4 3 4 4 0 7 4 8 3 0 7 0 9 4 9 1 8 1 9 6 5 2 8 8 9 7 9 9 4 5 9 6 6 6 9 5 3 2 1 6 0 5 5 6 5 6 1 4 6 1 2 3 7 8 9 8 0 2 1 4 9 2 0 2 5 5 9 5 5 7 7 0 7 2 4 6 3 7 5 3 5 0 7 1 2 4 5 8 6 0 0 7 9 9 8 6 9 2 1 6 7 3 1 9 3 5 7 1 2 6 2 1 7 4 8 9 5 4 0 5 4 7 5 6 4 1 9 3 1 3 6 5 4 9 7 4 5 5 6 0 8 6 4 7 0 9 4 1 4 0 9 5 0 7 5 7 0 4 3 7 3 7 5 6 1 0 0 4 8 2 1 7 8 7 6 3 7 3 2 0 3 7 2 4 1 1 4 7 1 7 8 4 4 8 2 9 6 4 6 2 3 4 8 6 7 8 2 2 7 6 7 2 5 0 2 3 5 4 4 5 7 3 9 0 0 3 8 8 3 3 2 0 4 6 4 9 0 7 6 3 9 9 5 6 7 3 8 6 7 2 3 1 2 3 0 9 9 1 3 6 1 0 8 9 0 5 0 1 7 4 5 5 2 7 7 5 5 2 8 2 1 9 9 1 8 0 2 2 6 0 9 1 3 6 0 4 5 8 5 9 3 8 9 2 0 9 3 6 8 6 2 5 6 4 8 2 0 4 7 6 4 5 3 6 0 6 9 0 7 3 0 8 7 0 5 8 9 3 6 8 7 6 4 2 5 8 2 2 4 2 3 4 7 1 2 7 8 6 3 1 4 0 3 4 7 7 7 8 3 5 6 2 1 7 5 0 4 8 3 1 1 2 1 6 8 0 1 6 7 6 5 6 1 3 5 0 6 9 6 4 5 8 6 7 8 1 3 8 0 5 3 4 2 2 6 0 6 2 7 1 4 7 5 9 0 1 2 1 8 8 0 2 4 5 0 5 0 0 7 8 5 5 0 1 6 5 8 3 0 9 5 2 7 9 7 6 6 3 2 2 5 5 4 4 8 1 8 7 6 2 9 0 4 4 8 8 0 2 8 5 6 7 8 3 0 8 1 5 8 8 9 5 8 8 4 2 6 5 1 9 9 5 8 7 2 4 0 0 0 3 2 0 2 6 2 8 0 7 9 4 0 1 3 4 6 3 2 9 4 3 1 0 2 6 3 4 8 8 8 9 9 7 7 1 6 9 6 1 9 4 2 5 4 9 6 9 5 7 6 1 7 5 9 2 9 0 0 5 6 9 3 1 8 8 0 1 5 7 7 6 1 0 6 6 1 9 0 2 0 7 5 5 7 1 7 8 1 7 7 7 2 0 5 7 8 4 0 7 6 7 2 5 7 9 4 7 3 4 2 5 1 3 3 8 8 9 8 9 8 1 0 2 5 9 4 4 1 8 8 9 3 1 4 5 2 9 4 4 3 6 9 5 8 7 4 9 3 3 5 7 4 9 1 1 7 6 8 1 5 6 0 7 0 3 0 0 0 7 0 5 5 7 5 2 6 2 4 1 1 3 3 8 2 3 7 4 3 1 3 1 8 3 7 9 4 6 1 9 5 5 9 5 9 8 3 5 2 0 9 5 4 4 8 3 6 5 6 2 2 6 6 6 2 7 0 8 8 6 8 4 0 6 9 8 7 0 4 5 3 6 1 7 5 3 2 5 7 7 3 3 3 9 8 9 5 0 8 4 0 0 5 5 8 1 8 9 6 2 4 1 8 0 8 5 0 0 7 5 4 1 7 2 9 5 3 1 7 1\n510\n2 5 6 5 3 2 1 8 7 7 5 9 3 8 9 2 0 9 3 6 8 6 2 5 6 4 8 2 0 4 7 6 4 5 3 6 0 6 9 0 7 3 0 8 7 0 5 8 9 3 6 8 7 6 4 2 5 8 2 2 4 2 3 4 7 1 2 7 8 6 3 1 4 0 3 4 7 7 7 8 3 5 6 2 1 7 5 0 4 8 3 1 1 2 1 6 8 0 1 6 7 6 5 6 1 3 5 0 6 9 6 4 5 8 6 7 8 1 3 8 0 5 3 4 2 2 6 0 6 2 7 1 4 7 5 9 0 1 2 1 8 8 0 2 4 5 0 5 0 0 7 8 5 5 0 1 6 5 8 3 0 9 5 2 7 9 7 6 6 3 2 2 5 5 4 4 8 1 8 7 6 2 9 0 4 4 8 8 0 2 8 5 6 7 8 3 0 8 1 5 8 8 9 5 8 8 4 2 6 5 1 9 9 5 8 7 2 4 0 0 0 3 2 0 2 6 2 8 0 7 9 4 0 1 3 4 6 3 2 9 4 3 1 0 2 6 3 4 8 8 8 9 9 7 7 1 6 9 6 1 9 4 2 5 4 9 6 9 5 7 6 1 7 5 9 2 9 0 0 5 6 9 3 1 8 8 0 1 5 7 7 6 1 0 6 6 1 9 0 2 0 7 5 5 7 1 7 8 1 7 7 7 2 0 5 7 8 4 0 7 6 7 2 5 7 9 4 7 3 4 2 5 1 3 3 8 8 9 8 9 8 1 0 2 5 9 4 4 1 8 8 9 3 1 4 5 2 9 4 4 3 6 9 5 8 7 4 9 3 3 5 7 4 9 1 1 7 6 8 1 5 6 0 7 0 3 0 0 0 7 0 5 5 7 5 2 6 2 4 1 1 3 3 8 2 3 7 4 3 1 3 1 8 3 7 9 4 6 1 9 5 5 9 5 9 8 3 5 2 0 9 5 4 4 8 3 6 5 6 2 2 6 6 6 2 7 0 8 8 6 8 4 0 6 9 8 7 0 4 5 3 6 1 7 5 3 2 5 7 7 3 3 3 9 8 9 5 0 8 4 0 0 5 5 8 1 8 9 6 2 4 1 8 0 8 5 0 0 7 5 4 1 7 2 9 5 3 1 7 1\n500\n",
+        "expectedOutput": "400\n",
+        "sample": false
+      },
+      {
+        "input": "30\n1 0 0 2 0 1 1 0 3 0 2 2 2 2 3 0 2 2 1 3 0 3 3 3 2 0 0 2 0 3\n30\n1 0 0 2 0 1 1 0 3 0 2 2 2 2 3 0 2 2 1 3 0 3 3 3 2 0 0 2 0 3\n0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "60\n1 1 0 0 1 0 2 1 2 1 2 2 1 1 0 1 2 2 0 1 1 1 2 1 1 2 1 2 2 2 0 1 1 1 0 2 0 1 2 0 0 1 1 2 2 2 0 0 0 1 1 0 0 1 1 0 0 2 1 1\n45\n1 1 1 0 2 2 2 0 2 2 0 1 0 0 2 2 2 1 1 1 1 0 1 0 2 2 2 1 0 0 1 2 2 1 0 0 1 0 2 0 2 0 2 1 2\n0\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      }
+    ],
+    "order": 137
   },
   {
     "slug": "remove-nth-node-from-end-of-list",
@@ -11189,7 +11557,7 @@
         "sample": false
       }
     ],
-    "order": 135
+    "order": 138
   },
   {
     "slug": "add-two-numbers",
@@ -11280,7 +11648,7 @@
         "sample": false
       }
     ],
-    "order": 136
+    "order": 139
   },
   {
     "slug": "swap-nodes-in-pairs",
@@ -11373,7 +11741,7 @@
         "sample": false
       }
     ],
-    "order": 137
+    "order": 140
   },
   {
     "slug": "odd-even-linked-list",
@@ -11462,7 +11830,7 @@
         "sample": false
       }
     ],
-    "order": 138
+    "order": 141
   },
   {
     "slug": "sort-list",
@@ -11553,7 +11921,7 @@
         "sample": false
       }
     ],
-    "order": 139
+    "order": 142
   },
   {
     "slug": "reorder-list",
@@ -11647,7 +12015,7 @@
         "sample": false
       }
     ],
-    "order": 140
+    "order": 143
   },
   {
     "slug": "rotate-list",
@@ -11743,7 +12111,7 @@
         "sample": false
       }
     ],
-    "order": 141
+    "order": 144
   },
   {
     "slug": "partition-list",
@@ -11837,7 +12205,7 @@
         "sample": false
       }
     ],
-    "order": 142
+    "order": 145
   },
   {
     "slug": "remove-duplicates-from-sorted-list-ii",
@@ -11926,7 +12294,7 @@
         "sample": false
       }
     ],
-    "order": 143
+    "order": 146
   },
   {
     "slug": "reverse-linked-list-ii",
@@ -12019,7 +12387,7 @@
         "sample": false
       }
     ],
-    "order": 144
+    "order": 147
   },
   {
     "slug": "maximum-twin-sum-of-a-linked-list",
@@ -12108,7 +12476,7 @@
         "sample": false
       }
     ],
-    "order": 145
+    "order": 148
   },
   {
     "slug": "flatten-binary-tree-to-linked-list",
@@ -12180,7 +12548,209 @@
         "sample": false
       }
     ],
-    "order": 146
+    "order": 149
+  },
+  {
+    "slug": "starting-point-of-loop-in-a-linked-list",
+    "title": "Starting Point of Loop in a Linked List",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "linked-list",
+      "two-pointers",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the node where the cycle begins, or `null` if there is no cycle. The result is printed as the node's **index in the list** (`0` is the head), or `-1` for `null`. Do not change the list.\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values.\nLine 3: `pos`, the index of the node that the last node points back to, or `-1` if there is no cycle.\n\n### Output\nThe index of the node where the cycle starts, or `-1`.\n\n### Constraints\n- `0 <= n <= 1000`\n- `-1000 <= value <= 1000`\n- `pos` is `-1` or a valid index\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n3 2 0 -4\n1\n\nOutput:\n1\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n0\n\nOutput:\n0\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static class ListNode {\n        int val;\n        ListNode next;\n        ListNode(int val) { this.val = val; }\n    }\n\n    static ListNode buildList(int[] vals) {\n        ListNode dummy = new ListNode(0), tail = dummy;\n        for (int v : vals) { tail.next = new ListNode(v); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static String listString(ListNode node) {\n        StringBuilder sb = new StringBuilder();\n        for (; node != null; node = node.next) { if (sb.length() > 0) sb.append(' '); sb.append(node.val); }\n        return sb.toString();\n    }\n\n\n    static ArrayList<ListNode> NODES = new ArrayList<>();\n    static ListNode SECOND = null;\n\n    static int nodeIndex(ListNode node) {\n        for (int i = 0; i < NODES.size(); i++) if (NODES.get(i) == node) return i;\n        return -1;\n    }\n\n    static ListNode buildCycleList(int[] vals, int loop) {\n        ListNode head = buildList(vals);\n        List<ListNode> nodes = new ArrayList<>();\n        for (ListNode cur = head; cur != null; cur = cur.next) nodes.add(cur);\n        NODES.addAll(nodes);\n        if (loop >= 0 && !nodes.isEmpty()) nodes.get(nodes.size() - 1).next = nodes.get(loop);\n        return head;\n    }\n\n    static ListNode buildShared(int[] a, int[] b, int k) {\n        ListNode tail = null;\n        for (int i = a.length - 1; i >= a.length - k; i--) { ListNode n = new ListNode(a[i]); n.next = tail; tail = n; }\n        ListNode headA = tail, headB = tail;\n        for (int i = a.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(a[i]); n.next = headA; headA = n; }\n        for (int i = b.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(b[i]); n.next = headB; headB = n; }\n        for (ListNode cur = headA; cur != null; cur = cur.next) NODES.add(cur);\n        for (ListNode cur = headB; cur != tail; cur = cur.next) NODES.add(cur);\n        SECOND = headB;\n        return headA;\n    }\n\n\n    static ListNode solve(ListNode head) {\n        // Write your solution here\n        return null;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int headLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] headVals = new int[headLen];\n        if (headLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < headLen; i++) headVals[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int headLoop = Integer.parseInt(lines.get(pos++).trim());\n        ListNode head = buildCycleList(headVals, headLoop);\n        ListNode result = solve(head);\n        System.out.println(nodeIndex(result));\n    }\n}\n",
+      "python": "import sys\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\ndef build_list(vals):\n    head = None\n    for v in reversed(vals):\n        head = ListNode(v, head)\n    return head\n\n\ndef list_values(node):\n    out = []\n    while node:\n        out.append(node.val)\n        node = node.next\n    return out\n\n\n\n_NODES = []\n_SECOND = [None]\n\n\ndef node_index(node):\n    for i, n in enumerate(_NODES):\n        if n is node:\n            return i\n    return -1\n\n\ndef build_cycle_list(vals, loop):\n    head = build_list(vals)\n    nodes = []\n    cur = head\n    while cur:\n        nodes.append(cur)\n        cur = cur.next\n    _NODES.extend(nodes)\n    if loop >= 0 and nodes:\n        nodes[-1].next = nodes[loop]\n    return head\n\n\ndef build_shared(a_vals, b_vals, k):\n    tail = build_list(a_vals[len(a_vals) - k:]) if k > 0 else None\n    head_a, head_b = tail, tail\n    for v in reversed(a_vals[:len(a_vals) - k]):\n        head_a = ListNode(v, head_a)\n    for v in reversed(b_vals[:len(b_vals) - k]):\n        head_b = ListNode(v, head_b)\n    cur = head_a\n    while cur:\n        _NODES.append(cur)\n        cur = cur.next\n    cur = head_b\n    while cur is not tail:\n        _NODES.append(cur)\n        cur = cur.next\n    _SECOND[0] = head_b\n    return head_a\n\n\n\ndef solve(head):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    head_len = int(lines[pos]); pos += 1\n    head_vals = list(map(int, lines[pos].split())) if head_len > 0 else []; pos += 1\n    head_loop = int(lines[pos]); pos += 1\n    head = build_cycle_list(head_vals, head_loop)\n    result = solve(head)\n    print(node_index(result))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nclass ListNode {\n  constructor(val = 0, next = null) {\n    this.val = val;\n    this.next = next;\n  }\n}\n\nfunction buildList(vals) {\n  let head = null;\n  for (let i = vals.length - 1; i >= 0; i--) head = new ListNode(vals[i], head);\n  return head;\n}\n\nfunction listString(node) {\n  const out = [];\n  for (; node; node = node.next) out.push(node.val);\n  return out.join(\" \");\n}\n\n\nconst NODES = [];\nlet SECOND = null;\n\nfunction nodeIndex(node) {\n  return NODES.indexOf(node);\n}\n\nfunction buildCycleList(vals, loop) {\n  const head = buildList(vals);\n  const nodes = [];\n  for (let c = head; c; c = c.next) nodes.push(c);\n  NODES.push(...nodes);\n  if (loop >= 0 && nodes.length) nodes[nodes.length - 1].next = nodes[loop];\n  return head;\n}\n\nfunction buildShared(a, b, k) {\n  const tail = buildList(a.slice(a.length - k));\n  let headA = tail, headB = tail;\n  for (let i = a.length - k - 1; i >= 0; i--) headA = new ListNode(a[i], headA);\n  for (let i = b.length - k - 1; i >= 0; i--) headB = new ListNode(b[i], headB);\n  for (let c = headA; c; c = c.next) NODES.push(c);\n  for (let c = headB; c !== tail; c = c.next) NODES.push(c);\n  SECOND = headB;\n  return headA;\n}\n\n\nfunction solve(head) {\n  // Write your solution here\n}\n\nconst headLen = parseInt(lines[pos++], 10);\nconst headVals = headLen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];\npos++;\nconst headLoop = parseInt(lines[pos++], 10);\nconst head = buildCycleList(headVals, headLoop);\nconst result = solve(head);\nconsole.log(String(nodeIndex(result)));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int v) : val(v), next(nullptr) {}\n};\n\nListNode *buildList(const vector<int> &vals) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    for (int v : vals) { tail->next = new ListNode(v); tail = tail->next; }\n    return dummy.next;\n}\n\nstring listString(ListNode *node) {\n    string out;\n    for (; node; node = node->next) {\n        if (!out.empty()) out += \" \";\n        out += to_string(node->val);\n    }\n    return out;\n}\n\n\nvector<ListNode *> NODES;\nListNode *SECOND = nullptr;\n\nint nodeIndex(ListNode *node) {\n    for (size_t i = 0; i < NODES.size(); i++) if (NODES[i] == node) return (int)i;\n    return -1;\n}\n\nListNode *buildCycleList(const vector<int> &vals, int loop) {\n    ListNode *head = buildList(vals);\n    vector<ListNode *> nodes;\n    for (ListNode *cur = head; cur; cur = cur->next) nodes.push_back(cur);\n    NODES.insert(NODES.end(), nodes.begin(), nodes.end());\n    if (loop >= 0 && !nodes.empty()) nodes.back()->next = nodes[loop];\n    return head;\n}\n\nListNode *buildShared(const vector<int> &a, const vector<int> &b, int k) {\n    ListNode *tail = nullptr;\n    for (int i = (int)a.size() - 1; i >= (int)a.size() - k; i--) { ListNode *n = new ListNode(a[i]); n->next = tail; tail = n; }\n    ListNode *headA = tail, *headB = tail;\n    for (int i = (int)a.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(a[i]); n->next = headA; headA = n; }\n    for (int i = (int)b.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(b[i]); n->next = headB; headB = n; }\n    for (ListNode *cur = headA; cur; cur = cur->next) NODES.push_back(cur);\n    for (ListNode *cur = headB; cur != tail; cur = cur->next) NODES.push_back(cur);\n    SECOND = headB;\n    return headA;\n}\n\n\nListNode * solve(ListNode * head) {\n    // Write your solution here\n    return nullptr;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int headLen = stoi(lines[pos++]);\n    vector<int> headVals(headLen);\n    if (headLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : headVals) iss >> v;\n    }\n    pos++;\n    int headLoop = stoi(lines[pos++]);\n    ListNode *head = buildCycleList(headVals, headLoop);\n    ListNode * result = solve(head);\n    cout << nodeIndex(result) << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n3 2 0 -4\n1\n",
+        "expectedOutput": "1\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 2\n0\n",
+        "expectedOutput": "0\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n-1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n2\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "5\n5 5 5 5 5\n2\n",
+        "expectedOutput": "2\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 3 4 5\n-1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      },
+      {
+        "input": "7\n4 0 7 4 3 5 8\n1\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "20\n0 23 40 11 45 30 24 27 50 30 35 42 20 6 2 9 37 37 43 15\n4\n",
+        "expectedOutput": "4\n",
+        "sample": false
+      },
+      {
+        "input": "50\n0 51 3 84 71 7 24 80 28 56 93 95 19 3 69 90 79 14 4 35 88 92 99 94 67 52 74 70 79 35 19 59 43 79 48 79 24 69 63 10 56 26 35 61 91 5 60 21 26 53\n31\n",
+        "expectedOutput": "31\n",
+        "sample": false
+      },
+      {
+        "input": "120\n29 8 73 44 61 31 10 30 44 59 85 86 49 6 91 62 36 95 44 60 92 42 1 39 12 22 13 21 87 49 47 99 4 92 11 100 90 32 11 39 89 51 25 68 82 39 63 65 73 64 82 84 29 31 97 51 11 58 13 82 21 62 68 92 74 31 85 9 24 96 5 69 68 19 75 97 56 27 27 43 37 47 83 57 64 32 15 96 39 15 36 85 13 16 25 60 41 47 79 90 18 32 70 26 79 9 58 71 13 35 2 30 56 39 97 3 30 16 99 31\n51\n",
+        "expectedOutput": "51\n",
+        "sample": false
+      },
+      {
+        "input": "400\n733 186 420 835 955 230 557 282 55 590 46 350 523 564 930 159 865 773 626 588 452 168 274 306 529 648 876 805 976 137 671 302 857 634 595 975 26 810 255 425 647 331 477 270 780 159 877 141 199 251 972 41 221 508 758 723 405 817 408 878 821 541 138 320 471 669 692 495 641 756 904 613 399 497 375 351 781 601 91 50 441 531 294 655 464 116 943 557 168 443 698 435 184 666 200 357 209 617 122 673 250 94 412 742 547 563 581 592 882 522 82 220 395 133 271 982 402 179 20 577 474 495 848 553 421 825 878 256 611 959 12 16 98 413 497 431 896 217 853 419 40 889 653 115 867 132 394 589 678 254 615 263 879 706 819 561 412 119 535 833 311 163 687 802 93 99 722 494 489 380 509 507 151 651 284 235 781 696 861 338 465 751 128 520 298 237 28 89 977 985 59 424 701 134 281 620 772 614 184 617 784 53 447 28 935 821 329 324 968 152 101 830 223 765 799 474 193 533 299 27 497 27 883 40 676 569 61 907 236 794 810 142 678 305 714 157 148 621 843 252 59 21 530 257 860 580 631 37 561 458 32 616 693 265 819 245 30 784 786 449 674 24 411 449 510 834 342 793 522 849 726 888 439 861 609 943 9 258 431 933 4 917 552 648 720 54 720 928 560 580 801 865 35 824 511 717 426 663 473 217 295 548 925 152 437 73 287 86 687 520 344 56 636 38 939 255 252 316 402 642 908 604 978 666 857 699 527 248 862 301 132 356 861 411 100 45 560 591 652 753 477 486 246 56 559 54 294 144 634 32 538 127 533 200 692 632 216 314 301 285 220 871 457 61 486 397 5 408 389 367 206 320 485 357 455 143 746 333 802 250 767 356 566 838 667 365 854 153 620 790 61 945 724 563 415 899 415 408 512 482\n162\n",
+        "expectedOutput": "162\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n921 260 193 143 148 378 502 695 79 729 163 653 136 346 660 48 711 950 384 788 856 993 870 750 797 178 436 831 721 884 461 682 662 422 168 250 227 671 864 55 779 430 974 53 905 778 696 193 119 177 479 126 151 140 520 350 405 523 343 485 675 588 59 504 855 397 651 780 253 107 888 317 800 66 314 733 219 354 327 488 488 161 747 722 935 164 242 955 866 628 335 400 212 155 840 569 967 138 208 347 244 123 191 301 148 507 64 654 642 69 596 558 236 900 638 859 850 872 125 560 473 99 294 250 425 632 676 904 148 81 767 288 161 645 63 337 711 575 541 177 111 407 901 237 178 220 2 697 987 110 405 258 516 768 468 631 881 503 181 851 633 604 807 354 594 206 571 150 580 927 553 211 891 40 545 699 798 66 208 938 689 393 634 458 740 666 908 420 299 906 667 736 178 516 437 446 342 97 438 130 760 543 434 309 731 606 795 464 956 294 111 917 881 586 784 829 401 197 447 625 311 435 282 49 981 581 192 187 188 172 436 55 605 902 479 933 881 856 209 597 538 608 790 286 17 525 231 222 829 531 118 965 438 490 140 546 512 303 468 866 76 716 948 810 722 518 834 156 504 885 571 315 31 686 202 256 440 114 260 369 632 945 175 498 900 459 959 912 282 508 91 926 5 316 121 637 927 170 189 905 603 300 272 269 225 894 415 94 974 820 174 659 965 526 834 741 643 754 387 795 645 935 43 372 686 339 287 651 737 554 315 139 935 432 760 632 616 744 914 902 454 981 225 851 629 669 764 87 881 145 99 221 85 301 508 461 683 181 774 918 758 894 76 428 42 363 279 962 961 666 883 7 14 615 785 904 585 766 566 399 552 781 701 64 212 982 651 392 288 430 911 930 898 927 871 249 587 652 53 611 344 790 244 65 249 719 305 790 93 109 231 715 206 495 875 100 263 998 240 487 291 841 157 900 514 179 457 424 849 991 688 227 616 981 56 124 373 555 97 706 143 49 189 930 271 76 876 349 152 242 999 139 767 951 149 478 620 362 760 46 759 176 658 361 987 641 489 742 789 697 52 598 672 996 248 349 472 621 877 104 153 517 862 534 958 603 661 932 339 190 936 56 865 274 577 979 909 10 522 626 606 585 840 875 850 63 775 788 276 639 722 630 756 349 966 865 379 786 302 226 215 775 630 759 405 134 991 530 698 215 682 961 169 732 969 129 531 830 209 570 491 453 898 365 221 291 1000 519 858 578 666 864 745 128 946 483 337 651 620 960 115 777 452 582 4 147 21 529 584 865 582 540 902 550 932 375 296 525 564 432 169 394 209 325 169 1000 954 338 773 792 764 839 216 594 90 838 371 248 47 750 454 97 707 605 4 665 297 945 841 243 734 786 12 65 488 388 559 762 107 304 765 534 933 546 770 523 219 865 685 692 300 890 339 971 641 75 150 134 942 37 585 677 353 415 106 61 96 167 826 752 915 919 0 244 223 686 624 376 270 163 924 75 762 509 699 963 204 224 733 107 308 556 952 494 338 519 944 501 530 915 100 647 755 510 198 871 35 858 522 321 188 868 688 299 612 180 991 799 975 143 922 157 618 127 662 408 135 364 601 511 418 713 159 255 924 146 732 928 771 245 201 697 308 133 488 491 598 503 543 528 586 585 659 855 121 406 407 368 675 715 677 564 30 44 206 649 979 255 133 961 537 945 99 254 530 650 13 696 967 111 641 864 315 279 109 639 267 181 84 803 267 640 573 431 422 605 512 207 830 10 223 713 587 911 91 514 807 215 323 244 734 590 344 817 303 57 364 814 70 614 248 286 929 81 516 573 833 866 510 512 262 145 462 504 154 830 831 174 336 926 558 457 33 131 93 882 411 533 435 346 470 67 720 588 724 540 366 199 571 333 680 902 814 858 328 674 17 50 984 433 111 505 69 11 879 966 265 782 180 987 1000 565 810 248 507 692 467 246 16 874 897 341 801 864 97 513 445 792 283 483 563 641 327 98 793 350 340 352 847 540 474 810 510 905 532 963 683 70 421 143 227 163 371 76 162 318 640 278 96 138 541 548 171 498 550 1000 21 486 455 822 387 995 728 572 135 886 949 936 185 43 727 517 529 435 146 260 244 989 753 283 43 903 573 120 347 702 418 334 954 608 708 646 756 591 458 129 672 626 919 161 389 95 318 239 815 32 287 926 868 928 47 241 443 499 781 294 347 947 546 547 420 61 261 77 468 888 486 724 68 598 836 1000 568 273 462 494 626 610 101 297\n610\n",
+        "expectedOutput": "610\n",
+        "sample": false
+      },
+      {
+        "input": "500\n2 2 1 1 0 1 1 1 0 0 0 1 3 0 2 0 2 3 3 3 1 3 3 0 2 1 2 1 1 1 2 2 0 3 1 1 0 2 3 1 2 3 2 1 1 3 0 2 2 0 1 1 0 0 1 2 2 2 3 2 2 1 2 1 1 1 3 2 1 0 1 0 2 2 3 2 0 0 2 1 1 0 2 3 0 1 1 1 2 1 0 3 1 0 3 3 1 2 3 0 3 3 3 1 2 1 0 0 2 2 3 1 3 3 1 0 3 2 1 1 0 1 1 1 2 1 1 3 1 2 2 3 1 1 3 1 0 0 1 3 2 1 1 3 0 0 2 1 2 0 3 3 3 2 2 3 3 0 2 0 0 0 3 2 1 3 1 2 1 1 0 0 1 0 1 0 0 2 3 2 2 3 3 0 1 0 2 0 2 3 3 3 1 2 2 3 2 1 0 1 2 2 0 1 1 1 3 2 1 2 3 1 0 1 3 2 3 3 0 0 3 3 3 1 3 3 0 2 1 1 0 0 0 0 1 0 1 2 3 2 2 3 2 1 1 2 1 0 1 3 1 0 1 0 1 2 1 0 1 2 0 1 2 0 3 3 1 1 2 1 1 2 1 2 1 3 0 0 3 3 0 1 3 3 0 2 1 0 3 1 3 1 3 0 2 0 0 2 1 1 2 0 0 2 3 2 3 0 1 1 2 3 1 3 3 0 1 1 2 1 1 2 2 3 3 3 2 3 3 0 0 1 1 1 2 3 1 0 2 3 2 1 1 2 3 3 3 2 0 3 3 3 2 2 3 3 1 3 1 2 2 0 3 2 3 3 3 0 2 0 3 1 2 1 2 1 3 3 0 1 1 1 3 1 0 3 2 0 2 1 1 1 2 3 1 1 2 1 2 2 0 0 2 0 3 1 1 1 0 3 2 1 2 3 2 1 0 1 3 2 3 3 3 0 0 1 1 2 1 3 1 2 3 1 3 2 1 2 2 3 0 2 1 1 0 1 0 2 1 2 2 0 0 1 0 1 0 3 1 2 1 1 3 1 0 3 3 1 1 0 0 3 3 1 1 0 2 1 3 0 3 3 1 2 1 0 0 3 1 3 2 3 1 1 2 3 3 2 3 3\n0\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "500\n0 3 0 2 0 2 0 2 1 3 1 3 2 1 2 0 0 3 0 2 1 3 3 1 2 1 0 3 0 3 0 2 0 1 2 3 2 2 1 2 2 0 3 2 2 1 3 2 1 0 0 2 0 1 0 1 3 3 0 3 3 0 1 2 3 0 1 2 0 1 1 3 0 3 1 1 1 1 2 1 0 1 1 1 2 2 3 0 3 0 3 0 2 2 0 2 2 1 3 1 2 2 3 3 0 0 0 0 1 3 3 3 0 3 2 3 2 3 2 3 2 0 2 3 1 0 2 3 3 2 3 2 1 0 1 2 2 3 3 3 2 0 3 3 2 2 0 2 3 1 0 1 0 3 2 3 0 2 1 2 2 1 1 0 2 2 0 2 2 2 1 3 1 2 2 3 0 1 2 0 1 2 3 2 0 3 2 3 1 2 1 3 1 2 0 1 3 3 3 1 2 1 1 3 1 0 0 1 2 0 2 2 3 2 3 0 2 3 0 1 0 0 1 1 3 0 2 0 1 1 1 0 2 0 3 0 1 3 2 2 0 2 1 0 3 0 0 3 0 0 3 0 2 3 2 1 0 0 2 1 0 0 0 0 2 3 0 3 0 2 3 3 1 2 2 2 2 2 0 3 1 0 2 0 3 2 3 3 3 3 1 1 3 2 0 0 0 3 1 2 1 2 2 2 1 2 0 1 3 2 2 3 0 1 0 1 1 2 3 1 1 1 3 0 0 0 2 1 1 1 2 1 0 2 0 1 3 2 2 3 2 0 1 1 3 1 2 2 2 3 1 1 1 0 1 3 0 1 3 1 1 3 2 3 2 2 3 2 3 1 0 2 0 2 0 3 1 1 1 2 3 0 0 2 1 3 0 2 2 0 0 1 0 0 1 2 0 1 3 1 2 1 0 0 1 0 0 2 2 2 2 3 1 0 2 1 3 1 1 2 2 3 1 2 2 1 2 0 1 1 1 3 2 3 2 1 2 0 2 3 0 2 1 2 2 1 2 3 3 3 1 3 0 0 2 0 0 2 1 1 3 2 1 1 1 1 3 3 0 1 0 1 3 1 1 0 1 0 1 0 2 0 3 0 0 1 1 3 1 1 0 3 2 2 0 3 3 3 2 3\n499\n",
+        "expectedOutput": "499\n",
+        "sample": false
+      },
+      {
+        "input": "500\n1 1 0 2 3 1 0 3 1 3 0 1 3 1 2 1 0 3 0 1 1 3 2 0 3 1 1 3 0 0 2 0 0 1 0 0 0 1 0 1 3 2 1 0 2 0 2 3 2 3 1 2 1 0 0 3 2 0 2 1 2 2 0 0 3 1 2 3 2 3 1 2 3 1 3 1 2 0 2 2 3 0 2 1 2 2 2 0 3 2 3 1 2 2 1 2 0 3 3 1 3 1 1 3 0 0 0 3 0 3 0 3 1 3 0 3 1 3 3 0 3 3 1 1 3 2 2 2 1 2 3 1 3 0 3 2 1 2 0 0 2 2 0 3 2 0 1 1 3 2 1 1 3 2 1 1 2 3 3 3 3 3 1 0 0 1 1 1 3 0 2 2 2 1 1 1 3 0 0 3 1 2 0 2 1 3 3 0 0 1 0 2 2 0 1 0 1 1 3 3 1 3 1 3 1 2 2 3 0 0 3 0 0 1 3 2 2 1 3 0 2 3 0 0 2 3 1 2 1 1 1 3 1 1 0 0 0 2 2 2 1 2 2 1 1 3 3 1 3 3 2 3 0 0 0 2 3 0 1 0 1 3 0 2 1 3 2 2 2 0 2 2 0 0 0 2 1 2 1 0 3 2 2 3 1 3 3 2 0 1 3 1 3 0 2 2 2 1 0 1 3 2 3 1 3 0 0 0 1 1 0 2 0 2 2 0 0 2 0 0 0 0 1 1 0 3 2 0 1 0 3 0 3 0 2 1 0 1 0 0 3 3 0 3 2 0 1 0 0 3 2 3 2 2 1 2 3 2 1 1 3 1 1 2 0 1 2 3 0 0 0 3 0 3 3 0 1 0 1 3 0 0 3 3 2 1 2 3 3 3 0 1 0 3 1 2 2 2 0 2 3 2 2 1 0 0 3 1 0 3 1 2 3 1 2 3 0 3 1 3 3 3 0 0 1 3 3 2 2 1 1 2 3 2 3 2 2 2 0 0 0 2 0 3 2 0 1 0 2 0 2 1 1 1 1 1 1 0 3 2 1 1 0 0 0 2 0 0 0 1 3 0 3 3 1 0 3 2 3 1 1 2 0 3 1 2 3 1 3 1 3 0 2 3 2 1 0 1 2 2\n-1\n",
+        "expectedOutput": "-1\n",
+        "sample": false
+      }
+    ],
+    "order": 150
+  },
+  {
+    "slug": "length-of-loop-in-a-linked-list",
+    "title": "Length of Loop in a Linked List",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "linked-list",
+      "two-pointers",
+      "striver-sde",
+      "striver-a2z"
+    ],
+    "description": "Return the number of nodes inside the cycle, or `0` if the list has no cycle.\n\n### Input\nLine 1: `n`, the number of nodes.\nLine 2: the `n` node values.\nLine 3: `pos`, the index of the node that the last node points back to, or `-1` if there is no cycle.\n\n### Output\nThe number of nodes in the cycle, or `0`.\n\n### Constraints\n- `0 <= n <= 1000`\n- `-1000 <= value <= 1000`\n- `pos` is `-1` or a valid index\n\n### Examples\n**Example 1**\n```text\nInput:\n4\n3 2 0 -4\n1\n\nOutput:\n3\n```\n\n**Example 2**\n```text\nInput:\n2\n1 2\n0\n\nOutput:\n2\n```\n",
+    "starterCode": {
+      "java": "import java.io.*;\nimport java.util.*;\nimport java.util.stream.*;\n\npublic class Main {\n    static class ListNode {\n        int val;\n        ListNode next;\n        ListNode(int val) { this.val = val; }\n    }\n\n    static ListNode buildList(int[] vals) {\n        ListNode dummy = new ListNode(0), tail = dummy;\n        for (int v : vals) { tail.next = new ListNode(v); tail = tail.next; }\n        return dummy.next;\n    }\n\n    static String listString(ListNode node) {\n        StringBuilder sb = new StringBuilder();\n        for (; node != null; node = node.next) { if (sb.length() > 0) sb.append(' '); sb.append(node.val); }\n        return sb.toString();\n    }\n\n\n    static ArrayList<ListNode> NODES = new ArrayList<>();\n    static ListNode SECOND = null;\n\n    static int nodeIndex(ListNode node) {\n        for (int i = 0; i < NODES.size(); i++) if (NODES.get(i) == node) return i;\n        return -1;\n    }\n\n    static ListNode buildCycleList(int[] vals, int loop) {\n        ListNode head = buildList(vals);\n        List<ListNode> nodes = new ArrayList<>();\n        for (ListNode cur = head; cur != null; cur = cur.next) nodes.add(cur);\n        NODES.addAll(nodes);\n        if (loop >= 0 && !nodes.isEmpty()) nodes.get(nodes.size() - 1).next = nodes.get(loop);\n        return head;\n    }\n\n    static ListNode buildShared(int[] a, int[] b, int k) {\n        ListNode tail = null;\n        for (int i = a.length - 1; i >= a.length - k; i--) { ListNode n = new ListNode(a[i]); n.next = tail; tail = n; }\n        ListNode headA = tail, headB = tail;\n        for (int i = a.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(a[i]); n.next = headA; headA = n; }\n        for (int i = b.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(b[i]); n.next = headB; headB = n; }\n        for (ListNode cur = headA; cur != null; cur = cur.next) NODES.add(cur);\n        for (ListNode cur = headB; cur != tail; cur = cur.next) NODES.add(cur);\n        SECOND = headB;\n        return headA;\n    }\n\n\n    static int solve(ListNode head) {\n        // Write your solution here\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        List<String> lines = new ArrayList<>();\n        String line;\n        while ((line = br.readLine()) != null) lines.add(line);\n        int pos = 0;\n        int headLen = Integer.parseInt(lines.get(pos++).trim());\n        int[] headVals = new int[headLen];\n        if (headLen > 0) {\n            StringTokenizer st = new StringTokenizer(lines.get(pos));\n            for (int i = 0; i < headLen; i++) headVals[i] = Integer.parseInt(st.nextToken());\n        }\n        pos++;\n        int headLoop = Integer.parseInt(lines.get(pos++).trim());\n        ListNode head = buildCycleList(headVals, headLoop);\n        int result = solve(head);\n        System.out.println(result);\n    }\n}\n",
+      "python": "import sys\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\ndef build_list(vals):\n    head = None\n    for v in reversed(vals):\n        head = ListNode(v, head)\n    return head\n\n\ndef list_values(node):\n    out = []\n    while node:\n        out.append(node.val)\n        node = node.next\n    return out\n\n\n\n_NODES = []\n_SECOND = [None]\n\n\ndef node_index(node):\n    for i, n in enumerate(_NODES):\n        if n is node:\n            return i\n    return -1\n\n\ndef build_cycle_list(vals, loop):\n    head = build_list(vals)\n    nodes = []\n    cur = head\n    while cur:\n        nodes.append(cur)\n        cur = cur.next\n    _NODES.extend(nodes)\n    if loop >= 0 and nodes:\n        nodes[-1].next = nodes[loop]\n    return head\n\n\ndef build_shared(a_vals, b_vals, k):\n    tail = build_list(a_vals[len(a_vals) - k:]) if k > 0 else None\n    head_a, head_b = tail, tail\n    for v in reversed(a_vals[:len(a_vals) - k]):\n        head_a = ListNode(v, head_a)\n    for v in reversed(b_vals[:len(b_vals) - k]):\n        head_b = ListNode(v, head_b)\n    cur = head_a\n    while cur:\n        _NODES.append(cur)\n        cur = cur.next\n    cur = head_b\n    while cur is not tail:\n        _NODES.append(cur)\n        cur = cur.next\n    _SECOND[0] = head_b\n    return head_a\n\n\n\ndef solve(head):\n    # Write your solution here\n    pass\n\n\ndef main():\n    lines = sys.stdin.read().splitlines()\n    pos = 0\n    head_len = int(lines[pos]); pos += 1\n    head_vals = list(map(int, lines[pos].split())) if head_len > 0 else []; pos += 1\n    head_loop = int(lines[pos]); pos += 1\n    head = build_cycle_list(head_vals, head_loop)\n    result = solve(head)\n    print(result)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+      "javascript": "const lines = require(\"fs\").readFileSync(0, \"utf8\").split(\"\\n\").map((l) => l.replace(/\\r$/, \"\"));\nlet pos = 0;\n\nclass ListNode {\n  constructor(val = 0, next = null) {\n    this.val = val;\n    this.next = next;\n  }\n}\n\nfunction buildList(vals) {\n  let head = null;\n  for (let i = vals.length - 1; i >= 0; i--) head = new ListNode(vals[i], head);\n  return head;\n}\n\nfunction listString(node) {\n  const out = [];\n  for (; node; node = node.next) out.push(node.val);\n  return out.join(\" \");\n}\n\n\nconst NODES = [];\nlet SECOND = null;\n\nfunction nodeIndex(node) {\n  return NODES.indexOf(node);\n}\n\nfunction buildCycleList(vals, loop) {\n  const head = buildList(vals);\n  const nodes = [];\n  for (let c = head; c; c = c.next) nodes.push(c);\n  NODES.push(...nodes);\n  if (loop >= 0 && nodes.length) nodes[nodes.length - 1].next = nodes[loop];\n  return head;\n}\n\nfunction buildShared(a, b, k) {\n  const tail = buildList(a.slice(a.length - k));\n  let headA = tail, headB = tail;\n  for (let i = a.length - k - 1; i >= 0; i--) headA = new ListNode(a[i], headA);\n  for (let i = b.length - k - 1; i >= 0; i--) headB = new ListNode(b[i], headB);\n  for (let c = headA; c; c = c.next) NODES.push(c);\n  for (let c = headB; c !== tail; c = c.next) NODES.push(c);\n  SECOND = headB;\n  return headA;\n}\n\n\nfunction solve(head) {\n  // Write your solution here\n}\n\nconst headLen = parseInt(lines[pos++], 10);\nconst headVals = headLen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];\npos++;\nconst headLoop = parseInt(lines[pos++], 10);\nconst head = buildCycleList(headVals, headLoop);\nconst result = solve(head);\nconsole.log(String(result));\n",
+      "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int v) : val(v), next(nullptr) {}\n};\n\nListNode *buildList(const vector<int> &vals) {\n    ListNode dummy(0);\n    ListNode *tail = &dummy;\n    for (int v : vals) { tail->next = new ListNode(v); tail = tail->next; }\n    return dummy.next;\n}\n\nstring listString(ListNode *node) {\n    string out;\n    for (; node; node = node->next) {\n        if (!out.empty()) out += \" \";\n        out += to_string(node->val);\n    }\n    return out;\n}\n\n\nvector<ListNode *> NODES;\nListNode *SECOND = nullptr;\n\nint nodeIndex(ListNode *node) {\n    for (size_t i = 0; i < NODES.size(); i++) if (NODES[i] == node) return (int)i;\n    return -1;\n}\n\nListNode *buildCycleList(const vector<int> &vals, int loop) {\n    ListNode *head = buildList(vals);\n    vector<ListNode *> nodes;\n    for (ListNode *cur = head; cur; cur = cur->next) nodes.push_back(cur);\n    NODES.insert(NODES.end(), nodes.begin(), nodes.end());\n    if (loop >= 0 && !nodes.empty()) nodes.back()->next = nodes[loop];\n    return head;\n}\n\nListNode *buildShared(const vector<int> &a, const vector<int> &b, int k) {\n    ListNode *tail = nullptr;\n    for (int i = (int)a.size() - 1; i >= (int)a.size() - k; i--) { ListNode *n = new ListNode(a[i]); n->next = tail; tail = n; }\n    ListNode *headA = tail, *headB = tail;\n    for (int i = (int)a.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(a[i]); n->next = headA; headA = n; }\n    for (int i = (int)b.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(b[i]); n->next = headB; headB = n; }\n    for (ListNode *cur = headA; cur; cur = cur->next) NODES.push_back(cur);\n    for (ListNode *cur = headB; cur != tail; cur = cur->next) NODES.push_back(cur);\n    SECOND = headB;\n    return headA;\n}\n\n\nint solve(ListNode * head) {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> lines;\n    string line;\n    while (getline(cin, line)) {\n        if (!line.empty() && line.back() == '\\r') line.pop_back();\n        lines.push_back(line);\n    }\n    size_t pos = 0;\n    int headLen = stoi(lines[pos++]);\n    vector<int> headVals(headLen);\n    if (headLen > 0) {\n        istringstream iss(lines[pos]);\n        for (auto &v : headVals) iss >> v;\n    }\n    pos++;\n    int headLoop = stoi(lines[pos++]);\n    ListNode *head = buildCycleList(headVals, headLoop);\n    int result = solve(head);\n    cout << result << \"\\n\";\n    return 0;\n}\n"
+    },
+    "testCases": [
+      {
+        "input": "4\n3 2 0 -4\n1\n",
+        "expectedOutput": "3\n",
+        "sample": true
+      },
+      {
+        "input": "2\n1 2\n0\n",
+        "expectedOutput": "2\n",
+        "sample": true
+      },
+      {
+        "input": "1\n1\n-1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "1\n1\n0\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "3\n1 2 3\n2\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "5\n5 5 5 5 5\n2\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "5\n1 2 3 4 5\n-1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      },
+      {
+        "input": "7\n0 5 4 4 0 4 1\n4\n",
+        "expectedOutput": "3\n",
+        "sample": false
+      },
+      {
+        "input": "20\n44 20 20 37 24 20 9 45 35 35 31 49 32 16 21 30 5 42 27 30\n0\n",
+        "expectedOutput": "20\n",
+        "sample": false
+      },
+      {
+        "input": "50\n47 43 94 12 50 51 26 45 71 54 63 84 9 28 69 88 86 0 75 32 96 49 75 45 93 35 23 82 47 10 97 91 87 69 98 19 83 43 71 45 11 53 2 61 42 97 50 88 69 46\n10\n",
+        "expectedOutput": "40\n",
+        "sample": false
+      },
+      {
+        "input": "120\n52 56 30 85 37 4 16 9 54 89 18 16 74 45 12 58 27 9 94 89 57 38 7 96 49 27 100 4 61 55 24 85 50 53 79 71 59 70 93 83 59 33 72 86 55 41 13 5 24 87 40 10 41 75 82 66 4 73 63 54 84 11 51 40 26 42 22 65 89 98 94 6 46 71 8 73 100 89 18 71 64 5 43 89 19 35 4 96 8 93 60 53 85 5 83 66 46 32 21 3 40 8 29 76 67 76 30 80 57 30 90 32 66 58 92 100 76 76 45 66\n101\n",
+        "expectedOutput": "19\n",
+        "sample": false
+      },
+      {
+        "input": "400\n292 829 44 804 611 360 296 817 947 416 390 737 772 397 817 158 365 748 773 203 154 451 562 450 658 173 140 770 921 240 893 177 456 277 546 658 203 342 952 78 623 834 761 247 657 273 357 133 914 594 610 503 62 704 671 412 178 792 965 340 876 84 602 916 313 555 846 818 654 446 944 814 249 338 552 484 239 193 154 721 898 449 184 784 675 344 495 785 867 515 587 558 355 43 300 906 768 153 329 412 275 239 717 629 734 921 8 154 349 788 84 108 313 268 771 312 956 685 677 803 528 190 953 19 75 210 197 831 851 35 873 269 479 135 455 211 610 71 221 551 416 80 927 207 425 771 147 134 712 721 644 305 182 88 267 156 212 211 619 675 548 280 802 818 685 441 290 419 962 481 419 734 633 98 276 314 701 809 715 491 185 666 915 84 772 786 860 965 674 738 478 659 828 452 682 719 424 81 801 968 274 924 394 196 685 181 777 991 236 311 769 487 82 13 436 556 461 491 469 483 533 389 359 607 531 709 296 883 126 15 334 287 515 905 273 927 983 330 531 617 493 218 73 584 900 942 45 817 287 75 108 259 386 77 692 896 546 623 420 496 784 374 699 508 374 53 365 469 492 423 758 121 298 726 519 56 491 643 791 859 25 502 651 267 249 533 308 516 952 481 283 196 82 772 669 317 980 231 885 254 1000 975 85 602 202 227 560 397 197 378 194 670 627 114 588 176 225 367 315 406 151 103 543 794 513 422 163 301 151 845 468 820 517 878 219 834 660 668 239 141 32 428 401 338 308 324 604 450 692 970 272 255 207 605 298 443 522 962 911 95 886 551 411 938 44 692 471 638 687 976 22 875 752 1000 994 902 160 819 828 771 569 793 288 189 174 9 624 113 821 191 492 377 795 74 433 856 886 616 777 719\n129\n",
+        "expectedOutput": "271\n",
+        "sample": false
+      },
+      {
+        "input": "1000\n427 978 96 743 455 681 215 775 309 566 442 385 352 310 814 337 664 424 603 362 626 350 572 806 193 73 628 16 537 981 990 810 715 63 702 434 909 656 526 783 274 571 213 250 312 113 193 514 419 44 886 265 727 122 665 41 276 117 605 684 306 298 266 59 869 295 25 17 666 392 358 731 153 90 569 118 214 328 153 976 395 57 139 466 1 131 693 326 142 358 966 754 757 70 863 216 755 97 322 437 950 818 965 827 524 779 268 908 120 330 434 148 440 892 701 439 918 661 360 273 736 760 472 582 796 892 957 891 182 995 515 465 255 613 460 766 175 679 114 95 847 441 110 699 79 740 816 481 263 835 279 265 431 637 33 445 950 286 622 432 352 146 815 851 538 26 409 247 779 549 524 688 135 576 632 798 964 382 431 554 253 75 326 480 453 42 504 138 345 891 739 1000 503 928 776 721 805 648 529 543 450 501 684 441 359 15 960 494 685 624 131 326 115 846 425 851 939 436 670 914 307 693 655 17 668 128 790 967 326 373 413 928 282 761 675 568 777 577 592 491 44 880 695 781 135 918 715 72 985 734 969 413 252 542 982 260 735 626 678 171 570 153 427 211 264 369 656 756 54 415 405 467 549 622 51 938 681 732 407 710 16 713 987 676 331 531 547 896 394 567 458 969 265 168 221 645 766 373 231 561 687 432 510 4 994 339 330 410 200 959 440 403 990 418 140 310 356 541 398 238 332 439 14 745 544 516 31 169 512 218 292 275 224 334 116 393 632 761 542 858 534 433 334 236 866 337 744 91 598 166 889 654 498 373 477 3 181 711 128 469 467 834 318 589 506 864 707 868 629 434 509 68 966 882 510 793 912 201 16 193 52 812 576 413 905 317 648 783 865 401 51 664 926 720 19 276 646 245 677 474 331 260 842 631 725 956 448 640 63 278 338 937 369 70 603 558 528 651 273 710 544 863 949 756 850 398 43 807 749 831 797 582 23 188 64 76 152 292 85 396 376 268 957 583 18 191 309 640 219 627 998 861 894 578 358 447 846 678 380 22 915 274 847 818 387 434 702 812 494 198 580 430 202 376 117 464 191 476 781 355 930 139 385 840 670 358 386 71 947 134 980 240 91 737 843 993 86 202 974 531 722 395 264 354 85 389 924 951 408 247 94 139 413 434 950 582 897 283 20 751 498 759 441 642 802 276 917 609 712 529 160 681 335 141 183 772 977 402 791 116 227 455 927 975 597 302 542 938 936 825 476 665 294 789 811 955 553 818 412 807 266 658 399 542 699 710 365 891 516 341 940 505 893 366 995 666 17 63 67 567 42 934 709 203 559 220 904 550 164 440 984 519 824 102 347 614 234 958 390 702 695 335 127 187 962 901 617 509 149 498 328 438 761 910 432 480 56 371 51 512 460 127 0 573 492 328 252 263 591 700 648 794 48 942 241 546 837 848 13 559 342 182 370 333 93 542 579 886 40 711 878 878 717 151 152 141 911 461 35 543 244 740 615 752 453 648 516 298 470 438 3 570 170 432 124 34 205 199 916 402 764 384 667 914 624 185 317 110 50 207 948 202 953 434 573 919 324 354 623 388 962 30 160 306 197 678 691 758 126 748 947 204 617 72 875 978 884 565 837 480 717 795 783 859 439 636 848 941 819 682 9 769 735 972 163 397 567 695 839 777 536 762 206 193 861 906 263 603 730 102 688 924 482 892 571 606 850 988 878 99 246 713 914 800 418 858 220 311 776 749 41 534 662 363 804 740 403 610 219 992 146 222 969 416 289 802 122 84 344 657 607 510 326 889 110 492 393 283 916 396 454 367 767 414 396 133 453 348 148 882 467 683 127 857 338 871 660 84 800 804 932 30 618 227 718 462 507 964 365 969 541 359 102 231 277 196 607 956 444 840 550 333 82 10 301 821 829 169 445 473 260 33 842 495 173 882 368 543 589 513 512 985 552 609 103 923 861 208 581 12 731 266 742 839 237 584 519 505 402 513 724 29 161 258 495 788 105 438 939 239 653 977 267 617 260 858 32 832 615 690 763 854 890 434 487 129 712 269 756 143 432 413 151 252 573 634 594 259 662 13 155 567 94 131 189 264 611 456 285 100 868 510 242 232 369 832 971 864 369 175 890 807 826 865 393 906 869 855 703 580 154 735 599 534 718 209 987 413 317 840 962 493 173 979 242 632 238 412 361 786 779 805 73 913 205 180 931 264 357 661 219 786 105 475 847 629 567 862 278 461 471 666 917 830 631 961 157 107 728 969\n200\n",
+        "expectedOutput": "800\n",
+        "sample": false
+      },
+      {
+        "input": "500\n2 0 1 3 3 0 2 3 2 1 2 0 2 0 2 3 2 0 2 3 0 2 1 1 0 1 1 0 0 1 2 3 1 1 3 0 1 0 2 2 1 0 0 0 2 3 3 2 0 0 1 2 2 2 2 3 2 2 3 0 1 3 3 3 1 1 3 2 3 1 0 1 1 2 0 3 1 2 2 0 1 1 0 2 2 0 3 3 1 0 0 1 3 3 1 2 2 1 1 0 0 0 3 2 3 2 1 0 1 3 3 0 2 0 2 0 3 0 1 3 2 3 0 2 1 3 0 3 0 0 1 0 0 3 2 1 0 1 1 2 0 2 0 0 2 1 3 0 3 2 0 2 0 0 1 0 2 0 1 3 0 3 2 1 3 3 3 1 2 2 3 1 1 2 3 3 1 2 1 1 3 2 1 2 0 2 0 3 2 3 2 0 0 2 3 2 3 2 0 2 3 2 1 0 1 2 2 0 3 1 0 0 0 1 3 3 2 1 0 1 0 0 1 0 2 0 3 3 3 1 2 3 0 2 3 1 1 2 3 0 0 2 3 1 0 3 1 2 0 2 0 1 0 3 0 3 3 1 3 2 3 0 1 3 2 3 1 2 0 0 3 1 2 0 0 1 0 0 2 2 1 3 2 0 1 0 1 0 2 2 2 2 1 2 0 3 2 0 1 0 3 1 1 3 0 0 3 1 2 0 0 3 3 2 1 2 1 2 1 0 2 0 0 2 0 3 1 3 2 3 0 0 3 1 3 2 1 2 3 1 3 1 2 1 3 0 2 0 2 2 2 3 0 0 0 1 1 3 1 0 3 1 3 1 1 0 3 2 1 3 0 3 0 0 0 2 0 3 1 0 0 2 2 0 1 0 2 1 0 1 2 0 1 3 0 0 1 0 0 3 2 3 1 0 2 1 0 3 1 0 0 3 0 0 0 0 3 0 1 2 2 0 0 3 2 3 0 0 3 2 0 3 3 3 2 2 1 2 0 0 3 1 3 2 3 2 1 3 0 3 1 0 3 0 2 0 2 3 3 0 3 0 0 2 2 3 1 2 0 3 1 0 2 2 1 0 0 3 0 0 1 0 1 2 1 3 2 3 2 0 3 0 3 3 3 3 2 1 1 1\n0\n",
+        "expectedOutput": "500\n",
+        "sample": false
+      },
+      {
+        "input": "500\n0 3 0 0 2 3 2 0 0 1 0 0 1 3 1 3 2 3 1 3 0 2 1 2 3 1 1 3 0 1 3 1 2 2 2 0 2 1 2 2 2 1 1 0 1 2 2 2 2 2 2 2 0 0 1 1 3 2 0 2 3 0 1 2 1 3 1 0 2 0 3 1 1 0 0 3 0 1 2 0 1 0 2 3 3 3 0 1 1 3 2 0 2 1 3 0 3 0 3 1 1 2 3 0 1 0 2 3 0 1 2 0 2 2 0 3 1 3 0 0 0 0 2 2 0 3 2 2 3 1 1 2 1 0 3 1 3 3 1 0 1 3 2 2 1 1 0 0 2 3 2 0 2 1 3 0 1 0 3 1 0 1 1 3 1 1 0 2 1 1 3 3 2 3 1 1 0 3 0 0 1 0 0 1 1 1 3 3 3 3 1 2 1 1 0 1 1 2 0 0 3 1 2 0 1 3 1 2 1 2 1 0 2 3 0 0 3 3 3 2 0 2 2 2 0 2 3 3 1 1 1 0 3 2 1 0 2 1 0 2 2 1 3 1 1 2 0 3 3 1 2 2 3 1 2 2 1 2 0 0 0 3 3 2 0 1 1 1 2 2 2 0 2 2 0 0 2 1 1 1 2 1 0 0 0 1 2 2 2 0 3 3 3 3 2 3 3 2 1 1 0 3 0 1 0 3 0 1 0 3 0 3 1 2 2 3 0 1 1 0 2 0 2 2 0 2 0 3 2 2 0 0 0 1 0 1 2 1 2 1 3 0 1 0 2 0 2 0 3 2 0 3 0 0 3 0 1 3 1 0 1 2 1 0 3 1 1 3 2 1 1 3 2 1 1 0 3 0 1 1 3 2 3 2 3 2 2 0 2 1 3 0 2 2 2 2 3 2 1 2 3 3 3 1 2 3 2 3 2 2 1 2 2 0 2 0 1 1 1 3 1 1 2 2 2 3 3 3 0 1 2 3 0 2 3 3 2 0 2 2 0 3 0 2 3 2 1 2 1 3 2 0 0 0 3 0 0 0 2 0 2 2 1 2 3 2 1 3 0 0 3 3 1 1 3 3 3 1 0 1 0 1 0 1 1 0 0 1 1 3 2 0 1 2 1 1 2 2 3 3\n499\n",
+        "expectedOutput": "1\n",
+        "sample": false
+      },
+      {
+        "input": "500\n3 2 2 1 0 0 2 1 2 1 0 0 2 1 1 2 1 1 2 1 3 2 0 1 3 1 0 2 3 1 3 2 0 3 0 0 1 2 2 3 1 2 1 3 3 0 0 0 0 2 3 3 3 1 0 0 2 1 2 2 0 2 2 0 0 0 1 0 3 0 0 3 2 3 2 1 1 2 0 1 1 3 3 0 0 3 1 3 2 2 3 3 3 3 3 3 3 3 1 3 2 0 3 0 2 2 0 2 1 2 3 3 1 0 2 2 2 1 0 3 0 2 3 0 3 3 1 2 0 1 2 0 3 1 1 1 2 3 0 1 1 2 0 2 0 2 0 1 0 0 1 2 1 2 3 2 1 1 2 0 0 3 1 3 1 2 0 1 0 3 1 3 1 2 1 3 1 1 0 3 1 3 1 1 1 1 1 3 1 1 0 3 2 1 1 2 0 0 1 1 1 1 2 3 1 3 3 1 3 1 3 2 3 2 2 3 3 3 2 0 3 2 2 1 3 3 0 0 0 0 0 1 0 0 2 2 1 1 1 0 3 3 0 3 1 2 2 2 0 3 0 2 1 1 2 1 0 0 0 1 2 3 3 1 3 1 3 1 1 3 3 1 3 1 0 2 3 0 0 0 3 2 0 3 2 1 2 1 2 0 0 3 2 2 0 3 0 0 0 3 2 2 0 0 3 1 3 1 1 1 2 0 0 1 3 1 1 2 0 2 2 1 2 2 1 0 2 0 3 3 3 3 3 3 2 1 3 3 3 0 1 1 2 1 0 1 2 0 0 1 1 2 3 0 2 2 0 3 2 2 2 0 3 3 2 2 2 2 3 2 1 0 0 0 0 1 3 3 1 1 0 3 3 3 0 2 0 0 2 2 1 3 1 2 1 3 1 0 0 0 1 3 2 0 3 0 3 2 0 2 3 2 0 2 0 0 2 3 2 1 3 2 0 0 2 3 3 0 2 0 3 1 1 0 2 0 2 2 0 2 3 3 1 1 3 0 0 0 1 1 0 2 3 3 0 1 2 1 1 0 2 3 3 1 0 0 3 2 3 0 2 3 2 2 2 1 3 1 2 0 0 2 1 1 1 3 2 2 0 2 0 2 0 2 1 0 3 0 1 1\n-1\n",
+        "expectedOutput": "0\n",
+        "sample": false
+      }
+    ],
+    "order": 151
   },
   {
     "slug": "reverse-nodes-in-k-group",
@@ -12281,7 +12851,7 @@
         "sample": false
       }
     ],
-    "order": 147
+    "order": 152
   },
   {
     "slug": "maximum-depth-of-binary-tree",
@@ -12378,7 +12948,7 @@
         "sample": false
       }
     ],
-    "order": 148
+    "order": 153
   },
   {
     "slug": "invert-binary-tree",
@@ -12464,7 +13034,7 @@
         "sample": false
       }
     ],
-    "order": 149
+    "order": 154
   },
   {
     "slug": "symmetric-tree",
@@ -12561,7 +13131,7 @@
         "sample": false
       }
     ],
-    "order": 150
+    "order": 155
   },
   {
     "slug": "same-tree",
@@ -12667,7 +13237,7 @@
         "sample": false
       }
     ],
-    "order": 151
+    "order": 156
   },
   {
     "slug": "diameter-of-binary-tree",
@@ -12758,7 +13328,7 @@
         "sample": false
       }
     ],
-    "order": 152
+    "order": 157
   },
   {
     "slug": "binary-tree-inorder-traversal",
@@ -12850,7 +13420,7 @@
         "sample": false
       }
     ],
-    "order": 153
+    "order": 158
   },
   {
     "slug": "path-sum",
@@ -12969,7 +13539,7 @@
         "sample": false
       }
     ],
-    "order": 154
+    "order": 159
   },
   {
     "slug": "balanced-binary-tree",
@@ -13060,7 +13630,7 @@
         "sample": false
       }
     ],
-    "order": 155
+    "order": 160
   },
   {
     "slug": "subtree-of-another-tree",
@@ -13174,7 +13744,7 @@
         "sample": false
       }
     ],
-    "order": 156
+    "order": 161
   },
   {
     "slug": "minimum-depth-of-binary-tree",
@@ -13274,7 +13844,7 @@
         "sample": false
       }
     ],
-    "order": 157
+    "order": 162
   },
   {
     "slug": "count-complete-tree-nodes",
@@ -13371,7 +13941,7 @@
         "sample": false
       }
     ],
-    "order": 158
+    "order": 163
   },
   {
     "slug": "binary-tree-preorder-traversal",
@@ -13443,7 +14013,7 @@
         "sample": false
       }
     ],
-    "order": 159
+    "order": 164
   },
   {
     "slug": "binary-tree-postorder-traversal",
@@ -13515,7 +14085,7 @@
         "sample": false
       }
     ],
-    "order": 160
+    "order": 165
   },
   {
     "slug": "two-sum-iv-input-is-a-bst",
@@ -13642,7 +14212,7 @@
         "sample": false
       }
     ],
-    "order": 161
+    "order": 166
   },
   {
     "slug": "binary-tree-right-side-view",
@@ -13739,7 +14309,7 @@
         "sample": false
       }
     ],
-    "order": 162
+    "order": 167
   },
   {
     "slug": "validate-binary-search-tree",
@@ -13856,7 +14426,7 @@
         "sample": false
       }
     ],
-    "order": 163
+    "order": 168
   },
   {
     "slug": "kth-smallest-element-in-a-bst",
@@ -13948,7 +14518,7 @@
         "sample": false
       }
     ],
-    "order": 164
+    "order": 169
   },
   {
     "slug": "count-good-nodes-in-binary-tree",
@@ -14037,7 +14607,7 @@
         "sample": false
       }
     ],
-    "order": 165
+    "order": 170
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-search-tree",
@@ -14128,7 +14698,7 @@
         "sample": false
       }
     ],
-    "order": 166
+    "order": 171
   },
   {
     "slug": "lowest-common-ancestor-of-a-binary-tree",
@@ -14214,7 +14784,7 @@
         "sample": false
       }
     ],
-    "order": 167
+    "order": 172
   },
   {
     "slug": "binary-tree-level-order-traversal",
@@ -14315,7 +14885,7 @@
         "sample": false
       }
     ],
-    "order": 168
+    "order": 173
   },
   {
     "slug": "sum-root-to-leaf-numbers",
@@ -14414,7 +14984,7 @@
         "sample": false
       }
     ],
-    "order": 169
+    "order": 174
   },
   {
     "slug": "house-robber-iii",
@@ -14504,7 +15074,7 @@
         "sample": false
       }
     ],
-    "order": 170
+    "order": 175
   },
   {
     "slug": "path-sum-iii",
@@ -14608,7 +15178,7 @@
         "sample": false
       }
     ],
-    "order": 171
+    "order": 176
   },
   {
     "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
@@ -14704,7 +15274,7 @@
         "sample": false
       }
     ],
-    "order": 172
+    "order": 177
   },
   {
     "slug": "binary-tree-zigzag-level-order-traversal",
@@ -14800,7 +15370,7 @@
         "sample": false
       }
     ],
-    "order": 173
+    "order": 178
   },
   {
     "slug": "left-view-of-binary-tree",
@@ -14872,7 +15442,7 @@
         "sample": false
       }
     ],
-    "order": 174
+    "order": 179
   },
   {
     "slug": "top-view-of-binary-tree",
@@ -14944,7 +15514,7 @@
         "sample": false
       }
     ],
-    "order": 175
+    "order": 180
   },
   {
     "slug": "bottom-view-of-binary-tree",
@@ -15016,7 +15586,7 @@
         "sample": false
       }
     ],
-    "order": 176
+    "order": 181
   },
   {
     "slug": "root-to-node-path-in-a-binary-tree",
@@ -15083,7 +15653,7 @@
         "sample": false
       }
     ],
-    "order": 177
+    "order": 182
   },
   {
     "slug": "maximum-width-of-binary-tree",
@@ -15164,7 +15734,7 @@
         "sample": false
       }
     ],
-    "order": 178
+    "order": 183
   },
   {
     "slug": "boundary-traversal-of-binary-tree",
@@ -15250,7 +15820,7 @@
         "sample": false
       }
     ],
-    "order": 179
+    "order": 184
   },
   {
     "slug": "construct-binary-tree-from-inorder-and-postorder-traversal",
@@ -15312,7 +15882,7 @@
         "sample": false
       }
     ],
-    "order": 180
+    "order": 185
   },
   {
     "slug": "children-sum-property",
@@ -15423,7 +15993,7 @@
         "sample": false
       }
     ],
-    "order": 181
+    "order": 186
   },
   {
     "slug": "ceil-in-a-bst",
@@ -15549,7 +16119,7 @@
         "sample": false
       }
     ],
-    "order": 182
+    "order": 187
   },
   {
     "slug": "floor-in-a-bst",
@@ -15675,7 +16245,7 @@
         "sample": false
       }
     ],
-    "order": 183
+    "order": 188
   },
   {
     "slug": "inorder-successor-in-bst",
@@ -15756,7 +16326,7 @@
         "sample": false
       }
     ],
-    "order": 184
+    "order": 189
   },
   {
     "slug": "construct-binary-search-tree-from-preorder-traversal",
@@ -15838,7 +16408,7 @@
         "sample": false
       }
     ],
-    "order": 185
+    "order": 190
   },
   {
     "slug": "recover-binary-search-tree",
@@ -15910,7 +16480,7 @@
         "sample": false
       }
     ],
-    "order": 186
+    "order": 191
   },
   {
     "slug": "amount-of-time-for-binary-tree-to-be-infected",
@@ -15982,7 +16552,7 @@
         "sample": false
       }
     ],
-    "order": 187
+    "order": 192
   },
   {
     "slug": "all-nodes-distance-k-in-binary-tree",
@@ -16054,7 +16624,7 @@
         "sample": false
       }
     ],
-    "order": 188
+    "order": 193
   },
   {
     "slug": "binary-tree-maximum-path-sum",
@@ -16151,7 +16721,7 @@
         "sample": false
       }
     ],
-    "order": 189
+    "order": 194
   },
   {
     "slug": "vertical-order-traversal-of-a-binary-tree",
@@ -16229,7 +16799,7 @@
         "sample": false
       }
     ],
-    "order": 190
+    "order": 195
   },
   {
     "slug": "largest-bst-subtree",
@@ -16351,7 +16921,7 @@
         "sample": false
       }
     ],
-    "order": 191
+    "order": 196
   },
   {
     "slug": "last-stone-weight",
@@ -16445,7 +17015,7 @@
         "sample": false
       }
     ],
-    "order": 192
+    "order": 197
   },
   {
     "slug": "kth-largest-element-in-an-array",
@@ -16528,7 +17098,7 @@
         "sample": false
       }
     ],
-    "order": 193
+    "order": 198
   },
   {
     "slug": "top-k-frequent-elements",
@@ -16625,7 +17195,7 @@
         "sample": false
       }
     ],
-    "order": 194
+    "order": 199
   },
   {
     "slug": "meeting-rooms-ii",
@@ -16721,7 +17291,7 @@
         "sample": false
       }
     ],
-    "order": 195
+    "order": 200
   },
   {
     "slug": "task-scheduler",
@@ -16822,7 +17392,7 @@
         "sample": false
       }
     ],
-    "order": 196
+    "order": 201
   },
   {
     "slug": "ugly-number-ii",
@@ -16932,7 +17502,7 @@
         "sample": false
       }
     ],
-    "order": 197
+    "order": 202
   },
   {
     "slug": "kth-smallest-element-in-a-sorted-matrix",
@@ -17022,7 +17592,7 @@
         "sample": false
       }
     ],
-    "order": 198
+    "order": 203
   },
   {
     "slug": "merge-k-sorted-arrays",
@@ -17078,7 +17648,7 @@
         "sample": false
       }
     ],
-    "order": 199
+    "order": 204
   },
   {
     "slug": "implement-min-heap",
@@ -17149,7 +17719,7 @@
         "sample": false
       }
     ],
-    "order": 200
+    "order": 205
   },
   {
     "slug": "sliding-window-maximum",
@@ -17247,7 +17817,7 @@
         "sample": false
       }
     ],
-    "order": 201
+    "order": 206
   },
   {
     "slug": "k-maximum-sum-combinations",
@@ -17309,7 +17879,7 @@
         "sample": false
       }
     ],
-    "order": 202
+    "order": 207
   },
   {
     "slug": "find-median-from-data-stream",
@@ -17400,7 +17970,7 @@
         "sample": false
       }
     ],
-    "order": 203
+    "order": 208
   },
   {
     "slug": "binary-strings-without-adjacent-ones",
@@ -17460,7 +18030,7 @@
         "sample": false
       }
     ],
-    "order": 204
+    "order": 209
   },
   {
     "slug": "word-search",
@@ -17550,7 +18120,7 @@
         "sample": false
       }
     ],
-    "order": 205
+    "order": 210
   },
   {
     "slug": "count-subsets-with-sum",
@@ -17644,7 +18214,7 @@
         "sample": false
       }
     ],
-    "order": 206
+    "order": 211
   },
   {
     "slug": "distinct-permutations-count",
@@ -17709,7 +18279,7 @@
         "sample": false
       }
     ],
-    "order": 207
+    "order": 212
   },
   {
     "slug": "generate-parentheses-count",
@@ -17760,7 +18330,7 @@
         "sample": false
       }
     ],
-    "order": 208
+    "order": 213
   },
   {
     "slug": "palindrome-partitioning-count",
@@ -17857,7 +18427,7 @@
         "sample": false
       }
     ],
-    "order": 209
+    "order": 214
   },
   {
     "slug": "combination-sum-count",
@@ -17924,7 +18494,7 @@
         "sample": false
       }
     ],
-    "order": 210
+    "order": 215
   },
   {
     "slug": "subsets",
@@ -17979,7 +18549,7 @@
         "sample": false
       }
     ],
-    "order": 211
+    "order": 216
   },
   {
     "slug": "subsets-ii",
@@ -18030,7 +18600,7 @@
         "sample": false
       }
     ],
-    "order": 212
+    "order": 217
   },
   {
     "slug": "combination-sum-ii",
@@ -18086,7 +18656,7 @@
         "sample": false
       }
     ],
-    "order": 213
+    "order": 218
   },
   {
     "slug": "combination-sum-iii",
@@ -18150,7 +18720,7 @@
         "sample": false
       }
     ],
-    "order": 214
+    "order": 219
   },
   {
     "slug": "permutations",
@@ -18201,7 +18771,7 @@
         "sample": false
       }
     ],
-    "order": 215
+    "order": 220
   },
   {
     "slug": "letter-combinations-of-a-phone-number",
@@ -18261,7 +18831,7 @@
         "sample": false
       }
     ],
-    "order": 216
+    "order": 221
   },
   {
     "slug": "subset-sums",
@@ -18312,7 +18882,7 @@
         "sample": false
       }
     ],
-    "order": 217
+    "order": 222
   },
   {
     "slug": "rat-in-a-maze",
@@ -18367,7 +18937,7 @@
         "sample": false
       }
     ],
-    "order": 218
+    "order": 223
   },
   {
     "slug": "count-subsequences-with-sum-k",
@@ -18428,7 +18998,7 @@
         "sample": false
       }
     ],
-    "order": 219
+    "order": 224
   },
   {
     "slug": "subsequences-with-sum-k",
@@ -18483,7 +19053,7 @@
         "sample": false
       }
     ],
-    "order": 220
+    "order": 225
   },
   {
     "slug": "rat-in-a-maze-count",
@@ -18564,7 +19134,7 @@
         "sample": false
       }
     ],
-    "order": 221
+    "order": 226
   },
   {
     "slug": "combination-sum",
@@ -18650,7 +19220,7 @@
         "sample": false
       }
     ],
-    "order": 222
+    "order": 227
   },
   {
     "slug": "n-queens-count",
@@ -18715,7 +19285,7 @@
         "sample": false
       }
     ],
-    "order": 223
+    "order": 228
   },
   {
     "slug": "sudoku-solver",
@@ -18786,7 +19356,7 @@
         "sample": false
       }
     ],
-    "order": 224
+    "order": 229
   },
   {
     "slug": "find-if-path-exists-in-graph",
@@ -18876,7 +19446,7 @@
         "sample": false
       }
     ],
-    "order": 225
+    "order": 230
   },
   {
     "slug": "find-the-town-judge",
@@ -18956,7 +19526,7 @@
         "sample": false
       }
     ],
-    "order": 226
+    "order": 231
   },
   {
     "slug": "bfs-of-graph",
@@ -19062,7 +19632,7 @@
         "sample": false
       }
     ],
-    "order": 227
+    "order": 232
   },
   {
     "slug": "dfs-of-graph",
@@ -19168,7 +19738,7 @@
         "sample": false
       }
     ],
-    "order": 228
+    "order": 233
   },
   {
     "slug": "number-of-islands",
@@ -19264,7 +19834,7 @@
         "sample": false
       }
     ],
-    "order": 229
+    "order": 234
   },
   {
     "slug": "course-schedule",
@@ -19356,7 +19926,7 @@
         "sample": false
       }
     ],
-    "order": 230
+    "order": 235
   },
   {
     "slug": "number-of-connected-components",
@@ -19452,7 +20022,7 @@
         "sample": false
       }
     ],
-    "order": 231
+    "order": 236
   },
   {
     "slug": "rotting-oranges",
@@ -19549,7 +20119,7 @@
         "sample": false
       }
     ],
-    "order": 232
+    "order": 237
   },
   {
     "slug": "shortest-path-in-binary-matrix",
@@ -19645,7 +20215,7 @@
         "sample": false
       }
     ],
-    "order": 233
+    "order": 238
   },
   {
     "slug": "perfect-squares",
@@ -19720,7 +20290,7 @@
         "sample": false
       }
     ],
-    "order": 234
+    "order": 239
   },
   {
     "slug": "longest-consecutive-sequence",
@@ -19812,7 +20382,7 @@
         "sample": false
       }
     ],
-    "order": 235
+    "order": 240
   },
   {
     "slug": "network-delay-time",
@@ -19908,7 +20478,7 @@
         "sample": false
       }
     ],
-    "order": 236
+    "order": 241
   },
   {
     "slug": "number-of-provinces",
@@ -19994,7 +20564,7 @@
         "sample": false
       }
     ],
-    "order": 237
+    "order": 242
   },
   {
     "slug": "redundant-connection",
@@ -20085,7 +20655,7 @@
         "sample": false
       }
     ],
-    "order": 238
+    "order": 243
   },
   {
     "slug": "min-cost-to-connect-all-points",
@@ -20182,7 +20752,7 @@
         "sample": false
       }
     ],
-    "order": 239
+    "order": 244
   },
   {
     "slug": "surrounded-regions",
@@ -20264,7 +20834,7 @@
         "sample": false
       }
     ],
-    "order": 240
+    "order": 245
   },
   {
     "slug": "01-matrix",
@@ -20360,7 +20930,7 @@
         "sample": false
       }
     ],
-    "order": 241
+    "order": 246
   },
   {
     "slug": "is-graph-bipartite",
@@ -20457,7 +21027,7 @@
         "sample": false
       }
     ],
-    "order": 242
+    "order": 247
   },
   {
     "slug": "cheapest-flights-within-k-stops",
@@ -20543,7 +21113,7 @@
         "sample": false
       }
     ],
-    "order": 243
+    "order": 248
   },
   {
     "slug": "path-with-minimum-effort",
@@ -20640,7 +21210,7 @@
         "sample": false
       }
     ],
-    "order": 244
+    "order": 249
   },
   {
     "slug": "detect-cycle-in-an-undirected-graph",
@@ -20822,7 +21392,7 @@
         "sample": false
       }
     ],
-    "order": 245
+    "order": 250
   },
   {
     "slug": "detect-cycle-in-a-directed-graph",
@@ -20969,7 +21539,7 @@
         "sample": false
       }
     ],
-    "order": 246
+    "order": 251
   },
   {
     "slug": "topological-sort",
@@ -21082,7 +21652,7 @@
         "sample": false
       }
     ],
-    "order": 247
+    "order": 252
   },
   {
     "slug": "shortest-path-in-undirected-graph",
@@ -21148,7 +21718,7 @@
         "sample": false
       }
     ],
-    "order": 248
+    "order": 253
   },
   {
     "slug": "dijkstra-algorithm",
@@ -21215,7 +21785,7 @@
         "sample": false
       }
     ],
-    "order": 249
+    "order": 254
   },
   {
     "slug": "bellman-ford-algorithm",
@@ -21322,7 +21892,7 @@
         "sample": false
       }
     ],
-    "order": 250
+    "order": 255
   },
   {
     "slug": "floyd-warshall",
@@ -21394,7 +21964,7 @@
         "sample": false
       }
     ],
-    "order": 251
+    "order": 256
   },
   {
     "slug": "minimum-spanning-tree",
@@ -21462,7 +22032,7 @@
         "sample": false
       }
     ],
-    "order": 252
+    "order": 257
   },
   {
     "slug": "eventual-safe-states",
@@ -21569,7 +22139,7 @@
         "sample": false
       }
     ],
-    "order": 253
+    "order": 258
   },
   {
     "slug": "number-of-operations-to-make-network-connected",
@@ -21681,7 +22251,7 @@
         "sample": false
       }
     ],
-    "order": 254
+    "order": 259
   },
   {
     "slug": "swim-in-rising-water",
@@ -21778,7 +22348,7 @@
         "sample": false
       }
     ],
-    "order": 255
+    "order": 260
   },
   {
     "slug": "m-coloring-problem",
@@ -21834,7 +22404,7 @@
         "sample": false
       }
     ],
-    "order": 256
+    "order": 261
   },
   {
     "slug": "strongly-connected-components-kosaraju",
@@ -21940,7 +22510,7 @@
         "sample": false
       }
     ],
-    "order": 257
+    "order": 262
   },
   {
     "slug": "critical-connections-in-a-network",
@@ -22051,7 +22621,7 @@
         "sample": false
       }
     ],
-    "order": 258
+    "order": 263
   },
   {
     "slug": "articulation-point-in-graph",
@@ -22162,7 +22732,7 @@
         "sample": false
       }
     ],
-    "order": 259
+    "order": 264
   },
   {
     "slug": "best-time-to-buy-and-sell-stock",
@@ -22258,7 +22828,7 @@
         "sample": false
       }
     ],
-    "order": 260
+    "order": 265
   },
   {
     "slug": "climbing-stairs",
@@ -22358,7 +22928,7 @@
         "sample": false
       }
     ],
-    "order": 261
+    "order": 266
   },
   {
     "slug": "min-cost-climbing-stairs",
@@ -22447,7 +23017,7 @@
         "sample": false
       }
     ],
-    "order": 262
+    "order": 267
   },
   {
     "slug": "counting-bits",
@@ -22526,7 +23096,7 @@
         "sample": false
       }
     ],
-    "order": 263
+    "order": 268
   },
   {
     "slug": "is-subsequence",
@@ -22621,7 +23191,7 @@
         "sample": false
       }
     ],
-    "order": 264
+    "order": 269
   },
   {
     "slug": "pascals-triangle",
@@ -22717,7 +23287,7 @@
         "sample": false
       }
     ],
-    "order": 265
+    "order": 270
   },
   {
     "slug": "maximum-subarray",
@@ -22813,7 +23383,7 @@
         "sample": false
       }
     ],
-    "order": 266
+    "order": 271
   },
   {
     "slug": "coin-change",
@@ -22908,7 +23478,7 @@
         "sample": false
       }
     ],
-    "order": 267
+    "order": 272
   },
   {
     "slug": "house-robber",
@@ -22998,7 +23568,7 @@
         "sample": false
       }
     ],
-    "order": 268
+    "order": 273
   },
   {
     "slug": "longest-increasing-subsequence",
@@ -23085,7 +23655,7 @@
         "sample": false
       }
     ],
-    "order": 269
+    "order": 274
   },
   {
     "slug": "jump-game",
@@ -23181,7 +23751,7 @@
         "sample": false
       }
     ],
-    "order": 270
+    "order": 275
   },
   {
     "slug": "unique-paths",
@@ -23282,7 +23852,7 @@
         "sample": false
       }
     ],
-    "order": 271
+    "order": 276
   },
   {
     "slug": "maximum-product-subarray",
@@ -23373,7 +23943,7 @@
         "sample": false
       }
     ],
-    "order": 272
+    "order": 277
   },
   {
     "slug": "longest-palindromic-substring-length",
@@ -23469,7 +24039,7 @@
         "sample": false
       }
     ],
-    "order": 273
+    "order": 278
   },
   {
     "slug": "longest-common-subsequence",
@@ -23560,7 +24130,7 @@
         "sample": false
       }
     ],
-    "order": 274
+    "order": 279
   },
   {
     "slug": "partition-equal-subset-sum",
@@ -23651,7 +24221,7 @@
         "sample": false
       }
     ],
-    "order": 275
+    "order": 280
   },
   {
     "slug": "maximal-square",
@@ -23745,7 +24315,7 @@
         "sample": false
       }
     ],
-    "order": 276
+    "order": 281
   },
   {
     "slug": "decode-ways",
@@ -23844,7 +24414,7 @@
         "sample": false
       }
     ],
-    "order": 277
+    "order": 282
   },
   {
     "slug": "unique-paths-ii",
@@ -23934,7 +24504,7 @@
         "sample": false
       }
     ],
-    "order": 278
+    "order": 283
   },
   {
     "slug": "house-robber-ii",
@@ -24029,7 +24599,7 @@
         "sample": false
       }
     ],
-    "order": 279
+    "order": 284
   },
   {
     "slug": "jump-game-ii",
@@ -24120,7 +24690,7 @@
         "sample": false
       }
     ],
-    "order": 280
+    "order": 285
   },
   {
     "slug": "minimum-path-sum",
@@ -24215,7 +24785,7 @@
         "sample": false
       }
     ],
-    "order": 281
+    "order": 286
   },
   {
     "slug": "word-break",
@@ -24336,7 +24906,7 @@
         "sample": false
       }
     ],
-    "order": 282
+    "order": 287
   },
   {
     "slug": "palindromic-substrings",
@@ -24451,7 +25021,7 @@
         "sample": false
       }
     ],
-    "order": 283
+    "order": 288
   },
   {
     "slug": "target-sum",
@@ -24546,7 +25116,7 @@
         "sample": false
       }
     ],
-    "order": 284
+    "order": 289
   },
   {
     "slug": "delete-and-earn",
@@ -24650,7 +25220,7 @@
         "sample": false
       }
     ],
-    "order": 285
+    "order": 290
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
@@ -24755,7 +25325,7 @@
         "sample": false
       }
     ],
-    "order": 286
+    "order": 291
   },
   {
     "slug": "minimum-falling-path-sum",
@@ -24845,7 +25415,7 @@
         "sample": false
       }
     ],
-    "order": 287
+    "order": 292
   },
   {
     "slug": "integer-break",
@@ -24954,7 +25524,7 @@
         "sample": false
       }
     ],
-    "order": 288
+    "order": 293
   },
   {
     "slug": "coin-change-ii",
@@ -25054,7 +25624,7 @@
         "sample": false
       }
     ],
-    "order": 289
+    "order": 294
   },
   {
     "slug": "maximum-sum-circular-subarray",
@@ -25153,7 +25723,7 @@
         "sample": false
       }
     ],
-    "order": 290
+    "order": 295
   },
   {
     "slug": "zero-one-knapsack",
@@ -25244,7 +25814,7 @@
         "sample": false
       }
     ],
-    "order": 291
+    "order": 296
   },
   {
     "slug": "rod-cutting",
@@ -25325,7 +25895,7 @@
         "sample": false
       }
     ],
-    "order": 292
+    "order": 297
   },
   {
     "slug": "longest-palindromic-subsequence",
@@ -25426,7 +25996,7 @@
         "sample": false
       }
     ],
-    "order": 293
+    "order": 298
   },
   {
     "slug": "subset-sum-equal-to-target",
@@ -25517,7 +26087,7 @@
         "sample": false
       }
     ],
-    "order": 294
+    "order": 299
   },
   {
     "slug": "longest-common-substring",
@@ -25598,7 +26168,7 @@
         "sample": false
       }
     ],
-    "order": 295
+    "order": 300
   },
   {
     "slug": "maximum-sum-increasing-subsequence",
@@ -25689,7 +26259,7 @@
         "sample": false
       }
     ],
-    "order": 296
+    "order": 301
   },
   {
     "slug": "longest-bitonic-subsequence",
@@ -25780,7 +26350,7 @@
         "sample": false
       }
     ],
-    "order": 297
+    "order": 302
   },
   {
     "slug": "number-of-longest-increasing-subsequences",
@@ -25866,7 +26436,7 @@
         "sample": false
       }
     ],
-    "order": 298
+    "order": 303
   },
   {
     "slug": "0-1-knapsack",
@@ -25936,7 +26506,7 @@
         "sample": false
       }
     ],
-    "order": 299
+    "order": 304
   },
   {
     "slug": "unbounded-knapsack",
@@ -26016,7 +26586,7 @@
         "sample": false
       }
     ],
-    "order": 300
+    "order": 305
   },
   {
     "slug": "edit-distance",
@@ -26112,7 +26682,7 @@
         "sample": false
       }
     ],
-    "order": 301
+    "order": 306
   },
   {
     "slug": "longest-valid-parentheses",
@@ -26217,7 +26787,7 @@
         "sample": false
       }
     ],
-    "order": 302
+    "order": 307
   },
   {
     "slug": "split-array-largest-sum",
@@ -26304,7 +26874,7 @@
         "sample": false
       }
     ],
-    "order": 303
+    "order": 308
   },
   {
     "slug": "distinct-subsequences",
@@ -26414,7 +26984,7 @@
         "sample": false
       }
     ],
-    "order": 304
+    "order": 309
   },
   {
     "slug": "regular-expression-matching",
@@ -26553,7 +27123,7 @@
         "sample": false
       }
     ],
-    "order": 305
+    "order": 310
   },
   {
     "slug": "burst-balloons",
@@ -26653,7 +27223,7 @@
         "sample": false
       }
     ],
-    "order": 306
+    "order": 311
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-iii",
@@ -26753,7 +27323,7 @@
         "sample": false
       }
     ],
-    "order": 307
+    "order": 312
   },
   {
     "slug": "interleaving-string",
@@ -26872,7 +27442,7 @@
         "sample": false
       }
     ],
-    "order": 308
+    "order": 313
   },
   {
     "slug": "wildcard-matching",
@@ -27032,7 +27602,7 @@
         "sample": false
       }
     ],
-    "order": 309
+    "order": 314
   },
   {
     "slug": "maximal-rectangle",
@@ -27130,7 +27700,7 @@
         "sample": false
       }
     ],
-    "order": 310
+    "order": 315
   },
   {
     "slug": "matrix-chain-multiplication",
@@ -27216,7 +27786,7 @@
         "sample": false
       }
     ],
-    "order": 311
+    "order": 316
   },
   {
     "slug": "palindrome-partitioning-ii",
@@ -27327,7 +27897,7 @@
         "sample": false
       }
     ],
-    "order": 312
+    "order": 317
   },
   {
     "slug": "egg-dropping-puzzle",
@@ -27449,7 +28019,7 @@
         "sample": false
       }
     ],
-    "order": 313
+    "order": 318
   },
   {
     "slug": "maximum-profit-in-job-scheduling",
@@ -27531,7 +28101,7 @@
         "sample": false
       }
     ],
-    "order": 314
+    "order": 319
   },
   {
     "slug": "minimum-insertion-steps-to-make-a-string-palindrome",
@@ -27622,7 +28192,7 @@
         "sample": false
       }
     ],
-    "order": 315
+    "order": 320
   },
   {
     "slug": "assign-cookies",
@@ -27718,7 +28288,7 @@
         "sample": false
       }
     ],
-    "order": 316
+    "order": 321
   },
   {
     "slug": "can-place-flowers",
@@ -27817,7 +28387,7 @@
         "sample": false
       }
     ],
-    "order": 317
+    "order": 322
   },
   {
     "slug": "lemonade-change",
@@ -27942,7 +28512,7 @@
         "sample": false
       }
     ],
-    "order": 318
+    "order": 323
   },
   {
     "slug": "minimum-number-of-coins",
@@ -28043,7 +28613,7 @@
         "sample": false
       }
     ],
-    "order": 319
+    "order": 324
   },
   {
     "slug": "container-with-most-water",
@@ -28133,7 +28703,7 @@
         "sample": false
       }
     ],
-    "order": 320
+    "order": 325
   },
   {
     "slug": "gas-station",
@@ -28217,7 +28787,7 @@
         "sample": false
       }
     ],
-    "order": 321
+    "order": 326
   },
   {
     "slug": "best-time-to-buy-and-sell-stock-ii",
@@ -28307,7 +28877,7 @@
         "sample": false
       }
     ],
-    "order": 322
+    "order": 327
   },
   {
     "slug": "partition-labels",
@@ -28402,7 +28972,7 @@
         "sample": false
       }
     ],
-    "order": 323
+    "order": 328
   },
   {
     "slug": "n-meetings-in-one-room",
@@ -28474,7 +29044,7 @@
         "sample": false
       }
     ],
-    "order": 324
+    "order": 329
   },
   {
     "slug": "minimum-platforms",
@@ -28546,7 +29116,7 @@
         "sample": false
       }
     ],
-    "order": 325
+    "order": 330
   },
   {
     "slug": "job-sequencing-problem",
@@ -28618,7 +29188,7 @@
         "sample": false
       }
     ],
-    "order": 326
+    "order": 331
   },
   {
     "slug": "fractional-knapsack",
@@ -28679,7 +29249,7 @@
         "sample": false
       }
     ],
-    "order": 327
+    "order": 332
   },
   {
     "slug": "candy",
@@ -28779,7 +29349,7 @@
         "sample": false
       }
     ],
-    "order": 328
+    "order": 333
   },
   {
     "slug": "non-overlapping-intervals",
@@ -28875,7 +29445,7 @@
         "sample": false
       }
     ],
-    "order": 329
+    "order": 334
   },
   {
     "slug": "insert-interval",
@@ -28970,7 +29540,7 @@
         "sample": false
       }
     ],
-    "order": 330
+    "order": 335
   },
   {
     "slug": "minimum-number-of-arrows-to-burst-balloons",
@@ -29065,7 +29635,7 @@
         "sample": false
       }
     ],
-    "order": 331
+    "order": 336
   },
   {
     "slug": "palindrome-number",
@@ -29173,7 +29743,7 @@
         "sample": false
       }
     ],
-    "order": 332
+    "order": 337
   },
   {
     "slug": "single-number",
@@ -29268,7 +29838,7 @@
         "sample": false
       }
     ],
-    "order": 333
+    "order": 338
   },
   {
     "slug": "missing-number",
@@ -29354,7 +29924,7 @@
         "sample": false
       }
     ],
-    "order": 334
+    "order": 339
   },
   {
     "slug": "number-of-1-bits",
@@ -29448,7 +30018,7 @@
         "sample": false
       }
     ],
-    "order": 335
+    "order": 340
   },
   {
     "slug": "power-of-two",
@@ -29553,7 +30123,7 @@
         "sample": false
       }
     ],
-    "order": 336
+    "order": 341
   },
   {
     "slug": "happy-number",
@@ -29627,7 +30197,7 @@
         "sample": false
       }
     ],
-    "order": 337
+    "order": 342
   },
   {
     "slug": "roman-to-integer",
@@ -29733,7 +30303,7 @@
         "sample": false
       }
     ],
-    "order": 338
+    "order": 343
   },
   {
     "slug": "excel-sheet-column-number",
@@ -29827,7 +30397,7 @@
         "sample": false
       }
     ],
-    "order": 339
+    "order": 344
   },
   {
     "slug": "plus-one",
@@ -29921,7 +30491,7 @@
         "sample": false
       }
     ],
-    "order": 340
+    "order": 345
   },
   {
     "slug": "hamming-distance",
@@ -30024,7 +30594,7 @@
         "sample": false
       }
     ],
-    "order": 341
+    "order": 346
   },
   {
     "slug": "sum-of-two-integers",
@@ -30128,7 +30698,7 @@
         "sample": false
       }
     ],
-    "order": 342
+    "order": 347
   },
   {
     "slug": "count-digits",
@@ -30197,7 +30767,7 @@
         "sample": false
       }
     ],
-    "order": 343
+    "order": 348
   },
   {
     "slug": "gcd-of-two-numbers",
@@ -30266,7 +30836,7 @@
         "sample": false
       }
     ],
-    "order": 344
+    "order": 349
   },
   {
     "slug": "armstrong-number",
@@ -30345,7 +30915,7 @@
         "sample": false
       }
     ],
-    "order": 345
+    "order": 350
   },
   {
     "slug": "divisors-of-a-number",
@@ -30419,7 +30989,7 @@
         "sample": false
       }
     ],
-    "order": 346
+    "order": 351
   },
   {
     "slug": "check-prime-number",
@@ -30498,7 +31068,7 @@
         "sample": false
       }
     ],
-    "order": 347
+    "order": 352
   },
   {
     "slug": "largest-odd-number-in-a-string",
@@ -30568,7 +31138,7 @@
         "sample": false
       }
     ],
-    "order": 348
+    "order": 353
   },
   {
     "slug": "minimum-bit-flips-to-convert-number",
@@ -30658,7 +31228,7 @@
         "sample": false
       }
     ],
-    "order": 349
+    "order": 354
   },
   {
     "slug": "count-primes",
@@ -30743,7 +31313,7 @@
         "sample": false
       }
     ],
-    "order": 350
+    "order": 355
   },
   {
     "slug": "fast-power-mod",
@@ -30837,7 +31407,7 @@
         "sample": false
       }
     ],
-    "order": 351
+    "order": 356
   },
   {
     "slug": "reverse-integer",
@@ -30945,7 +31515,7 @@
         "sample": false
       }
     ],
-    "order": 352
+    "order": 357
   },
   {
     "slug": "rotate-image",
@@ -31032,7 +31602,7 @@
         "sample": false
       }
     ],
-    "order": 353
+    "order": 358
   },
   {
     "slug": "bitwise-and-of-numbers-range",
@@ -31136,7 +31706,7 @@
         "sample": false
       }
     ],
-    "order": 354
+    "order": 359
   },
   {
     "slug": "single-number-ii",
@@ -31236,7 +31806,7 @@
         "sample": false
       }
     ],
-    "order": 355
+    "order": 360
   },
   {
     "slug": "find-the-repeating-and-missing-number",
@@ -31293,7 +31863,7 @@
         "sample": false
       }
     ],
-    "order": 356
+    "order": 361
   },
   {
     "slug": "count-subarrays-with-given-xor",
@@ -31355,7 +31925,7 @@
         "sample": false
       }
     ],
-    "order": 357
+    "order": 362
   },
   {
     "slug": "string-to-integer-atoi",
@@ -31446,7 +32016,7 @@
         "sample": false
       }
     ],
-    "order": 358
+    "order": 363
   },
   {
     "slug": "integer-to-roman",
@@ -31542,7 +32112,7 @@
         "sample": false
       }
     ],
-    "order": 359
+    "order": 364
   },
   {
     "slug": "maximum-xor-of-two-numbers-in-an-array",
@@ -31629,7 +32199,7 @@
         "sample": false
       }
     ],
-    "order": 360
+    "order": 365
   },
   {
     "slug": "divide-two-integers",
@@ -31805,7 +32375,7 @@
         "sample": false
       }
     ],
-    "order": 361
+    "order": 366
   },
   {
     "slug": "permutation-sequence",
@@ -31871,7 +32441,7 @@
         "sample": false
       }
     ],
-    "order": 362
+    "order": 367
   },
   {
     "slug": "island-perimeter",
@@ -31960,7 +32530,7 @@
         "sample": false
       }
     ],
-    "order": 363
+    "order": 368
   },
   {
     "slug": "max-area-of-island",
@@ -32049,7 +32619,7 @@
         "sample": false
       }
     ],
-    "order": 364
+    "order": 369
   },
   {
     "slug": "spiral-matrix",
@@ -32159,7 +32729,7 @@
         "sample": false
       }
     ],
-    "order": 365
+    "order": 370
   },
   {
     "slug": "set-matrix-zeroes",
@@ -32246,7 +32816,7 @@
         "sample": false
       }
     ],
-    "order": 366
+    "order": 371
   },
   {
     "slug": "valid-sudoku",
@@ -32350,7 +32920,7 @@
         "sample": false
       }
     ],
-    "order": 367
+    "order": 372
   },
   {
     "slug": "game-of-life",
@@ -32444,6 +33014,6 @@
         "sample": false
       }
     ],
-    "order": 368
+    "order": 373
   }
 ]

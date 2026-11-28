@@ -43,12 +43,27 @@ def fmt_input(params, args):
         elif typ == "tree":
             lines.append(str(len(val)))
             lines.append(" ".join("null" if v is None else str(v) for v in val))
+        elif typ == "double":
+            lines.append(f"{val:.5f}")
+        elif typ == "cyclelist":                      # (values, index the last node links back to, or -1)
+            vals, loop = val
+            lines += [str(len(vals)), " ".join(map(str, vals)), str(loop)]
+        elif typ == "xlistA":                         # (list A, list B, k): the last k nodes of both lists are the same nodes
+            a, b, k = val
+            assert k == 0 or a[len(a) - k:] == b[len(b) - k:], "shared tails must hold equal values"
+            lines += [str(len(a)), " ".join(map(str, a)), str(len(b)), " ".join(map(str, b)), str(k)]
+        elif typ == "xlistB":                         # built together with xlistA: no input lines of its own
+            pass
         else:
             raise ValueError(typ)
     return "\n".join(lines) + "\n"
 
 
 def fmt_output(ret, val):
+    if ret == "node":                                 # position of the returned node (list order; A's nodes, then B's own), -1 for none
+        return f"{val}\n"
+    if ret == "double":
+        return f"{val:.5f}\n"
     if ret == "int":
         return f"{val}\n"
     if ret == "bool":
@@ -79,6 +94,18 @@ def fmt_output(ret, val):
 # ------------------------------------------------------------ starter code
 def uses(params, ret, kind):
     return ret == kind or any(t == kind for _, t in params)
+
+
+NODE_KINDS = ("cyclelist", "xlistA", "xlistB", "node")
+
+
+def uses_nodes(params, ret):
+    """Linked-list problems that need the node registry (cycles, shared tails, returning a node)."""
+    return any(uses(params, ret, k) for k in NODE_KINDS)
+
+
+def uses_list(params, ret):
+    return uses(params, ret, "list") or uses_nodes(params, ret)
 
 
 PY_LIST = ["class ListNode:", "    def __init__(self, val=0, next=None):", "        self.val = val", "        self.next = next", "",
@@ -157,13 +184,146 @@ CPP_TREE = ["struct TreeNode {", "    int val;", "    TreeNode *left, *right;", 
             '    while (!out.empty() && out.back() == "null") out.pop_back();', '    string s;', "    for (size_t i = 0; i < out.size(); i++) {",
             '        if (i) s += " ";', "        s += out[i];", "    }", "    return s;", "}", ""]
 
+PY_NODES = """
+_NODES = []
+_SECOND = [None]
+
+
+def node_index(node):
+    for i, n in enumerate(_NODES):
+        if n is node:
+            return i
+    return -1
+
+
+def build_cycle_list(vals, loop):
+    head = build_list(vals)
+    nodes = []
+    cur = head
+    while cur:
+        nodes.append(cur)
+        cur = cur.next
+    _NODES.extend(nodes)
+    if loop >= 0 and nodes:
+        nodes[-1].next = nodes[loop]
+    return head
+
+
+def build_shared(a_vals, b_vals, k):
+    tail = build_list(a_vals[len(a_vals) - k:]) if k > 0 else None
+    head_a, head_b = tail, tail
+    for v in reversed(a_vals[:len(a_vals) - k]):
+        head_a = ListNode(v, head_a)
+    for v in reversed(b_vals[:len(b_vals) - k]):
+        head_b = ListNode(v, head_b)
+    cur = head_a
+    while cur:
+        _NODES.append(cur)
+        cur = cur.next
+    cur = head_b
+    while cur is not tail:
+        _NODES.append(cur)
+        cur = cur.next
+    _SECOND[0] = head_b
+    return head_a
+""".strip("\\n").split("\\n") + ["", ""]
+JAVA_NODES = """
+    static ArrayList<ListNode> NODES = new ArrayList<>();
+    static ListNode SECOND = null;
+
+    static int nodeIndex(ListNode node) {
+        for (int i = 0; i < NODES.size(); i++) if (NODES.get(i) == node) return i;
+        return -1;
+    }
+
+    static ListNode buildCycleList(int[] vals, int loop) {
+        ListNode head = buildList(vals);
+        List<ListNode> nodes = new ArrayList<>();
+        for (ListNode cur = head; cur != null; cur = cur.next) nodes.add(cur);
+        NODES.addAll(nodes);
+        if (loop >= 0 && !nodes.isEmpty()) nodes.get(nodes.size() - 1).next = nodes.get(loop);
+        return head;
+    }
+
+    static ListNode buildShared(int[] a, int[] b, int k) {
+        ListNode tail = null;
+        for (int i = a.length - 1; i >= a.length - k; i--) { ListNode n = new ListNode(a[i]); n.next = tail; tail = n; }
+        ListNode headA = tail, headB = tail;
+        for (int i = a.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(a[i]); n.next = headA; headA = n; }
+        for (int i = b.length - k - 1; i >= 0; i--) { ListNode n = new ListNode(b[i]); n.next = headB; headB = n; }
+        for (ListNode cur = headA; cur != null; cur = cur.next) NODES.add(cur);
+        for (ListNode cur = headB; cur != tail; cur = cur.next) NODES.add(cur);
+        SECOND = headB;
+        return headA;
+    }
+""".strip("\\n").split("\\n") + [""]
+JS_NODES = """
+const NODES = [];
+let SECOND = null;
+
+function nodeIndex(node) {
+  return NODES.indexOf(node);
+}
+
+function buildCycleList(vals, loop) {
+  const head = buildList(vals);
+  const nodes = [];
+  for (let c = head; c; c = c.next) nodes.push(c);
+  NODES.push(...nodes);
+  if (loop >= 0 && nodes.length) nodes[nodes.length - 1].next = nodes[loop];
+  return head;
+}
+
+function buildShared(a, b, k) {
+  const tail = buildList(a.slice(a.length - k));
+  let headA = tail, headB = tail;
+  for (let i = a.length - k - 1; i >= 0; i--) headA = new ListNode(a[i], headA);
+  for (let i = b.length - k - 1; i >= 0; i--) headB = new ListNode(b[i], headB);
+  for (let c = headA; c; c = c.next) NODES.push(c);
+  for (let c = headB; c !== tail; c = c.next) NODES.push(c);
+  SECOND = headB;
+  return headA;
+}
+""".strip("\\n").split("\\n") + [""]
+CPP_NODES = """
+vector<ListNode *> NODES;
+ListNode *SECOND = nullptr;
+
+int nodeIndex(ListNode *node) {
+    for (size_t i = 0; i < NODES.size(); i++) if (NODES[i] == node) return (int)i;
+    return -1;
+}
+
+ListNode *buildCycleList(const vector<int> &vals, int loop) {
+    ListNode *head = buildList(vals);
+    vector<ListNode *> nodes;
+    for (ListNode *cur = head; cur; cur = cur->next) nodes.push_back(cur);
+    NODES.insert(NODES.end(), nodes.begin(), nodes.end());
+    if (loop >= 0 && !nodes.empty()) nodes.back()->next = nodes[loop];
+    return head;
+}
+
+ListNode *buildShared(const vector<int> &a, const vector<int> &b, int k) {
+    ListNode *tail = nullptr;
+    for (int i = (int)a.size() - 1; i >= (int)a.size() - k; i--) { ListNode *n = new ListNode(a[i]); n->next = tail; tail = n; }
+    ListNode *headA = tail, *headB = tail;
+    for (int i = (int)a.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(a[i]); n->next = headA; headA = n; }
+    for (int i = (int)b.size() - k - 1; i >= 0; i--) { ListNode *n = new ListNode(b[i]); n->next = headB; headB = n; }
+    for (ListNode *cur = headA; cur; cur = cur->next) NODES.push_back(cur);
+    for (ListNode *cur = headB; cur != tail; cur = cur->next) NODES.push_back(cur);
+    SECOND = headB;
+    return headA;
+}
+""".strip("\\n").split("\\n") + [""]
+
+
 def cap(name):
     return name[0].upper() + name[1:]
 
 
 def starter_python(params, ret):
     names = ", ".join(n for n, _ in params)
-    prelude = (PY_LIST if uses(params, ret, "list") else []) + (PY_TREE if uses(params, ret, "tree") else [])
+    prelude = (PY_LIST if uses_list(params, ret) else []) + (PY_NODES if uses_nodes(params, ret) else []) + (PY_TREE if uses(params, ret, "tree") else [])
     body = ["import sys"] + ([""] if not prelude or prelude[0].startswith("from") else []) + [""]
     body += prelude
     body += [f"def solve({names}):", "    # Write your solution here", "    pass", "", "", "def main():",
@@ -185,6 +345,23 @@ def starter_python(params, ret):
         elif t == "list":
             body += [f"    {n}_len = int(lines[pos]); pos += 1",
                      f"    {n} = build_list(list(map(int, lines[pos].split())) if {n}_len > 0 else []); pos += 1"]
+        elif t == "double":
+            body += [f"    {n} = float(lines[pos]); pos += 1"]
+        elif t == "cyclelist":
+            body += [f"    {n}_len = int(lines[pos]); pos += 1",
+                     f"    {n}_vals = list(map(int, lines[pos].split())) if {n}_len > 0 else []; pos += 1",
+                     f"    {n}_loop = int(lines[pos]); pos += 1",
+                     f"    {n} = build_cycle_list({n}_vals, {n}_loop)"]
+        elif t == "xlistA":
+            b = next(nm for nm, tt in params if tt == "xlistB")   # list B's own parameter name, so examples can show it
+            body += [f"    {n}_len = int(lines[pos]); pos += 1",
+                     f"    {n}_vals = list(map(int, lines[pos].split())) if {n}_len > 0 else []; pos += 1",
+                     f"    {b}_len = int(lines[pos]); pos += 1",
+                     f"    {b}_vals = list(map(int, lines[pos].split())) if {b}_len > 0 else []; pos += 1",
+                     f"    {b}_shared = int(lines[pos]); pos += 1",
+                     f"    {n} = build_shared({n}_vals, {b}_vals, {b}_shared)"]
+        elif t == "xlistB":
+            body += [f"    {n} = _SECOND[0]"]
         elif t == "tree":
             body += [f"    {n}_len = int(lines[pos]); pos += 1",
                      f"    {n} = build_tree(lines[pos].split() if {n}_len > 0 else []); pos += 1"]
@@ -200,22 +377,26 @@ def starter_python(params, ret):
         "rows": ["    rows = sorted(list(r) for r in result)", "    for row in rows:", '        print(" ".join(map(str, row)))'],
         "strs": ["    for s in sorted(result):", "        print(s)"],
         "str": ["    print(result)"],
+        "node": ["    print(node_index(result))"],
+        "double": ['    print(f"{result:.5f}")'],
     }[ret]
     body += ["", "", 'if __name__ == "__main__":', "    main()", ""]
     return "\n".join(body)
 
 
-JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "strs": "String[]", "list": "ListNode", "tree": "TreeNode"}
+JAVA_T = {"int": "int", "str": "String", "int[]": "int[]", "int[][]": "int[][]", "grid": "String[]", "strs": "String[]", "list": "ListNode", "tree": "TreeNode",
+          "double": "double", "cyclelist": "ListNode", "xlistA": "ListNode", "xlistB": "ListNode"}
 JAVA_RET = {"int": "int", "bool": "boolean", "int[]": "int[]", "int[][]": "int[][]", "list": "ListNode", "tree": "TreeNode",
-            "sets": "int[][]", "rows": "int[][]", "strs": "String[]", "str": "String"}
+            "sets": "int[][]", "rows": "int[][]", "strs": "String[]", "str": "String",
+            "double": "double", "node": "ListNode"}
 JAVA_DEFAULT = {"int": "0", "bool": "false", "int[]": "new int[0]", "int[][]": "new int[0][]", "list": "null", "tree": "null",
-                "sets": "new int[0][]", "rows": "new int[0][]", "strs": "new String[0]", "str": '""'}
+                "sets": "new int[0][]", "rows": "new int[0][]", "strs": "new String[0]", "str": '""', "double": "0.0", "node": "null"}
 
 
 def starter_java(params, ret):
     sig = ", ".join(f"{JAVA_T[t]} {n}" for n, t in params)
     names = ", ".join(n for n, _ in params)
-    prelude = (JAVA_LIST if uses(params, ret, "list") else []) + (JAVA_TREE if uses(params, ret, "tree") else [])
+    prelude = (JAVA_LIST if uses_list(params, ret) else []) + (JAVA_NODES if uses_nodes(params, ret) else []) + (JAVA_TREE if uses(params, ret, "tree") else [])
     out = ["import java.io.*;", "import java.util.*;", "import java.util.stream.*;", "", "public class Main {"] + prelude
     out += [f"    static {JAVA_RET[ret]} solve({sig}) {{", "        // Write your solution here",
            f"        return {JAVA_DEFAULT[ret]};", "    }", "",
@@ -254,6 +435,34 @@ def starter_java(params, ret):
                     f"            StringTokenizer st = new StringTokenizer(lines.get(pos));",
                     f"            for (int i = 0; i < {n}Len; i++) {n}Vals[i] = Integer.parseInt(st.nextToken());",
                     "        }", "        pos++;", f"        ListNode {n} = buildList({n}Vals);"]
+        elif t == "double":
+            out += [f"        double {n} = Double.parseDouble(lines.get(pos++).trim());"]
+        elif t == "cyclelist":
+            out += [f"        int {n}Len = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        int[] {n}Vals = new int[{n}Len];",
+                    f"        if ({n}Len > 0) {{",
+                    f"            StringTokenizer st = new StringTokenizer(lines.get(pos));",
+                    f"            for (int i = 0; i < {n}Len; i++) {n}Vals[i] = Integer.parseInt(st.nextToken());",
+                    "        }", "        pos++;",
+                    f"        int {n}Loop = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        ListNode {n} = buildCycleList({n}Vals, {n}Loop);"]
+        elif t == "xlistA":
+            out += [f"        int {n}ALen = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        int[] {n}AVals = new int[{n}ALen];",
+                    f"        if ({n}ALen > 0) {{",
+                    f"            StringTokenizer st = new StringTokenizer(lines.get(pos));",
+                    f"            for (int i = 0; i < {n}ALen; i++) {n}AVals[i] = Integer.parseInt(st.nextToken());",
+                    "        }", "        pos++;",
+                    f"        int {n}BLen = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        int[] {n}BVals = new int[{n}BLen];",
+                    f"        if ({n}BLen > 0) {{",
+                    f"            StringTokenizer st = new StringTokenizer(lines.get(pos));",
+                    f"            for (int i = 0; i < {n}BLen; i++) {n}BVals[i] = Integer.parseInt(st.nextToken());",
+                    "        }", "        pos++;",
+                    f"        int {n}Shared = Integer.parseInt(lines.get(pos++).trim());",
+                    f"        ListNode {n} = buildShared({n}AVals, {n}BVals, {n}Shared);"]
+        elif t == "xlistB":
+            out += [f"        ListNode {n} = SECOND;"]
         elif t == "tree":
             out += [f"        int {n}Len = Integer.parseInt(lines.get(pos++).trim());",
                     f"        String[] {n}Tok = {n}Len > 0 ? lines.get(pos).trim().split(\"\\\\s+\") : new String[0];",
@@ -278,6 +487,8 @@ def starter_java(params, ret):
         "strs": ["        String[] sorted = result.clone();", "        Arrays.sort(sorted);",
                  "        for (String s : sorted) System.out.println(s);"],
         "str": ["        System.out.println(result);"],
+        "node": ["        System.out.println(nodeIndex(result));"],
+        "double": ['        System.out.println(String.format(Locale.ROOT, "%.5f", result));'],
     }[ret]
     out += ["    }", "}", ""]
     return "\n".join(out)
@@ -285,7 +496,7 @@ def starter_java(params, ret):
 
 def starter_js(params, ret):
     names = ", ".join(n for n, _ in params)
-    prelude = (JS_LIST if uses(params, ret, "list") else []) + (JS_TREE if uses(params, ret, "tree") else [])
+    prelude = (JS_LIST if uses_list(params, ret) else []) + (JS_NODES if uses_nodes(params, ret) else []) + (JS_TREE if uses(params, ret, "tree") else [])
     out = ['const lines = require("fs").readFileSync(0, "utf8").split("\\n").map((l) => l.replace(/\\r$/, ""));',
            "let pos = 0;", ""] + prelude
     out += [f"function solve({names}) {{", "  // Write your solution here", "}", ""]
@@ -306,6 +517,22 @@ def starter_js(params, ret):
         elif t == "list":
             out += [f"const {n}Len = parseInt(lines[pos++], 10);",
                     f"const {n} = buildList({n}Len > 0 ? lines[pos].trim().split(/\\s+/).map(Number) : []);", "pos++;"]
+        elif t == "double":
+            out += [f"const {n} = parseFloat(lines[pos++]);"]
+        elif t == "cyclelist":
+            out += [f"const {n}Len = parseInt(lines[pos++], 10);",
+                    f"const {n}Vals = {n}Len > 0 ? lines[pos].trim().split(\" \").map(Number) : [];", "pos++;",
+                    f"const {n}Loop = parseInt(lines[pos++], 10);",
+                    f"const {n} = buildCycleList({n}Vals, {n}Loop);"]
+        elif t == "xlistA":
+            out += [f"const {n}ALen = parseInt(lines[pos++], 10);",
+                    f"const {n}AVals = {n}ALen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];", "pos++;",
+                    f"const {n}BLen = parseInt(lines[pos++], 10);",
+                    f"const {n}BVals = {n}BLen > 0 ? lines[pos].trim().split(\" \").map(Number) : [];", "pos++;",
+                    f"const {n}Shared = parseInt(lines[pos++], 10);",
+                    f"const {n} = buildShared({n}AVals, {n}BVals, {n}Shared);"]
+        elif t == "xlistB":
+            out += [f"const {n} = SECOND;"]
         elif t == "tree":
             out += [f"const {n}Len = parseInt(lines[pos++], 10);",
                     f"const {n} = buildTree({n}Len > 0 ? lines[pos].trim().split(/\\s+/) : []);", "pos++;"]
@@ -326,23 +553,26 @@ def starter_js(params, ret):
                  'console.log(rows.map((r) => r.join(" ")).join("\\n"));'],
         "strs": ['console.log([...result].sort().join("\\n"));'],
         "str": ["console.log(result);"],
+        "node": ["console.log(String(nodeIndex(result)));"],
+        "double": ["console.log(result.toFixed(5));"],
     }[ret]
     out += [""]
     return "\n".join(out)
 
 
 CPP_T = {"int": "int", "str": "string", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "grid": "vector<string>", "strs": "vector<string>",
-         "list": "ListNode *", "tree": "TreeNode *"}
+         "list": "ListNode *", "tree": "TreeNode *",
+         "double": "double", "cyclelist": "ListNode *", "xlistA": "ListNode *", "xlistB": "ListNode *"}
 CPP_RET = {"int": "int", "bool": "bool", "int[]": "vector<int>", "int[][]": "vector<vector<int>>", "list": "ListNode *", "tree": "TreeNode *",
-           "sets": "vector<vector<int>>", "rows": "vector<vector<int>>", "strs": "vector<string>", "str": "string"}
+           "sets": "vector<vector<int>>", "rows": "vector<vector<int>>", "strs": "vector<string>", "str": "string", "double": "double", "node": "ListNode *"}
 CPP_DEFAULT = {"int": "0", "bool": "false", "int[]": "{}", "int[][]": "{}", "list": "nullptr", "tree": "nullptr",
-               "sets": "{}", "rows": "{}", "strs": "{}", "str": "{}"}
+               "sets": "{}", "rows": "{}", "strs": "{}", "str": "{}", "double": "0.0", "node": "nullptr"}
 
 
 def starter_cpp(params, ret):
     sig = ", ".join(f"{CPP_T[t]} {n}" for n, t in params)
     names = ", ".join(n for n, _ in params)
-    prelude = (CPP_LIST if uses(params, ret, "list") else []) + (CPP_TREE if uses(params, ret, "tree") else [])
+    prelude = (CPP_LIST if uses_list(params, ret) else []) + (CPP_NODES if uses_nodes(params, ret) else []) + (CPP_TREE if uses(params, ret, "tree") else [])
     out = ["#include <bits/stdc++.h>", "using namespace std;", ""] + prelude
     out += [f"{CPP_RET[ret]} solve({sig}) {{", "    // Write your solution here", f"    return {CPP_DEFAULT[ret]};", "}", "",
            "int main() {", "    ios::sync_with_stdio(false);", "    cin.tie(nullptr);",
@@ -373,6 +603,25 @@ def starter_cpp(params, ret):
                     f"    if ({n}Len > 0) {{", "        istringstream iss(lines[pos]);",
                     f"        for (auto &v : {n}Vals) iss >> v;", "    }", "    pos++;",
                     f"    ListNode *{n} = buildList({n}Vals);"]
+        elif t == "double":
+            out += [f"    double {n} = stod(lines[pos++]);"]
+        elif t == "cyclelist":
+            out += [f"    int {n}Len = stoi(lines[pos++]);", f"    vector<int> {n}Vals({n}Len);",
+                    f"    if ({n}Len > 0) {{", "        istringstream iss(lines[pos]);",
+                    f"        for (auto &v : {n}Vals) iss >> v;", "    }", "    pos++;",
+                    f"    int {n}Loop = stoi(lines[pos++]);",
+                    f"    ListNode *{n} = buildCycleList({n}Vals, {n}Loop);"]
+        elif t == "xlistA":
+            out += [f"    int {n}ALen = stoi(lines[pos++]);", f"    vector<int> {n}AVals({n}ALen);",
+                    f"    if ({n}ALen > 0) {{", "        istringstream iss(lines[pos]);",
+                    f"        for (auto &v : {n}AVals) iss >> v;", "    }", "    pos++;",
+                    f"    int {n}BLen = stoi(lines[pos++]);", f"    vector<int> {n}BVals({n}BLen);",
+                    f"    if ({n}BLen > 0) {{", "        istringstream iss(lines[pos]);",
+                    f"        for (auto &v : {n}BVals) iss >> v;", "    }", "    pos++;",
+                    f"    int {n}Shared = stoi(lines[pos++]);",
+                    f"    ListNode *{n} = buildShared({n}AVals, {n}BVals, {n}Shared);"]
+        elif t == "xlistB":
+            out += [f"    ListNode *{n} = SECOND;"]
         elif t == "tree":
             out += [f"    int {n}Len = stoi(lines[pos++]);", f"    vector<string> {n}Tok;",
                     f"    if ({n}Len > 0) {{", "        istringstream iss(lines[pos]);", "        string tok;",
@@ -396,6 +645,8 @@ def starter_cpp(params, ret):
                  "            cout << row[j];", "        }", '        cout << "\\n";', "    }"],
         "strs": ["    sort(result.begin(), result.end());", '    for (auto &s : result) cout << s << "\\n";'],
         "str": ['    cout << result << "\\n";'],
+        "node": ['    cout << nodeIndex(result) << "\\n";'],
+        "double": ['    cout << fixed << setprecision(5) << result << "\\n";'],
     }[ret]
     out += ["    return 0;", "}", ""]
     return "\n".join(out)
@@ -6584,6 +6835,11 @@ _have9 = {p["slug"] for p in PROBLEMS}
 SDE_BATCH_9 = [p for p in make_batch_9(mk, a2z_rng) if p["slug"] not in _have9]
 PROBLEMS += SDE_BATCH_9
 
+from sde_batch10 import make_batch as make_batch_10  # noqa: E402  (Pow(x, n) with decimals, pointer-style linked-list problems)
+_have10 = {p["slug"] for p in PROBLEMS}
+SDE_BATCH_10 = [p for p in make_batch_10(mk, a2z_rng) if p["slug"] not in _have10]
+PROBLEMS += SDE_BATCH_10
+
 
 # Curated sheets: the slugs that belong to each study plan. The tags are added on top of each problem's own tags, so
 # regenerating the seed keeps the plans intact (plans.json lists the tag).
@@ -6604,6 +6860,8 @@ STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_8}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_8}
 STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_9}
 STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_9}
+STRIVER_SDE |= {p["slug"] for p in SDE_BATCH_10}
+STRIVER_A2Z |= {p["slug"] for p in SDE_BATCH_10}
 # Already-seeded problems that are also on the real Striver SDE sheet (tag only; their tests and answers exist).
 STRIVER_SDE |= set(['count-inversions', 'reverse-pairs', 'majority-element-ii', 'largest-subarray-with-0-sum', 'count-subarrays-with-given-xor', 'find-the-repeating-and-missing-number', 'search-a-2d-matrix-ii', 'nth-root-of-an-integer', 'single-element-in-a-sorted-array', 'kth-element-of-two-sorted-arrays', 'aggressive-cows', 'median-in-a-row-wise-sorted-matrix', 'split-array-largest-sum', 'subset-sums', 'subsets-ii', 'combination-sum-ii', 'combination-sum-count', 'palindrome-partitioning-count', 'permutation-sequence', 'permutations', 'n-queens-count', 'm-coloring-problem', 'next-greater-element-ii', 'reverse-words-in-a-string', 'string-to-integer-atoi', 'longest-common-prefix', 'count-and-say', 'longest-palindromic-substring-length', 'binary-tree-right-side-view', 'count-complete-tree-nodes'])
 
