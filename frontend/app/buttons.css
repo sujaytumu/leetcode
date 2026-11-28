@@ -1,9 +1,9 @@
 /* ---- one calm button system: same radius, weight, press and focus everywhere; Back buttons ---- */
 :root { --r-btn:10px; }
 
-button, input[type="submit"], .btn { border-radius:var(--r-btn); font-weight:600; }
+button, input[type="submit"], .btn { border-radius:var(--r-btn); font-weight:600; transition:border-color .15s, background-color .15s, color .15s, box-shadow .15s, transform .1s, scale .1s, translate .12s; }
 input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="url"], select { min-height:38px; border-radius:var(--r-btn); }
-button:active:not(:disabled), .btn:active { transform:scale(.97); }
+button:active:not(:disabled), .btn:active { scale:.97; }
 button:disabled { opacity:.55; cursor:not-allowed; }
 :is(a, button, summary, [role="tab"], [role="menuitem"]):focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 :is(button, input, select, textarea):focus-visible { outline:none; } /* fields draw their own ring */
@@ -11,8 +11,8 @@ button:disabled { opacity:.55; cursor:not-allowed; }
 /* main call-to-action: warm gradient from the start (hover only brightens), soft shadow */
 button.primary { font-weight:700; border-color:transparent; color:#1a1206;
   background:linear-gradient(135deg, var(--accent), var(--brand2)); box-shadow:0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent); }
-button.primary:hover:not(:disabled) { filter:brightness(1.07); box-shadow:0 10px 22px -10px color-mix(in srgb, var(--accent) 85%, transparent); transform:translateY(-1px); }
-button.primary:active:not(:disabled) { transform:scale(.97); }
+button.primary:hover:not(:disabled) { filter:brightness(1.07); box-shadow:0 10px 22px -10px color-mix(in srgb, var(--accent) 85%, transparent); translate:0 -1px; }
+button.primary:active:not(:disabled) { scale:.97; }
 
 /* a link that looks like a quiet button */
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:0 16px; font-size:14px; color:var(--text); background:var(--cell); border:1px solid var(--line); cursor:pointer; text-decoration:none; transition:border-color .15s, transform .12s, background .15s; }
@@ -39,7 +39,7 @@ main > .bar { gap:10px; flex-wrap:wrap; }
   .backbtn, .btn { min-height:40px; }
   input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], select { min-height:42px; }
 }
-@media (prefers-reduced-motion:reduce) { button:active:not(:disabled), .btn, .backbtn, .backbtn svg, button.primary { transition:none; transform:none !important; } }
+@media (prefers-reduced-motion:reduce) { button:active:not(:disabled), .btn, .backbtn, .backbtn svg, button.primary { transition:none; scale:none !important; translate:none !important; } }
 
 /* ---- problem list: pager, shuffle, topic chips (phone) ---- */
 .pager { display:flex; align-items:center; justify-content:center; gap:14px; margin:18px 0 10px; font-size:13px; }
