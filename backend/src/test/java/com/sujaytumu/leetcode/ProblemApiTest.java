@@ -138,7 +138,7 @@ class ProblemApiTest {
     @Test
     void sortsByTitleAndNumberInEitherDirection() throws Exception {
         mvc.perform(get("/api/problems").param("sort", "title").param("size", "2"))
-                .andExpect(jsonPath("$.items[0].title").value("01 Matrix"));
+                .andExpect(jsonPath("$.items[0].title").value("0/1 Knapsack"));
         mvc.perform(get("/api/problems").param("sort", "number").param("dir", "desc").param("size", "1"))
                 .andExpect(jsonPath("$.items[0].number").value(373));
     }
