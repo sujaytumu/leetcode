@@ -58,6 +58,35 @@ class ContestServiceTest {
         assertTrue(ContestService.pick(8, bank) != null);
     }
 
+    private static Problem tagged(long id, Difficulty d, String... tags) {
+        Problem p = problem(id, d);
+        p.getTags().addAll(List.of(tags));
+        return p;
+    }
+
+    @Test
+    void laterContestsFollowLeetCodeStyleTopics() {
+        List<Problem> bank = new ArrayList<>();
+        bank.add(tagged(1, Difficulty.EASY, "array"));
+        bank.add(tagged(2, Difficulty.EASY, "tree"));
+        bank.add(tagged(3, Difficulty.MEDIUM, "string"));
+        bank.add(tagged(4, Difficulty.MEDIUM, "dynamic-programming"));
+        bank.add(tagged(5, Difficulty.MEDIUM, "binary-search"));
+        bank.add(tagged(6, Difficulty.MEDIUM, "tree"));
+        bank.add(tagged(7, Difficulty.MEDIUM, "graph"));
+        bank.add(tagged(8, Difficulty.HARD, "dynamic-programming"));
+        bank.add(tagged(9, Difficulty.HARD, "graph"));
+        for (long n = ContestService.THEMED_FROM; n < ContestService.THEMED_FROM + 12; n++) {
+            List<Problem> q = ContestService.pick(n, bank);
+            assertEquals(q, ContestService.pick(n, bank));
+            assertEquals(4, q.size());
+            assertEquals(1L, q.get(0).getId()); // the only easy on a q1 topic
+            assertEquals(n % 2 == 0 ? 8L : 9L, q.get(3).getId()); // hard: dp on even weeks, graph on odd
+            assertTrue(q.get(1).getTags().stream().anyMatch(t -> t.equals("string")));
+            assertEquals(4, q.stream().distinct().count());
+        }
+    }
+
     @Test
     void scoringUsesPointsPenaltiesAndFinishTime() {
         UUID a = UUID.randomUUID();

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -86,8 +87,55 @@ public class ContestService {
         return now.isBefore(startOf(n).plus(LENGTH)) ? "RUNNING" : "FINISHED";
     }
 
-    /** Easy, Medium, Medium, Hard chosen deterministically from the contest number (fewer if the bank is small). */
+    /** Contests before this one keep their original random problems, so results already on the board stay valid. */
+    static final long THEMED_FROM = 151;
+
+    private static final Set<String> EASY_TOPICS =
+            Set.of("array", "string", "math", "hash-table", "two-pointers", "sorting", "bit-manipulation");
+    private static final Set<String> MEDIUM_TOPICS =
+            Set.of("array", "string", "hash-table", "two-pointers", "sliding-window", "greedy", "sorting", "math", "matrix");
+    /** The third question rotates through the classic weekly-contest themes. */
+    private static final List<Set<String>> THIRD_TOPICS = List.of(
+            Set.of("binary-search", "greedy", "heap"),
+            Set.of("tree", "dfs", "bfs", "backtracking", "linked-list"),
+            Set.of("graph", "union-find", "stack", "monotonic-stack"));
+    private static final Set<String> HARD_DP = Set.of("dynamic-programming", "dp");
+    private static final Set<String> HARD_GRAPH = Set.of("graph", "binary-search", "monotonic-stack", "heap");
+
+    /**
+     * Easy, Medium, Medium, Hard chosen deterministically from the contest number (fewer if the bank is small).
+     * From contest {@link #THEMED_FROM} the questions follow LeetCode-style topics: Q1 array/string/math, Q2 an
+     * array/string/greedy medium, Q3 a rotating theme (binary search/greedy, trees/backtracking, graphs/stack) and
+     * Q4 a hard on dynamic programming (even weeks) or graphs/binary search (odd weeks).
+     */
     static List<Problem> pick(long n, List<Problem> bank) {
+        if (n < THEMED_FROM) {
+            return pickAnyTopic(n, bank);
+        }
+        Random rnd = new Random(n * 1_000_003L + 17);
+        List<Problem> sorted = bank.stream().sorted(Comparator.comparing(Problem::getId)).toList();
+        List<Problem> out = new ArrayList<>();
+        addOne(out, sorted, Difficulty.EASY, EASY_TOPICS, rnd);
+        addOne(out, sorted, Difficulty.MEDIUM, MEDIUM_TOPICS, rnd);
+        addOne(out, sorted, Difficulty.MEDIUM, THIRD_TOPICS.get((int) (n % THIRD_TOPICS.size())), rnd);
+        addOne(out, sorted, Difficulty.HARD, n % 2 == 0 ? HARD_DP : HARD_GRAPH, rnd);
+        return out;
+    }
+
+    /** One problem of this difficulty on one of the topics (any problem of that difficulty if none fits). */
+    private static void addOne(List<Problem> out, List<Problem> sorted, Difficulty d, Set<String> topics, Random rnd) {
+        List<Problem> pool = sorted.stream()
+                .filter(p -> p.getDifficulty() == d && !out.contains(p) && p.getTags().stream().anyMatch(topics::contains))
+                .toList();
+        if (pool.isEmpty()) {
+            pool = sorted.stream().filter(p -> p.getDifficulty() == d && !out.contains(p)).toList();
+        }
+        if (!pool.isEmpty()) {
+            out.add(pool.get(rnd.nextInt(pool.size())));
+        }
+    }
+
+    private static List<Problem> pickAnyTopic(long n, List<Problem> bank) {
         Random rnd = new Random(n * 1_000_003L + 17);
         Map<Difficulty, List<Problem>> byDifficulty = bank.stream()
                 .sorted(Comparator.comparing(Problem::getId))
