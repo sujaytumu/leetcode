@@ -50,6 +50,7 @@ export default function StriverPage() {
   const [difficulty, setDifficulty] = useState("");
   const [hideSolved, setHideSolved] = useState(false);
   const [q, setQ] = useState("");
+  const [open, setOpen] = useState<Set<string>>(new Set()); // topics you expanded; all start collapsed
   const [ticked, setTicked] = useState<Set<string>>(new Set()); // problems you ticked by hand, kept on this device
 
   // Which sheet: ?sheet=a2z|sde from a link, else the one you used last time.
@@ -111,12 +112,12 @@ export default function StriverPage() {
     groupTotals.set(t, g);
   }
   const chapters = [...groupTotals.keys()].sort(compareTopics);
-  const chapterNo = (topic: string) => String(chapters.indexOf(topic) + 1).padStart(2, "0");
+  const chapterNo = (topic: string) => String(chapters.indexOf(topic) + 1);
+  const toggleTopic = (topic: string) => setOpen((prev) => { const n = new Set(prev); if (n.has(topic)) n.delete(topic); else n.add(topic); return n; });
+  const isOpen = (topic: string) => open.has(topic) || text !== "" || difficulty !== "";
   const jumpTo = (topic: string) => {
-    const el = document.getElementById(`ch-${topic}`) as HTMLDetailsElement | null;
-    if (!el) return;
-    el.open = true;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen((prev) => new Set(prev).add(topic));
+    requestAnimationFrame(() => document.getElementById(`ch-${topic}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
   const groups = new Map<string, ProblemSummary[]>();
   for (const p of shown) { const t = topicOf(p); groups.set(t, [...(groups.get(t) ?? []), p]); }
@@ -180,6 +181,7 @@ export default function StriverPage() {
             <option value="EASY">Easy</option><option value="MEDIUM">Medium</option><option value="HARD">Hard</option>
           </select>
           <label className="sh-hide"><input type="checkbox" checked={hideSolved} onChange={(e) => setHideSolved(e.target.checked)} /> Hide done</label>
+          <button type="button" className="sh-expand" onClick={() => setOpen((prev) => (prev.size >= chapters.length ? new Set() : new Set(chapters)))}>{open.size >= chapters.length ? "Collapse all" : "Expand all"}</button>
         </div>
       )}
 
@@ -198,14 +200,10 @@ export default function StriverPage() {
       {[...groups.entries()].sort(([a], [b]) => compareTopics(a, b)).map(([topic, items]) => {
         const g = groupTotals.get(topic)!;
         return (
-          <details className="sh-group" id={`ch-${topic}`} key={topic} open>
-            <summary>
-              <span className="sh-gnum" aria-hidden="true">{chapterNo(topic)}</span>
-              <span className="sh-gname"><small>Topic {chapterNo(topic)}</small>{tagLabel(topic)}</span>
-              <span className="sh-gmeta">
-                <span className="sh-gbar" aria-hidden="true"><i style={{ width: `${g.total ? (g.solved / g.total) * 100 : 0}%` }} /></span>
-                <span className="sh-gcount">{g.solved}/{g.total}</span>
-              </span>
+          <details className="sh-group" id={`ch-${topic}`} key={topic} open={isOpen(topic)} style={{ "--p": `${g.total ? (g.solved / g.total) * 100 : 0}%` } as React.CSSProperties}>
+            <summary onClick={(e) => { e.preventDefault(); toggleTopic(topic); }}>
+              <span className="sh-gname">Step {chapterNo(topic)}: {tagLabel(topic)}</span>
+              <span className="sh-gcount">{g.solved}/{g.total}</span>
             </summary>
             <ul className="sh-list">
               <li className="sh-cols" aria-hidden="true"><span>Done</span><span>Problem</span><span>Level</span><span>Question</span><span>Answer</span></li>
