@@ -110,6 +110,14 @@ export default function StriverPage() {
     g.total++; if (isDone(p)) g.solved++;
     groupTotals.set(t, g);
   }
+  const chapters = [...groupTotals.keys()].sort(compareTopics);
+  const chapterNo = (topic: string) => String(chapters.indexOf(topic) + 1).padStart(2, "0");
+  const jumpTo = (topic: string) => {
+    const el = document.getElementById(`ch-${topic}`) as HTMLDetailsElement | null;
+    if (!el) return;
+    el.open = true;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const groups = new Map<string, ProblemSummary[]>();
   for (const p of shown) { const t = topicOf(p); groups.set(t, [...(groups.get(t) ?? []), p]); }
 
@@ -175,6 +183,14 @@ export default function StriverPage() {
         </div>
       )}
 
+      {all.length > 0 && chapters.length > 1 && (
+        <nav className="sh-jump" aria-label="Jump to a topic">
+          {chapters.filter((c) => groups.has(c)).map((c) => (
+            <button key={c} type="button" onClick={() => jumpTo(c)}><b>{chapterNo(c)}</b>{tagLabel(c)}</button>
+          ))}
+        </nav>
+      )}
+
       {!all.length && <FreeSpace loading={loading} error={error} onRetry={() => setReload((n) => n + 1)} label="Loading the sheet…" />}
       {all.length > 0 && error && <div className="banner err">{error} <button onClick={() => setReload((n) => n + 1)}>Retry</button></div>}
       {all.length > 0 && shown.length === 0 && <p className="mute sh-empty">Nothing matches those filters.</p>}
@@ -182,8 +198,15 @@ export default function StriverPage() {
       {[...groups.entries()].sort(([a], [b]) => compareTopics(a, b)).map(([topic, items]) => {
         const g = groupTotals.get(topic)!;
         return (
-          <details className="sh-group" key={topic} open>
-            <summary><span className="sh-gname">{tagLabel(topic)}</span><span className="sh-gcount">{g.solved}/{g.total}</span></summary>
+          <details className="sh-group" id={`ch-${topic}`} key={topic} open>
+            <summary>
+              <span className="sh-gnum" aria-hidden="true">{chapterNo(topic)}</span>
+              <span className="sh-gname"><small>Topic {chapterNo(topic)}</small>{tagLabel(topic)}</span>
+              <span className="sh-gmeta">
+                <span className="sh-gbar" aria-hidden="true"><i style={{ width: `${g.total ? (g.solved / g.total) * 100 : 0}%` }} /></span>
+                <span className="sh-gcount">{g.solved}/{g.total}</span>
+              </span>
+            </summary>
             <ul className="sh-list">
               <li className="sh-cols" aria-hidden="true"><span>Done</span><span>Problem</span><span>Level</span><span>Question</span><span>Answer</span></li>
               {(["EASY", "MEDIUM", "HARD"] as const).map((d) => {
