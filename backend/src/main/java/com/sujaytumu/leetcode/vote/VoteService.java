@@ -99,6 +99,6 @@ public class VoteService {
     }
 
     private Problem requireProblem(String slug) {
-        return problems.findBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
+        return problems.findLightBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
     }
 }

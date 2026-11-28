@@ -65,13 +65,13 @@ public class SubmissionService {
         if (customInput != null && !customInput.isBlank()) {
             return runCustom(language, code, customInput);
         }
-        List<TestCase> cases = problem.getTestCases().stream().filter(TestCase::isSample).toList();
+        List<TestCase> cases = problems.findSamples(problem.getId());
         return judge(problem, clientId, language, code, cases, false);
     }
 
     /** Runs against every test case and records the submission. */
     public RunResponse submit(String slug, UUID clientId, Language language, String code) {
-        Problem problem = requireProblem(slug);
+        Problem problem = requireProblemWithCases(slug);
         rateLimiter.check(clientId);
         return judge(problem, clientId, language, code, problem.getTestCases(), true);
     }
@@ -316,7 +316,13 @@ public class SubmissionService {
         return value.length() <= max ? value : value.substring(0, max) + "…";
     }
 
+    /** The problem without its test cases: enough for everything except submitting. */
     private Problem requireProblem(String slug) {
+        return problems.findLightBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
+    }
+
+    /** The problem with every test case (hidden ones included), needed to judge a submission. */
+    private Problem requireProblemWithCases(String slug) {
         return problems.findBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
     }
 

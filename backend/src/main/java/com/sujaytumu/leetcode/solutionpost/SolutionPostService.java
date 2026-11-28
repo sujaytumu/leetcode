@@ -215,6 +215,6 @@ public class SolutionPostService {
     }
 
     private Long requireProblemId(String slug) {
-        return problems.findBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug)).getId();
+        return problems.findLightBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug)).getId();
     }
 }

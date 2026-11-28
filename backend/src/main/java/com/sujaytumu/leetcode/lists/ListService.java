@@ -54,7 +54,7 @@ public class ListService {
         items.countByListIds(ids).forEach(r -> counts.put(((Number) r[0]).longValue(), ((Number) r[1]).intValue()));
         Set<Long> containing = new HashSet<>();
         if (slug != null && !slug.isBlank()) {
-            problems.findBySlug(slug).ifPresent(p -> containing.addAll(items.findListIdsContaining(p.getId(), ids)));
+            problems.findLightBySlug(slug).ifPresent(p -> containing.addAll(items.findListIdsContaining(p.getId(), ids)));
         }
         return mine.stream()
                 .map(l -> new ListSummary(l.getId(), l.getName(), counts.getOrDefault(l.getId(), 0), containing.contains(l.getId())))
@@ -119,6 +119,6 @@ public class ListService {
     }
 
     private Problem problem(String slug) {
-        return problems.findBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
+        return problems.findLightBySlug(slug).orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
     }
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -70,22 +71,28 @@ public class DataSeeder implements ApplicationRunner {
             seed = objectMapper.readValue(in, new TypeReference<>() {});
         }
 
-        // Read every existing problem at once: one query per slug (with its test cases) made each start-up slow.
-        Map<String, Problem> bySlug = new HashMap<>();
-        problems.findAll().forEach(p -> bySlug.put(p.getSlug(), p));
+        // What is already stored, read with two small queries. (Loading each existing problem one by one, with all its
+        // test cases, cost hundreds of database round trips on every cold start.)
+        Map<String, Integer> storedOrder = new HashMap<>();
+        for (Object[] row : problems.findAllSlugsAndOrders()) {
+            storedOrder.put((String) row[0], (Integer) row[1]);
+        }
+        Map<String, Set<String>> storedTags = new HashMap<>();
+        for (Object[] row : problems.findAllSlugTagPairs()) {
+            storedTags.computeIfAbsent((String) row[0], slug -> new LinkedHashSet<>()).add((String) row[1]);
+        }
 
         int inserted = 0;
         for (SeedProblem item : seed) {
-            Problem existing = bySlug.get(item.slug());
-            if (existing != null) {
+            if (storedOrder.containsKey(item.slug())) {
                 // Content is never overwritten, but the study-path position and the tags (which hold the Striver sheet
                 // memberships) are kept in step with the seed file.
-                if (item.order() != null && !item.order().equals(existing.getSortOrder())) {
-                    existing.setSortOrder(item.order());
+                if (item.order() != null && !item.order().equals(storedOrder.get(item.slug()))) {
+                    problems.updateSortOrder(item.slug(), item.order());
                 }
-                LinkedHashSet<String> wantedTags = new LinkedHashSet<>(item.tags());
-                if (!wantedTags.equals(new LinkedHashSet<>(existing.getTags()))) {
-                    existing.setTags(wantedTags);
+                Set<String> wantedTags = new LinkedHashSet<>(item.tags());
+                if (!wantedTags.equals(storedTags.getOrDefault(item.slug(), Set.of()))) {
+                    problems.findLightBySlug(item.slug()).ifPresent(existing -> existing.setTags(wantedTags));
                 }
                 continue;
             }
@@ -102,7 +109,7 @@ public class DataSeeder implements ApplicationRunner {
                 }
                 problem.addTestCase(new TestCase(position++, tc.input(), tc.expectedOutput(), tc.sample()));
             }
-            bySlug.put(item.slug(), problems.save(problem));
+            problems.save(problem);
             inserted++;
         }
         log.info("Seeded {} new problem(s); {} total", inserted, problems.count());

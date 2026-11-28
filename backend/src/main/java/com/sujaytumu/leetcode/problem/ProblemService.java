@@ -116,12 +116,11 @@ public class ProblemService {
 
     @Transactional(readOnly = true)
     public ProblemDetail detail(String slug, UUID clientId) {
-        Problem problem = problems.findBySlug(slug)
+        Problem problem = problems.findLightBySlug(slug)
                 .orElseThrow(() -> new NotFoundException("Problem not found: " + slug));
         ClientState state = ClientState.load(clientId, submissions, bookmarks);
 
-        List<SampleCase> samples = problem.getTestCases().stream()
-                .filter(TestCase::isSample)
+        List<SampleCase> samples = problems.findSamples(problem.getId()).stream()
                 .map(tc -> new SampleCase(tc.getInput(), tc.getExpectedOutput()))
                 .toList();
 
