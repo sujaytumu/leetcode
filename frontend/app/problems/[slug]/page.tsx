@@ -584,12 +584,12 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
               <Solutions slug={slug} />
             ) : tab === "discuss" ? (
               <>
-                <div className="subhead"><button onClick={() => setTab("desc")}>← Description</button><b>Discuss</b></div>
+                <div className="subhead"><button className="backbtn" onClick={() => setTab("desc")}>← Description</button><b>Discuss</b></div>
                 <Discuss slug={slug} />
               </>
             ) : tab === "notes" ? (
               <>
-                <div className="subhead"><button onClick={() => setTab("desc")}>← Description</button><b>Notes</b></div>
+                <div className="subhead"><button className="backbtn" onClick={() => setTab("desc")}>← Description</button><b>Notes</b></div>
                 <p className="mute" style={{ marginBottom: 6 }}>Private notes for this problem, saved on this device.</p>
                 <textarea className="notes" placeholder="Your approach, mistakes, edge cases to remember…" value={notes}
                   onChange={(e) => { setNotes(e.target.value); localStorage.setItem(`lc-notes:${slug}`, e.target.value); cloud.saveNotes(e.target.value); }} />
@@ -597,7 +597,7 @@ export default function ProblemPage({ params }: { params: Promise<{ slug: string
             ) : (
               openSub ? (
                 <div className="subdetail">
-                  <button className="ghost backlink" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All Submissions</button>
+                  <button className="backbtn" onClick={() => { setOpenSub(null); setDiffWith(""); }}>← All Submissions</button>
                   <div className="subtop">
                     <div>
                       <h3 className={`verdict subverdict ${openSub.verdict}`}>{title(openSub.verdict)}</h3>

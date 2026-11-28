@@ -111,7 +111,7 @@ function Open({ id, onBack, onEdit }: { id: number; onBack: () => void; onEdit: 
 
   return (
     <div className="discuss">
-      <div className="bar" style={{ margin: "0 0 8px" }}><button onClick={onBack}>← All solutions</button></div>
+      <div className="bar" style={{ margin: "0 0 8px" }}><button className="backbtn" onClick={onBack}>← All solutions</button></div>
       {error && <div className="banner err" style={{ margin: "8px 0" }}>{error}</div>}
       {!d && !error && <p className="mute">Loading…</p>}
       {d && (
@@ -157,7 +157,7 @@ function Write({ slug, edit, onDone }: { slug: string; edit?: Detail; onDone: (i
   return (
     <div className="discuss">
       <div className="bar" style={{ margin: "0 0 8px" }}>
-        <button onClick={() => onDone(edit ? edit.id : null)}>← Cancel</button><span className="grow" />
+        <button className="backbtn" onClick={() => onDone(edit ? edit.id : null)}>← Cancel</button><span className="grow" />
         <button className={preview ? "on" : ""} onClick={() => setPreview(!preview)}>{preview ? "Edit" : "Preview"}</button>
       </div>
       <input value={title} maxLength={MAX_TITLE} placeholder="Title, e.g. “One pass with a hash map”" onChange={(e) => setTitle(e.target.value)} style={{ width: "100%", marginBottom: 8 }} />

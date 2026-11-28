@@ -118,3 +118,8 @@ a.daycell:hover { box-shadow:0 8px 18px -12px rgba(0,0,0,.6); }
 .nav-end .plansbtn:hover { color:#1a1206; background:linear-gradient(135deg, var(--accent), var(--brand2)); filter:brightness(1.08); }
 .nav-end .plansbtn.active { color:#1a1206; background:linear-gradient(135deg, var(--accent), var(--brand2)); }
 @media (max-width:700px) { .nav-end .plansbtn { padding:5px 10px; } }
+
+/* in-page back buttons (same look as the page-level Back) */
+button.backbtn { padding:0 14px; }
+.subhead { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.subhead b { font-size:16px; font-weight:800; }
