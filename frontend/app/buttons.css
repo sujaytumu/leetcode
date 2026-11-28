@@ -149,3 +149,18 @@ button.backbtn { padding:0 14px; }
 .pc-share:hover:not(:disabled) { color:var(--accent); border-color:var(--accent); }
 .profilecard .pc-edit { transition:transform .12s, background .15s, box-shadow .15s; }
 .profilecard .pc-edit:hover { transform:translateY(-1px); }
+
+/* ---- problem page: result case chips (green/red), tabs, editor controls ---- */
+.casechips button { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:4px 13px; font-weight:600; transition:background .15s, border-color .15s, transform .12s, box-shadow .15s; }
+.casechips button:hover { transform:translateY(-1px); }
+.caseicon { display:inline-grid; place-items:center; width:17px; height:17px; border-radius:50%; font-size:10px; font-weight:800; color:#fff; }
+.caseicon.ok { background:var(--ok, #2cbb5d); }
+.caseicon.bad { background:var(--bad, #ef4743); }
+.casechips button:has(.caseicon.ok).on { color:var(--ok, #2cbb5d); border-color:var(--ok, #2cbb5d); background:color-mix(in srgb, var(--ok, #2cbb5d) 12%, var(--panel)); box-shadow:0 0 0 3px color-mix(in srgb, var(--ok, #2cbb5d) 14%, transparent); }
+.casechips button:has(.caseicon.bad).on { color:var(--bad, #ef4743); border-color:var(--bad, #ef4743); background:color-mix(in srgb, var(--bad, #ef4743) 12%, var(--panel)); box-shadow:0 0 0 3px color-mix(in srgb, var(--bad, #ef4743) 14%, transparent); }
+.casechips button.on:not(:has(.caseicon)) { color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, var(--panel)); }
+.lctabs button { transition:color .15s, box-shadow .15s; }
+.lctabs button.on { box-shadow:inset 0 -2px 0 var(--accent); }
+.langpick, .sizepick { border-radius:8px; font-weight:600; cursor:pointer; }
+.langpick:hover, .sizepick:hover { border-color:var(--accent); }
+.lcfoot > button, .lcfoot .votes button { border-radius:8px; transition:background .15s, color .15s, transform .1s; }
