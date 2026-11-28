@@ -108,3 +108,13 @@ a.daycell:hover { box-shadow:0 8px 18px -12px rgba(0,0,0,.6); }
 .chip { border-radius:999px; padding:5px 13px; font-size:13px; font-weight:600; background:var(--cell); border:1px solid var(--line); cursor:pointer; transition:transform .12s, background .15s, border-color .15s, box-shadow .15s; }
 .chip:hover { border-color:var(--accent); transform:translateY(-1px); }
 .chip.on { color:var(--accent); border-color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, var(--panel)); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+
+/* ---- header: clearer active link, round icon buttons, Plans pill ---- */
+.nav nav a { border-radius:999px; }
+.nav nav a.active { color:var(--accent); background:color-mix(in srgb, var(--accent) 13%, var(--cell)); font-weight:700; }
+.nav-end .bellbtn, .nav-end .palette-btn, .nav-end > button { border-radius:50%; }
+.nav-end .bellbtn:hover, .nav-end .palette-btn:hover, .nav-end > button:hover:not(:disabled) { background:color-mix(in srgb, var(--accent) 14%, var(--cell)); color:var(--accent); transform:none; }
+.nav-end .plansbtn { border-radius:999px; font-weight:700; color:#1a1206; background:linear-gradient(135deg, var(--accent), var(--brand2)); padding:6px 14px; box-shadow:0 4px 12px -6px color-mix(in srgb, var(--accent) 80%, transparent); }
+.nav-end .plansbtn:hover { color:#1a1206; background:linear-gradient(135deg, var(--accent), var(--brand2)); filter:brightness(1.08); }
+.nav-end .plansbtn.active { color:#1a1206; background:linear-gradient(135deg, var(--accent), var(--brand2)); }
+@media (max-width:700px) { .nav-end .plansbtn { padding:5px 10px; } }
