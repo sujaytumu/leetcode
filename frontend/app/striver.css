@@ -276,3 +276,23 @@
   .sh-cols { background:color-mix(in srgb, var(--text) 4%, var(--panel)); }
 }
 @media (prefers-reduced-motion:reduce) { .sh-group, .sh-row, .sh-bar i, .sh-jump button, .sh-go { transition:none; } }
+
+/* ---- progress card: ring on the right, level tiles beside it ---- */
+.sh-card { display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"top ring" "levels ring"; column-gap:26px; row-gap:14px; align-items:start; }
+.sh-card-top { grid-area:top; }
+.sh-card .sh-levels { grid-area:levels; margin-top:0; align-self:end; }
+.sh-ring { grid-area:ring; position:relative; width:168px; height:168px; align-self:center; }
+.sh-ring circle { transition:stroke-dasharray .5s ease; }
+.sh-ring-fill { filter:drop-shadow(0 0 4px rgba(255,255,255,.12)); }
+.sh-ring-mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05; text-align:center; }
+.sh-ring-mid b { font-size:34px; font-weight:800; letter-spacing:-1px; font-variant-numeric:tabular-nums; }
+.sh-ring-mid small { font-size:13px; font-weight:600; color:var(--mute); margin-top:3px; }
+.sh-ring-mid em { font-style:normal; font-size:11.5px; font-weight:600; color:var(--mute); opacity:.85; margin-top:5px; }
+@media (max-width:700px) {
+  .sh-card { grid-template-areas:"top ring" "levels levels"; column-gap:10px; }
+  .sh-card-top { flex-direction:column; align-items:stretch; }
+  .sh-ring { width:104px; height:104px; }
+  .sh-ring-mid b { font-size:23px; }
+  .sh-ring-mid small { font-size:11px; margin-top:1px; }
+  .sh-ring-mid em { display:none; }
+}

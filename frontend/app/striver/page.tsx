@@ -18,6 +18,32 @@ const ICON = {
 } as const;
 const cap = (d: string) => d[0] + d.slice(1).toLowerCase();
 
+const RING_COLOR = { EASY: "#00b8a3", MEDIUM: "#ffa116", HARD: "#ff375f" } as const;
+/** Overall progress ring: one arc per difficulty (sized by how many problems it has), filled by how many you did. */
+function Ring({ lvl, done, total }: { lvl: { l: "EASY" | "MEDIUM" | "HARD"; n: number; dn: number }[]; done: number; total: number }) {
+  const R = 62, C = 2 * Math.PI * R;
+  const segs = lvl.filter((x) => x.n > 0);
+  const gap = segs.length > 1 ? 5 : 0, usable = C - gap * segs.length;
+  let start = 0;
+  const arcs = segs.map(({ l, n, dn }) => {
+    const len = (usable * n) / total, fill = len * (dn / n), at = start;
+    start += len + gap;
+    return { l, len, fill, at };
+  });
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  return (
+    <div className="sh-ring" role="img" aria-label={`${done} of ${total} done, ${pct} percent`}>
+      <svg viewBox="0 0 150 150" width="100%" height="100%" aria-hidden="true">
+        <g transform="rotate(-90 75 75)" fill="none" strokeWidth="11">
+          {arcs.map((a) => <circle key={`t${a.l}`} cx="75" cy="75" r={R} stroke={RING_COLOR[a.l]} strokeOpacity=".2" strokeDasharray={`${a.len} ${C - a.len}`} strokeDashoffset={-a.at} />)}
+          {arcs.filter((a) => a.fill > 0).map((a) => <circle key={`f${a.l}`} cx="75" cy="75" r={R} stroke={RING_COLOR[a.l]} strokeDasharray={`${a.fill} ${C - a.fill}`} strokeDashoffset={-a.at} className="sh-ring-fill" />)}
+        </g>
+      </svg>
+      <div className="sh-ring-mid"><b>{done}</b><small>/ {total}</small><em>{pct}% done</em></div>
+    </div>
+  );
+}
+
 /** One row of the sheet. Memoised so ticking a problem re-renders that row only, not the whole sheet. */
 const SheetRow = memo(function SheetRow({ p, d, done, mine, onToggle }: { p: ProblemSummary; d: string; done: boolean; mine: boolean; onToggle: (p: ProblemSummary) => void }) {
   const router = useRouter();
@@ -115,6 +141,10 @@ export default function StriverPage() {
     g.total++; if (isDone(p)) g.solved++;
     groupTotals.set(t, g);
   }
+  const lvl = (["EASY", "MEDIUM", "HARD"] as const).map((l) => {
+    const ps = all.filter((x) => x.difficulty === l);
+    return { l, n: ps.length, dn: ps.filter(isDone).length };
+  });
   const chapters = [...groupTotals.keys()].sort(compareTopics);
   const chapterNo = (topic: string) => String(chapters.indexOf(topic) + 1);
   const toggleTopic = (topic: string) => setOpen((prev) => { const n = new Set(prev); if (n.has(topic)) n.delete(topic); else n.add(topic); return n; });
@@ -155,26 +185,17 @@ export default function StriverPage() {
             : <span className="sh-done">All solved 🎉</span>)}
         </div>
         {all.length > 0 && (
-          <div className="sh-prog">
-            <div className="sh-bar" role="progressbar" aria-valuemin={0} aria-valuemax={all.length} aria-valuenow={solved} aria-label="Done on this sheet"><i style={{ width: `${(solved / all.length) * 100}%` }} /></div>
-            <span className="sh-count"><b>{solved}</b> / {all.length} done{all.length > 0 && <> · {Math.round((solved / all.length) * 100)}%</>}</span>
-          </div>
-        )}
-        {all.length > 0 && (
           <div className="sh-levels">
-            {(["EASY", "MEDIUM", "HARD"] as const).map((l) => {
-              const ps = all.filter((x) => x.difficulty === l);
-              const dn = ps.filter(isDone).length;
-              return (
-                <div key={l} className={`sh-lv ${l}`}>
-                  <span>{cap(l)}</span>
-                  <b>{dn}<small> / {ps.length}</small></b>
-                  <div className="sh-bar sm"><i style={{ width: `${ps.length ? (dn / ps.length) * 100 : 0}%` }} /></div>
-                </div>
-              );
-            })}
+            {lvl.map(({ l, n, dn }) => (
+              <div key={l} className={`sh-lv ${l}`}>
+                <span>{cap(l)}</span>
+                <b>{dn}<small> / {n}</small></b>
+                <div className="sh-bar sm"><i style={{ width: `${n ? (dn / n) * 100 : 0}%` }} /></div>
+              </div>
+            ))}
           </div>
         )}
+        {all.length > 0 && <Ring lvl={lvl} done={solved} total={all.length} />}
       </section>
 
       {all.length > 0 && (
