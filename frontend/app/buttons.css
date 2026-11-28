@@ -164,3 +164,12 @@ button.backbtn { padding:0 14px; }
 .langpick, .sizepick { border-radius:8px; font-weight:600; cursor:pointer; }
 .langpick:hover, .sizepick:hover { border-color:var(--accent); }
 .lcfoot > button, .lcfoot .votes button { border-radius:8px; transition:background .15s, color .15s, transform .1s; }
+
+/* ---- phone bottom bar: top indicator on the active tab, softer press ---- */
+@media (max-width:900px) {
+  .mtabs a, .mtabs button { position:relative; transition:color .15s, background .15s; }
+  .mtabs a.on::before, .mtabs button.on::before { content:""; position:absolute; top:-8px; left:32%; right:32%; height:3px; border-radius:0 0 4px 4px; background:var(--accent); }
+  .mtabs a.on, .mtabs button.on { font-weight:700; }
+  .msheet-grid a { border-radius:14px; transition:background .15s, transform .12s; }
+  .msheet-grid a.on { color:var(--accent); background:color-mix(in srgb, var(--accent) 13%, var(--cell)); }
+}
