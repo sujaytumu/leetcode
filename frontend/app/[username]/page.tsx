@@ -7,6 +7,7 @@ import OwnProfile from "@/app/profile/page";
 import ProfileLayout from "@/components/ProfileLayout";
 import Skeleton from "@/components/Skeleton";
 import { api, PublicProfile, publicProfilePath } from "@/lib/api";
+import { swr } from "@/lib/local";
 
 /** Someone's public profile, addressed by the username they chose. Same layout as your own, read-only, with Follow. */
 export default function PublicProfilePage() {
@@ -17,7 +18,8 @@ export default function PublicProfilePage() {
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(() => {
-    api<PublicProfile>(publicProfilePath(name)).then((d) => { setData(d); setError(""); }).catch((e: Error) => setError(e.message));
+    // Saved copy first, then the live one (retrying while the server wakes).
+    swr<PublicProfile>(publicProfilePath(name), (d) => { setData(d); setError(""); }, () => {}).catch((e: Error) => setError(e.message));
   }, [name]);
   useEffect(() => { setData(null); load(); }, [load]);
 

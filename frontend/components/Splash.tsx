@@ -6,8 +6,8 @@ type Phase = "show" | "fade" | "done";
 
 /**
  * Full-screen loading page, separate from the app. It is part of the very first paint (server-rendered), so the app
- * never shows a half-loaded state underneath. It goes away as soon as the server answers; a sleeping free-tier server
- * can take a minute, so after a while it explains what is happening.
+ * never shows a half-loaded state underneath. It goes away as soon as the server answers, or after 1.2 seconds, so a
+ * sleeping free-tier server never blocks the app.
  */
 export default function Splash() {
   const [phase, setPhase] = useState<Phase>("show");
@@ -20,6 +20,14 @@ export default function Splash() {
     let stop = false;
     const slowTimer = setTimeout(() => { if (!stop) setSlow(true); }, 6000);
     const started = Date.now();
+    // Never hold the app back for the server: pages have cached or bundled data and retry on their own.
+    const open = () => {
+      if (stop) return;
+      clearTimeout(slowTimer);
+      try { localStorage.setItem("lc-warm", "1"); } catch { /* storage blocked: splash simply shows next time */ }
+      setPhase("fade");
+    };
+    const cap = setTimeout(open, 1200);
     const up = async () => {
       const ctl = new AbortController();
       // A request to a sleeping server can hang; cut it and try again instead of waiting on a dead socket.
@@ -34,12 +42,9 @@ export default function Splash() {
         if (Date.now() - started > 90000) break; // give up waiting; the pages show their own retry messages
         await new Promise((r) => setTimeout(r, 1000));
       }
-      if (stop) return;
-      clearTimeout(slowTimer);
-      try { localStorage.setItem("lc-warm", "1"); } catch { /* storage blocked: splash simply shows next time */ }
-      setPhase("fade");
+      open();
     })();
-    return () => { stop = true; clearTimeout(slowTimer); };
+    return () => { stop = true; clearTimeout(slowTimer); clearTimeout(cap); };
   }, []);
 
   useEffect(() => {

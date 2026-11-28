@@ -28,5 +28,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+# The host checks /actuator/health every few seconds. Querying the database there would stop Neon from ever
+# suspending (using up its free compute hours), now that the app stays awake.
+management:
+  health:
+    db:
+      enabled: false
+
 server:
   forward-headers-strategy: framework

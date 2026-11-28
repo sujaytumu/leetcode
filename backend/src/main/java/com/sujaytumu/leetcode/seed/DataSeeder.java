@@ -9,6 +9,7 @@ import com.sujaytumu.leetcode.problem.ProblemRepository;
 import com.sujaytumu.leetcode.problem.TestCase;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +70,13 @@ public class DataSeeder implements ApplicationRunner {
             seed = objectMapper.readValue(in, new TypeReference<>() {});
         }
 
+        // Read every existing problem at once: one query per slug (with its test cases) made each start-up slow.
+        Map<String, Problem> bySlug = new HashMap<>();
+        problems.findAll().forEach(p -> bySlug.put(p.getSlug(), p));
+
         int inserted = 0;
         for (SeedProblem item : seed) {
-            Problem existing = problems.findBySlug(item.slug()).orElse(null);
+            Problem existing = bySlug.get(item.slug());
             if (existing != null) {
                 // Content is never overwritten, but the study-path position and the tags (which hold the Striver sheet
                 // memberships) are kept in step with the seed file.
@@ -97,7 +102,7 @@ public class DataSeeder implements ApplicationRunner {
                 }
                 problem.addTestCase(new TestCase(position++, tc.input(), tc.expectedOutput(), tc.sample()));
             }
-            problems.save(problem);
+            bySlug.put(item.slug(), problems.save(problem));
             inserted++;
         }
         log.info("Seeded {} new problem(s); {} total", inserted, problems.count());
