@@ -133,3 +133,19 @@ button.backbtn { padding:0 14px; }
 .me-row td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
 .tscroll table tbody tr:nth-child(-n+3) td:first-child { font-weight:800; color:var(--accent); }
 @media (prefers-reduced-motion:reduce) { .card.topic, .card.rec { transition:none; } .card.topic:hover, .card.rec:hover { transform:none; } }
+
+/* ---- profile: tabs, rows, actions ---- */
+.ptab-bar { scrollbar-width:none; }
+.ptab-bar::-webkit-scrollbar { display:none; }
+.ptab-bar button { font-weight:600; transition:color .15s, background .15s; }
+.ptab-bar button:hover:not(.on) { color:var(--text); background:color-mix(in srgb, var(--text) 5%, transparent); }
+.ptab-bar button.on { color:var(--accent); border-bottom-color:var(--accent); background:color-mix(in srgb, var(--accent) 10%, var(--cell)); }
+.prow { transition:background .15s, transform .12s; }
+.prow:hover { filter:none; background:color-mix(in srgb, var(--accent) 9%, var(--cell)); }
+.prow:active { transform:scale(.995); }
+.prow-all, .pc-public { display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--accent); }
+.prow-all:hover, .pc-public:hover { text-decoration:underline; text-underline-offset:3px; }
+.pc-share { border-radius:12px; }
+.pc-share:hover:not(:disabled) { color:var(--accent); border-color:var(--accent); }
+.profilecard .pc-edit { transition:transform .12s, background .15s, box-shadow .15s; }
+.profilecard .pc-edit:hover { transform:translateY(-1px); }
