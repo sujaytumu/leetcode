@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/BackLink";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -38,7 +39,7 @@ export default function PublicProfilePage() {
       <section className="card authcard">
         <h3 style={{ marginTop: 0 }}>Profile not found</h3>
         <p className="mute">{error}</p>
-        <Link href="/leaderboard">Back to the leaderboard</Link>
+        <BackLink fallback="/leaderboard" />
       </section>
     );
   }

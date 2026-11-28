@@ -4,6 +4,7 @@ import "./globals.css";
 import "./polish.css";
 import "./striver.css";
 import "./verdicts.css";
+import "./buttons.css";
 import Link from "next/link";
 import type { Metadata, Viewport } from "next";
 import ThemeToggle from "@/components/ThemeToggle";

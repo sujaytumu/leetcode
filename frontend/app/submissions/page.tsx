@@ -1,6 +1,7 @@
 "use client";
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
+import BackLink from "@/components/BackLink";
 import { useEffect, useState } from "react";
 import { type Page } from "@/lib/api";
 import Skeleton from "@/components/Skeleton";
@@ -41,7 +42,7 @@ export default function SubmissionsPage() {
           <h2>My submissions</h2>
           {data && <p className="mute">{data.totalElements} {verdict ? label(verdict).toLowerCase() : "in total"}</p>}
         </div>
-        <Link className="sb-back" href="/profile">← Profile</Link>
+        <BackLink fallback="/profile" />
       </div>
       <div className="sb-chips" role="tablist" aria-label="Filter by status">
         <button type="button" role="tab" aria-selected={verdict === ""} className={verdict === "" ? "on" : ""} onClick={() => { setVerdict(""); setPage(0); }}>All</button>

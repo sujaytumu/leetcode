@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/BackLink";
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -125,7 +126,7 @@ export default function StatsPage() {
     <>
       <div className="bar" style={{ marginBottom: 10 }}>
         <h2 style={{ margin: 0 }}>My stats</h2><span className="grow" />
-        <Link href="/submissions">All submissions</Link> · <Link href="/profile">← Profile</Link>
+        <Link href="/submissions" className="softlink">All submissions</Link><BackLink fallback="/profile" />
       </div>
       <div className="cards">
         <div className="card"><span className="mute">Submissions</span><b>{s.total}</b></div>

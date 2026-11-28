@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/BackLink";
 import { usePageTitle } from "@/lib/usePageTitle";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -88,7 +89,7 @@ export default function AccountPage() {
       <p className="mute" style={{ margin: "0 0 8px", fontSize: 13 }}>Lost a phone or used a shared computer? Sign out everywhere else. You stay signed in here.</p>
       <button type="button" onClick={signOutOthers} disabled={busy}>Sign out other devices</button>
       <div className="bar" style={{ marginTop: 16 }}>
-        <Link href="/profile">← Profile</Link><span className="grow" />
+        <BackLink fallback="/profile" /><span className="grow" />
         <button type="button" onClick={() => { clearSession(); window.location.href = "/"; }}>Log out</button>
       </div>
     </section>

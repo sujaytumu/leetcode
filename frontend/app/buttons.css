@@ -1,0 +1,42 @@
+/* ---- one calm button system: same radius, weight, press and focus everywhere; Back buttons ---- */
+:root { --r-btn:10px; }
+
+button, input[type="submit"], .btn { border-radius:var(--r-btn); font-weight:600; }
+input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], input[type="url"], select { min-height:38px; border-radius:var(--r-btn); }
+button:active:not(:disabled), .btn:active { transform:scale(.97); }
+button:disabled { opacity:.55; cursor:not-allowed; }
+:is(a, button, summary, [role="tab"], [role="menuitem"]):focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+:is(button, input, select, textarea):focus-visible { outline:none; } /* fields draw their own ring */
+
+/* main call-to-action: warm gradient from the start (hover only brightens), soft shadow */
+button.primary { font-weight:700; border-color:transparent; color:#1a1206;
+  background:linear-gradient(135deg, var(--accent), var(--brand2)); box-shadow:0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent); }
+button.primary:hover:not(:disabled) { filter:brightness(1.07); box-shadow:0 10px 22px -10px color-mix(in srgb, var(--accent) 85%, transparent); transform:translateY(-1px); }
+button.primary:active:not(:disabled) { transform:scale(.97); }
+
+/* a link that looks like a quiet button */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:0 16px; font-size:14px; color:var(--text); background:var(--cell); border:1px solid var(--line); cursor:pointer; text-decoration:none; transition:border-color .15s, transform .12s, background .15s; }
+.btn:hover { border-color:var(--accent); transform:translateY(-1px); }
+.softlink { font-size:13px; font-weight:600; color:var(--mute); padding:6px 4px; }
+.softlink:hover { color:var(--text); }
+
+/* Back: returns to the page you came from */
+.backbtn { display:inline-flex; align-items:center; gap:4px; min-height:34px; padding:0 14px 0 8px; border-radius:999px; font-size:13px; font-weight:700; color:var(--text); text-decoration:none; cursor:pointer;
+  background:var(--cell); border:1px solid var(--line); transition:transform .12s, border-color .15s, background .15s, color .15s; }
+.backbtn svg { flex:none; transition:transform .15s; }
+.backbtn:hover { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 10%, var(--cell)); }
+.backbtn:hover svg { transform:translateX(-2px); }
+.backbtn:active { transform:scale(.96); }
+.nf-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+
+/* page headers share one rhythm */
+main > h2:first-child, main > .bar > h2:first-child { font-size:24px; font-weight:800; letter-spacing:-.3px; line-height:1.2; }
+main > .bar { gap:10px; flex-wrap:wrap; }
+.filters { gap:10px; }
+
+@media (max-width:700px) {
+  button.primary { min-height:44px; }
+  .backbtn, .btn { min-height:40px; }
+  input:not([type]), input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="number"], select { min-height:42px; }
+}
+@media (prefers-reduced-motion:reduce) { button:active:not(:disabled), .btn, .backbtn, .backbtn svg, button.primary { transition:none; transform:none !important; } }
