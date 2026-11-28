@@ -10,6 +10,7 @@ import "../striver.css";
 
 const SHEET_KEY = "lc-striver-sheet";
 const TICK_KEY = "lc-striver-done";
+const UNTICK_KEY = "lc-striver-undone";
 const ICON = {
   SOLVED: <span className="st-done" title="Solved" aria-label="Solved">✔</span>,
   ATTEMPTED: <span className="st-att" title="Attempted" aria-label="Attempted" />,
@@ -18,13 +19,13 @@ const ICON = {
 const cap = (d: string) => d[0] + d.slice(1).toLowerCase();
 
 /** One row of the sheet. Memoised so ticking a problem re-renders that row only, not the whole sheet. */
-const SheetRow = memo(function SheetRow({ p, d, done, ticked, onToggle }: { p: ProblemSummary; d: string; done: boolean; ticked: boolean; onToggle: (slug: string) => void }) {
+const SheetRow = memo(function SheetRow({ p, d, done, mine, onToggle }: { p: ProblemSummary; d: string; done: boolean; mine: boolean; onToggle: (p: ProblemSummary) => void }) {
   const router = useRouter();
   const warm = (slug: string) => { prefetchProblem(slug); router.prefetch(`/problems/${slug}?lang=cpp`); };
   return (
     <li className={`sh-row ${d}`}>
-                          <label className={`sh-check${p.status === "ATTEMPTED" && !done ? " att" : ""}`} title={p.status === "SOLVED" ? "Solved by a submission" : ticked ? "Marked done (tap to undo)" : "Mark as done"}>
-                            <input type="checkbox" checked={done} disabled={p.status === "SOLVED"} onChange={() => onToggle(p.slug)} aria-label={`Mark ${p.title} as done`} />
+                          <label className={`sh-check${p.status === "ATTEMPTED" && !done ? " att" : ""}`} title={done ? (p.status === "SOLVED" && !mine ? "Done from your solved history (tap to untick)" : "Marked done (tap to undo)") : "Mark as done"}>
+                            <input type="checkbox" checked={done} onChange={() => onToggle(p)} aria-label={`Mark ${p.title} as done`} />
                             <i aria-hidden="true" />
                           </label>
                           <Link prefetch={false} className="sh-title" href={`/problems/${p.slug}?lang=cpp`} onPointerEnter={() => warm(p.slug)} onTouchStart={() => warm(p.slug)}>{p.number ?? p.id}. {p.title}</Link>
@@ -52,6 +53,7 @@ export default function StriverPage() {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<Set<string>>(new Set()); // topics you expanded; all start collapsed
   const [ticked, setTicked] = useState<Set<string>>(new Set()); // problems you ticked by hand, kept on this device
+  const [unticked, setUnticked] = useState<Set<string>>(new Set()); // solved problems you chose to untick, kept on this device
 
   // Which sheet: ?sheet=a2z|sde from a link, else the one you used last time.
   useEffect(() => {
@@ -63,16 +65,18 @@ export default function StriverPage() {
 
   useEffect(() => {
     try { const raw = localStorage.getItem(TICK_KEY); if (raw) setTicked(new Set(JSON.parse(raw) as string[])); } catch { /* storage blocked */ }
+    try { const raw = localStorage.getItem(UNTICK_KEY); if (raw) setUnticked(new Set(JSON.parse(raw) as string[])); } catch { /* storage blocked */ }
   }, []);
-  const toggleTick = useCallback((slug: string) => {
-    setTicked((prev) => {
-      const next = new Set(prev);
-      if (next.has(slug)) next.delete(slug); else next.add(slug);
-      try { localStorage.setItem(TICK_KEY, JSON.stringify([...next])); } catch { /* storage blocked */ }
-      return next;
-    });
-  }, []);
-  const isDone = (p: ProblemSummary) => p.status === "SOLVED" || ticked.has(p.slug);
+  /** Your own choice wins; with none, a problem you have solved starts ticked. */
+  const isDone = (p: ProblemSummary) => ticked.has(p.slug) || (p.status === "SOLVED" && !unticked.has(p.slug));
+  const toggleTick = useCallback((p: ProblemSummary) => {
+    const wasDone = ticked.has(p.slug) || (p.status === "SOLVED" && !unticked.has(p.slug));
+    const on = new Set(ticked), off = new Set(unticked);
+    if (wasDone) { on.delete(p.slug); if (p.status === "SOLVED") off.add(p.slug); }
+    else { off.delete(p.slug); if (p.status !== "SOLVED") on.add(p.slug); }
+    setTicked(on); setUnticked(off);
+    try { localStorage.setItem(TICK_KEY, JSON.stringify([...on])); localStorage.setItem(UNTICK_KEY, JSON.stringify([...off])); } catch { /* storage blocked */ }
+  }, [ticked, unticked]);
 
   useEffect(() => {
     swr<{ tag: string; total: number }[]>("/api/topics", (t) => setTotals(new Map(t.map((x) => [x.tag, x.total]))), () => {}).catch(() => {});
@@ -216,7 +220,7 @@ export default function StriverPage() {
                     <div className={`sh-level ${d}`}><b>{cap(d)}</b><span>{done}/{part.length}</span></div>
                     <ul className="sh-sublist">
                       {part.map((p) => (
-                        <SheetRow key={p.id} p={p} d={d} done={isDone(p)} ticked={ticked.has(p.slug)} onToggle={toggleTick} />
+                        <SheetRow key={p.id} p={p} d={d} done={isDone(p)} mine={ticked.has(p.slug)} onToggle={toggleTick} />
                       ))}
                     </ul>
                   </li>

@@ -226,3 +226,53 @@
   .sh-group summary { padding:14px 12px; font-size:15.5px; }
   .sh-group { margin-bottom:8px; }
 }
+
+/* ---- polish pass: depth, softer surfaces, clearer actions ---- */
+.sh-head h1 { font-size:28px; font-weight:800; letter-spacing:-.5px; }
+.sh-tabs button { transition:background .15s, border-color .15s, color .15s, transform .1s; font-weight:600; }
+.sh-tabs button:active { transform:scale(.98); }
+.sh-tabs button.on { box-shadow:0 0 0 3px color-mix(in srgb, #ffa116 18%, transparent); }
+
+.sh-card { position:relative; overflow:hidden; border-radius:18px; padding:16px 18px; box-shadow:0 8px 28px -14px rgba(0,0,0,.45);
+  background:radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, #ffa116 11%, var(--panel)) 0%, var(--panel) 55%); }
+.sh-card h2 { font-size:19px; font-weight:800; letter-spacing:-.2px; }
+.sh-bar { height:10px; background:color-mix(in srgb, var(--text) 9%, transparent); }
+.sh-bar i { background:linear-gradient(90deg, #2cbb5d, #5ae38a); box-shadow:0 0 12px color-mix(in srgb, #2cbb5d 55%, transparent); }
+.sh-bar.sm { height:5px; }
+.sh-bar.sm i { box-shadow:none; }
+.sh-go { box-shadow:0 6px 18px -6px color-mix(in srgb, #ffa116 70%, transparent); transition:transform .12s, filter .15s; }
+.sh-go:hover { transform:translateY(-1px); }
+.sh-lv { border-radius:12px; background:color-mix(in srgb, var(--text) 4%, var(--panel)); }
+
+.sh-filters input { border-radius:10px; }
+.sh-jump button { transition:border-color .15s, transform .12s, background .15s; }
+.sh-jump button:hover { transform:translateY(-1px); background:color-mix(in srgb, #ffa116 10%, var(--cell)); }
+
+.sh-group { border-radius:16px; box-shadow:0 1px 0 rgba(255,255,255,.02), 0 6px 20px -16px rgba(0,0,0,.6); transition:border-color .2s, box-shadow .2s; }
+.sh-group:hover { border-color:color-mix(in srgb, #ffa116 40%, var(--line)); }
+.sh-group[open] { border-color:color-mix(in srgb, #ffa116 55%, var(--line)); box-shadow:0 10px 30px -18px rgba(0,0,0,.7); }
+.sh-group summary { min-height:60px; }
+.sh-group:not([open]) summary::after, .sh-group[open] summary::after { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; font-size:20px; margin-left:6px;
+  background:color-mix(in srgb, var(--text) 9%, transparent); transition:background .15s, color .15s; }
+.sh-group summary:hover::after { background:#ffa116; color:#1a1a1a; }
+.sh-gcount { font-variant-numeric:tabular-nums; }
+
+.sh-list { border-top:0; }
+.sh-row { transition:background .12s; border-left-width:3px; }
+.sh-row:hover { background:color-mix(in srgb, #ffa116 6%, var(--panel)); }
+.sh-row:has(input:checked) { background:color-mix(in srgb, #2cbb5d 5%, var(--panel)); }
+.sh-row:has(input:checked) .sh-title { color:var(--mute); }
+.sh-diff { padding:3px 10px; border-radius:999px; font-size:12px; text-align:center; }
+.sh-diff.EASY { background:color-mix(in srgb, var(--easy) 14%, transparent); }
+.sh-diff.MEDIUM { background:color-mix(in srgb, var(--med) 14%, transparent); }
+.sh-diff.HARD { background:color-mix(in srgb, var(--hard) 14%, transparent); }
+.sh-check i { transition:background .15s, border-color .15s, transform .15s; }
+.sh-check:hover i { border-color:#2cbb5d; }
+.sh-check input:checked + i { transform:scale(1.06); box-shadow:0 0 0 3px color-mix(in srgb, #2cbb5d 22%, transparent); }
+@media (min-width:901px) {
+  .sh-solve { background:#ffa116; color:#1a1a1a; border-color:#ffa116; }
+  .sh-solve:hover { filter:brightness(1.08); color:#1a1a1a; }
+  .sh-sol:hover { background:color-mix(in srgb, #ffa116 10%, var(--cell)); }
+  .sh-cols { background:color-mix(in srgb, var(--text) 4%, var(--panel)); }
+}
+@media (prefers-reduced-motion:reduce) { .sh-group, .sh-row, .sh-bar i, .sh-jump button, .sh-go { transition:none; } }
