@@ -21,19 +21,19 @@
 .striverbar-go { font-weight:700; font-size:14px; color:#ffa116; white-space:nowrap; }
 
 /* ---- /striver page ---- */
-.sh { max-width:860px; margin:0 auto; padding:16px 16px 96px; }
+.sh { --acc:#ffa116; max-width:860px; margin:0 auto; padding:16px 16px 96px; }
 .sh-head h1 { font-size:24px; margin:4px 0 4px; }
 .sh-head p { margin:0 0 14px; font-size:14px; }
 .sh-tabs { display:flex; gap:8px; margin-bottom:12px; }
 .sh-tabs button { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:8px 12px; border-radius:12px; font-size:15px;
   background:var(--cell); border:1px solid transparent; color:var(--mute); cursor:pointer; }
-.sh-tabs button.on { color:var(--text); background:color-mix(in srgb, #ffa116 16%, var(--cell)); border-color:#ffa116; }
+.sh-tabs button.on { color:var(--text); background:color-mix(in srgb, var(--acc) 16%, var(--cell)); border-color:var(--acc); }
 .sh-n { font-size:12px; font-weight:600; padding:1px 8px; border-radius:999px; background:color-mix(in srgb, var(--text) 12%, transparent); }
 .sh-card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
 .sh-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
 .sh-card h2 { font-size:17px; margin:0 0 2px; }
 .sh-card p { margin:0; font-size:13.5px; }
-.sh-go { flex:none; align-self:center; padding:9px 16px; border-radius:999px; font-weight:700; font-size:14px; text-decoration:none; background:#ffa116; color:#1a1a1a; white-space:nowrap; }
+.sh-go { flex:none; align-self:center; padding:9px 16px; border-radius:999px; font-weight:700; font-size:14px; text-decoration:none; background:var(--acc); color:#1a1a1a; white-space:nowrap; }
 .sh-go:hover { filter:brightness(1.08); }
 .sh-done { flex:none; align-self:center; font-weight:700; font-size:14px; color:#2cbb5d; white-space:nowrap; }
 .sh-prog { display:flex; align-items:center; gap:12px; margin-top:12px; }
@@ -66,7 +66,7 @@
 .sh-row:hover { background:var(--hover, var(--cell)); }
 .sh-levelwrap:last-child .sh-sublist .sh-row:last-child { border-bottom:0; }
 .sh-title { color:var(--text); text-decoration:none; font-size:14.5px; line-height:1.35; overflow-wrap:anywhere; }
-.sh-title:hover { color:#ffa116; }
+.sh-title:hover { color:var(--acc); }
 .sh-st { display:inline-flex; justify-content:center; }
 .sh-diff { font-size:13px; font-weight:600; white-space:nowrap; }
 .sh-diff.EASY { color:var(--easy); } .sh-diff.MEDIUM { color:var(--med); } .sh-diff.HARD { color:var(--hard); }
@@ -93,11 +93,11 @@
 .sh-check { position:relative; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; cursor:pointer; }
 .sh-check input { position:absolute; inset:-8px; width:38px; height:38px; margin:0; opacity:0; cursor:pointer; }
 .sh-check i { width:20px; height:20px; border-radius:6px; border:2px solid var(--mute); background:transparent; display:grid; place-items:center; transition:background .15s, border-color .15s; pointer-events:none; }
-.sh-check.att i { border-color:#ffa116; }
+.sh-check.att i { border-color:var(--acc); }
 .sh-check input:checked + i { background:#2cbb5d; border-color:#2cbb5d; }
 .sh-check input:checked + i::after { content:""; width:5px; height:10px; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:rotate(45deg) translate(-1px,-1px); }
 .sh-check input:disabled { cursor:default; }
-.sh-check input:focus-visible + i { outline:2px solid #ffa116; outline-offset:2px; }
+.sh-check input:focus-visible + i { outline:2px solid var(--acc); outline-offset:2px; }
 .sh-row:has(input:checked) .sh-title { color:var(--mute); }
 
 /* ---- laptop: a Striver-sheet style table (Done | Problem | Level | Question | Answer) ---- */
@@ -116,7 +116,7 @@
   .sh-check i { border-radius:7px; }
   .sh-check input:checked + i::after { width:6px; height:12px; }
   .sh-btn { min-height:34px; padding:0 12px; border:1px solid var(--line); background:var(--cell); color:var(--text); }
-  .sh-btn:hover { border-color:#ffa116; color:#ffa116; }
+  .sh-btn:hover { border-color:var(--acc); color:var(--acc); }
   .sh-solve { display:inline-flex; }
   .sh-sol span { display:inline; }
   .sh-sol { color:var(--text); }
@@ -137,7 +137,7 @@
 .sh-lv small { font-size:13px; font-weight:500; color:var(--mute); }
 .sh-bar.sm { height:5px; margin-top:2px; }
 .sh-lv.EASY span, .sh-lv.EASY .sh-bar i { color:#00b8a3; background-color:#00b8a3; }
-.sh-lv.MEDIUM span, .sh-lv.MEDIUM .sh-bar i { color:#ffa116; background-color:#ffa116; }
+.sh-lv.MEDIUM span, .sh-lv.MEDIUM .sh-bar i { color:var(--acc); background-color:var(--acc); }
 .sh-lv.HARD span, .sh-lv.HARD .sh-bar i { color:#ff375f; background-color:#ff375f; }
 .sh-lv span { background:none !important; }
 @media (max-width:480px) { .sh-lv { padding:8px 9px; } .sh-lv b { font-size:17px; } }
@@ -177,13 +177,13 @@
 .sh-jump::-webkit-scrollbar { display:none; }
 .sh-jump button { flex:none; display:inline-flex; align-items:center; gap:7px; height:32px; padding:0 12px 0 8px; border-radius:999px; font-size:13px; font-weight:600; color:var(--text);
   background:var(--cell); border:1px solid var(--line); cursor:pointer; }
-.sh-jump button b { font-size:11px; font-weight:800; color:#ffa116; font-variant-numeric:tabular-nums; }
-.sh-jump button:hover { border-color:#ffa116; }
+.sh-jump button b { font-size:11px; font-weight:800; color:var(--acc); font-variant-numeric:tabular-nums; }
+.sh-jump button:hover { border-color:var(--acc); }
 
-.sh-group { margin:0 0 24px; border-radius:16px; border-top:3px solid #ffa116; scroll-margin-top:72px; }
+.sh-group { margin:0 0 24px; border-radius:16px; border-top:3px solid var(--acc); scroll-margin-top:72px; }
 .sh-group summary { gap:14px; padding:16px 20px; font-size:inherit;
-  background:linear-gradient(90deg, color-mix(in srgb, #ffa116 12%, var(--panel)), var(--panel) 75%); }
-.sh-gnum { flex:none; min-width:40px; font-size:30px; font-weight:800; line-height:1; letter-spacing:-1px; color:#ffa116; font-variant-numeric:tabular-nums; }
+  background:linear-gradient(90deg, color-mix(in srgb, var(--acc) 12%, var(--panel)), var(--panel) 75%); }
+.sh-gnum { flex:none; min-width:40px; font-size:30px; font-weight:800; line-height:1; letter-spacing:-1px; color:var(--acc); font-variant-numeric:tabular-nums; }
 .sh-gname { display:flex; flex-direction:column; gap:3px; font-size:21px; font-weight:800; letter-spacing:-.3px; line-height:1.15; }
 .sh-gname small { font-size:10.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--mute); opacity:.8; }
 .sh-gmeta { display:inline-flex; align-items:center; gap:10px; flex:none; }
@@ -221,7 +221,7 @@
 .sh-group[open] summary::after { content:"\2212"; }
 .sh-group[open] summary { border-bottom:1px solid var(--line); }
 .sh-expand { margin-left:auto; height:34px; padding:0 14px; border-radius:10px; font-size:13px; font-weight:600; color:var(--text); background:var(--cell); border:1px solid var(--line); cursor:pointer; white-space:nowrap; }
-.sh-expand:hover { border-color:#ffa116; color:#ffa116; }
+.sh-expand:hover { border-color:var(--acc); color:var(--acc); }
 .sh-jump button b::after { content:"."; }
 @media (max-width:700px) {
   .sh-group summary { padding:14px 12px; font-size:15.5px; }
@@ -232,35 +232,35 @@
 .sh-head h1 { font-size:28px; font-weight:800; letter-spacing:-.5px; }
 .sh-tabs button { transition:background .15s, border-color .15s, color .15s, transform .1s; font-weight:600; }
 .sh-tabs button:active { transform:scale(.98); }
-.sh-tabs button.on { box-shadow:0 0 0 3px color-mix(in srgb, #ffa116 18%, transparent); }
+.sh-tabs button.on { box-shadow:0 0 0 3px color-mix(in srgb, var(--acc) 18%, transparent); }
 
 .sh-card { position:relative; overflow:hidden; border-radius:18px; padding:16px 18px; box-shadow:0 8px 28px -14px rgba(0,0,0,.45);
-  background:radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, #ffa116 11%, var(--panel)) 0%, var(--panel) 55%); }
+  background:radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--acc) 11%, var(--panel)) 0%, var(--panel) 55%); }
 .sh-card h2 { font-size:19px; font-weight:800; letter-spacing:-.2px; }
 .sh-bar { height:10px; background:color-mix(in srgb, var(--text) 9%, transparent); }
 .sh-bar i { background:linear-gradient(90deg, #2cbb5d, #5ae38a); box-shadow:0 0 12px color-mix(in srgb, #2cbb5d 55%, transparent); }
 .sh-bar.sm { height:5px; }
 .sh-bar.sm i { box-shadow:none; }
-.sh-go { box-shadow:0 6px 18px -6px color-mix(in srgb, #ffa116 70%, transparent); transition:transform .12s, filter .15s; }
+.sh-go { box-shadow:0 6px 18px -6px color-mix(in srgb, var(--acc) 70%, transparent); transition:transform .12s, filter .15s; }
 .sh-go:hover { transform:translateY(-1px); }
 .sh-lv { border-radius:12px; background:color-mix(in srgb, var(--text) 4%, var(--panel)); }
 
 .sh-filters input { border-radius:10px; }
 .sh-jump button { transition:border-color .15s, transform .12s, background .15s; }
-.sh-jump button:hover { transform:translateY(-1px); background:color-mix(in srgb, #ffa116 10%, var(--cell)); }
+.sh-jump button:hover { transform:translateY(-1px); background:color-mix(in srgb, var(--acc) 10%, var(--cell)); }
 
 .sh-group { border-radius:16px; box-shadow:0 1px 0 rgba(255,255,255,.02), 0 6px 20px -16px rgba(0,0,0,.6); transition:border-color .2s, box-shadow .2s; }
-.sh-group:hover { border-color:color-mix(in srgb, #ffa116 40%, var(--line)); }
-.sh-group[open] { border-color:color-mix(in srgb, #ffa116 55%, var(--line)); box-shadow:0 10px 30px -18px rgba(0,0,0,.7); }
+.sh-group:hover { border-color:color-mix(in srgb, var(--acc) 40%, var(--line)); }
+.sh-group[open] { border-color:color-mix(in srgb, var(--acc) 55%, var(--line)); box-shadow:0 10px 30px -18px rgba(0,0,0,.7); }
 .sh-group summary { min-height:60px; }
 .sh-group:not([open]) summary::after, .sh-group[open] summary::after { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; font-size:20px; margin-left:6px;
   background:color-mix(in srgb, var(--text) 9%, transparent); transition:background .15s, color .15s; }
-.sh-group summary:hover::after { background:#ffa116; color:#1a1a1a; }
+.sh-group summary:hover::after { background:var(--acc); color:#1a1a1a; }
 .sh-gcount { font-variant-numeric:tabular-nums; }
 
 .sh-list { border-top:0; }
 .sh-row { transition:background .12s; border-left-width:3px; }
-.sh-row:hover { background:color-mix(in srgb, #ffa116 6%, var(--panel)); }
+.sh-row:hover { background:color-mix(in srgb, var(--acc) 6%, var(--panel)); }
 .sh-row:has(input:checked) { background:color-mix(in srgb, #2cbb5d 5%, var(--panel)); }
 .sh-row:has(input:checked) .sh-title { color:var(--mute); }
 .sh-diff { padding:3px 10px; border-radius:999px; font-size:12px; text-align:center; }
@@ -271,9 +271,9 @@
 .sh-check:hover i { border-color:#2cbb5d; }
 .sh-check input:checked + i { transform:scale(1.06); box-shadow:0 0 0 3px color-mix(in srgb, #2cbb5d 22%, transparent); }
 @media (min-width:901px) {
-  .sh-solve { background:#ffa116; color:#1a1a1a; border-color:#ffa116; }
+  .sh-solve { background:var(--acc); color:#1a1a1a; border-color:var(--acc); }
   .sh-solve:hover { filter:brightness(1.08); color:#1a1a1a; }
-  .sh-sol:hover { background:color-mix(in srgb, #ffa116 10%, var(--cell)); }
+  .sh-sol:hover { background:color-mix(in srgb, var(--acc) 10%, var(--cell)); }
   .sh-cols { background:color-mix(in srgb, var(--text) 4%, var(--panel)); }
 }
 @media (prefers-reduced-motion:reduce) { .sh-group, .sh-row, .sh-bar i, .sh-jump button, .sh-go { transition:none; } }
@@ -302,3 +302,27 @@
 .sh-tabs button { min-width:0; }
 .sh-tabs button b { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 @media (max-width:480px) { .sh-tabs { gap:4px; } .sh-tabs button { padding:5px 6px; font-size:12.5px; gap:5px; } .sh-n { padding:1px 6px; font-size:11px; } }
+
+/* ---- accent per sheet (same colours as the pills), sticky filters, entrance ---- */
+.sh[data-sheet="SDE"] { --acc:#2cbb5d; }
+.sh[data-sheet="M50"] { --acc:#a78bfa; }
+.sh-go, .sh-solve { color:#14110a; }
+.sh-tabs button::before { content:""; flex:none; width:8px; height:8px; border-radius:50%; background:#ffa116; opacity:.55; transition:opacity .15s, box-shadow .15s; }
+.sh-tabs button[data-sheet="SDE"]::before { background:#2cbb5d; }
+.sh-tabs button[data-sheet="M50"]::before { background:#a78bfa; }
+.sh-tabs button.on::before { opacity:1; box-shadow:0 0 8px currentColor; }
+.sh-tabs button.on[data-sheet="A2Z"]::before { color:#ffa116; } .sh-tabs button.on[data-sheet="SDE"]::before { color:#2cbb5d; } .sh-tabs button.on[data-sheet="M50"]::before { color:#a78bfa; }
+
+.sh-filters { position:sticky; top:52px; z-index:20; margin:0 -8px 6px; padding:8px 8px 8px; background:color-mix(in srgb, var(--bg, #111) 88%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid transparent; }
+@media (min-width:901px) { .sh-filters { top:66px; } }
+.sh-filters input:focus, .sh-filters select:focus { outline:2px solid var(--acc); outline-offset:1px; }
+
+@keyframes shIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.sh-group, .sh-card { animation:shIn .28s ease both; }
+.sh-group:nth-of-type(2) { animation-delay:.03s; } .sh-group:nth-of-type(3) { animation-delay:.06s; } .sh-group:nth-of-type(4) { animation-delay:.09s; }
+.sh-group:focus-within, .sh-group summary:focus-visible { outline:none; }
+.sh-group summary:focus-visible { box-shadow:inset 0 0 0 2px var(--acc); }
+.sh-row:focus-within { background:color-mix(in srgb, var(--acc) 9%, var(--panel)); }
+.sh-card { background:radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--acc) 13%, var(--panel)) 0%, var(--panel) 55%); }
+.sh-gcount { background:color-mix(in srgb, var(--acc) 14%, transparent); }
+@media (prefers-reduced-motion:reduce) { .sh-group, .sh-card { animation:none; } }

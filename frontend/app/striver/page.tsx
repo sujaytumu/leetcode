@@ -157,7 +157,7 @@ export default function StriverPage() {
   for (const p of shown) { const t = topicOf(p); groups.set(t, [...(groups.get(t) ?? []), p]); }
 
   return (
-    <div className="sh">
+    <div className="sh" data-sheet={sheet.short}>
       <header className="sh-head">
         <h1>Striver Sheets</h1>
         <p className="mute">Striver&apos;s A2Z and SDE sheets, plus Magic 50, topic by topic. Tick a problem when you are done, open the question to solve it in C++, and the answer shows the optimal C++ solution.</p>
@@ -167,7 +167,7 @@ export default function StriverPage() {
         {SHEETS.map((s) => {
           const n = totals.get(s.tag) ?? (s.tag === sheet.tag && all.length ? all.length : undefined);
           return (
-            <button key={s.tag} type="button" role="tab" aria-selected={s.tag === sheet.tag} className={s.tag === sheet.tag ? "on" : ""} onClick={() => choose(s)}>
+            <button key={s.tag} type="button" role="tab" data-sheet={s.short} aria-selected={s.tag === sheet.tag} className={s.tag === sheet.tag ? "on" : ""} onClick={() => choose(s)}>
               <b>{s.label}</b>{n !== undefined && <span className="sh-n">{n}</span>}
             </button>
           );
