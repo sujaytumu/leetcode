@@ -326,3 +326,33 @@
 .sh-card { background:radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--acc) 13%, var(--panel)) 0%, var(--panel) 55%); }
 .sh-gcount { background:color-mix(in srgb, var(--acc) 14%, transparent); }
 @media (prefers-reduced-motion:reduce) { .sh-group, .sh-card { animation:none; } }
+
+/* ---- Topics popup: a centred dialog on phone and laptop (not a side drawer) ---- */
+.sh-topicsbtn { display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 14px; border-radius:10px; font-size:13px; font-weight:700; color:#14110a; background:var(--acc); border:1px solid var(--acc); cursor:pointer; white-space:nowrap; }
+.sh-topicsbtn:hover { filter:brightness(1.08); }
+.sh-pop { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:16px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); animation:shFade .15s ease both; }
+.sh-pop-card { width:min(520px, 100%); max-height:min(78dvh, 640px); display:flex; flex-direction:column; overflow:hidden; border-radius:18px; background:var(--panel); border:1px solid var(--line);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.7); animation:shPop .2s cubic-bezier(.2,.9,.3,1.2) both; }
+.sh-pop-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px 12px 20px; border-bottom:1px solid var(--line); background:linear-gradient(90deg, color-mix(in srgb, var(--acc) 14%, var(--panel)), var(--panel) 80%); }
+.sh-pop-head b { font-size:18px; font-weight:800; margin-right:10px; }
+.sh-pop-head span { font-size:12.5px; font-weight:600; color:var(--mute); }
+.sh-pop-x { flex:none; width:34px; height:34px; border-radius:50%; font-size:22px; line-height:1; color:var(--text); background:color-mix(in srgb, var(--text) 9%, transparent); border:0; cursor:pointer; }
+.sh-pop-x:hover { background:var(--acc); color:#14110a; }
+.sh-pop-list { list-style:none; margin:0; padding:8px; overflow-y:auto; overscroll-behavior:contain; }
+.sh-pop-list button { width:100%; display:grid; grid-template-columns:34px minmax(0,1fr) 84px auto; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; border:0; background:none; color:var(--text); font-size:15.5px; font-weight:600; text-align:left; cursor:pointer; }
+.sh-pop-list button:hover, .sh-pop-list button:focus-visible { background:color-mix(in srgb, var(--acc) 12%, transparent); outline:none; }
+.sh-pop-list .n { font-size:15px; font-weight:800; color:var(--acc); font-variant-numeric:tabular-nums; }
+.sh-pop-list .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sh-pop-list .bar { height:5px; border-radius:999px; background:color-mix(in srgb, var(--text) 10%, transparent); overflow:hidden; }
+.sh-pop-list .bar i { display:block; height:100%; background:#2cbb5d; border-radius:999px; }
+.sh-pop-list .ct { font-size:12px; font-weight:600; color:var(--mute); font-variant-numeric:tabular-nums; min-width:34px; text-align:right; }
+@keyframes shFade { from { opacity:0; } to { opacity:1; } }
+@keyframes shPop { from { opacity:0; transform:translateY(10px) scale(.97); } to { opacity:1; transform:none; } }
+@media (max-width:700px) {
+  .sh-jump { display:none; }
+  .sh-pop { padding:12px; }
+  .sh-pop-card { max-height:82dvh; }
+  .sh-pop-list button { grid-template-columns:28px minmax(0,1fr) 56px auto; gap:10px; padding:12px 8px; }
+  .sh-topicsbtn { flex:1 1 auto; justify-content:center; }
+}
+@media (prefers-reduced-motion:reduce) { .sh-pop, .sh-pop-card { animation:none; } }

@@ -78,6 +78,7 @@ export default function StriverPage() {
   const [hideSolved, setHideSolved] = useState(false);
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<Set<string>>(new Set()); // topics you expanded; all start collapsed
+  const [pop, setPop] = useState(false); // the "Topics" popup
   const [ticked, setTicked] = useState<Set<string>>(new Set()); // problems you ticked by hand, kept on this device
   const [unticked, setUnticked] = useState<Set<string>>(new Set()); // solved problems you chose to untick, kept on this device
 
@@ -129,6 +130,15 @@ export default function StriverPage() {
     try { localStorage.setItem(SHEET_KEY, s.short); } catch { /* storage blocked */ }
     window.history.replaceState(null, "", `/striver?sheet=${s.short.toLowerCase()}`);
   };
+
+  useEffect(() => {
+    if (!pop) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPop(false); };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [pop]);
 
   const all = Object.keys(pages).map(Number).sort((a, b) => a - b).flatMap((k) => pages[k]);
   const solved = all.filter(isDone).length;
@@ -206,6 +216,10 @@ export default function StriverPage() {
             <option value="EASY">Easy</option><option value="MEDIUM">Medium</option><option value="HARD">Hard</option>
           </select>
           <label className="sh-hide"><input type="checkbox" checked={hideSolved} onChange={(e) => setHideSolved(e.target.checked)} /> Hide done</label>
+          <button type="button" className="sh-topicsbtn" onClick={() => setPop(true)} aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            Topics
+          </button>
           <button type="button" className="sh-expand" onClick={() => setOpen((prev) => (prev.size >= chapters.length ? new Set() : new Set(chapters)))}>{open.size >= chapters.length ? "Collapse all" : "Expand all"}</button>
         </div>
       )}
@@ -251,6 +265,32 @@ export default function StriverPage() {
           </details>
         );
       })}
+
+      {pop && (
+        <div className="sh-pop" onMouseDown={(e) => { if (e.target === e.currentTarget) setPop(false); }}>
+          <div className="sh-pop-card" role="dialog" aria-modal="true" aria-label="Jump to a topic">
+            <div className="sh-pop-head">
+              <div><b>Topics</b><span>{sheet.label}</span></div>
+              <button type="button" className="sh-pop-x" onClick={() => setPop(false)} aria-label="Close" autoFocus>×</button>
+            </div>
+            <ul className="sh-pop-list">
+              {chapters.filter((c) => groups.has(c)).map((c) => {
+                const g = groupTotals.get(c)!;
+                return (
+                  <li key={c}>
+                    <button type="button" onClick={() => { setPop(false); jumpTo(c); }}>
+                      <span className="n">{chapterNo(c)}</span>
+                      <span className="nm">{tagLabel(c)}</span>
+                      <span className="bar" aria-hidden="true"><i style={{ width: `${g.total ? (g.solved / g.total) * 100 : 0}%` }} /></span>
+                      <span className="ct">{g.solved}/{g.total}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
